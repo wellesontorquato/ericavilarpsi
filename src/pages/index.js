@@ -1,7 +1,9 @@
 import Head from 'next/head';
+import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
+import { getAllPosts } from '@/lib/posts';
 
-export default function Home() {
+export default function Home({ posts = [] }) {
   const [heroIndex, setHeroIndex] = useState(0);
   const heroSliderRef = useRef(null);
   const touchStartX = useRef(0);
@@ -106,12 +108,14 @@ export default function Home() {
               </svg>
               <span>Início</span>
             </a>
+
             <a href="#sobre" className="nav-link">
               <svg viewBox="0 0 24 24">
                 <path d="M12 21s-7-4.6-9-8.7C1.2 8.7 3.8 5 7.7 5c2.1 0 3.5 1 4.3 2.2C12.8 6 14.2 5 16.3 5c3.9 0 6.5 3.7 4.7 7.3-2 4.1-9 8.7-9 8.7Z" />
               </svg>
               <span>Sobre</span>
             </a>
+
             <a href="#como-funciona" className="nav-link">
               <svg viewBox="0 0 24 24">
                 <path d="M4 6h16" />
@@ -120,11 +124,22 @@ export default function Home() {
               </svg>
               <span>Atendimento</span>
             </a>
+
             <a href="#contato" className="nav-link">
               <svg viewBox="0 0 24 24">
                 <path d="M4 5h16v11H8l-4 4z" />
               </svg>
               <span>Contato</span>
+            </a>
+
+            <a href="#blog" className="nav-link">
+              <svg viewBox="0 0 24 24">
+                <path d="M5 5h14v14H5z" />
+                <path d="M8 9h8" />
+                <path d="M8 13h8" />
+                <path d="M8 17h5" />
+              </svg>
+              <span>Blog</span>
             </a>
           </nav>
 
@@ -141,6 +156,7 @@ export default function Home() {
                 <strong>Erica Vilar</strong>
                 <span>Psicóloga para mulheres reais</span>
               </div>
+
               <div className="mobile-avatar">
                 <img src="/IMG_3092.webp" alt="Erica Vilar" />
               </div>
@@ -156,21 +172,36 @@ export default function Home() {
                 >
                   <article className={`hero-slide ${heroIndex === 0 ? 'is-active' : ''}`}>
                     <div className="hero-slide-media">
-                      <img src="/IMG_3092.webp" alt="Retrato da psicóloga" className="img-destaque-1" />
+                      <img
+                        src="/IMG_3092.webp"
+                        alt="Retrato da psicóloga"
+                        className="img-destaque-1"
+                      />
                     </div>
+
                     <div className="hero-slide-overlay"></div>
+
                     <div className="hero-slide-content">
-                      <div className="hero-slide-eyebrow">Psicóloga para mulheres reais</div>
+                      <div className="hero-slide-eyebrow">
+                        Psicóloga para mulheres reais
+                      </div>
+
                       <h1>
-                        Um espaço de <span>escuta</span>, presença e reencontro com quem você é.
+                        Um espaço de <span>escuta</span>, presença e reencontro
+                        com quem você é.
                       </h1>
+
                       <p>
-                        A terapia aqui nasce da delicadeza, da profundidade e da possibilidade de voltar para si com mais verdade, clareza e presença.
+                        A terapia aqui nasce da delicadeza, da profundidade e da
+                        possibilidade de voltar para si com mais verdade, clareza
+                        e presença.
                       </p>
+
                       <div className="hero-slide-meta">
                         <span>CRP 15/7179</span>
                         <span>Maceió e Online</span>
                       </div>
+
                       <div className="hero-actions hero-slide-actions">
                         <a
                           href="https://wa.me/5582996657825?text=Ol%C3%A1%2C%20vim%20pelo%20site%20e%20gostaria%20de%20entender%20melhor%20como%20funciona%20o%20seu%20trabalho%20e%20quais%20seriam%20os%20pr%C3%B3ximos%20passos."
@@ -180,6 +211,7 @@ export default function Home() {
                         >
                           Agendar atendimento
                         </a>
+
                         <a href="#sobre" className="btn btn-secondary">
                           Conhecer meu trabalho
                         </a>
@@ -189,19 +221,34 @@ export default function Home() {
 
                   <article className={`hero-slide ${heroIndex === 1 ? 'is-active' : ''}`}>
                     <div className="hero-slide-media">
-                      <img src="/erica.jfif" alt="Psicóloga em momento de atendimento" />
+                      <img
+                        src="/erica.jfif"
+                        alt="Psicóloga em momento de atendimento"
+                      />
                     </div>
+
                     <div className="hero-slide-overlay"></div>
+
                     <div className="hero-slide-content">
-                      <div className="hero-slide-eyebrow">Atendimento com presença clínica</div>
-                      <h2>Um cuidado sério, sensível e feito para mulheres que desejam se escutar de verdade.</h2>
+                      <div className="hero-slide-eyebrow">
+                        Atendimento com presença clínica
+                      </div>
+
+                      <h2>
+                        Um cuidado sério, sensível e feito para mulheres que
+                        desejam se escutar de verdade.
+                      </h2>
+
                       <p>
-                        Um acompanhamento que respeita seu tempo, sua história e o que hoje pede elaboração, pausa e reconexão emocional.
+                        Um acompanhamento que respeita seu tempo, sua história e
+                        o que hoje pede elaboração, pausa e reconexão emocional.
                       </p>
+
                       <div className="hero-slide-meta">
                         <span>Escuta acolhedora</span>
                         <span>Profundidade clínica</span>
                       </div>
+
                       <div className="hero-actions hero-slide-actions">
                         <a
                           href="https://wa.me/5582996657825?text=Ol%C3%A1%2C%20vim%20pelo%20site%20e%20gostaria%20de%20entender%20melhor%20como%20funciona%20o%20seu%20trabalho%20e%20quais%20seriam%20os%20pr%C3%B3ximos%20passos."
@@ -211,71 +258,13 @@ export default function Home() {
                         >
                           Quero agendar
                         </a>
+
                         <a href="#como-funciona" className="btn btn-secondary">
                           Como funciona
                         </a>
                       </div>
                     </div>
                   </article>
-
-                  {/* <article className={`hero-slide ${heroIndex === 2 ? 'is-active' : ''}`}>
-                    <div className="hero-slide-media">
-                      <img
-                        src="https://www.psicologosberrini.com.br/wp-content/uploads/cropped-psicologo-tudo-sobre-psicologia-2-1.jpg"
-                        alt="Retrato complementar da psicóloga"
-                      />
-                    </div>
-                    <div className="hero-slide-overlay"></div>
-                    <div className="hero-slide-content">
-                      <div className="hero-slide-eyebrow">Identidade · Maternidade · Profissão</div>
-                      <h2>Questões reais da vida feminina podem ter, sim, um lugar de cuidado e elaboração.</h2>
-                      <p>
-                        Meu trabalho conversa com identidade, maternidade, sobrecarga emocional, autocobrança e com a sensação de ter se afastado de si.
-                      </p>
-                      <div className="hero-slide-meta">
-                        <span>Identidade</span>
-                        <span>Maternidade</span>
-                        <span>Profissão</span>
-                      </div>
-                      <div className="hero-actions hero-slide-actions">
-                        <a href="#temas" className="btn btn-primary">
-                          Ver temas
-                        </a>
-                        <a href="#faq" className="btn btn-secondary">
-                          Tirar dúvidas
-                        </a>
-                      </div>
-                    </div>
-                  </article>
-
-                  <article className={`hero-slide ${heroIndex === 3 ? 'is-active' : ''}`}>
-                    <div className="hero-slide-media">
-                      <img
-                        src="https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=1400&q=80"
-                        alt="Imagem de acolhimento e presença"
-                      />
-                    </div>
-                    <div className="hero-slide-overlay"></div>
-                    <div className="hero-slide-content">
-                      <div className="hero-slide-eyebrow">Maceió e também Online</div>
-                      <h2>Um espaço possível para a sua rotina, sem perder acolhimento, constância e profundidade.</h2>
-                      <p>
-                        Seja presencialmente em Maceió ou Online, a proposta é oferecer um lugar seguro, humano e consistente para o seu processo terapêutico.
-                      </p>
-                      <div className="hero-slide-meta">
-                        <span>Presencial em Maceió</span>
-                        <span>Online</span>
-                      </div>
-                      <div className="hero-actions hero-slide-actions">
-                        <a href="#contato" className="btn btn-primary">
-                          Entrar em contato
-                        </a>
-                        <a href="#sobre" className="btn btn-secondary">
-                          Sobre a psicóloga
-                        </a>
-                      </div>
-                    </div>
-                  </article> */}
                 </div>
 
                 <div className="hero-slider-controls">
@@ -305,19 +294,34 @@ export default function Home() {
                 <div className="hero-highlights">
                   <div className="hero-highlight-card">
                     <strong>Escuta clínica</strong>
-                    <span>Um cuidado psicológico que acolhe sua história sem fórmulas prontas.</span>
+                    <span>
+                      Um cuidado psicológico que acolhe sua história sem fórmulas
+                      prontas.
+                    </span>
                   </div>
+
                   <div className="hero-highlight-card">
                     <strong>Mulheres reais</strong>
-                    <span>Questões de identidade, maternidade, rotina, vínculos e sobrecarga emocional.</span>
+                    <span>
+                      Questões de identidade, maternidade, rotina, vínculos e
+                      sobrecarga emocional.
+                    </span>
                   </div>
+
                   <div className="hero-highlight-card">
                     <strong>Presença + profundidade</strong>
-                    <span>Um espaço para elaborar, sustentar perguntas e reencontrar sua própria voz.</span>
+                    <span>
+                      Um espaço para elaborar, sustentar perguntas e reencontrar
+                      sua própria voz.
+                    </span>
                   </div>
+
                   <div className="hero-highlight-card">
                     <strong>Maceió e Online</strong>
-                    <span>Atendimento pensado para ser possível, consistente e acolhedor na sua rotina.</span>
+                    <span>
+                      Atendimento pensado para ser possível, consistente e
+                      acolhedor na sua rotina.
+                    </span>
                   </div>
                 </div>
               </div>
@@ -327,22 +331,40 @@ export default function Home() {
               <div className="section-header">
                 <div>
                   <span className="section-label">Sobre</span>
-                  <h2>Meu trabalho nasce da escuta, delicadeza e de uma Psicologia baseada em ciência.</h2>
+                  <h2>
+                    Meu trabalho nasce da escuta, delicadeza e de uma Psicologia
+                    baseada em ciência.
+                  </h2>
                 </div>
+
                 <p>
-                  Acredito que muitas mulheres seguem funcionando, dando conta de tudo e cumprindo papéis, mas acabam se afastando de si no processo. A terapia pode ser um lugar de volta: para se ouvir, se perceber e se reconstruir com mais presença.
+                  Acredito que muitas mulheres seguem funcionando, dando conta
+                  de tudo e cumprindo papéis, mas acabam se afastando de si no
+                  processo. A terapia pode ser um lugar de volta: para se ouvir,
+                  se perceber e se reconstruir com mais presença.
                 </p>
               </div>
 
               <div className="about-grid">
                 <article className="card about-main-card">
                   <div className="card-body about-main">
-                    <div className="about-quote">“Te ajudo a sair do papel que te ensinaram.”</div>
+                    <div className="about-quote">
+                      “Te ajudo a sair do papel que te ensinaram.”
+                    </div>
+
                     <p>
-                      Meu trabalho é voltado para mulheres que desejam compreender melhor sua história, suas emoções, seus vínculos e a forma como vêm ocupando seus lugares na vida. Mais do que buscar respostas prontas, o processo é um convite para se escutar com mais honestidade.
+                      Meu trabalho é voltado para mulheres que desejam
+                      compreender melhor sua história, suas emoções, seus
+                      vínculos e a forma como vêm ocupando seus lugares na vida.
+                      Mais do que buscar respostas prontas, o processo é um
+                      convite para se escutar com mais honestidade.
                     </p>
+
                     <p>
-                      Vejo a terapia como um espaço de pausa, elaboração e reencontro. Um lugar em que é possível sustentar perguntas importantes, acolher limites, reconhecer desejos e construir uma relação mais verdadeira consigo mesma.
+                      Vejo a terapia como um espaço de pausa, elaboração e
+                      reencontro. Um lugar em que é possível sustentar perguntas
+                      importantes, acolher limites, reconhecer desejos e
+                      construir uma relação mais verdadeira consigo mesma.
                     </p>
                   </div>
                 </article>
@@ -351,7 +373,10 @@ export default function Home() {
                   <div className="card-body">
                     <h3>Maneira como eu enxergo o cuidado</h3>
                     <p>
-                      Não vejo o cuidado como um lugar de corrigir quem você é. Vejo como um espaço em que você pode se encontrar com mais honestidade, compreender o que sente e sustentar sua própria história com mais gentileza.
+                      Não vejo o cuidado como um lugar de corrigir quem você é.
+                      Vejo como um espaço em que você pode se encontrar com mais
+                      honestidade, compreender o que sente e sustentar sua
+                      própria história com mais gentileza.
                     </p>
                   </div>
                 </article>
@@ -360,7 +385,10 @@ export default function Home() {
                   <div className="card-body">
                     <h3>Para quem é esse espaço</h3>
                     <p>
-                      Este espaço é para mulheres que vivem questões ligadas à identidade, maternidade, sobrecarga emocional, autocobrança, cansaço e à sensação de estarem vivendo apenas o papel que esperam delas.
+                      Este espaço é para mulheres que vivem questões ligadas à
+                      identidade, maternidade, sobrecarga emocional,
+                      autocobrança, cansaço e à sensação de estarem vivendo
+                      apenas o papel que esperam delas.
                     </p>
                   </div>
                 </article>
@@ -373,8 +401,11 @@ export default function Home() {
                   <span className="section-label">Atendimento</span>
                   <h2>Como funciona o acompanhamento</h2>
                 </div>
+
                 <p>
-                  O primeiro passo é entrar em contato, conhecer melhor minha proposta de atendimento e perceber se esse espaço faz sentido para o seu momento de vida.
+                  O primeiro passo é entrar em contato, conhecer melhor minha
+                  proposta de atendimento e perceber se esse espaço faz sentido
+                  para o seu momento de vida.
                 </p>
               </div>
 
@@ -383,7 +414,9 @@ export default function Home() {
                   <div className="step-number">1</div>
                   <h3>Primeiro contato</h3>
                   <p>
-                    Você pode me chamar para conhecer melhor a proposta do acompanhamento, esclarecer dúvidas e dar o primeiro passo de forma simples e direta.
+                    Você pode me chamar para conhecer melhor a proposta do
+                    acompanhamento, esclarecer dúvidas e dar o primeiro passo de
+                    forma simples e direta.
                   </p>
                 </article>
 
@@ -391,7 +424,9 @@ export default function Home() {
                   <div className="step-number">2</div>
                   <h3>Início do processo</h3>
                   <p>
-                    O acompanhamento se torna um espaço contínuo de escuta, elaboração e aprofundamento, respeitando sua história, seu tempo e suas questões.
+                    O acompanhamento se torna um espaço contínuo de escuta,
+                    elaboração e aprofundamento, respeitando sua história, seu
+                    tempo e suas questões.
                   </p>
                 </article>
 
@@ -399,7 +434,9 @@ export default function Home() {
                   <div className="step-number">3</div>
                   <h3>Maceió e Online</h3>
                   <p>
-                    O atendimento acontece presencialmente em Maceió e também Online, ampliando as possibilidades de cuidado com presença, constância e acolhimento.
+                    O atendimento acontece presencialmente em Maceió e também
+                    Online, ampliando as possibilidades de cuidado com presença,
+                    constância e acolhimento.
                   </p>
                 </article>
               </div>
@@ -410,18 +447,19 @@ export default function Home() {
                 <div>
                   <span className="section-label">Contato</span>
                 </div>
-             {/*    <p>
-                  Se você sente que chegou a hora de se escutar com mais profundidade, este pode ser um bom começo. O primeiro contato é simples e pode te ajudar a entender se esse espaço faz sentido para você.
-                </p> */}
               </div>
 
               <div className="contact-box">
                 <article className="card contact-main-card contact-main">
                   <div className="contact-card">
                     <h2>Vamos conversar?</h2>
+
                     <p>
-                      Um espaço com atmosfera acolhedora, presença clínica e escuta séria — sem perder a delicadeza de uma psicóloga individual que acompanha sua história com cuidado real.
+                      Um espaço com atmosfera acolhedora, presença clínica e
+                      escuta séria — sem perder a delicadeza de uma psicóloga
+                      individual que acompanha sua história com cuidado real.
                     </p>
+
                     <div className="contact-actions">
                       <a
                         href="https://wa.me/5582996657825?text=Ol%C3%A1%2C%20vim%20pelo%20site%20e%20gostaria%20de%20entender%20melhor%20como%20funciona%20o%20seu%20trabalho%20e%20quais%20seriam%20os%20pr%C3%B3ximos%20passos."
@@ -434,45 +472,90 @@ export default function Home() {
                     </div>
                   </div>
                 </article>
-
-                {/* <article className="card contact-info-card">
-                  <div className="contact-card">
-                    <h3>Informações importantes</h3>
-                    <ul className="contact-list">
-                      <li>Atendimento em Maceió e também Online.</li>
-                      <li>Escuta clínica voltada para mulheres e suas travessias reais.</li>
-                      <li>Contato inicial para conhecer a proposta e tirar dúvidas.</li>
-                    </ul>
-                  </div>
-                </article>
-
-                <article className="card contact-escuta-card">
-                  <div className="contact-card">
-                    <h3>Atmosfera do cuidado</h3>
-                    <p>
-                      A proposta aqui não é de um consultório impessoal. É de uma presença clínica autoral, com ambiente acolhedor, profundidade e espaço para você existir com mais verdade.
-                    </p>
-                  </div>
-                </article> */}
               </div>
+            </section>
+
+            <section className="section" id="blog">
+              <div className="section-header">
+                <div>
+                  <span className="section-label">Blog</span>
+                  <h2>
+                    Reflexões para pausar, sentir e se escutar com mais verdade.
+                  </h2>
+                </div>
+
+                <p>
+                  Textos sobre saúde emocional, identidade, maternidade,
+                  vínculos, autocobrança e os atravessamentos da vida real das
+                  mulheres.
+                </p>
+              </div>
+
+              {posts.length === 0 && (
+                <p className="blog-home-empty">Nenhum artigo publicado ainda.</p>
+              )}
+
+              {posts.length > 0 && (
+                <div className="blog-home-grid">
+                  {posts.slice(0, 3).map((post) => (
+                    <article className="blog-home-card" key={post.slug}>
+                      {post.thumbnail && (
+                        <Link href={`/blog/${post.slug}`} className="blog-home-image">
+                          <img src={post.thumbnail} alt={post.title} />
+                        </Link>
+                      )}
+
+                      <div className="blog-home-content">
+                        {post.date && <span>{post.date}</span>}
+
+                        <h3>
+                          <Link href={`/blog/${post.slug}`}>{post.title}</Link>
+                        </h3>
+
+                        {post.excerpt && <p>{post.excerpt}</p>}
+
+                        <Link href={`/blog/${post.slug}`} className="blog-home-link">
+                          Ler artigo
+                        </Link>
+                      </div>
+                    </article>
+                  ))}
+                </div>
+              )}
+
+              {posts.length > 3 && (
+                <div className="blog-home-actions">
+                  <Link href="/blog" className="btn btn-secondary">
+                    Ver todos os artigos
+                  </Link>
+                </div>
+              )}
             </section>
 
             <footer className="footer">
               <div className="footer-inner">
                 <div className="footer-brand">
-                  <a href="https://instagram.com/dev.torquato" target="_blank" rel="noopener noreferrer">
+                  <a
+                    href="https://instagram.com/dev.torquato"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
                     Desenvolvido por DevTorquato
                   </a>
                 </div>
+
                 <div className="footer-center">
-                  <span>© 2026 Erica Vilar. Cuidado psicológico com escuta, presença e profundidade.</span>
+                  <span>
+                    © 2026 Erica Vilar. Cuidado psicológico com escuta,
+                    presença e profundidade.
+                  </span>
                 </div>
               </div>
             </footer>
           </div>
         </main>
 
-        <nav className="mobile-tabbar">
+        <nav className="mobile-tabbar mobile-tabbar-five">
           <a href="#inicio" className="tab-link active">
             <svg viewBox="0 0 24 24">
               <path d="M3 10.5 12 3l9 7.5" />
@@ -480,12 +563,14 @@ export default function Home() {
             </svg>
             <span>Início</span>
           </a>
+
           <a href="#sobre" className="tab-link">
             <svg viewBox="0 0 24 24">
               <path d="M12 21s-7-4.6-9-8.7C1.2 8.7 3.8 5 7.7 5c2.1 0 3.5 1 4.3 2.2C12.8 6 14.2 5 16.3 5c3.9 0 6.5 3.7 4.7 7.3-2 4.1-9 8.7-9 8.7Z" />
             </svg>
             <span>Sobre</span>
-    </a>
+          </a>
+
           <a href="#como-funciona" className="tab-link">
             <svg viewBox="0 0 24 24">
               <path d="M4 6h16" />
@@ -494,6 +579,17 @@ export default function Home() {
             </svg>
             <span>Atend.</span>
           </a>
+
+          <a href="#blog" className="tab-link">
+            <svg viewBox="0 0 24 24">
+              <path d="M5 5h14v14H5z" />
+              <path d="M8 9h8" />
+              <path d="M8 13h8" />
+              <path d="M8 17h5" />
+            </svg>
+            <span>Blog</span>
+          </a>
+
           <a href="#contato" className="tab-link">
             <svg viewBox="0 0 24 24">
               <path d="M4 5h16v11H8l-4 4z" />
@@ -504,4 +600,14 @@ export default function Home() {
       </div>
     </>
   );
+}
+
+export async function getStaticProps() {
+  const posts = getAllPosts();
+
+  return {
+    props: {
+      posts,
+    },
+  };
 }
