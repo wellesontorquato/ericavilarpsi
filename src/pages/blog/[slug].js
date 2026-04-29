@@ -164,7 +164,6 @@ export default function BlogPost({ post }) {
                         <div className="blog-post-hero-meta">
                             <span>Por Érica Vilar</span>
                             {post.date && <span>{post.date}</span>}
-                            <span>Psicologia para mulheres reais</span>
                         </div>
                         </div>
                     </div>

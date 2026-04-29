@@ -64,6 +64,24 @@ function normalizeSearchText(text = "") {
     .trim();
 }
 
+function enhancePostImages(contentHtml = "") {
+  let imageIndex = 0;
+
+  return String(contentHtml).replace(
+    /<p>\s*(<img[^>]*>)\s*<\/p>/g,
+    (match, imageTag) => {
+      const alignment = imageIndex % 2 === 0 ? "align-left" : "align-right";
+      imageIndex += 1;
+
+      return `
+        <figure class="blog-post-image-block ${alignment}">
+          ${imageTag}
+        </figure>
+      `;
+    }
+  );
+}
+
 export function getAllPostSlugs() {
   if (!fs.existsSync(postsDirectory)) {
     return [];
@@ -118,7 +136,7 @@ export async function getPostBySlug(slug) {
     .use(html)
     .process(matterResult.content);
 
-  const contentHtml = processedContent.toString();
+  const contentHtml = enhancePostImages(processedContent.toString());
 
   return {
     slug: getPostSlug(matchedFile, matterResult.data),
