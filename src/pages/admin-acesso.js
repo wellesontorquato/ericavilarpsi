@@ -1,39 +1,49 @@
 import Head from "next/head";
 import Script from "next/script";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 export default function AdminAcesso() {
+  const [identityReady, setIdentityReady] = useState(false);
+  const [hasInviteToken, setHasInviteToken] = useState(false);
+
   useEffect(() => {
-    const openIdentity = () => {
-      if (typeof window === "undefined" || !window.netlifyIdentity) return;
+    if (typeof window === "undefined") return;
 
-      window.netlifyIdentity.on("init", (user) => {
-        if (!user) {
-          const hasInviteToken = window.location.hash.includes("invite_token");
-          const hasRecoveryToken = window.location.hash.includes("recovery_token");
-          const hasConfirmationToken = window.location.hash.includes("confirmation_token");
+    const hash = window.location.hash || "";
 
-          if (hasInviteToken || hasRecoveryToken || hasConfirmationToken) {
-            window.netlifyIdentity.open();
-          }
-        }
-      });
-
-      window.netlifyIdentity.on("signup", () => {
-        window.location.href = "/admin/";
-      });
-
-      window.netlifyIdentity.on("login", () => {
-        window.location.href = "/admin/";
-      });
-
-      window.netlifyIdentity.init();
-    };
-
-    const timer = setTimeout(openIdentity, 500);
-
-    return () => clearTimeout(timer);
+    setHasInviteToken(
+      hash.includes("invite_token") ||
+        hash.includes("recovery_token") ||
+        hash.includes("confirmation_token")
+    );
   }, []);
+
+  function handleOpenIdentity() {
+    if (typeof window === "undefined" || !window.netlifyIdentity) {
+      return;
+    }
+
+    window.netlifyIdentity.on("signup", () => {
+      window.location.href = "/admin/";
+    });
+
+    window.netlifyIdentity.on("login", () => {
+      window.location.href = "/admin/";
+    });
+
+    /*
+      Importante:
+      Quando existe invite_token na URL, o correto é chamar init().
+      O próprio widget da Netlify lê o token e abre a tela "Complete your signup".
+      Se chamarmos open() direto, ele abre a tela comum de login.
+    */
+    if (hasInviteToken) {
+      window.netlifyIdentity.init();
+      return;
+    }
+
+    window.netlifyIdentity.open();
+  }
 
   return (
     <>
@@ -48,29 +58,30 @@ export default function AdminAcesso() {
       <Script
         src="https://identity.netlify.com/v1/netlify-identity-widget.js"
         strategy="afterInteractive"
+        onLoad={() => setIdentityReady(true)}
       />
 
       <main className="admin-access-page">
         <section className="admin-access-card">
           <span className="admin-access-kicker">Área administrativa</span>
 
-          <h1>Crie sua senha de acesso</h1>
+          <h1>Crie sua senha</h1>
 
           <p>
             Você recebeu um convite para acessar o painel administrativo do site
-            Érica Vilar. Para continuar, defina uma senha segura na janela que
-            será aberta.
+            Érica Vilar. Para continuar, clique no botão abaixo e defina uma
+            senha segura.
           </p>
 
           <div className="admin-access-steps">
             <div>
               <strong>1</strong>
-              <span>Digite uma senha segura.</span>
+              <span>Clique em “Abrir criação de senha”.</span>
             </div>
 
             <div>
               <strong>2</strong>
-              <span>Clique em “Sign up” para finalizar o cadastro.</span>
+              <span>Digite uma senha segura na janela da Netlify.</span>
             </div>
 
             <div>
@@ -82,17 +93,17 @@ export default function AdminAcesso() {
           <button
             type="button"
             className="admin-access-button"
-            onClick={() => {
-              if (window.netlifyIdentity) {
-                window.netlifyIdentity.open();
-              }
-            }}
+            onClick={handleOpenIdentity}
+            disabled={!identityReady}
           >
-            Abrir criação de senha
+            {identityReady
+              ? "Abrir criação de senha"
+              : "Carregando acesso..."}
           </button>
 
           <small>
-            Caso a janela não apareça automaticamente, clique no botão acima.
+            Se aparecer a tela de login em vez da criação de senha, abra
+            novamente o link original do convite recebido por e-mail.
           </small>
         </section>
       </main>
