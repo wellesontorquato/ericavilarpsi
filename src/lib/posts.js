@@ -10,10 +10,21 @@ function getPostSlug(fileName, data = {}) {
   return data.slug || fileName.replace(/\.md$/, "");
 }
 
+function normalizeDateValue(dateValue) {
+  if (!dateValue) return "";
+
+  if (dateValue instanceof Date) {
+    return dateValue.toISOString();
+  }
+
+  return String(dateValue);
+}
+
 function parsePostDate(dateValue) {
   if (!dateValue) return null;
 
-  const date = new Date(dateValue);
+  const normalizedDate = normalizeDateValue(dateValue);
+  const date = new Date(normalizedDate);
 
   if (Number.isNaN(date.getTime())) {
     return null;
@@ -106,7 +117,7 @@ export async function getPostBySlug(slug) {
     slug: getPostSlug(matchedFile, matterResult.data),
     title: matterResult.data.title || "",
     date: formatPostDate(matterResult.data.date),
-    rawDate: matterResult.data.date || "",
+    rawDate: normalizeDateValue(matterResult.data.date),
     thumbnail: matterResult.data.thumbnail || "",
     excerpt: matterResult.data.excerpt || "",
     contentHtml,
@@ -132,7 +143,7 @@ export function getAllPosts() {
         slug: getPostSlug(fileName, data),
         title: data.title || "",
         date: formatPostDate(data.date),
-        rawDate: data.date || "",
+        rawDate: normalizeDateValue(data.date),
         timestamp: getPostTimestamp(data.date),
         thumbnail: data.thumbnail || "",
         excerpt: data.excerpt || "",
