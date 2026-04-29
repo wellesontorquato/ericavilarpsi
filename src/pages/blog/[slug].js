@@ -162,7 +162,7 @@ export default function BlogPost({ post }) {
                         {post.excerpt && <p>{post.excerpt}</p>}
 
                         <div className="blog-post-hero-meta">
-                            <span>Por Érica Vilar</span>
+                            <span>Por Erica Vilar</span>
                             {post.date && <span>{post.date}</span>}
                         </div>
                         </div>
