@@ -876,7 +876,7 @@
       background:var(--primary);
       margin-top:.56em;
     }
-    
+
     .footer{padding:32px 0 110px;}
 
     .footer-inner{
@@ -2868,6 +2868,40 @@
   }
 }
 
+/* =========================================================
+   AJUSTE MOBILE - TÍTULO DO HERO DO POST
+   ========================================================= */
+
+@media (max-width: 640px) {
+  .blog-post-hero-content h1 {
+    font-size: clamp(2.25rem, 10.8vw, 3.05rem) !important;
+    line-height: 1.04 !important;
+    letter-spacing: -.045em;
+    max-width: 100%;
+    margin-bottom: 16px;
+  }
+
+  .blog-post-hero-content {
+    width: 100%;
+  }
+
+  .blog-post-hero {
+    min-height: 610px;
+  }
+
+  .blog-post-hero-inner {
+    min-height: 610px;
+    padding-bottom: 30px;
+  }
+}
+
+@media (max-width: 390px) {
+  .blog-post-hero-content h1 {
+    font-size: clamp(2.05rem, 10.2vw, 2.75rem) !important;
+    line-height: 1.06 !important;
+  }
+}
+
     @media (max-width: 1360px){
       .hero-grid{
         grid-template-columns:minmax(0, .94fr) minmax(0, .84fr);
@@ -3005,9 +3039,6 @@
 
       .hero-grid,
       .steps-grid,
-      .faq-intro,
-      .faq-categories{grid-template-columns:1fr;}
-
       .hero-grid{
         grid-template-areas:
           "copy"
@@ -3038,8 +3069,6 @@
       }
 
       .section-header p,
-      .faq-intro p{justify-self:start;}
-
       .hero-visual{
         min-height:540px;
         transform:none;
@@ -3362,27 +3391,6 @@
       .about-care-card .card-body,
       .about-audience-card .card-body{height:100%;}
 
-      .faq-intro{
-        grid-template-columns:1fr;
-        gap:14px;
-        margin-bottom:18px;
-      }
-
-      .faq-categories{
-        grid-template-columns:1fr;
-        gap:14px;
-      }
-
-      .faq-category{padding:18px;}
-      .faq-question{padding:16px;}
-      .faq-question span{font-size:.93rem;}
-
-      .faq-answer p{
-        padding:0 16px 16px;
-        font-size:.92rem;
-        line-height:1.72;
-      }
-
       .footer{padding:28px 0 0;}
 
       .footer-inner{
@@ -3508,8 +3516,6 @@
       .contact-card{padding:20px;}
 
       .section,
-      .faq-section{padding-top:64px;}
-
       .main{padding-bottom:calc(var(--mobile-safe-bottom) + 10px);}
 
       .mobile-tabbar{
@@ -4112,9 +4118,6 @@
     }
 /* =========================================================
    AJUSTE FINAL DO HERO DESKTOP - PRIMEIRA FOTO
-   Solução editorial: a foto não fica chapada no centro.
-   A imagem principal vira composição lateral e o fundo integra
-   com gradientes + blur da própria foto.
    ========================================================= */
 
 @media (min-width: 921px){
@@ -4228,13 +4231,6 @@
     z-index: 5;
   }
 }
-
-/* =========================================================
-   AJUSTE FINAL SOLICITADO
-   1) Mobile volta para o enquadramento antigo.
-   2) Desktop mantém a composição editorial bonita.
-   3) Remove o efeito de subida/descida da foto e dos textos.
-   ========================================================= */
 
 /* Remove entrada vertical dos textos do hero */
 .hero-slide-content > *,
