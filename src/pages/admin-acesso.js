@@ -1,15 +1,17 @@
 import Head from "next/head";
+import Script from "next/script";
 import { useEffect, useState } from "react";
 
 export default function AdminAcesso() {
-  const [isLoading, setIsLoading] = useState(false);
-  const [hasToken, setHasToken] = useState(false);
+  const [savedHash, setSavedHash] = useState("");
+  const [shouldStartIdentity, setShouldStartIdentity] = useState(false);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
 
     const hash = window.location.hash || "";
-    const storedHash = sessionStorage.getItem("netlify_identity_hash");
+    const searchParams = new URLSearchParams(window.location.search);
+    const start = searchParams.get("start") === "1";
 
     const isIdentityToken =
       hash.includes("invite_token") ||
@@ -18,93 +20,56 @@ export default function AdminAcesso() {
 
     if (isIdentityToken) {
       sessionStorage.setItem("netlify_identity_hash", hash);
-      setHasToken(true);
-      return;
+      setSavedHash(hash);
+    } else {
+      const storedHash = sessionStorage.getItem("netlify_identity_hash") || "";
+      setSavedHash(storedHash);
     }
 
-    if (storedHash) {
-      setHasToken(true);
+    if (start) {
+      setShouldStartIdentity(true);
     }
   }, []);
 
-  function loadNetlifyIdentity() {
-    return new Promise((resolve, reject) => {
-      if (typeof window === "undefined") return reject();
-
-      if (window.netlifyIdentity) {
-        resolve(window.netlifyIdentity);
-        return;
-      }
-
-      const script = document.createElement("script");
-      script.src = "https://identity.netlify.com/v1/netlify-identity-widget.js";
-      script.async = true;
-
-      script.onload = () => {
-        if (window.netlifyIdentity) {
-          resolve(window.netlifyIdentity);
-        } else {
-          reject();
-        }
-      };
-
-      script.onerror = reject;
-
-      document.body.appendChild(script);
-    });
-  }
-
-  async function handleOpenIdentity() {
+  function handleStartSignup() {
     if (typeof window === "undefined") return;
 
-    setIsLoading(true);
+    const hash =
+      savedHash ||
+      sessionStorage.getItem("netlify_identity_hash") ||
+      window.location.hash;
 
-    try {
-      const savedHash =
-        sessionStorage.getItem("netlify_identity_hash") ||
-        window.location.hash;
+    const hasToken =
+      hash.includes("invite_token") ||
+      hash.includes("recovery_token") ||
+      hash.includes("confirmation_token");
 
-      const hasSavedToken =
-        savedHash.includes("invite_token") ||
-        savedHash.includes("recovery_token") ||
-        savedHash.includes("confirmation_token");
-
-      if (hasSavedToken) {
-        window.location.hash = savedHash;
-      }
-
-      const netlifyIdentity = await loadNetlifyIdentity();
-
-      netlifyIdentity.on("signup", () => {
-        sessionStorage.removeItem("netlify_identity_hash");
-        window.location.href = "/admin/";
-      });
-
-      netlifyIdentity.on("login", () => {
-        sessionStorage.removeItem("netlify_identity_hash");
-        window.location.href = "/admin/";
-      });
-
-      netlifyIdentity.on("close", () => {
-        const savedHashAgain = sessionStorage.getItem("netlify_identity_hash");
-
-        if (savedHashAgain && window.location.hash === "#") {
-          window.location.hash = savedHashAgain;
-        }
-      });
-
-      if (hasSavedToken) {
-        netlifyIdentity.init();
-      } else {
-        netlifyIdentity.open();
-      }
-    } catch (error) {
+    if (!hasToken) {
       alert(
-        "Não foi possível carregar a janela de acesso. Recarregue a página e tente novamente."
+        "O token de convite não foi encontrado. Abra novamente o link de convite recebido por e-mail."
       );
-    } finally {
-      setIsLoading(false);
+      return;
     }
+
+    sessionStorage.setItem("netlify_identity_hash", hash);
+
+    window.location.href = `/admin-acesso?start=1${hash}`;
+  }
+
+  function handleIdentityLoad() {
+    if (typeof window === "undefined" || !window.netlifyIdentity) return;
+
+    window.netlifyIdentity.on("signup", () => {
+      sessionStorage.removeItem("netlify_identity_hash");
+      window.location.href = "/admin/";
+    });
+
+    window.netlifyIdentity.on("login", () => {
+      sessionStorage.removeItem("netlify_identity_hash");
+      window.location.href = "/admin/";
+    });
+
+    window.netlifyIdentity.init();
   }
 
   return (
@@ -116,6 +81,14 @@ export default function AdminAcesso() {
           content="Página de criação de senha para acesso administrativo ao site Érica Vilar."
         />
       </Head>
+
+      {shouldStartIdentity && (
+        <Script
+          src="https://identity.netlify.com/v1/netlify-identity-widget.js"
+          strategy="afterInteractive"
+          onLoad={handleIdentityLoad}
+        />
+      )}
 
       <main className="admin-access-page">
         <section className="admin-access-card">
@@ -149,25 +122,15 @@ export default function AdminAcesso() {
           <button
             type="button"
             className="admin-access-button"
-            onClick={handleOpenIdentity}
-            disabled={isLoading}
+            onClick={handleStartSignup}
           >
-            {isLoading ? "Carregando..." : "Abrir criação de senha"}
+            Abrir criação de senha
           </button>
 
-          {!hasToken && (
-            <small>
-              Para criar a senha, acesse esta página usando o link de convite
-              recebido por e-mail.
-            </small>
-          )}
-
-          {hasToken && (
-            <small>
-              Se você fechou a janela sem criar a senha, clique novamente no
-              botão acima.
-            </small>
-          )}
+          <small>
+            Caso a janela não apareça, abra novamente o link original recebido
+            por e-mail.
+          </small>
         </section>
       </main>
     </>
