@@ -4799,4 +4799,26 @@
   .hero-slide:first-child .hero-slide-content{
     z-index: 2;
   }
+  .share-button.instagram-share-button {
+    border: 0;
+    cursor: pointer;
+    border-radius: 999px;
+    padding: 0.7rem 1rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    line-height: 1;
+    color: #fff;
+    background: linear-gradient(135deg, #833ab4, #fd1d1d, #fcb045);
+    transition: transform 0.2s ease, opacity 0.2s ease;
+  }
+
+  .share-button.instagram-share-button:hover {
+    transform: translateY(-2px);
+  }
+
+  .share-button.instagram-share-button:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+    transform: none;
+  }
 }

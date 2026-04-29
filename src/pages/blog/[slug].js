@@ -13,10 +13,14 @@ export default function BlogPost({ post }) {
 
   const postUrl = `${SITE_URL}/blog/${post.slug}`;
   const shareText = `${post.title} | Erica Vilar`;
-  const ogImage = post.thumbnail ? `${SITE_URL}${post.thumbnail}` : `${SITE_URL}/IMG_3092.webp`;
+  const ogImage = post.thumbnail
+    ? `${SITE_URL}${post.thumbnail}`
+    : `${SITE_URL}/IMG_3092.webp`;
 
   const shareLinks = {
-    whatsapp: `https://wa.me/?text=${encodeURIComponent(`${shareText} ${postUrl}`)}`,
+    whatsapp: `https://wa.me/?text=${encodeURIComponent(
+      `${shareText} ${postUrl}`
+    )}`,
 
     x: `https://twitter.com/intent/tweet?url=${encodeURIComponent(
       postUrl
@@ -27,21 +31,75 @@ export default function BlogPost({ post }) {
     )}`,
   };
 
-  async function copyInstagramLink() {
+  async function shareInstagramStory(event) {
+    const button = event?.currentTarget;
+
+    const wantsToContinue = window.confirm(
+      "Vamos criar uma imagem automática para você compartilhar no Instagram. Deseja continuar?"
+    );
+
+    if (!wantsToContinue) return;
+
     try {
-      if (typeof navigator !== "undefined" && navigator.clipboard) {
-        await navigator.clipboard.writeText(postUrl);
+      if (button) {
+        button.disabled = true;
+        button.classList.add("is-loading");
+      }
 
-        alert(
-          "Link do artigo copiado. Agora você pode colar no Instagram, nos stories, na bio ou enviar por direct."
-        );
+      const blob = await createInstagramStoryImage({
+        title: post.title,
+        subtitle: post.excerpt,
+        url: postUrl,
+        category: "Blog",
+        siteName: "Erica Vilar Psicologia",
+      });
 
+      if (!blob) {
+        throw new Error("Não foi possível criar a imagem.");
+      }
+
+      const fileName = createSafeFileName(post.title);
+      const file = new File([blob], `${fileName}.png`, {
+        type: "image/png",
+      });
+
+      const shareData = {
+        title: post.title,
+        text: `${post.title}\n\n${postUrl}`,
+        files: [file],
+      };
+
+      const canShareFile =
+        typeof navigator !== "undefined" &&
+        navigator.canShare &&
+        navigator.canShare({ files: [file] });
+
+      if (navigator.share && canShareFile) {
+        await navigator.share(shareData);
         return;
       }
 
-      alert(`Copie este link para compartilhar no Instagram: ${postUrl}`);
+      await copyTextToClipboard(postUrl);
+      downloadBlob(blob, `${fileName}.png`);
+
+      alert(
+        "Seu navegador não permitiu abrir o compartilhamento nativo com imagem. A imagem foi baixada e o link do artigo foi copiado. Agora é só abrir o Instagram e postar nos Stories."
+      );
     } catch (error) {
-      alert(`Copie este link para compartilhar no Instagram: ${postUrl}`);
+      console.error("Erro ao compartilhar no Instagram:", error);
+
+      try {
+        await copyTextToClipboard(postUrl);
+      } catch {}
+
+      alert(
+        "Não foi possível abrir o compartilhamento automaticamente. O link do artigo foi copiado para você compartilhar manualmente."
+      );
+    } finally {
+      if (button) {
+        button.disabled = false;
+        button.classList.remove("is-loading");
+      }
     }
   }
 
@@ -138,41 +196,45 @@ export default function BlogPost({ post }) {
             </div>
 
             <article className="blog-post-page">
-                <section className={`blog-post-hero ${!post.thumbnail ? "without-image" : ""}`}>
-                    {post.thumbnail && (
-                        <div className="blog-post-hero-media">
-                        <img src={post.thumbnail} alt={post.title} />
-                        </div>
-                    )}
+              <section
+                className={`blog-post-hero ${
+                  !post.thumbnail ? "without-image" : ""
+                }`}
+              >
+                {post.thumbnail && (
+                  <div className="blog-post-hero-media">
+                    <img src={post.thumbnail} alt={post.title} />
+                  </div>
+                )}
 
-                    <div className="blog-post-hero-overlay" />
+                <div className="blog-post-hero-overlay" />
 
-                    <div className="blog-post-hero-inner">
-                        <div className="blog-post-hero-top">
-                        <Link href="/blog" className="blog-post-hero-back">
-                            ← Voltar ao blog
-                        </Link>
+                <div className="blog-post-hero-inner">
+                  <div className="blog-post-hero-top">
+                    <Link href="/blog" className="blog-post-hero-back">
+                      ← Voltar ao blog
+                    </Link>
 
-                        <span className="blog-post-hero-kicker">Blog</span>
-                        </div>
+                    <span className="blog-post-hero-kicker">Blog</span>
+                  </div>
 
-                        <div className="blog-post-hero-content">
-                        <h1>{post.title}</h1>
+                  <div className="blog-post-hero-content">
+                    <h1>{post.title}</h1>
 
-                        {post.excerpt && <p>{post.excerpt}</p>}
+                    {post.excerpt && <p>{post.excerpt}</p>}
 
-                        <div className="blog-post-hero-meta">
-                            <span>Por Erica Vilar</span>
-                            {post.date && <span>{post.date}</span>}
-                        </div>
-                        </div>
+                    <div className="blog-post-hero-meta">
+                      <span>Por Erica Vilar</span>
+                      {post.date && <span>{post.date}</span>}
                     </div>
-                    </section>
+                  </div>
+                </div>
+              </section>
 
-                <div
-                    className="blog-post-content"
-                    dangerouslySetInnerHTML={{ __html: post.contentHtml }}
-                />
+              <div
+                className="blog-post-content"
+                dangerouslySetInnerHTML={{ __html: post.contentHtml }}
+              />
 
               <footer className="blog-post-footer">
                 <section className="post-signature">
@@ -185,9 +247,7 @@ export default function BlogPost({ post }) {
 
                     <h2>Erica Vilar</h2>
 
-                    <p>
-                      De uma mulher real, para mulheres reais.
-                    </p>
+                    <p>De uma mulher real, para mulheres reais.</p>
 
                     <div className="post-signature-actions">
                       <a
@@ -220,63 +280,63 @@ export default function BlogPost({ post }) {
 
                   <div className="post-share-buttons post-share-icon-buttons">
                     <a
-                        href={shareLinks.whatsapp}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="post-share-icon-btn post-share-whatsapp"
-                        aria-label="Compartilhar no WhatsApp"
-                        title="Compartilhar no WhatsApp"
+                      href={shareLinks.whatsapp}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="post-share-icon-btn post-share-whatsapp"
+                      aria-label="Compartilhar no WhatsApp"
+                      title="Compartilhar no WhatsApp"
                     >
-                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                      <svg viewBox="0 0 24 24" aria-hidden="true">
                         <path d="M20.5 11.8a8.4 8.4 0 0 1-12.4 7.4L4 20.3l1.1-4a8.4 8.4 0 1 1 15.4-4.5Z" />
                         <path d="M9.2 7.9c-.2-.5-.4-.5-.7-.5h-.6c-.2 0-.6.1-.9.4-.3.3-1.1 1-1.1 2.4s1.1 2.9 1.2 3.1c.1.2 2.1 3.3 5.2 4.5 2.6 1 3.1.8 3.7.8.6-.1 1.8-.7 2-1.4.3-.7.3-1.3.2-1.4-.1-.1-.3-.2-.7-.4l-2.1-1c-.3-.1-.6-.2-.8.2-.2.3-.9 1.1-1.1 1.3-.2.2-.4.2-.7.1-.3-.2-1.3-.5-2.4-1.5-.9-.8-1.5-1.8-1.7-2.1-.2-.3 0-.5.1-.6l.5-.6c.2-.2.2-.3.3-.5.1-.2.1-.4 0-.6l-1-2.2Z" />
-                        </svg>
-                        <span>WhatsApp</span>
+                      </svg>
+                      <span>WhatsApp</span>
                     </a>
 
                     <a
-                        href={shareLinks.x}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="post-share-icon-btn post-share-x"
-                        aria-label="Compartilhar no X"
-                        title="Compartilhar no X"
+                      href={shareLinks.x}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="post-share-icon-btn post-share-x"
+                      aria-label="Compartilhar no X"
+                      title="Compartilhar no X"
                     >
-                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                      <svg viewBox="0 0 24 24" aria-hidden="true">
                         <path d="M4 4h4.7l4.1 5.8L17.8 4H20l-6.2 7.1L21 20h-4.7l-4.6-6.5L6.1 20H4l6.7-7.7L4 4Z" />
-                        </svg>
-                        <span>Twitter</span>
+                      </svg>
+                      <span>Twitter</span>
                     </a>
 
                     <a
-                        href={shareLinks.facebook}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="post-share-icon-btn post-share-facebook"
-                        aria-label="Compartilhar no Facebook"
-                        title="Compartilhar no Facebook"
+                      href={shareLinks.facebook}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="post-share-icon-btn post-share-facebook"
+                      aria-label="Compartilhar no Facebook"
+                      title="Compartilhar no Facebook"
                     >
-                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                      <svg viewBox="0 0 24 24" aria-hidden="true">
                         <path d="M14 8.5V6.9c0-.7.2-1.1 1.2-1.1H17V3.1c-.3 0-1.4-.1-2.6-.1-2.6 0-4.4 1.6-4.4 4.5v1H7v3.1h3V21h3.6v-9.4H17l.5-3.1H14Z" />
-                        </svg>
-                        <span>Facebook</span>
+                      </svg>
+                      <span>Facebook</span>
                     </a>
 
                     <button
-                        type="button"
-                        onClick={copyInstagramLink}
-                        className="post-share-icon-btn post-share-instagram"
-                        aria-label="Copiar link para compartilhar no Instagram"
-                        title="Copiar link para Instagram"
+                      type="button"
+                      onClick={shareInstagramStory}
+                      className="post-share-icon-btn post-share-instagram"
+                      aria-label="Criar imagem para compartilhar no Instagram"
+                      title="Criar imagem para Instagram"
                     >
-                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                      <svg viewBox="0 0 24 24" aria-hidden="true">
                         <rect x="4" y="4" width="16" height="16" rx="5" />
                         <circle cx="12" cy="12" r="3.4" />
                         <circle cx="17.2" cy="6.8" r="1" />
-                        </svg>
-                        <span>Instagram</span>
+                      </svg>
+                      <span>Instagram</span>
                     </button>
-                    </div>
+                  </div>
                 </section>
 
                 <div className="blog-post-final-actions">
@@ -355,6 +415,246 @@ export default function BlogPost({ post }) {
       </div>
     </>
   );
+}
+
+async function createInstagramStoryImage({
+  title,
+  subtitle,
+  url,
+  category = "Blog",
+  siteName = "Erica Vilar Psicologia",
+}) {
+  const canvas = document.createElement("canvas");
+  const ctx = canvas.getContext("2d");
+
+  if (!ctx) {
+    return null;
+  }
+
+  const width = 1080;
+  const height = 1920;
+
+  canvas.width = width;
+  canvas.height = height;
+
+  const gradient = ctx.createLinearGradient(0, 0, width, height);
+  gradient.addColorStop(0, "#f8ebe7");
+  gradient.addColorStop(0.42, "#e9c9c0");
+  gradient.addColorStop(1, "#9b6f67");
+
+  ctx.fillStyle = gradient;
+  ctx.fillRect(0, 0, width, height);
+
+  ctx.globalAlpha = 0.11;
+  ctx.fillStyle = "#ffffff";
+
+  for (let i = 0; i < 95; i++) {
+    ctx.beginPath();
+    ctx.arc(
+      Math.random() * width,
+      Math.random() * height,
+      Math.random() * 3.5 + 1,
+      0,
+      Math.PI * 2
+    );
+    ctx.fill();
+  }
+
+  ctx.globalAlpha = 1;
+
+  ctx.fillStyle = "rgba(255, 255, 255, 0.16)";
+  roundedRect(ctx, 52, 72, width - 104, height - 144, 72);
+  ctx.fill();
+
+  const cardX = 90;
+  const cardY = 300;
+  const cardW = width - 180;
+  const cardH = 1140;
+
+  ctx.fillStyle = "rgba(255, 255, 255, 0.84)";
+  roundedRect(ctx, cardX, cardY, cardW, cardH, 58);
+  ctx.fill();
+
+  ctx.fillStyle = "#9b6f67";
+  ctx.font = "600 34px Arial";
+  ctx.textAlign = "center";
+  ctx.textBaseline = "top";
+  ctx.fillText(String(category || "Blog").toUpperCase(), width / 2, cardY + 95);
+
+  ctx.strokeStyle = "#b98c82";
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  ctx.moveTo(width / 2 - 90, cardY + 160);
+  ctx.lineTo(width / 2 + 90, cardY + 160);
+  ctx.stroke();
+
+  ctx.fillStyle = "#2f2624";
+  ctx.font = "700 72px Georgia";
+  ctx.textAlign = "center";
+  ctx.textBaseline = "top";
+
+  wrapCanvasText({
+    ctx,
+    text: title || "Novo artigo publicado",
+    x: width / 2,
+    y: cardY + 260,
+    maxWidth: cardW - 140,
+    lineHeight: 88,
+    maxLines: 7,
+  });
+
+  if (subtitle) {
+    ctx.fillStyle = "#6b5450";
+    ctx.font = "400 42px Arial";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "top";
+
+    wrapCanvasText({
+      ctx,
+      text: subtitle,
+      x: width / 2,
+      y: cardY + 880,
+      maxWidth: cardW - 150,
+      lineHeight: 58,
+      maxLines: 4,
+    });
+  }
+
+  ctx.fillStyle = "#2f2624";
+  ctx.font = "700 42px Arial";
+  ctx.textAlign = "center";
+  ctx.textBaseline = "top";
+  ctx.fillText(siteName, width / 2, height - 300);
+
+  ctx.fillStyle = "#6b5450";
+  ctx.font = "400 30px Arial";
+  ctx.fillText("Leia o artigo completo no site", width / 2, height - 238);
+
+  ctx.fillStyle = "#9b6f67";
+  ctx.font = "400 29px Arial";
+  ctx.fillText("ericavilarpsi.com.br", width / 2, height - 188);
+
+  return new Promise((resolve) => {
+    canvas.toBlob(
+      (blob) => {
+        resolve(blob);
+      },
+      "image/png",
+      1
+    );
+  });
+}
+
+function wrapCanvasText({ ctx, text, x, y, maxWidth, lineHeight, maxLines }) {
+  const words = String(text || "").trim().split(/\s+/);
+  const lines = [];
+  let line = "";
+
+  for (const word of words) {
+    const testLine = line ? `${line} ${word}` : word;
+    const metrics = ctx.measureText(testLine);
+
+    if (metrics.width > maxWidth && line) {
+      lines.push(line);
+      line = word;
+    } else {
+      line = testLine;
+    }
+
+    if (lines.length >= maxLines) {
+      break;
+    }
+  }
+
+  if (line && lines.length < maxLines) {
+    lines.push(line);
+  }
+
+  const finalLines = lines.slice(0, maxLines);
+
+  if (finalLines.length === maxLines) {
+    const usedWords = finalLines.join(" ").split(/\s+/).length;
+
+    if (usedWords < words.length) {
+      const lastIndex = finalLines.length - 1;
+      finalLines[lastIndex] = finalLines[lastIndex].replace(/[.,;:!?]?$/, "...");
+
+      while (
+        ctx.measureText(finalLines[lastIndex]).width > maxWidth &&
+        finalLines[lastIndex].includes(" ")
+      ) {
+        finalLines[lastIndex] = finalLines[lastIndex]
+          .replace(/\s+\S+\.\.\.$/, "...")
+          .trim();
+      }
+    }
+  }
+
+  finalLines.forEach((item, index) => {
+    ctx.fillText(item, x, y + index * lineHeight);
+  });
+}
+
+function roundedRect(ctx, x, y, width, height, radius) {
+  ctx.beginPath();
+  ctx.moveTo(x + radius, y);
+  ctx.lineTo(x + width - radius, y);
+  ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
+  ctx.lineTo(x + width, y + height - radius);
+  ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+  ctx.lineTo(x + radius, y + height);
+  ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
+  ctx.lineTo(x, y + radius);
+  ctx.quadraticCurveTo(x, y, x + radius, y);
+  ctx.closePath();
+}
+
+function createSafeFileName(title) {
+  const base = String(title || "story-erica-vilar")
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)/g, "")
+    .slice(0, 70);
+
+  return base || "story-erica-vilar";
+}
+
+async function copyTextToClipboard(text) {
+  if (!text) return;
+
+  if (navigator.clipboard && window.isSecureContext) {
+    await navigator.clipboard.writeText(text);
+    return;
+  }
+
+  const textarea = document.createElement("textarea");
+  textarea.value = text;
+  textarea.style.position = "fixed";
+  textarea.style.opacity = "0";
+  textarea.style.left = "-9999px";
+
+  document.body.appendChild(textarea);
+  textarea.focus();
+  textarea.select();
+
+  document.execCommand("copy");
+  document.body.removeChild(textarea);
+}
+
+function downloadBlob(blob, filename) {
+  const objectUrl = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+
+  link.href = objectUrl;
+  link.download = filename;
+
+  document.body.appendChild(link);
+  link.click();
+
+  document.body.removeChild(link);
+  URL.revokeObjectURL(objectUrl);
 }
 
 export async function getStaticPaths() {
