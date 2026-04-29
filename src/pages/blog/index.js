@@ -1,51 +1,94 @@
-import Head from "next/head";
-import Link from "next/link";
-import { getAllPosts } from "@/lib/posts";
+import Head from 'next/head';
+import Link from 'next/link';
+import { useMemo, useState } from 'react';
+import { getAllPosts } from '@/lib/posts';
 
-export default function BlogPage({ posts }) {
+function formatPostDate(dateString) {
+  if (!dateString) return '';
+
+  const date = new Date(`${dateString}T12:00:00`);
+
+  if (Number.isNaN(date.getTime())) {
+    return dateString;
+  }
+
+  return new Intl.DateTimeFormat('pt-BR', {
+    day: '2-digit',
+    month: 'long',
+    year: 'numeric',
+  }).format(date);
+}
+
+export default function BlogPage({ posts = [] }) {
+  const [search, setSearch] = useState('');
+
+  const filteredPosts = useMemo(() => {
+    const term = search.trim().toLowerCase();
+
+    if (!term) return posts;
+
+    return posts.filter((post) => {
+      const title = (post.title || '').toLowerCase();
+      const excerpt = (post.excerpt || '').toLowerCase();
+      const content = (post.contentText || '').toLowerCase();
+
+      return (
+        title.includes(term) ||
+        excerpt.includes(term) ||
+        content.includes(term)
+      );
+    });
+  }, [posts, search]);
+
   return (
     <>
       <Head>
-        <title>Blog | Érica Vilar</title>
+        <title>Blog | Erica Vilar</title>
         <meta
           name="description"
-          content="Reflexões sobre escuta clínica, saúde emocional, presença, identidade e vida real."
+          content="Leia os artigos do blog da psicóloga Erica Vilar sobre saúde emocional, identidade, maternidade, autocuidado e relações."
         />
       </Head>
 
-      <div className="blog-site-shell">
-        <aside className="sidebar blog-sidebar">
+      <div className="app">
+        <aside className="sidebar">
           <div className="brand-wrap">
-            <Link href="/" className="brand-badge">
+            <Link href="/" className="brand-badge" aria-label="Voltar para a home">
               EV
             </Link>
-
-            <span className="brand-vertical">Érica Vilar</span>
+            <div className="brand-vertical">Erica Vilar</div>
           </div>
 
-          <nav className="sidebar-nav" aria-label="Navegação do blog">
-            <Link href="/" className="nav-link">
+          <nav className="sidebar-nav">
+            <Link href="/#inicio" className="nav-link">
               <svg viewBox="0 0 24 24">
-                <path d="M3 11.5 12 4l9 7.5" />
-                <path d="M5 10.5V20h14v-9.5" />
+                <path d="M3 10.5 12 3l9 7.5" />
+                <path d="M5 9.5V21h14V9.5" />
               </svg>
               <span>Início</span>
             </Link>
 
             <Link href="/#sobre" className="nav-link">
               <svg viewBox="0 0 24 24">
-                <path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8Z" />
+                <path d="M12 21s-7-4.6-9-8.7C1.2 8.7 3.8 5 7.7 5c2.1 0 3.5 1 4.3 2.2C12.8 6 14.2 5 16.3 5c3.9 0 6.5 3.7 4.7 7.3-2 4.1-9 8.7-9 8.7Z" />
               </svg>
               <span>Sobre</span>
             </Link>
 
-            <Link href="/#servicos" className="nav-link">
+            <Link href="/#como-funciona" className="nav-link">
               <svg viewBox="0 0 24 24">
-                <path d="M4 7h16" />
+                <path d="M4 6h16" />
                 <path d="M4 12h10" />
-                <path d="M4 17h7" />
+                <path d="M4 18h7" />
               </svg>
-              <span>Serviços</span>
+              <span>Atendimento</span>
+            </Link>
+
+            <Link href="/#contato" className="nav-link">
+              <svg viewBox="0 0 24 24">
+                <path d="M4 5h16v11H8l-4 4z" />
+              </svg>
+              <span>Contato</span>
             </Link>
 
             <Link href="/blog" className="nav-link active">
@@ -60,129 +103,166 @@ export default function BlogPage({ posts }) {
           </nav>
 
           <div className="sidebar-foot">
-            <span className="mini-pill">CRP 15/7179</span>
-            <span className="mini-pill">Maceió e Online</span>
+            <div className="mini-pill">CRP 15/7179</div>
+            <div className="mini-pill">Maceió e Online</div>
           </div>
         </aside>
 
-        <main className="blog-main">
-          <div className="mobile-topbar blog-mobile-topbar">
-            <div className="left">
-              <strong>Érica Vilar</strong>
-              <span>Blog</span>
+        <main className="main">
+          <div className="container">
+            <div className="mobile-topbar">
+              <div className="left">
+                <strong>Erica Vilar</strong>
+                <span>Psicóloga para mulheres reais</span>
+              </div>
+
+              <Link href="/" className="mobile-avatar" aria-label="Ir para a home">
+                <img src="/IMG_3092.webp" alt="Erica Vilar" />
+              </Link>
             </div>
 
-            <Link href="/" className="mobile-avatar" aria-label="Voltar ao início">
-              <img src="/favicon-32x32.png" alt="Érica Vilar" />
-            </Link>
+            <section className="blog-list-page">
+              <div className="blog-list-header">
+                <div className="blog-list-heading">
+                  <span className="section-label">Blog</span>
+                  <h1>Reflexões para se escutar com mais verdade.</h1>
+                  <p>
+                    Textos sobre saúde emocional, identidade, maternidade,
+                    relações, autocobrança e os atravessamentos da vida real.
+                  </p>
+                </div>
+              </div>
+
+              <form
+                className="blog-searchbar"
+                onSubmit={(e) => e.preventDefault()}
+              >
+                <input
+                  type="text"
+                  placeholder="Buscar artigo..."
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  aria-label="Buscar artigo"
+                />
+                <button type="submit">Buscar</button>
+              </form>
+
+              {filteredPosts.length === 0 ? (
+                <div className="blog-list-empty">
+                  Nenhum artigo encontrado para essa busca.
+                </div>
+              ) : (
+                <div className="blog-list-vertical">
+                  {filteredPosts.map((post) => (
+                    <article className="blog-list-item" key={post.slug}>
+                      <Link
+                        href={`/blog/${post.slug}`}
+                        className="blog-list-thumb"
+                        aria-label={`Abrir artigo ${post.title}`}
+                      >
+                        {post.thumbnail ? (
+                          <img src={post.thumbnail} alt={post.title} />
+                        ) : (
+                          <div className="blog-list-thumb-placeholder">
+                            Erica Vilar
+                          </div>
+                        )}
+                      </Link>
+
+                      <div className="blog-list-content">
+                        <div className="blog-list-meta">
+                          <span className="blog-list-category">Blog Erica Vilar</span>
+                          {post.date && (
+                            <span className="blog-list-date">
+                              {formatPostDate(post.date)}
+                            </span>
+                          )}
+                        </div>
+
+                        <h2>
+                          <Link href={`/blog/${post.slug}`}>{post.title}</Link>
+                        </h2>
+
+                        {post.excerpt && <p>{post.excerpt}</p>}
+
+                        <Link
+                          href={`/blog/${post.slug}`}
+                          className="blog-list-readmore"
+                        >
+                          Ler mais →
+                        </Link>
+                      </div>
+                    </article>
+                  ))}
+                </div>
+              )}
+            </section>
+
+            <footer className="footer">
+              <div className="footer-inner">
+                <div className="footer-brand">
+                  <a
+                    href="https://instagram.com/dev.torquato"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Desenvolvido por DevTorquato
+                  </a>
+                </div>
+
+                <div className="footer-center">
+                  <span>
+                    © 2026 Erica Vilar. Cuidado psicológico com escuta,
+                    presença e profundidade.
+                  </span>
+                </div>
+              </div>
+            </footer>
           </div>
-
-          <section className="blog-landing-hero">
-            <div className="blog-landing-copy">
-              <span className="section-label">Blog</span>
-
-              <h1>Reflexões para mulheres que desejam se escutar de verdade.</h1>
-
-              <p>
-                Textos sobre saúde emocional, relações, identidade, maternidade,
-                rotina, presença e o cuidado possível na vida real.
-              </p>
-
-              <div className="blog-landing-actions">
-                <Link href="/" className="btn btn-secondary">
-                  Voltar ao site
-                </Link>
-
-                <Link href="/#contato" className="btn btn-primary btn-pulse">
-                  Agendar atendimento
-                </Link>
-              </div>
-            </div>
-
-            <div className="blog-landing-visual">
-              <img src="/IMG_3092.webp" alt="Érica Vilar" />
-            </div>
-          </section>
-
-          <section className="blog-list-section">
-            <div className="blog-section-head">
-              <span className="section-label">Artigos recentes</span>
-              <h2>Leituras para pausar, sentir e elaborar.</h2>
-            </div>
-
-            {posts.length === 0 && (
-              <p className="blog-empty">Nenhum artigo publicado ainda.</p>
-            )}
-
-            {posts.length > 0 && (
-              <div className="blog-list">
-                {posts.map((post) => (
-                  <article className="blog-card" key={post.slug}>
-                    {post.thumbnail && (
-                      <Link
-                        href={`/blog/${post.slug}`}
-                        className="blog-card-image"
-                      >
-                        <img src={post.thumbnail} alt={post.title} />
-                      </Link>
-                    )}
-
-                    <div className="blog-card-content">
-                      {post.date && <span>{post.date}</span>}
-
-                      <h2>
-                        <Link href={`/blog/${post.slug}`}>{post.title}</Link>
-                      </h2>
-
-                      {post.excerpt && <p>{post.excerpt}</p>}
-
-                      <Link
-                        href={`/blog/${post.slug}`}
-                        className="blog-card-link"
-                      >
-                        Ler artigo
-                      </Link>
-                    </div>
-                  </article>
-                ))}
-              </div>
-            )}
-          </section>
-
-          <nav className="mobile-tabbar blog-mobile-tabbar">
-            <Link href="/" className="tab-link">
-              <svg viewBox="0 0 24 24">
-                <path d="M3 11.5 12 4l9 7.5" />
-                <path d="M5 10.5V20h14v-9.5" />
-              </svg>
-              Início
-            </Link>
-
-            <Link href="/#sobre" className="tab-link">
-              <svg viewBox="0 0 24 24">
-                <path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8Z" />
-              </svg>
-              Sobre
-            </Link>
-
-            <Link href="/blog" className="tab-link active">
-              <svg viewBox="0 0 24 24">
-                <path d="M5 5h14v14H5z" />
-                <path d="M8 9h8" />
-                <path d="M8 13h8" />
-                <path d="M8 17h5" />
-              </svg>
-              Blog
-            </Link>
-
-            <Link href="/#contato" className="tab-link">
-              <svg viewBox="0 0 24 24">
-                <path d="M21 15a4 4 0 0 1-4 4H8l-5 3V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4z" />
-              </svg>
-              Contato
-            </Link>
-          </nav>
         </main>
+
+        <nav className="mobile-tabbar mobile-tabbar-five">
+          <Link href="/#inicio" className="tab-link">
+            <svg viewBox="0 0 24 24">
+              <path d="M3 10.5 12 3l9 7.5" />
+              <path d="M5 9.5V21h14V9.5" />
+            </svg>
+            <span>Início</span>
+          </Link>
+
+          <Link href="/#sobre" className="tab-link">
+            <svg viewBox="0 0 24 24">
+              <path d="M12 21s-7-4.6-9-8.7C1.2 8.7 3.8 5 7.7 5c2.1 0 3.5 1 4.3 2.2C12.8 6 14.2 5 16.3 5c3.9 0 6.5 3.7 4.7 7.3-2 4.1-9 8.7-9 8.7Z" />
+            </svg>
+            <span>Sobre</span>
+          </Link>
+
+          <Link href="/#como-funciona" className="tab-link">
+            <svg viewBox="0 0 24 24">
+              <path d="M4 6h16" />
+              <path d="M4 12h10" />
+              <path d="M4 18h7" />
+            </svg>
+            <span>Atend.</span>
+          </Link>
+
+          <Link href="/blog" className="tab-link active">
+            <svg viewBox="0 0 24 24">
+              <path d="M5 5h14v14H5z" />
+              <path d="M8 9h8" />
+              <path d="M8 13h8" />
+              <path d="M8 17h5" />
+            </svg>
+            <span>Blog</span>
+          </Link>
+
+          <Link href="/#contato" className="tab-link">
+            <svg viewBox="0 0 24 24">
+              <path d="M4 5h16v11H8l-4 4z" />
+            </svg>
+            <span>Contato</span>
+          </Link>
+        </nav>
       </div>
     </>
   );

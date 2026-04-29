@@ -445,16 +445,14 @@ export default function Home({ posts = [] }) {
             <section className="section" id="blog">
               <div className="section-header">
                 <div>
-                  <span className="section-label">Blog</span>
+                  <span className="section-label">Meu Blog</span>
                   <h2>
                     Reflexões para pausar, sentir e se escutar com mais verdade.
                   </h2>
                 </div>
 
                 <p>
-                  Textos sobre saúde emocional, identidade, maternidade,
-                  vínculos, autocobrança e os atravessamentos da vida real das
-                  mulheres.
+                  Artigos autorais sobre saúde emocional, identidade, maternidade, vínculos, autocobrança e os atravessamentos da vida real das mulheres.
                 </p>
               </div>
 

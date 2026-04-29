@@ -57,6 +57,13 @@ function getPostTimestamp(dateValue) {
   return date.getTime();
 }
 
+function normalizeSearchText(text = "") {
+  return String(text)
+    .replace(/[#>*_`~\-[\]()]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
 export function getAllPostSlugs() {
   if (!fs.existsSync(postsDirectory)) {
     return [];
@@ -121,6 +128,7 @@ export async function getPostBySlug(slug) {
     thumbnail: matterResult.data.thumbnail || "",
     excerpt: matterResult.data.excerpt || "",
     contentHtml,
+    contentText: normalizeSearchText(matterResult.content),
   };
 }
 
@@ -137,7 +145,7 @@ export function getAllPosts() {
       const fullPath = path.join(postsDirectory, fileName);
       const fileContents = fs.readFileSync(fullPath, "utf8");
 
-      const { data } = matter(fileContents);
+      const { data, content } = matter(fileContents);
 
       return {
         slug: getPostSlug(fileName, data),
@@ -147,6 +155,7 @@ export function getAllPosts() {
         timestamp: getPostTimestamp(data.date),
         thumbnail: data.thumbnail || "",
         excerpt: data.excerpt || "",
+        contentText: normalizeSearchText(content),
       };
     });
 

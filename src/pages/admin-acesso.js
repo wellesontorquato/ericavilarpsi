@@ -135,10 +135,10 @@ export default function AdminAcesso() {
   return (
     <>
       <Head>
-        <title>Criar senha | Érica Vilar</title>
+        <title>Criar senha | Erica Vilar</title>
         <meta
           name="description"
-          content="Criação de senha para acesso administrativo ao site Érica Vilar."
+          content="Criação de senha para acesso administrativo ao site Erica Vilar."
         />
       </Head>
 
@@ -150,7 +150,7 @@ export default function AdminAcesso() {
 
           <p>
             Defina uma senha segura para acessar o painel administrativo do site
-            Érica Vilar.
+            Erica Vilar.
           </p>
 
           <form className="admin-password-form" onSubmit={handleSubmit}>
