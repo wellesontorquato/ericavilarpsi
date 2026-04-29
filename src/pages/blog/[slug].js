@@ -236,7 +236,7 @@ export default function BlogPost({ post }) {
                         <svg viewBox="0 0 24 24" aria-hidden="true">
                         <path d="M4 4h4.7l4.1 5.8L17.8 4H20l-6.2 7.1L21 20h-4.7l-4.6-6.5L6.1 20H4l6.7-7.7L4 4Z" />
                         </svg>
-                        <span>X</span>
+                        <span>Twitter</span>
                     </a>
 
                     <a
