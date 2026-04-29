@@ -6,7 +6,6 @@ export default function App({ Component, pageProps }) {
     if (typeof window === "undefined") return;
 
     const hash = window.location.hash || "";
-
     const isIdentityToken =
       hash.includes("invite_token") ||
       hash.includes("recovery_token") ||
@@ -16,10 +15,33 @@ export default function App({ Component, pageProps }) {
 
     if (isIdentityToken && !isAdminAccessPage) {
       const cleanHash = hash.replace("#", "");
+      const params = new URLSearchParams(cleanHash);
 
-      window.location.replace(
-        `/admin-acesso?identity_token=${encodeURIComponent(cleanHash)}`
-      );
+      const inviteToken = params.get("invite_token");
+      const recoveryToken = params.get("recovery_token");
+      const confirmationToken = params.get("confirmation_token");
+
+      if (inviteToken) {
+        window.location.replace(
+          `/admin-acesso?type=invite&token=${encodeURIComponent(inviteToken)}`
+        );
+        return;
+      }
+
+      if (recoveryToken) {
+        window.location.replace(
+          `/admin-acesso?type=recovery&token=${encodeURIComponent(recoveryToken)}`
+        );
+        return;
+      }
+
+      if (confirmationToken) {
+        window.location.replace(
+          `/admin-acesso?type=confirmation&token=${encodeURIComponent(
+            confirmationToken
+          )}`
+        );
+      }
     }
   }, []);
 

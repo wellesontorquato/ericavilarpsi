@@ -1,93 +1,146 @@
 import Head from "next/head";
-import Script from "next/script";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import GoTrue from "gotrue-js";
 
 export default function AdminAcesso() {
-  const [identityToken, setIdentityToken] = useState("");
-  const [shouldLoadIdentity, setShouldLoadIdentity] = useState(false);
+  const [token, setToken] = useState("");
+  const [flowType, setFlowType] = useState("invite");
+
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [message, setMessage] = useState({
+    type: "",
+    text: "",
+  });
+
+  const auth = useMemo(() => {
+    if (typeof window === "undefined") return null;
+
+    return new GoTrue({
+      APIUrl: `${window.location.origin}/.netlify/identity`,
+      audience: "",
+      setCookie: true,
+    });
+  }, []);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
 
     const params = new URLSearchParams(window.location.search);
-    const tokenFromUrl = params.get("identity_token");
+    const tokenFromUrl = params.get("token") || "";
+    const typeFromUrl = params.get("type") || "invite";
 
-    if (tokenFromUrl) {
-      sessionStorage.setItem("netlify_identity_token", tokenFromUrl);
-      setIdentityToken(tokenFromUrl);
-      return;
+    setToken(tokenFromUrl);
+    setFlowType(typeFromUrl);
+
+    if (!tokenFromUrl) {
+      setMessage({
+        type: "error",
+        text: "Token de convite não encontrado. Abra esta página usando o link recebido por e-mail.",
+      });
     }
-
-    const tokenFromStorage =
-      sessionStorage.getItem("netlify_identity_token") || "";
-
-    setIdentityToken(tokenFromStorage);
   }, []);
 
-  function handleStartSignup() {
-    if (typeof window === "undefined") return;
+  function validatePassword() {
+    if (!token) {
+      return "Token de convite não encontrado. Abra novamente o link recebido por e-mail.";
+    }
 
-    const token =
-      identityToken ||
-      sessionStorage.getItem("netlify_identity_token") ||
-      "";
+    if (!password || !confirmPassword) {
+      return "Preencha a senha e a confirmação de senha.";
+    }
 
-    const hasToken =
-      token.includes("invite_token") ||
-      token.includes("recovery_token") ||
-      token.includes("confirmation_token");
+    if (password.length < 8) {
+      return "A senha precisa ter pelo menos 8 caracteres.";
+    }
 
-    if (!hasToken) {
-      alert(
-        "O token de convite não foi encontrado. Envie um novo convite pela Netlify e abra o link recebido por e-mail."
-      );
+    if (password !== confirmPassword) {
+      return "As senhas não conferem. Digite novamente.";
+    }
+
+    return "";
+  }
+
+  async function handleSubmit(event) {
+    event.preventDefault();
+
+    const validationError = validatePassword();
+
+    if (validationError) {
+      setMessage({
+        type: "error",
+        text: validationError,
+      });
       return;
     }
 
-    sessionStorage.setItem("netlify_identity_token", token);
-
-    const url = new URL(window.location.href);
-    url.searchParams.set("start", "1");
-    url.hash = token;
-
-    window.history.replaceState({}, "", url.toString());
-
-    setShouldLoadIdentity(true);
-  }
-
-  function handleIdentityLoad() {
-    if (typeof window === "undefined" || !window.netlifyIdentity) return;
-
-    window.netlifyIdentity.on("signup", () => {
-      sessionStorage.removeItem("netlify_identity_token");
-      window.location.href = "/admin/";
+    setIsSubmitting(true);
+    setMessage({
+      type: "",
+      text: "",
     });
 
-    window.netlifyIdentity.on("login", () => {
-      sessionStorage.removeItem("netlify_identity_token");
-      window.location.href = "/admin/";
-    });
+    try {
+      if (!auth) {
+        throw new Error("Serviço de autenticação indisponível.");
+      }
 
-    window.netlifyIdentity.init();
+      /*
+        Para convite da Netlify:
+        auth.acceptInvite(token, password)
+
+        Para recuperação de senha, podemos tratar depois com:
+        auth.recover(token)
+        ou endpoint específico conforme necessidade.
+      */
+      if (flowType !== "invite") {
+        throw new Error(
+          "Este formulário está configurado para convite de novo usuário."
+        );
+      }
+
+      await auth.acceptInvite(token, password);
+
+      setMessage({
+        type: "success",
+        text: "Senha criada com sucesso. Redirecionando para o painel...",
+      });
+
+      setTimeout(() => {
+        window.location.href = "/admin/";
+      }, 900);
+    } catch (error) {
+      console.error(error);
+
+      let errorMessage =
+        "Não foi possível criar a senha. Verifique se o convite ainda é válido.";
+
+      if (error?.json?.msg) {
+        errorMessage = error.json.msg;
+      } else if (error?.message) {
+        errorMessage = error.message;
+      }
+
+      setMessage({
+        type: "error",
+        text: errorMessage,
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
   return (
     <>
       <Head>
-        <title>Acesso administrativo | Érica Vilar</title>
+        <title>Criar senha | Érica Vilar</title>
         <meta
           name="description"
-          content="Página de criação de senha para acesso administrativo ao site Érica Vilar."
+          content="Criação de senha para acesso administrativo ao site Érica Vilar."
         />
       </Head>
-
-      {shouldLoadIdentity && (
-        <Script
-          src="https://identity.netlify.com/v1/netlify-identity-widget.js"
-          strategy="afterInteractive"
-          onLoad={handleIdentityLoad}
-        />
-      )}
 
       <main className="admin-access-page">
         <section className="admin-access-card">
@@ -96,39 +149,58 @@ export default function AdminAcesso() {
           <h1>Crie sua senha</h1>
 
           <p>
-            Você recebeu um convite para acessar o painel administrativo do site
-            Érica Vilar. Para continuar, clique no botão abaixo e defina uma
-            senha segura.
+            Defina uma senha segura para acessar o painel administrativo do site
+            Érica Vilar.
           </p>
 
-          <div className="admin-access-steps">
-            <div>
-              <strong>1</strong>
-              <span>Clique em “Abrir criação de senha”.</span>
+          <form className="admin-password-form" onSubmit={handleSubmit}>
+            <label>
+              <span>Nova senha</span>
+              <input
+                type="password"
+                placeholder="Digite uma senha segura"
+                value={password}
+                onChange={(event) => setPassword(event.target.value)}
+                autoComplete="new-password"
+              />
+            </label>
+
+            <label>
+              <span>Confirmar senha</span>
+              <input
+                type="password"
+                placeholder="Digite a senha novamente"
+                value={confirmPassword}
+                onChange={(event) => setConfirmPassword(event.target.value)}
+                autoComplete="new-password"
+              />
+            </label>
+
+            <div className="admin-password-rules">
+              <strong>Recomendação:</strong>
+              <span>
+                use pelo menos 8 caracteres, misturando letras, números e
+                símbolos.
+              </span>
             </div>
 
-            <div>
-              <strong>2</strong>
-              <span>Digite uma senha segura na janela de cadastro.</span>
-            </div>
+            {message.text && (
+              <div className={`admin-access-message ${message.type}`}>
+                {message.text}
+              </div>
+            )}
 
-            <div>
-              <strong>3</strong>
-              <span>Depois disso, você será levado ao painel do blog.</span>
-            </div>
-          </div>
-
-          <button
-            type="button"
-            className="admin-access-button"
-            onClick={handleStartSignup}
-          >
-            Abrir criação de senha
-          </button>
+            <button
+              type="submit"
+              className="admin-access-button"
+              disabled={isSubmitting || !token}
+            >
+              {isSubmitting ? "Criando senha..." : "Criar senha e acessar"}
+            </button>
+          </form>
 
           <small>
-            Se o botão não abrir a criação de senha, envie um novo convite pela
-            Netlify. Tokens antigos podem ser invalidados após testes.
+            Este acesso é restrito a usuários convidados pela administração.
           </small>
         </section>
       </main>

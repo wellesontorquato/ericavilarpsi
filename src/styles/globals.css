@@ -1189,6 +1189,97 @@
     }
   }
 
+  /* =========================================================
+   ADMIN PASSWORD FORM
+   ========================================================= */
+
+  .admin-password-form {
+    display: grid;
+    gap: 16px;
+    margin-top: 28px;
+    text-align: left;
+  }
+
+  .admin-password-form label {
+    display: grid;
+    gap: 8px;
+  }
+
+  .admin-password-form label span {
+    color: var(--text);
+    font-size: .86rem;
+    font-weight: 700;
+  }
+
+  .admin-password-form input {
+    width: 100%;
+    min-height: 54px;
+    border: 1px solid rgba(46,38,40,.12);
+    border-radius: 18px;
+    background: rgba(255,255,255,.86);
+    padding: 0 16px;
+    color: var(--text);
+    font-family: "Montserrat", sans-serif;
+    font-size: .95rem;
+    outline: none;
+    transition:
+      border-color var(--transition),
+      box-shadow var(--transition),
+      background var(--transition);
+  }
+
+  .admin-password-form input:focus {
+    border-color: rgba(170,120,135,.6);
+    box-shadow: 0 0 0 4px rgba(170,120,135,.12);
+    background: #fff;
+  }
+
+  .admin-password-rules {
+    display: grid;
+    gap: 4px;
+    padding: 14px 16px;
+    border-radius: 18px;
+    background: rgba(170,120,135,.08);
+    border: 1px solid rgba(46,38,40,.06);
+  }
+
+  .admin-password-rules strong {
+    color: var(--text);
+    font-size: .86rem;
+  }
+
+  .admin-password-rules span {
+    color: var(--muted);
+    font-size: .88rem;
+    line-height: 1.5;
+  }
+
+  .admin-access-message {
+    padding: 14px 16px;
+    border-radius: 18px;
+    font-size: .9rem;
+    line-height: 1.55;
+  }
+
+  .admin-access-message.error {
+    background: rgba(160, 45, 45, .09);
+    color: #8b2b2b;
+    border: 1px solid rgba(160, 45, 45, .16);
+  }
+
+  .admin-access-message.success {
+    background: rgba(45, 125, 82, .10);
+    color: #276b48;
+    border: 1px solid rgba(45, 125, 82, .18);
+  }
+
+  .admin-access-button:disabled {
+    opacity: .55;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+  }
+
     /* =========================================================
     BLOG - ÉRICA VILAR
     Listagem + Página individual
