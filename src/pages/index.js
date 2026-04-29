@@ -442,39 +442,6 @@ export default function Home({ posts = [] }) {
               </div>
             </section>
 
-            <section className="section" id="contato">
-              <div className="section-header">
-                <div>
-                  <span className="section-label">Contato</span>
-                </div>
-              </div>
-
-              <div className="contact-box">
-                <article className="card contact-main-card contact-main">
-                  <div className="contact-card">
-                    <h2>Vamos conversar?</h2>
-
-                    <p>
-                      Um espaço com atmosfera acolhedora, presença clínica e
-                      escuta séria — sem perder a delicadeza de uma psicóloga
-                      individual que acompanha sua história com cuidado real.
-                    </p>
-
-                    <div className="contact-actions">
-                      <a
-                        href="https://wa.me/5582996657825?text=Ol%C3%A1%2C%20vim%20pelo%20site%20e%20gostaria%20de%20entender%20melhor%20como%20funciona%20o%20seu%20trabalho%20e%20quais%20seriam%20os%20pr%C3%B3ximos%20passos."
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="btn btn-primary btn-pulse"
-                      >
-                        Agendar atendimento
-                      </a>
-                    </div>
-                  </div>
-                </article>
-              </div>
-            </section>
-
             <section className="section" id="blog">
               <div className="section-header">
                 <div>
@@ -530,6 +497,39 @@ export default function Home({ posts = [] }) {
                   </Link>
                 </div>
               )}
+            </section>
+
+            <section className="section" id="contato">
+              <div className="section-header">
+                <div>
+                  <span className="section-label">Contato</span>
+                </div>
+              </div>
+
+              <div className="contact-box">
+                <article className="card contact-main-card contact-main">
+                  <div className="contact-card">
+                    <h2>Vamos conversar?</h2>
+
+                    <p>
+                      Um espaço com atmosfera acolhedora, presença clínica e
+                      escuta séria — sem perder a delicadeza de uma psicóloga
+                      individual que acompanha sua história com cuidado real.
+                    </p>
+
+                    <div className="contact-actions">
+                      <a
+                        href="https://wa.me/5582996657825?text=Ol%C3%A1%2C%20vim%20pelo%20site%20e%20gostaria%20de%20entender%20melhor%20como%20funciona%20o%20seu%20trabalho%20e%20quais%20seriam%20os%20pr%C3%B3ximos%20passos."
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="btn btn-primary btn-pulse"
+                      >
+                        Agendar atendimento
+                      </a>
+                    </div>
+                  </div>
+                </article>
+              </div>
             </section>
 
             <footer className="footer">
