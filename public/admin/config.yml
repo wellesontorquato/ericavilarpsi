@@ -4,6 +4,8 @@ backend:
 
 local_backend: true
 
+locale: "pt"
+
 media_folder: "public/uploads"
 public_folder: "/uploads"
 
@@ -17,46 +19,46 @@ collections:
     label_singular: "Artigo"
     folder: "content/posts"
     create: true
+    identifier_field: "title"
     slug: "{{slug}}"
     extension: "md"
     format: "frontmatter"
     summary: "{{title}} — {{date}}"
     preview_path: "blog/{{slug}}"
+    preview_path_date_field: "date"
 
     fields:
       - label: "Título do artigo"
         name: "title"
         widget: "string"
         required: true
-        hint: "Título principal que aparecerá no topo do artigo."
-
-      - label: "Endereço do artigo"
-        name: "slug"
-        widget: "string"
-        required: true
-        hint: "Use letras minúsculas, sem acentos e com hífens. Ex: imagem-pessoal-e-autoestima"
+        hint: "Digite o título principal do artigo. O endereço do post será criado automaticamente a partir dele."
 
       - label: "Data de publicação"
         name: "date"
         widget: "datetime"
         required: true
+        default: "{{now}}"
         date_format: "DD/MM/YYYY"
-        time_format: false
-        format: "YYYY-MM-DD"
+        time_format: "HH:mm"
+        format: "YYYY-MM-DDTHH:mm:ssZ"
+        picker_utc: false
+        hint: "Preenchida automaticamente com a data e hora atuais. Você pode alterar se quiser agendar ou ajustar a publicação."
 
       - label: "Imagem de capa"
         name: "thumbnail"
         widget: "image"
         required: false
+        choose_url: false
         hint: "Imagem horizontal que aparecerá no card e no topo do artigo. Recomendado: 1600x900px."
 
-      - label: "Resumo do artigo"
+      - label: "Resumo curto"
         name: "excerpt"
         widget: "text"
         required: false
-        hint: "Resumo curto para aparecer na página do blog e nas descrições."
+        hint: "Pequeno resumo para aparecer na listagem do blog e na descrição do Google."
 
-      - label: "Conteúdo"
+      - label: "Conteúdo do artigo"
         name: "body"
         widget: "markdown"
         required: true

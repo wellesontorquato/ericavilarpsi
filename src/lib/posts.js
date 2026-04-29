@@ -6,6 +6,46 @@ import html from "remark-html";
 
 const postsDirectory = path.join(process.cwd(), "content/posts");
 
+function getPostSlug(fileName, data = {}) {
+  return data.slug || fileName.replace(/\.md$/, "");
+}
+
+function parsePostDate(dateValue) {
+  if (!dateValue) return null;
+
+  const date = new Date(dateValue);
+
+  if (Number.isNaN(date.getTime())) {
+    return null;
+  }
+
+  return date;
+}
+
+function formatPostDate(dateValue) {
+  const date = parsePostDate(dateValue);
+
+  if (!date) {
+    return "";
+  }
+
+  return new Intl.DateTimeFormat("pt-BR", {
+    day: "2-digit",
+    month: "long",
+    year: "numeric",
+  }).format(date);
+}
+
+function getPostTimestamp(dateValue) {
+  const date = parsePostDate(dateValue);
+
+  if (!date) {
+    return 0;
+  }
+
+  return date.getTime();
+}
+
 export function getAllPostSlugs() {
   if (!fs.existsSync(postsDirectory)) {
     return [];
@@ -22,7 +62,7 @@ export function getAllPostSlugs() {
 
       return {
         params: {
-          slug: data.slug || fileName.replace(/\.md$/, ""),
+          slug: getPostSlug(fileName, data),
         },
       };
     });
@@ -42,9 +82,9 @@ export async function getPostBySlug(slug) {
     const fileContents = fs.readFileSync(fullPath, "utf8");
     const { data } = matter(fileContents);
 
-    const fileSlug = fileName.replace(/\.md$/, "");
+    const postSlug = getPostSlug(fileName, data);
 
-    return data.slug === slug || fileSlug === slug;
+    return postSlug === slug;
   });
 
   if (!matchedFile) {
@@ -63,11 +103,10 @@ export async function getPostBySlug(slug) {
   const contentHtml = processedContent.toString();
 
   return {
-    slug: matterResult.data.slug || matchedFile.replace(/\.md$/, ""),
+    slug: getPostSlug(matchedFile, matterResult.data),
     title: matterResult.data.title || "",
-    date: matterResult.data.date
-      ? String(matterResult.data.date).slice(0, 10)
-      : "",
+    date: formatPostDate(matterResult.data.date),
+    rawDate: matterResult.data.date || "",
     thumbnail: matterResult.data.thumbnail || "",
     excerpt: matterResult.data.excerpt || "",
     contentHtml,
@@ -90,17 +129,15 @@ export function getAllPosts() {
       const { data } = matter(fileContents);
 
       return {
-        slug: data.slug || fileName.replace(/\.md$/, ""),
+        slug: getPostSlug(fileName, data),
         title: data.title || "",
-        date: data.date ? String(data.date).slice(0, 10) : "",
+        date: formatPostDate(data.date),
+        rawDate: data.date || "",
+        timestamp: getPostTimestamp(data.date),
         thumbnail: data.thumbnail || "",
         excerpt: data.excerpt || "",
       };
     });
 
-  return posts.sort((a, b) => {
-    if (a.date < b.date) return 1;
-    if (a.date > b.date) return -1;
-    return 0;
-  });
+  return posts.sort((a, b) => b.timestamp - a.timestamp);
 }
