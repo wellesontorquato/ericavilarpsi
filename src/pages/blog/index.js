@@ -16,10 +16,9 @@ export default function BlogPage({ posts }) {
       <main className="blog-page">
         <section className="blog-hero">
           <span>Blog</span>
-          <h1>Imagem, presença e estilo com intenção</h1>
+          <h1>Psicologia no geral</h1>
           <p>
-            Conteúdos sobre imagem pessoal, autoestima, elegância,
-            posicionamento e construção de presença.
+            Conteúdos sobre psicologia no geral.
           </p>
         </section>
 
