@@ -138,32 +138,42 @@ export default function BlogPost({ post }) {
             </div>
 
             <article className="blog-post-page">
-              <div className="blog-post-topline">
-                <Link href="/blog" className="blog-back-link">
-                  ← Voltar ao blog
-                </Link>
+                <section className={`blog-post-hero ${!post.thumbnail ? "without-image" : ""}`}>
+                    {post.thumbnail && (
+                    <div className="blog-post-hero-media">
+                        <img src={post.thumbnail} alt={post.title} />
+                    </div>
+                    )}
 
-                {post.date && <span className="blog-post-date">{post.date}</span>}
-              </div>
+                    <div className="blog-post-hero-overlay" />
 
-              <header className="blog-post-header">
-                <span className="section-label">Blog</span>
+                    <div className="blog-post-hero-inner">
+                    <Link href="/blog" className="blog-post-hero-back">
+                        ← Voltar ao blog
+                    </Link>
 
-                <h1>{post.title}</h1>
+                    <div className="blog-post-hero-content">
+                        <span className="blog-post-hero-kicker">Blog</span>
 
-                {post.excerpt && <p>{post.excerpt}</p>}
-              </header>
+                        <h1>{post.title}</h1>
 
-              {post.thumbnail && (
-                <div className="blog-post-thumbnail">
-                  <img src={post.thumbnail} alt={post.title} />
-                </div>
-              )}
+                        {post.excerpt && <p>{post.excerpt}</p>}
 
-              <div
-                className="blog-post-content"
-                dangerouslySetInnerHTML={{ __html: post.contentHtml }}
-              />
+                        <div className="blog-post-hero-meta">
+                        <span>Por Érica Vilar</span>
+
+                        {post.date && <span>{post.date}</span>}
+
+                        <span>Psicologia para mulheres reais</span>
+                        </div>
+                    </div>
+                    </div>
+                </section>
+
+                <div
+                    className="blog-post-content"
+                    dangerouslySetInnerHTML={{ __html: post.contentHtml }}
+                />
 
               <footer className="blog-post-footer">
                 <section className="post-signature">
