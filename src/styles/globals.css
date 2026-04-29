@@ -1288,6 +1288,273 @@
    BLOG NA HOME
 ========================= */
 
+/* =========================================================
+   BLOG COMPACTO NA HOME - ESTILO CARDS PEQUENOS
+   ========================================================= */
+
+.blog-home-compact-section {
+  padding-top: clamp(46px, 7vw, 82px);
+  padding-bottom: clamp(46px, 7vw, 82px);
+}
+
+.blog-home-compact-head {
+  max-width: 840px;
+  margin: 0 auto 34px;
+  text-align: center;
+}
+
+.blog-home-compact-head .section-label {
+  margin-bottom: 10px;
+}
+
+.blog-home-compact-head h2 {
+  margin: 0 0 10px;
+  font-family: "Libre Bodoni", serif;
+  font-size: clamp(2.4rem, 4vw, 4.2rem);
+  font-weight: 500;
+  line-height: .95;
+  letter-spacing: -.04em;
+  color: var(--text);
+}
+
+.blog-home-compact-head p {
+  max-width: 680px;
+  margin: 0 auto;
+  color: var(--muted);
+  font-size: .98rem;
+  line-height: 1.7;
+}
+
+.blog-home-compact-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.blog-home-compact-card {
+  display: grid;
+  grid-template-columns: 104px minmax(0, 1fr);
+  gap: 14px;
+  align-items: start;
+  min-height: 172px;
+  padding: 16px;
+  border-radius: 22px;
+  background: rgba(255,255,255,.86);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow-xs);
+  overflow: hidden;
+  transition:
+    transform var(--transition),
+    box-shadow var(--transition),
+    border-color var(--transition),
+    background var(--transition);
+}
+
+.blog-home-compact-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-sm);
+  border-color: rgba(170,120,135,.18);
+  background: rgba(255,255,255,.94);
+}
+
+.blog-home-compact-image {
+  width: 104px;
+  height: 82px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border-radius: 14px;
+  background:
+    radial-gradient(circle at top left, rgba(255,255,255,.32), transparent 34%),
+    linear-gradient(135deg, #ead7dc, #f7efea);
+  color: var(--primary-dark);
+  font-family: "Libre Bodoni", serif;
+  font-size: 1.3rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.blog-home-compact-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  transition: transform .7s ease;
+}
+
+.blog-home-compact-card:hover .blog-home-compact-image img {
+  transform: scale(1.05);
+}
+
+.blog-home-compact-content {
+  min-width: 0;
+}
+
+.blog-home-compact-date {
+  display: inline-flex;
+  width: max-content;
+  max-width: 100%;
+  margin-bottom: 7px;
+  color: var(--primary-dark);
+  font-size: .66rem;
+  font-weight: 800;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+
+.blog-home-compact-content h3 {
+  display: -webkit-box;
+  margin: 0 0 8px;
+  overflow: hidden;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  color: var(--text);
+  font-family: "Montserrat", sans-serif;
+  font-size: .98rem;
+  font-weight: 800;
+  line-height: 1.18;
+  letter-spacing: -.02em;
+}
+
+.blog-home-compact-content h3 a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.blog-home-compact-content h3 a:hover {
+  color: var(--primary-dark);
+}
+
+.blog-home-compact-content p {
+  display: -webkit-box;
+  margin: 0 0 12px;
+  overflow: hidden;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  color: var(--muted);
+  font-size: .86rem;
+  line-height: 1.5;
+}
+
+.blog-home-compact-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 32px;
+  padding: 0 12px;
+  border-radius: 999px;
+  background: rgba(170,120,135,.10);
+  border: 1px solid rgba(170,120,135,.18);
+  color: var(--primary-dark);
+  font-size: .68rem;
+  font-weight: 800;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition:
+    transform var(--transition),
+    background var(--transition),
+    color var(--transition);
+}
+
+.blog-home-compact-link:hover {
+  transform: translateY(-2px);
+  background: var(--text);
+  color: #fff;
+}
+
+.blog-home-compact-actions {
+  display: flex;
+  justify-content: center;
+  margin-top: 28px;
+}
+
+/* Tablet */
+@media (max-width: 1220px) {
+  .blog-home-compact-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .blog-home-compact-card {
+    max-width: 760px;
+    margin: 0 auto;
+  }
+}
+
+/* Mobile: mantém a ideia de arrastar para o lado */
+@media (max-width: 920px) {
+  .blog-home-compact-head {
+    text-align: left;
+    margin-bottom: 24px;
+  }
+
+  .blog-home-compact-head h2 {
+    font-size: clamp(2.2rem, 9vw, 3.2rem);
+  }
+
+  .blog-home-compact-head p {
+    margin-left: 0;
+    margin-right: 0;
+  }
+
+  .blog-home-compact-grid {
+    display: flex;
+    gap: 14px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 2px 10px 8px 0;
+    scroll-snap-type: x proximity;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .blog-home-compact-grid::-webkit-scrollbar {
+    display: none;
+  }
+
+  .blog-home-compact-card {
+    flex: 0 0 86%;
+    min-width: 86%;
+    max-width: none;
+    margin: 0;
+    scroll-snap-align: start;
+  }
+
+  .blog-home-compact-actions {
+    justify-content: flex-start;
+  }
+}
+
+@media (max-width: 560px) {
+  .blog-home-compact-card {
+    grid-template-columns: 92px minmax(0, 1fr);
+    gap: 12px;
+    padding: 14px;
+    border-radius: 20px;
+    min-height: 164px;
+  }
+
+  .blog-home-compact-image {
+    width: 92px;
+    height: 78px;
+    border-radius: 13px;
+  }
+
+  .blog-home-compact-content h3 {
+    font-size: .92rem;
+  }
+
+  .blog-home-compact-content p {
+    font-size: .82rem;
+  }
+
+  .blog-home-compact-link {
+    min-height: 30px;
+    padding: 0 11px;
+    font-size: .64rem;
+  }
+}
+
 .blog-home-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
