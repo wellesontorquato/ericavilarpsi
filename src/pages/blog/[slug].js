@@ -1,3 +1,4 @@
+import { useEffect, useMemo, useState } from "react";
 import Head from "next/head";
 import Link from "next/link";
 import { getAllPostSlugs, getPostBySlug } from "@/lib/posts";
@@ -7,15 +8,20 @@ const WHATSAPP_URL =
   "https://wa.me/5582996657825?text=Ol%C3%A1%2C%20vim%20pelo%20site%20e%20gostaria%20de%20entender%20melhor%20como%20funciona%20o%20seu%20trabalho%20e%20quais%20seriam%20os%20pr%C3%B3ximos%20passos.";
 
 export default function BlogPost({ post }) {
-  if (!post) {
-    return null;
-  }
+  const [storyBlob, setStoryBlob] = useState(null);
+  const [isStoryPreparing, setIsStoryPreparing] = useState(false);
+  const [isStorySharing, setIsStorySharing] = useState(false);
 
-  const postUrl = `${SITE_URL}/blog/${post.slug}`;
-  const shareText = `${post.title} | Erica Vilar`;
-  const ogImage = post.thumbnail
+  const postUrl = post ? `${SITE_URL}/blog/${post.slug}` : SITE_URL;
+  const shareText = post ? `${post.title} | Erica Vilar` : "Erica Vilar";
+
+  const ogImage = post?.thumbnail
     ? `${SITE_URL}${post.thumbnail}`
     : `${SITE_URL}/IMG_3092.webp`;
+
+  const storyBackgroundImage = useMemo(() => {
+    return post?.thumbnail || "/IMG_3092.webp";
+  }, [post?.thumbnail]);
 
   const shareLinks = {
     whatsapp: `https://wa.me/?text=${encodeURIComponent(
@@ -31,35 +37,73 @@ export default function BlogPost({ post }) {
     )}`,
   };
 
+  useEffect(() => {
+    if (!post) return;
+
+    let cancelled = false;
+
+    async function prepareInstagramStoryImage() {
+      try {
+        setIsStoryPreparing(true);
+        setStoryBlob(null);
+
+        const blob = await createInstagramStoryImage({
+          title: post.title,
+          subtitle: post.excerpt,
+          url: postUrl,
+          category: "Blog",
+          siteName: "Erica Vilar Psicologia",
+          backgroundImageSrc: storyBackgroundImage,
+        });
+
+        if (!cancelled) {
+          setStoryBlob(blob);
+        }
+      } catch (error) {
+        console.error("Erro ao preparar imagem do Instagram:", error);
+
+        if (!cancelled) {
+          setStoryBlob(null);
+        }
+      } finally {
+        if (!cancelled) {
+          setIsStoryPreparing(false);
+        }
+      }
+    }
+
+    prepareInstagramStoryImage();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [post, postUrl, storyBackgroundImage]);
+
+  if (!post) {
+    return null;
+  }
+
   async function shareInstagramStory(event) {
     const button = event?.currentTarget;
 
-    const wantsToContinue = window.confirm(
-      "Vamos criar uma imagem automática para você compartilhar no Instagram. Deseja continuar?"
-    );
-
-    if (!wantsToContinue) return;
+    if (!storyBlob) {
+      alert(
+        "A imagem ainda está sendo preparada. Aguarde alguns segundos e toque novamente."
+      );
+      return;
+    }
 
     try {
+      setIsStorySharing(true);
+
       if (button) {
         button.disabled = true;
         button.classList.add("is-loading");
       }
 
-      const blob = await createInstagramStoryImage({
-        title: post.title,
-        subtitle: post.excerpt,
-        url: postUrl,
-        category: "Blog",
-        siteName: "Erica Vilar Psicologia",
-      });
-
-      if (!blob) {
-        throw new Error("Não foi possível criar a imagem.");
-      }
-
       const fileName = createSafeFileName(post.title);
-      const file = new File([blob], `${fileName}.png`, {
+
+      const file = new File([storyBlob], `${fileName}.png`, {
         type: "image/png",
       });
 
@@ -71,22 +115,26 @@ export default function BlogPost({ post }) {
 
       const canShareFile =
         typeof navigator !== "undefined" &&
-        navigator.canShare &&
-        navigator.canShare({ files: [file] });
+        navigator.share &&
+        (!navigator.canShare || navigator.canShare({ files: [file] }));
 
-      if (navigator.share && canShareFile) {
+      if (canShareFile) {
         await navigator.share(shareData);
         return;
       }
 
       await copyTextToClipboard(postUrl);
-      downloadBlob(blob, `${fileName}.png`);
+      downloadBlob(storyBlob, `${fileName}.png`);
 
       alert(
-        "Seu navegador não permitiu abrir o compartilhamento nativo com imagem. A imagem foi baixada e o link do artigo foi copiado. Agora é só abrir o Instagram e postar nos Stories."
+        "Seu navegador não permitiu abrir o compartilhamento nativo com imagem. A imagem foi baixada e o link do artigo foi copiado."
       );
     } catch (error) {
       console.error("Erro ao compartilhar no Instagram:", error);
+
+      if (error?.name === "AbortError") {
+        return;
+      }
 
       try {
         await copyTextToClipboard(postUrl);
@@ -96,6 +144,8 @@ export default function BlogPost({ post }) {
         "Não foi possível abrir o compartilhamento automaticamente. O link do artigo foi copiado para você compartilhar manualmente."
       );
     } finally {
+      setIsStorySharing(false);
+
       if (button) {
         button.disabled = false;
         button.classList.remove("is-loading");
@@ -325,16 +375,28 @@ export default function BlogPost({ post }) {
                     <button
                       type="button"
                       onClick={shareInstagramStory}
+                      disabled={isStoryPreparing || isStorySharing}
                       className="post-share-icon-btn post-share-instagram"
                       aria-label="Criar imagem para compartilhar no Instagram"
-                      title="Criar imagem para Instagram"
+                      title={
+                        isStoryPreparing
+                          ? "Preparando imagem para compartilhar"
+                          : "Compartilhar imagem do artigo"
+                      }
                     >
                       <svg viewBox="0 0 24 24" aria-hidden="true">
                         <rect x="4" y="4" width="16" height="16" rx="5" />
                         <circle cx="12" cy="12" r="3.4" />
                         <circle cx="17.2" cy="6.8" r="1" />
                       </svg>
-                      <span>Instagram</span>
+
+                      <span>
+                        {isStoryPreparing
+                          ? "Preparando..."
+                          : isStorySharing
+                          ? "Abrindo..."
+                          : "Instagram"}
+                      </span>
                     </button>
                   </div>
                 </section>
@@ -423,6 +485,7 @@ async function createInstagramStoryImage({
   url,
   category = "Blog",
   siteName = "Erica Vilar Psicologia",
+  backgroundImageSrc,
 }) {
   const canvas = document.createElement("canvas");
   const ctx = canvas.getContext("2d");
@@ -437,18 +500,38 @@ async function createInstagramStoryImage({
   canvas.width = width;
   canvas.height = height;
 
-  const gradient = ctx.createLinearGradient(0, 0, width, height);
-  gradient.addColorStop(0, "#f8ebe7");
-  gradient.addColorStop(0.42, "#e9c9c0");
-  gradient.addColorStop(1, "#9b6f67");
+  const backgroundImage = await loadCanvasImage(backgroundImageSrc);
 
-  ctx.fillStyle = gradient;
-  ctx.fillRect(0, 0, width, height);
+  if (backgroundImage) {
+    ctx.save();
+    ctx.filter = "blur(22px)";
+    drawImageCover(ctx, backgroundImage, -50, -50, width + 100, height + 100);
+    ctx.restore();
 
-  ctx.globalAlpha = 0.11;
+    ctx.fillStyle = "rgba(38, 28, 26, 0.46)";
+    ctx.fillRect(0, 0, width, height);
+
+    const imageOverlay = ctx.createLinearGradient(0, 0, 0, height);
+    imageOverlay.addColorStop(0, "rgba(248, 235, 231, 0.32)");
+    imageOverlay.addColorStop(0.48, "rgba(155, 111, 103, 0.34)");
+    imageOverlay.addColorStop(1, "rgba(47, 38, 36, 0.68)");
+
+    ctx.fillStyle = imageOverlay;
+    ctx.fillRect(0, 0, width, height);
+  } else {
+    const gradient = ctx.createLinearGradient(0, 0, width, height);
+    gradient.addColorStop(0, "#f8ebe7");
+    gradient.addColorStop(0.42, "#e9c9c0");
+    gradient.addColorStop(1, "#9b6f67");
+
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, width, height);
+  }
+
+  ctx.globalAlpha = 0.14;
   ctx.fillStyle = "#ffffff";
 
-  for (let i = 0; i < 95; i++) {
+  for (let i = 0; i < 90; i++) {
     ctx.beginPath();
     ctx.arc(
       Math.random() * width,
@@ -462,7 +545,7 @@ async function createInstagramStoryImage({
 
   ctx.globalAlpha = 1;
 
-  ctx.fillStyle = "rgba(255, 255, 255, 0.16)";
+  ctx.fillStyle = "rgba(255, 255, 255, 0.14)";
   roundedRect(ctx, 52, 72, width - 104, height - 144, 72);
   ctx.fill();
 
@@ -471,7 +554,7 @@ async function createInstagramStoryImage({
   const cardW = width - 180;
   const cardH = 1140;
 
-  ctx.fillStyle = "rgba(255, 255, 255, 0.84)";
+  ctx.fillStyle = "rgba(255, 255, 255, 0.86)";
   roundedRect(ctx, cardX, cardY, cardW, cardH, 58);
   ctx.fill();
 
@@ -520,29 +603,89 @@ async function createInstagramStoryImage({
     });
   }
 
-  ctx.fillStyle = "#2f2624";
+  ctx.fillStyle = "#ffffff";
   ctx.font = "700 42px Arial";
   ctx.textAlign = "center";
   ctx.textBaseline = "top";
   ctx.fillText(siteName, width / 2, height - 300);
 
-  ctx.fillStyle = "#6b5450";
+  ctx.fillStyle = "rgba(255, 255, 255, 0.88)";
   ctx.font = "400 30px Arial";
   ctx.fillText("Leia o artigo completo no site", width / 2, height - 238);
 
-  ctx.fillStyle = "#9b6f67";
+  ctx.fillStyle = "rgba(255, 255, 255, 0.92)";
   ctx.font = "400 29px Arial";
   ctx.fillText("ericavilarpsi.com.br", width / 2, height - 188);
 
   return new Promise((resolve) => {
-    canvas.toBlob(
-      (blob) => {
-        resolve(blob);
-      },
-      "image/png",
-      1
-    );
+    try {
+      canvas.toBlob(
+        (blob) => {
+          resolve(blob);
+        },
+        "image/png",
+        1
+      );
+    } catch (error) {
+      console.error("Erro ao exportar imagem do canvas:", error);
+      resolve(null);
+    }
   });
+}
+
+function loadCanvasImage(src) {
+  return new Promise((resolve) => {
+    if (!src) {
+      resolve(null);
+      return;
+    }
+
+    const image = new Image();
+
+    image.crossOrigin = "anonymous";
+
+    image.onload = () => {
+      resolve(image);
+    };
+
+    image.onerror = () => {
+      resolve(null);
+    };
+
+    image.src = src;
+  });
+}
+
+function drawImageCover(ctx, image, x, y, width, height) {
+  const imageRatio = image.width / image.height;
+  const boxRatio = width / height;
+
+  let sourceX = 0;
+  let sourceY = 0;
+  let sourceWidth = image.width;
+  let sourceHeight = image.height;
+
+  if (imageRatio > boxRatio) {
+    sourceHeight = image.height;
+    sourceWidth = sourceHeight * boxRatio;
+    sourceX = (image.width - sourceWidth) / 2;
+  } else {
+    sourceWidth = image.width;
+    sourceHeight = sourceWidth / boxRatio;
+    sourceY = (image.height - sourceHeight) / 2;
+  }
+
+  ctx.drawImage(
+    image,
+    sourceX,
+    sourceY,
+    sourceWidth,
+    sourceHeight,
+    x,
+    y,
+    width,
+    height
+  );
 }
 
 function wrapCanvasText({ ctx, text, x, y, maxWidth, lineHeight, maxLines }) {
