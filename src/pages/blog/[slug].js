@@ -177,9 +177,7 @@ export default function BlogPost({ post }) {
                     <h2>Erica Vilar</h2>
 
                     <p>
-                      Psicóloga para mulheres reais. Um espaço de escuta,
-                      presença e elaboração para quem deseja se reencontrar com
-                      mais verdade, clareza e cuidado.
+                      De uma mulher real, para mulheres reais.
                     </p>
 
                     <div className="post-signature-actions">
@@ -253,15 +251,6 @@ export default function BlogPost({ post }) {
                   <Link href="/blog" className="btn btn-secondary">
                     ← Voltar ao blog
                   </Link>
-
-                  <a
-                    href={WHATSAPP_URL}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="btn btn-primary"
-                  >
-                    Falar com Erica
-                  </a>
                 </div>
               </footer>
             </article>
