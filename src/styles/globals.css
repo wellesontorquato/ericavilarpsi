@@ -2874,7 +2874,7 @@
 
 @media (max-width: 640px) {
   .blog-post-hero-content h1 {
-    font-size: clamp(2.25rem, 10.8vw, 3.05rem) !important;
+    font-size: clamp(2.05rem, 9.8vw, 2.85rem) !important;
     line-height: 1.04 !important;
     letter-spacing: -.045em;
     max-width: 100%;
