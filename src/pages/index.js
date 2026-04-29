@@ -173,7 +173,7 @@ export default function Home() {
                       </div>
                       <div className="hero-actions hero-slide-actions">
                         <a
-                          href="https://linktr.ee/agendamento_psiericavilar"
+                          href="https://wa.me/5582996657825?text=Ol%C3%A1%2C%20vim%20pelo%20site%20e%20gostaria%20de%20entender%20melhor%20como%20funciona%20o%20seu%20trabalho%20e%20quais%20seriam%20os%20pr%C3%B3ximos%20passos."
                           target="_blank"
                           rel="noopener noreferrer"
                           className="btn btn-primary"
@@ -204,7 +204,7 @@ export default function Home() {
                       </div>
                       <div className="hero-actions hero-slide-actions">
                         <a
-                          href="https://linktr.ee/agendamento_psiericavilar"
+                          href="https://wa.me/5582996657825?text=Ol%C3%A1%2C%20vim%20pelo%20site%20e%20gostaria%20de%20entender%20melhor%20como%20funciona%20o%20seu%20trabalho%20e%20quais%20seriam%20os%20pr%C3%B3ximos%20passos."
                           target="_blank"
                           rel="noopener noreferrer"
                           className="btn btn-primary"
@@ -424,7 +424,7 @@ export default function Home() {
                     </p>
                     <div className="contact-actions">
                       <a
-                        href="https://linktr.ee/agendamento_psiericavilar"
+                        href="https://wa.me/5582996657825?text=Ol%C3%A1%2C%20vim%20pelo%20site%20e%20gostaria%20de%20entender%20melhor%20como%20funciona%20o%20seu%20trabalho%20e%20quais%20seriam%20os%20pr%C3%B3ximos%20passos."
                         target="_blank"
                         rel="noopener noreferrer"
                         className="btn btn-primary btn-pulse"
