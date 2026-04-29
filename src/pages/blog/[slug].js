@@ -140,35 +140,35 @@ export default function BlogPost({ post }) {
             <article className="blog-post-page">
                 <section className={`blog-post-hero ${!post.thumbnail ? "without-image" : ""}`}>
                     {post.thumbnail && (
-                    <div className="blog-post-hero-media">
+                        <div className="blog-post-hero-media">
                         <img src={post.thumbnail} alt={post.title} />
-                    </div>
+                        </div>
                     )}
 
                     <div className="blog-post-hero-overlay" />
 
                     <div className="blog-post-hero-inner">
-                    <Link href="/blog" className="blog-post-hero-back">
-                        ← Voltar ao blog
-                    </Link>
+                        <div className="blog-post-hero-top">
+                        <Link href="/blog" className="blog-post-hero-back">
+                            ← Voltar ao blog
+                        </Link>
 
-                    <div className="blog-post-hero-content">
                         <span className="blog-post-hero-kicker">Blog</span>
+                        </div>
 
+                        <div className="blog-post-hero-content">
                         <h1>{post.title}</h1>
 
                         {post.excerpt && <p>{post.excerpt}</p>}
 
                         <div className="blog-post-hero-meta">
-                        <span>Por Érica Vilar</span>
-
-                        {post.date && <span>{post.date}</span>}
-
-                        <span>Psicologia para mulheres reais</span>
+                            <span>Por Érica Vilar</span>
+                            {post.date && <span>{post.date}</span>}
+                            <span>Psicologia para mulheres reais</span>
+                        </div>
                         </div>
                     </div>
-                    </div>
-                </section>
+                    </section>
 
                 <div
                     className="blog-post-content"
