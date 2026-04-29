@@ -1,0 +1,57 @@
+backend:
+  name: git-gateway
+  branch: main
+
+local_backend: true
+
+media_folder: "public/uploads"
+public_folder: "/uploads"
+
+site_url: "https://ericavilarpsi.com.br"
+display_url: "https://ericavilarpsi.com.br"
+logo_url: "/favicon.ico"
+
+collections:
+  - name: "posts"
+    label: "Posts do Blog"
+    label_singular: "Post"
+    folder: "content/posts"
+    create: true
+    slug: "{{slug}}"
+    extension: "md"
+    format: "frontmatter"
+
+    fields:
+      - label: "Título"
+        name: "title"
+        widget: "string"
+        required: true
+
+      - label: "Slug"
+        name: "slug"
+        widget: "string"
+        required: true
+        hint: "Use letras minúsculas, sem acentos e com hífens. Ex: como-cuidar-da-imagem-pessoal"
+
+      - label: "Data"
+        name: "date"
+        widget: "datetime"
+        required: true
+        format: "YYYY-MM-DD"
+
+      - label: "Thumbnail"
+        name: "thumbnail"
+        widget: "image"
+        required: false
+        hint: "Imagem de capa do post."
+
+      - label: "Resumo"
+        name: "excerpt"
+        widget: "text"
+        required: false
+        hint: "Pequeno resumo para exibir na listagem do blog."
+
+      - label: "Conteúdo"
+        name: "body"
+        widget: "markdown"
+        required: true
