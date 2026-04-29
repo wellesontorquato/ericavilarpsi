@@ -9,49 +9,55 @@ public_folder: "/uploads"
 
 site_url: "https://ericavilarpsi.com.br"
 display_url: "https://ericavilarpsi.com.br"
-logo_url: "/favicon.ico"
+logo_url: "/favicon-32x32.png"
 
 collections:
   - name: "posts"
-    label: "Posts do Blog"
-    label_singular: "Post"
+    label: "Blog"
+    label_singular: "Artigo"
     folder: "content/posts"
     create: true
     slug: "{{slug}}"
     extension: "md"
     format: "frontmatter"
+    summary: "{{title}} — {{date}}"
+    preview_path: "blog/{{slug}}"
 
     fields:
-      - label: "Título"
+      - label: "Título do artigo"
         name: "title"
         widget: "string"
         required: true
+        hint: "Título principal que aparecerá no topo do artigo."
 
-      - label: "Slug"
+      - label: "Endereço do artigo"
         name: "slug"
         widget: "string"
         required: true
-        hint: "Use letras minúsculas, sem acentos e com hífens. Ex: como-cuidar-da-imagem-pessoal"
+        hint: "Use letras minúsculas, sem acentos e com hífens. Ex: imagem-pessoal-e-autoestima"
 
-      - label: "Data"
+      - label: "Data de publicação"
         name: "date"
         widget: "datetime"
         required: true
+        date_format: "DD/MM/YYYY"
+        time_format: false
         format: "YYYY-MM-DD"
 
-      - label: "Thumbnail"
+      - label: "Imagem de capa"
         name: "thumbnail"
         widget: "image"
         required: false
-        hint: "Imagem de capa do post."
+        hint: "Imagem horizontal que aparecerá no card e no topo do artigo. Recomendado: 1600x900px."
 
-      - label: "Resumo"
+      - label: "Resumo do artigo"
         name: "excerpt"
         widget: "text"
         required: false
-        hint: "Pequeno resumo para exibir na listagem do blog."
+        hint: "Resumo curto para aparecer na página do blog e nas descrições."
 
       - label: "Conteúdo"
         name: "body"
         widget: "markdown"
         required: true
+        hint: "Escreva aqui o conteúdo completo do artigo."
