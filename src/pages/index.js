@@ -10,6 +10,7 @@ export default function Home({ posts = [] }) {
   const touchEndX = useRef(0);
 
   useEffect(() => {
+    // ---- SCROLL OBSERVER (NAV ATIVA) ----
     const navLinks = document.querySelectorAll('.nav-link, .tab-link');
     const sections = document.querySelectorAll('section[id]');
 
@@ -42,6 +43,7 @@ export default function Home({ posts = [] }) {
   }, []);
 
   useEffect(() => {
+    // ---- HERO SLIDER LOGIC ----
     const slides = document.querySelectorAll('.hero-slide');
     if (!slides.length) return;
 
@@ -440,15 +442,17 @@ export default function Home({ posts = [] }) {
               </div>
             </section>
 
-            <section className="section blog-home-compact-section" id="blog">
-              <div className="blog-home-compact-head">
-                <span className="section-label">Meu Blog</span>
-
-                <h2>Últimos artigos</h2>
+            <section className="section" id="blog">
+              <div className="section-header">
+                <div>
+                  <span className="section-label">Meu Blog</span>
+                  <h2>
+                    Reflexões para pausar, sentir e se escutar com mais verdade.
+                  </h2>
+                </div>
 
                 <p>
-                  Saúde emocional, identidade, maternidade, vínculos e vida real
-                  das mulheres em textos autorais.
+                  Artigos autorais sobre saúde emocional, identidade, maternidade, vínculos, autocobrança e os atravessamentos da vida real das mulheres.
                 </p>
               </div>
 
@@ -457,25 +461,17 @@ export default function Home({ posts = [] }) {
               )}
 
               {posts.length > 0 && (
-                <div className="blog-home-compact-grid">
+                <div className="blog-home-grid">
                   {posts.slice(0, 3).map((post) => (
-                    <article className="blog-home-compact-card" key={post.slug}>
-                      <Link
-                        href={`/blog/${post.slug}`}
-                        className="blog-home-compact-image"
-                        aria-label={`Ler artigo: ${post.title}`}
-                      >
-                        {post.thumbnail ? (
+                    <article className="blog-home-card" key={post.slug}>
+                      {post.thumbnail && (
+                        <Link href={`/blog/${post.slug}`} className="blog-home-image">
                           <img src={post.thumbnail} alt={post.title} />
-                        ) : (
-                          <span>EV</span>
-                        )}
-                      </Link>
+                        </Link>
+                      )}
 
-                      <div className="blog-home-compact-content">
-                        <span className="blog-home-compact-date">
-                          {post.date || 'Artigo'}
-                        </span>
+                      <div className="blog-home-content">
+                        {post.date && <span>{post.date}</span>}
 
                         <h3>
                           <Link href={`/blog/${post.slug}`}>{post.title}</Link>
@@ -483,10 +479,7 @@ export default function Home({ posts = [] }) {
 
                         {post.excerpt && <p>{post.excerpt}</p>}
 
-                        <Link
-                          href={`/blog/${post.slug}`}
-                          className="blog-home-compact-link"
-                        >
+                        <Link href={`/blog/${post.slug}`} className="blog-home-link">
                           Ler artigo
                         </Link>
                       </div>
@@ -495,11 +488,13 @@ export default function Home({ posts = [] }) {
                 </div>
               )}
 
-              <div className="blog-home-compact-actions">
-                <Link href="/blog" className="btn btn-secondary">
-                  Ver todos os artigos
-                </Link>
-              </div>
+              {posts.length > 3 && (
+                <div className="blog-home-actions">
+                  <Link href="/blog" className="btn btn-secondary">
+                    Ver todos os artigos
+                  </Link>
+                </div>
+              )}
             </section>
 
             <section className="section" id="contato">
