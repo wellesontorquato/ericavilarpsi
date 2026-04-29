@@ -3,69 +3,68 @@ import Script from "next/script";
 import { useEffect, useState } from "react";
 
 export default function AdminAcesso() {
-  const [savedHash, setSavedHash] = useState("");
-  const [shouldStartIdentity, setShouldStartIdentity] = useState(false);
+  const [identityToken, setIdentityToken] = useState("");
+  const [shouldLoadIdentity, setShouldLoadIdentity] = useState(false);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
 
-    const hash = window.location.hash || "";
-    const searchParams = new URLSearchParams(window.location.search);
-    const start = searchParams.get("start") === "1";
+    const params = new URLSearchParams(window.location.search);
+    const tokenFromUrl = params.get("identity_token");
 
-    const isIdentityToken =
-      hash.includes("invite_token") ||
-      hash.includes("recovery_token") ||
-      hash.includes("confirmation_token");
-
-    if (isIdentityToken) {
-      sessionStorage.setItem("netlify_identity_hash", hash);
-      setSavedHash(hash);
-    } else {
-      const storedHash = sessionStorage.getItem("netlify_identity_hash") || "";
-      setSavedHash(storedHash);
+    if (tokenFromUrl) {
+      sessionStorage.setItem("netlify_identity_token", tokenFromUrl);
+      setIdentityToken(tokenFromUrl);
+      return;
     }
 
-    if (start) {
-      setShouldStartIdentity(true);
-    }
+    const tokenFromStorage =
+      sessionStorage.getItem("netlify_identity_token") || "";
+
+    setIdentityToken(tokenFromStorage);
   }, []);
 
   function handleStartSignup() {
     if (typeof window === "undefined") return;
 
-    const hash =
-      savedHash ||
-      sessionStorage.getItem("netlify_identity_hash") ||
-      window.location.hash;
+    const token =
+      identityToken ||
+      sessionStorage.getItem("netlify_identity_token") ||
+      "";
 
     const hasToken =
-      hash.includes("invite_token") ||
-      hash.includes("recovery_token") ||
-      hash.includes("confirmation_token");
+      token.includes("invite_token") ||
+      token.includes("recovery_token") ||
+      token.includes("confirmation_token");
 
     if (!hasToken) {
       alert(
-        "O token de convite não foi encontrado. Abra novamente o link de convite recebido por e-mail."
+        "O token de convite não foi encontrado. Envie um novo convite pela Netlify e abra o link recebido por e-mail."
       );
       return;
     }
 
-    sessionStorage.setItem("netlify_identity_hash", hash);
+    sessionStorage.setItem("netlify_identity_token", token);
 
-    window.location.href = `/admin-acesso?start=1${hash}`;
+    const url = new URL(window.location.href);
+    url.searchParams.set("start", "1");
+    url.hash = token;
+
+    window.history.replaceState({}, "", url.toString());
+
+    setShouldLoadIdentity(true);
   }
 
   function handleIdentityLoad() {
     if (typeof window === "undefined" || !window.netlifyIdentity) return;
 
     window.netlifyIdentity.on("signup", () => {
-      sessionStorage.removeItem("netlify_identity_hash");
+      sessionStorage.removeItem("netlify_identity_token");
       window.location.href = "/admin/";
     });
 
     window.netlifyIdentity.on("login", () => {
-      sessionStorage.removeItem("netlify_identity_hash");
+      sessionStorage.removeItem("netlify_identity_token");
       window.location.href = "/admin/";
     });
 
@@ -82,7 +81,7 @@ export default function AdminAcesso() {
         />
       </Head>
 
-      {shouldStartIdentity && (
+      {shouldLoadIdentity && (
         <Script
           src="https://identity.netlify.com/v1/netlify-identity-widget.js"
           strategy="afterInteractive"
@@ -128,8 +127,8 @@ export default function AdminAcesso() {
           </button>
 
           <small>
-            Caso a janela não apareça, abra novamente o link original recebido
-            por e-mail.
+            Se o botão não abrir a criação de senha, envie um novo convite pela
+            Netlify. Tokens antigos podem ser invalidados após testes.
           </small>
         </section>
       </main>

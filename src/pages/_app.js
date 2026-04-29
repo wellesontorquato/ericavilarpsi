@@ -15,7 +15,11 @@ export default function App({ Component, pageProps }) {
     const isAdminAccessPage = window.location.pathname === "/admin-acesso";
 
     if (isIdentityToken && !isAdminAccessPage) {
-      window.location.replace(`/admin-acesso${hash}`);
+      const cleanHash = hash.replace("#", "");
+
+      window.location.replace(
+        `/admin-acesso?identity_token=${encodeURIComponent(cleanHash)}`
+      );
     }
   }, []);
 
