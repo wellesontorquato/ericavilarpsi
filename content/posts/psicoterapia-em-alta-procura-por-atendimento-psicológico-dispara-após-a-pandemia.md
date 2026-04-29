@@ -7,8 +7,6 @@ excerpt: Com mais brasileiros buscando equilíbrio, a psicoterapia cresce e a
   saúde mental vira prioridade. Especialistas defendem agora políticas públicas
   de acesso e prevenção para o setor.
 ---
-asdadsa
-
 Nos últimos três anos, o Brasil tem vivido um movimento silencioso, porém poderoso: a **explosão da procura por psicoterapia**. Desde o início da pandemia da COVID-19, o número de pessoas que passaram a buscar acompanhamento psicológico aumentou significativamente, segundo dados do Conselho Federal de Psicologia e de plataformas online de atendimento.
 
 O isolamento social, o luto, o medo, a insegurança econômica e as mudanças abruptas na rotina foram gatilhos poderosos para quadros de ansiedade, depressão e crises existenciais. Mas, para além da dor, surgiu também um fenômeno positivo: **a quebra do tabu sobre fazer terapia**.
@@ -16,8 +14,6 @@ O isolamento social, o luto, o medo, a insegurança econômica e as mudanças ab
 “Hoje, falar sobre saúde mental não é mais um assunto restrito a consultórios. Está nas redes sociais, nas escolas, nas empresas. Isso é um ganho cultural muito importante”, avalia a psicóloga clínica Fernanda Duarte.
 
 ![](https://img.freepik.com/fotos-gratis/vista-lateral-jovem-conversando-com-terapeuta_23-2150136592.jpg?semt=ais_hybrid&w=740)
-
-
 
 #### 💡 O que impulsionou essa mudança?
 
@@ -34,8 +30,6 @@ O aumento da procura também escancara um desafio: **a desigualdade no acesso �
 Em março deste ano, um projeto de lei (PL 3047/2024) foi protocolado na Câmara dos Deputados, propondo a ampliação do acesso gratuito à psicoterapia em unidades básicas de saúde e escolas públicas. A proposta visa transformar o cuidado com a saúde mental em um direito básico e universal.
 
 ![](https://media.revide.com.br/cache/40/ea/40eaaedc5a1b92186c748d3631f53e36.jpg)
-
-
 
 #### 🧘‍♀️ Psicoterapia para além do sofrimento
 
