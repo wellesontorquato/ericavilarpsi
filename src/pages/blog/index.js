@@ -98,7 +98,7 @@ export default function BlogPage({ posts = [] }) {
                 <path d="M8 13h8" />
                 <path d="M8 17h5" />
               </svg>
-              <span>Blog</span>
+              <span>Meu Blog</span>
             </Link>
           </nav>
 
@@ -126,10 +126,7 @@ export default function BlogPage({ posts = [] }) {
                 <div className="blog-list-heading">
                   <span className="section-label">Blog</span>
                   <h1>Reflexões para se escutar com mais verdade.</h1>
-                  <p>
-                    Textos sobre saúde emocional, identidade, maternidade,
-                    relações, autocobrança e os atravessamentos da vida real.
-                  </p>
+                  <p>Artigos autorais sobre saúde emocional, identidade, maternidade, vínculos, autocobrança e os atravessamentos da vida real das mulheres.</p>
                 </div>
               </div>
 

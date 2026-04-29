@@ -132,7 +132,7 @@ export default function Home({ posts = [] }) {
               <span>Contato</span>
             </a>
 
-            <a href="#blog" className="nav-link">
+            <a href="/blog" className="nav-link">
               <svg viewBox="0 0 24 24">
                 <path d="M5 5h14v14H5z" />
                 <path d="M8 9h8" />
@@ -578,7 +578,7 @@ export default function Home({ posts = [] }) {
             <span>Atend.</span>
           </a>
 
-          <a href="#blog" className="tab-link">
+          <a href="/blog" className="tab-link">
             <svg viewBox="0 0 24 24">
               <path d="M5 5h14v14H5z" />
               <path d="M8 9h8" />
