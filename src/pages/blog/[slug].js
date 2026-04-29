@@ -209,42 +209,65 @@ export default function BlogPost({ post }) {
                     </p>
                   </div>
 
-                  <div className="post-share-buttons">
+                  <div className="post-share-buttons post-share-icon-buttons">
                     <a
-                      href={shareLinks.whatsapp}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      aria-label="Compartilhar no WhatsApp"
+                        href={shareLinks.whatsapp}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="post-share-icon-btn post-share-whatsapp"
+                        aria-label="Compartilhar no WhatsApp"
+                        title="Compartilhar no WhatsApp"
                     >
-                      WhatsApp
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M20.5 11.8a8.4 8.4 0 0 1-12.4 7.4L4 20.3l1.1-4a8.4 8.4 0 1 1 15.4-4.5Z" />
+                        <path d="M9.2 7.9c-.2-.5-.4-.5-.7-.5h-.6c-.2 0-.6.1-.9.4-.3.3-1.1 1-1.1 2.4s1.1 2.9 1.2 3.1c.1.2 2.1 3.3 5.2 4.5 2.6 1 3.1.8 3.7.8.6-.1 1.8-.7 2-1.4.3-.7.3-1.3.2-1.4-.1-.1-.3-.2-.7-.4l-2.1-1c-.3-.1-.6-.2-.8.2-.2.3-.9 1.1-1.1 1.3-.2.2-.4.2-.7.1-.3-.2-1.3-.5-2.4-1.5-.9-.8-1.5-1.8-1.7-2.1-.2-.3 0-.5.1-.6l.5-.6c.2-.2.2-.3.3-.5.1-.2.1-.4 0-.6l-1-2.2Z" />
+                        </svg>
+                        <span>WhatsApp</span>
                     </a>
 
                     <a
-                      href={shareLinks.x}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      aria-label="Compartilhar no X"
+                        href={shareLinks.x}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="post-share-icon-btn post-share-x"
+                        aria-label="Compartilhar no X"
+                        title="Compartilhar no X"
                     >
-                      X
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M4 4h4.7l4.1 5.8L17.8 4H20l-6.2 7.1L21 20h-4.7l-4.6-6.5L6.1 20H4l6.7-7.7L4 4Z" />
+                        </svg>
+                        <span>X</span>
                     </a>
 
                     <a
-                      href={shareLinks.facebook}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      aria-label="Compartilhar no Facebook"
+                        href={shareLinks.facebook}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="post-share-icon-btn post-share-facebook"
+                        aria-label="Compartilhar no Facebook"
+                        title="Compartilhar no Facebook"
                     >
-                      Facebook
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M14 8.5V6.9c0-.7.2-1.1 1.2-1.1H17V3.1c-.3 0-1.4-.1-2.6-.1-2.6 0-4.4 1.6-4.4 4.5v1H7v3.1h3V21h3.6v-9.4H17l.5-3.1H14Z" />
+                        </svg>
+                        <span>Facebook</span>
                     </a>
 
                     <button
-                      type="button"
-                      onClick={copyInstagramLink}
-                      aria-label="Copiar link para compartilhar no Instagram"
+                        type="button"
+                        onClick={copyInstagramLink}
+                        className="post-share-icon-btn post-share-instagram"
+                        aria-label="Copiar link para compartilhar no Instagram"
+                        title="Copiar link para Instagram"
                     >
-                      Instagram
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <rect x="4" y="4" width="16" height="16" rx="5" />
+                        <circle cx="12" cy="12" r="3.4" />
+                        <circle cx="17.2" cy="6.8" r="1" />
+                        </svg>
+                        <span>Instagram</span>
                     </button>
-                  </div>
+                    </div>
                 </section>
 
                 <div className="blog-post-final-actions">

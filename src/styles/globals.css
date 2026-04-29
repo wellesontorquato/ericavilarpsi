@@ -1763,66 +1763,191 @@
     margin-top: 22px;
   }
 
-  /* =========================
-    COMPARTILHAMENTO DO POST
-  ========================= */
+/* =========================================================
+   BOTÕES COM LOGOS - COMPARTILHAMENTO DO POST
+   ========================================================= */
 
-  .post-share {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 24px;
-    padding: 28px;
-    border-radius: 34px;
-    background: rgba(255,255,255,.84);
-    border: 1px solid var(--line);
-    box-shadow: var(--shadow-xs);
+.post-share-icon-buttons {
+  width: min(100%, 360px);
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.post-share-icon-btn {
+  position: relative;
+  min-height: 52px;
+  padding: 0 14px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  overflow: hidden;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,.18);
+  color: #fff;
+  font-family: "Montserrat", sans-serif;
+  font-size: .72rem;
+  font-weight: 800;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  text-decoration: none;
+  cursor: pointer;
+  backdrop-filter: blur(12px);
+  box-shadow: none;
+  transition:
+    transform var(--transition),
+    box-shadow var(--transition),
+    border-color var(--transition),
+    background var(--transition),
+    color var(--transition);
+}
+
+.post-share-icon-btn::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: .92;
+  z-index: -2;
+  transition:
+    opacity var(--transition),
+    transform var(--transition);
+}
+
+.post-share-icon-btn::after {
+  content: "";
+  position: absolute;
+  inset: 1px;
+  border-radius: inherit;
+  background:
+    linear-gradient(135deg, rgba(255,255,255,.14), rgba(255,255,255,.05));
+  z-index: -1;
+}
+
+.post-share-icon-btn svg {
+  width: 19px;
+  height: 19px;
+  flex: 0 0 auto;
+}
+
+.post-share-icon-btn svg path,
+.post-share-icon-btn svg rect,
+.post-share-icon-btn svg circle {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.9;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.post-share-x svg path,
+.post-share-facebook svg path {
+  fill: currentColor;
+  stroke: none;
+}
+
+.post-share-icon-btn span {
+  position: relative;
+  z-index: 1;
+  white-space: nowrap;
+}
+
+/* WhatsApp */
+.post-share-whatsapp::before {
+  background:
+    radial-gradient(circle at top left, rgba(255,255,255,.18), transparent 34%),
+    linear-gradient(135deg, rgba(37,211,102,.42), rgba(37,211,102,.16));
+}
+
+/* X */
+.post-share-x::before {
+  background:
+    radial-gradient(circle at top left, rgba(255,255,255,.18), transparent 34%),
+    linear-gradient(135deg, rgba(255,255,255,.18), rgba(255,255,255,.08));
+}
+
+/* Facebook */
+.post-share-facebook::before {
+  background:
+    radial-gradient(circle at top left, rgba(255,255,255,.18), transparent 34%),
+    linear-gradient(135deg, rgba(24,119,242,.44), rgba(24,119,242,.16));
+}
+
+/* Instagram */
+.post-share-instagram::before {
+  background:
+    radial-gradient(circle at 18% 18%, rgba(255,255,255,.24), transparent 28%),
+    linear-gradient(
+      135deg,
+      rgba(245,133,41,.42),
+      rgba(221,42,123,.36),
+      rgba(129,52,175,.32),
+      rgba(81,91,212,.28)
+    );
+}
+
+.post-share-icon-btn:hover {
+  transform: translateY(-2px);
+  border-color: rgba(255,255,255,.38);
+  box-shadow: 0 20px 38px rgba(0,0,0,.20);
+  color: #fff;
+}
+
+.post-share-icon-btn:hover::before {
+  opacity: 1;
+  transform: scale(1.04);
+}
+
+.post-share-icon-btn:focus-visible {
+  outline: 3px solid rgba(255,255,255,.38);
+  outline-offset: 3px;
+}
+
+/* Responsivo */
+@media (max-width: 920px) {
+  .post-share-icon-buttons {
+    width: 100%;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 
-  .post-share h2 {
-    max-width: 560px;
-    font-family: "Libre Bodoni", serif;
-    font-size: clamp(1.8rem, 2.8vw, 2.8rem);
-    font-weight: 500;
-    line-height: 1;
-    letter-spacing: -.03em;
+  .post-share-icon-btn {
+    min-height: 56px;
+    padding: 0;
+    border-radius: 20px;
+    flex-direction: column;
+    gap: 5px;
+    font-size: .58rem;
+    letter-spacing: .04em;
   }
 
-  .post-share-buttons {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: flex-end;
-    gap: 10px;
+  .post-share-icon-btn svg {
+    width: 20px;
+    height: 20px;
+  }
+}
+
+@media (max-width: 520px) {
+  .post-share-icon-buttons {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
   }
 
-  .post-share-buttons a,
-  .post-share-buttons button {
-    min-height: 42px;
-    padding: 0 15px;
-    border-radius: 999px;
-    border: 1px solid var(--line);
-    background: #fff;
-    color: var(--text);
-    font-family: "Montserrat", sans-serif;
-    font-size: .76rem;
-    font-weight: 800;
-    letter-spacing: .08em;
-    text-transform: uppercase;
-    text-decoration: none;
-    cursor: pointer;
-    box-shadow: var(--shadow-xs);
-    transition:
-      transform var(--transition),
-      box-shadow var(--transition),
-      background var(--transition);
+  .post-share-icon-btn {
+    min-height: 58px;
+    border-radius: 18px;
+    font-size: .52rem;
   }
 
-  .post-share-buttons a:hover,
-  .post-share-buttons button:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-sm);
-    background: rgba(170,120,135,.08);
+  .post-share-icon-btn span {
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
+
+  .post-share-facebook span {
+    font-size: .48rem;
+  }
+}
 
   /* =========================
     RESPONSIVO - BLOG NA HOME
