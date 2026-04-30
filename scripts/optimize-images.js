@@ -4,10 +4,29 @@ const sharp = require("sharp");
 
 const publicDir = path.join(process.cwd(), "public");
 const uploadsDir = path.join(publicDir, "uploads");
+
 const optimizedRootDir = path.join(publicDir, "optimized");
 const optimizedUploadsDir = path.join(uploadsDir, "optimized");
 
 const allowedExtensions = [".jpg", ".jpeg", ".png", ".webp", ".jfif"];
+
+// Imagens da raiz do public, como:
+// public/IMG_3092.webp
+const rootImageSizes = [
+  { width: 96, suffix: "96", quality: 74 },
+  { width: 320, suffix: "320", quality: 76 },
+  { width: 640, suffix: "640", quality: 78 },
+  { width: 768, suffix: "768", quality: 80 },
+  { width: 1024, suffix: "1024", quality: 82 },
+];
+
+// Imagens enviadas pelo CMS, como:
+// public/uploads/imagem-do-post.png
+const uploadImageSizes = [
+  { width: 320, suffix: "320", quality: 76 },
+  { width: 640, suffix: "640", quality: 78 },
+  { width: 1024, suffix: "1024", quality: 82 },
+];
 
 function ensureDir(dir) {
   if (!fs.existsSync(dir)) {
@@ -24,43 +43,66 @@ function getBaseName(fileName) {
   return path.basename(fileName, path.extname(fileName));
 }
 
-async function createWebpVersions(inputPath, outputDir, fileName) {
-  const baseName = getBaseName(fileName);
+function shouldIgnoreFile(fileName) {
+  if (!fileName) return true;
 
-  const sizes = [
-    { width: 320, suffix: "320", quality: 76 },
-    { width: 480, suffix: "480", quality: 78 },
-    { width: 640, suffix: "640", quality: 80 },
-    { width: 768, suffix: "768", quality: 80 },
-    { width: 1024, suffix: "1024", quality: 82 },
-    { width: 1200, suffix: "1200", quality: 82 }
+  const ignoredNames = [
+    "favicon.ico",
+    "favicon-16x16.png",
+    "favicon-32x32.png",
+    "apple-touch-icon.png",
+    "android-chrome-192x192.png",
+    "android-chrome-512x512.png",
   ];
+
+  return ignoredNames.includes(fileName.toLowerCase());
+}
+
+function shouldSkipOptimizedOutput(outputPath, inputPath) {
+  if (!fs.existsSync(outputPath)) {
+    return false;
+  }
+
+  const outputStat = fs.statSync(outputPath);
+  const inputStat = fs.statSync(inputPath);
+
+  // Se a imagem otimizada já existe e foi gerada depois da original,
+  // não precisa recriar.
+  return outputStat.mtimeMs >= inputStat.mtimeMs;
+}
+
+async function createWebpVersions(inputPath, outputDir, fileName, sizes) {
+  const baseName = getBaseName(fileName);
 
   for (const size of sizes) {
     const outputPath = path.join(outputDir, `${baseName}-${size.suffix}.webp`);
 
-    if (fs.existsSync(outputPath)) {
-      console.log(`Já existe: ${path.basename(outputPath)}`);
+    if (shouldSkipOptimizedOutput(outputPath, inputPath)) {
+      console.log(`Já otimizada: ${path.basename(outputPath)}`);
       continue;
     }
 
-    await sharp(inputPath)
-      .rotate()
-      .resize({
-        width: size.width,
-        withoutEnlargement: true
-      })
-      .webp({
-        quality: size.quality,
-        effort: 6
-      })
-      .toFile(outputPath);
+    try {
+      await sharp(inputPath)
+        .rotate()
+        .resize({
+          width: size.width,
+          withoutEnlargement: true,
+        })
+        .webp({
+          quality: size.quality,
+          effort: 6,
+        })
+        .toFile(outputPath);
 
-    console.log(`Criada: ${path.basename(outputPath)}`);
+      console.log(`Criada/atualizada: ${path.basename(outputPath)}`);
+    } catch (error) {
+      console.error(`Erro ao criar ${path.basename(outputPath)}:`, error.message);
+    }
   }
 }
 
-async function optimizeFolderImages(sourceDir, outputDir, options = {}) {
+async function optimizeFolderImages(sourceDir, outputDir, sizes) {
   if (!fs.existsSync(sourceDir)) {
     console.log(`Pasta não encontrada: ${sourceDir}`);
     return;
@@ -68,8 +110,13 @@ async function optimizeFolderImages(sourceDir, outputDir, options = {}) {
 
   ensureDir(outputDir);
 
-  const files = fs
-    .readdirSync(sourceDir)
+  const entries = fs.readdirSync(sourceDir, { withFileTypes: true });
+
+  const files = entries
+    .filter((entry) => entry.isFile())
+    .map((entry) => entry.name)
+    .filter((fileName) => !fileName.startsWith("."))
+    .filter((fileName) => !shouldIgnoreFile(fileName))
     .filter((fileName) => isImage(fileName));
 
   if (files.length === 0) {
@@ -78,26 +125,18 @@ async function optimizeFolderImages(sourceDir, outputDir, options = {}) {
   }
 
   for (const fileName of files) {
-    if (fileName.startsWith(".")) continue;
-
     const inputPath = path.join(sourceDir, fileName);
 
-    if (fs.statSync(inputPath).isDirectory()) continue;
-
-    try {
-      await createWebpVersions(inputPath, outputDir, fileName);
-    } catch (error) {
-      console.error(`Erro ao otimizar ${fileName}:`, error.message);
-    }
+    await createWebpVersions(inputPath, outputDir, fileName, sizes);
   }
 }
 
 async function run() {
   console.log("Otimizando imagens da raiz do public...");
-  await optimizeFolderImages(publicDir, optimizedRootDir);
+  await optimizeFolderImages(publicDir, optimizedRootDir, rootImageSizes);
 
   console.log("Otimizando imagens de public/uploads...");
-  await optimizeFolderImages(uploadsDir, optimizedUploadsDir);
+  await optimizeFolderImages(uploadsDir, optimizedUploadsDir, uploadImageSizes);
 
   console.log("Otimização de imagens concluída.");
 }

@@ -8,7 +8,9 @@ const WHATSAPP_URL =
 
 const SITE_URL = 'https://ericavilarpsi.com.br';
 
+const HERO_IMAGE_96 = '/optimized/IMG_3092-96.webp';
 const HERO_IMAGE_640 = '/optimized/IMG_3092-640.webp';
+const HERO_IMAGE_768 = '/optimized/IMG_3092-768.webp';
 const HERO_IMAGE_1024 = '/optimized/IMG_3092-1024.webp';
 
 export default function Home({ posts = [] }) {
@@ -129,9 +131,9 @@ export default function Home({ posts = [] }) {
         <link
           rel="preload"
           as="image"
-          href={HERO_IMAGE_640}
-          imageSrcSet={`${HERO_IMAGE_640} 640w, ${HERO_IMAGE_1024} 1024w`}
-          imageSizes="(max-width: 768px) 92vw, 690px"
+          href={HERO_IMAGE_768}
+          imageSrcSet={`${HERO_IMAGE_640} 640w, ${HERO_IMAGE_768} 768w, ${HERO_IMAGE_1024} 1024w`}
+          imageSizes="(max-width: 768px) 690px, 690px"
           fetchPriority="high"
         />
       </Head>
@@ -202,15 +204,15 @@ export default function Home({ posts = [] }) {
 
               <div className="mobile-avatar">
                 <img
-                  src={HERO_IMAGE_640}
-                  srcSet={`${HERO_IMAGE_640} 640w, ${HERO_IMAGE_1024} 1024w`}
+                  src={HERO_IMAGE_96}
+                  srcSet={`${HERO_IMAGE_96} 96w, ${HERO_IMAGE_640} 640w`}
                   sizes="96px"
                   alt="Erica Vilar"
                   width="96"
                   height="96"
                   loading="eager"
                   decoding="async"
-                  fetchPriority="high"
+                  fetchPriority="low"
                 />
               </div>
             </div>
@@ -226,13 +228,13 @@ export default function Home({ posts = [] }) {
                   <article className={`hero-slide ${heroIndex === 0 ? 'is-active' : ''}`}>
                     <div className="hero-slide-media">
                       <img
-                        src={HERO_IMAGE_640}
-                        srcSet={`${HERO_IMAGE_640} 640w, ${HERO_IMAGE_1024} 1024w`}
-                        sizes="(max-width: 768px) 92vw, 690px"
+                        src={HERO_IMAGE_768}
+                        srcSet={`${HERO_IMAGE_640} 640w, ${HERO_IMAGE_768} 768w, ${HERO_IMAGE_1024} 1024w`}
+                        sizes="(max-width: 768px) 690px, 690px"
                         alt="Retrato da psicóloga Erica Vilar"
                         className="img-destaque-1"
-                        width="640"
-                        height="845"
+                        width="768"
+                        height="1014"
                         loading="eager"
                         decoding="async"
                         fetchPriority="high"
@@ -536,8 +538,8 @@ export default function Home({ posts = [] }) {
                           <img
                             src={post.thumbnail}
                             alt={post.title}
-                            width="320"
-                            height="420"
+                            width="205"
+                            height="137"
                             loading="lazy"
                             decoding="async"
                             fetchPriority="low"
