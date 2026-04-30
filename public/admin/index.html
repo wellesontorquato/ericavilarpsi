@@ -1,27 +1,416 @@
 <!doctype html>
-<html>
+<html lang="pt-BR">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Admin | Erica Vilar</title>
+    <title>Painel Administrativo | Erica Vilar</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+
+    <style>
+      :root {
+        --bg: #f6eeee;
+        --rose-light: #f3dedb;
+        --rose: #d9b8b0;
+        --rose-dark: #9b6f67;
+        --text: #2f2927;
+        --muted: #786460;
+        --dark: #1f302f;
+        --white: #ffffff;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        margin: 0;
+        min-height: 100%;
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system,
+          BlinkMacSystemFont, "Segoe UI", sans-serif;
+        background: var(--bg);
+        color: var(--text);
+      }
+
+      body {
+        min-height: 100vh;
+      }
+
+      .admin-login {
+        position: fixed;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 24px;
+        overflow: hidden;
+        background:
+          radial-gradient(circle at 18% 18%, rgba(255, 255, 255, 0.75), transparent 24%),
+          radial-gradient(circle at 78% 20%, rgba(255, 255, 255, 0.42), transparent 22%),
+          radial-gradient(circle at 70% 82%, rgba(255, 255, 255, 0.28), transparent 24%),
+          linear-gradient(135deg, #f8efed 0%, #ecd5d0 44%, #cdaaa1 100%);
+      }
+
+      .admin-login::before {
+        content: "";
+        position: absolute;
+        width: 620px;
+        height: 620px;
+        border-radius: 999px;
+        left: -210px;
+        bottom: -250px;
+        background: rgba(255, 255, 255, 0.22);
+        filter: blur(3px);
+      }
+
+      .admin-login::after {
+        content: "";
+        position: absolute;
+        width: 460px;
+        height: 460px;
+        border-radius: 999px;
+        right: -190px;
+        top: -150px;
+        background: rgba(255, 255, 255, 0.18);
+        filter: blur(3px);
+      }
+
+      .login-card {
+        position: relative;
+        z-index: 2;
+        width: min(100%, 980px);
+        display: grid;
+        grid-template-columns: 1.12fr 0.88fr;
+        gap: 30px;
+        align-items: center;
+        padding: 42px;
+        border-radius: 34px;
+        background: rgba(255, 255, 255, 0.72);
+        border: 1px solid rgba(155, 111, 103, 0.14);
+        box-shadow:
+          0 26px 70px rgba(70, 45, 40, 0.13),
+          inset 0 1px 0 rgba(255, 255, 255, 0.7);
+        backdrop-filter: blur(18px);
+      }
+
+      .brand-area {
+        min-width: 0;
+      }
+
+      .ev-badge {
+        width: 62px;
+        height: 62px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 20px;
+        margin-bottom: 20px;
+        background: linear-gradient(135deg, #f4dfda, #e6c1b7);
+        color: #805851;
+        font-family: Georgia, serif;
+        font-size: 1.35rem;
+        font-weight: 700;
+        box-shadow: 0 12px 30px rgba(155, 111, 103, 0.18);
+      }
+
+      .kicker {
+        display: block;
+        margin-bottom: 12px;
+        color: var(--rose-dark);
+        font-size: 0.78rem;
+        font-weight: 800;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+      }
+
+      h1 {
+        margin: 0;
+        max-width: 640px;
+        font-family: Georgia, "Times New Roman", serif;
+        font-size: clamp(2.2rem, 5vw, 4.4rem);
+        line-height: 0.98;
+        letter-spacing: -0.055em;
+        color: var(--text);
+      }
+
+      .brand-area p {
+        max-width: 560px;
+        margin: 22px 0 0;
+        color: var(--muted);
+        font-size: 1.03rem;
+        line-height: 1.75;
+      }
+
+      .action-panel {
+        padding: 24px;
+        border-radius: 26px;
+        background: rgba(255, 255, 255, 0.58);
+        border: 1px solid rgba(155, 111, 103, 0.12);
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.72);
+      }
+
+      .action-panel h2 {
+        margin: 0 0 10px;
+        color: var(--text);
+        font-size: 1.18rem;
+        letter-spacing: -0.02em;
+      }
+
+      .action-panel p {
+        margin: 0 0 20px;
+        color: var(--muted);
+        font-size: 0.94rem;
+        line-height: 1.6;
+      }
+
+      .login-button {
+        width: 100%;
+        min-height: 56px;
+        border: 0;
+        border-radius: 18px;
+        cursor: pointer;
+        padding: 0 22px;
+        color: #fff;
+        background: linear-gradient(135deg, #1e302f, #30413f);
+        font-size: 0.98rem;
+        font-weight: 800;
+        box-shadow: 0 16px 34px rgba(31, 48, 47, 0.2);
+        transition:
+          transform 0.2s ease,
+          box-shadow 0.2s ease,
+          opacity 0.2s ease;
+      }
+
+      .login-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 20px 42px rgba(31, 48, 47, 0.26);
+      }
+
+      .login-button:disabled {
+        opacity: 0.7;
+        cursor: not-allowed;
+        transform: none;
+      }
+
+      .back-link {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        min-height: 48px;
+        margin-top: 10px;
+        border-radius: 16px;
+        color: #755f5a;
+        text-decoration: none;
+        font-size: 0.93rem;
+        font-weight: 700;
+        transition:
+          background 0.2s ease,
+          color 0.2s ease;
+      }
+
+      .back-link:hover {
+        background: rgba(155, 111, 103, 0.08);
+        color: #4f3d39;
+      }
+
+      .status-text {
+        margin-top: 16px;
+        color: #8b716b;
+        font-size: 0.8rem;
+        text-align: center;
+      }
+
+      .decap-loading {
+        position: fixed;
+        inset: 0;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        background: #f6eeee;
+        color: #6f5a55;
+        font-weight: 700;
+      }
+
+      .decap-loading.is-visible {
+        display: flex;
+      }
+
+      .admin-login.is-hidden {
+        display: none;
+      }
+
+      @media (max-width: 860px) {
+        .login-card {
+          grid-template-columns: 1fr;
+          padding: 30px;
+          gap: 24px;
+        }
+
+        .action-panel {
+          padding: 20px;
+        }
+      }
+
+      @media (max-width: 520px) {
+        .admin-login {
+          padding: 16px;
+        }
+
+        .login-card {
+          padding: 24px;
+          border-radius: 26px;
+        }
+
+        .ev-badge {
+          width: 54px;
+          height: 54px;
+          border-radius: 18px;
+          font-size: 1.2rem;
+        }
+
+        .brand-area p {
+          font-size: 0.96rem;
+          line-height: 1.65;
+        }
+
+        .login-button {
+          min-height: 54px;
+          font-size: 0.94rem;
+        }
+      }
+    </style>
   </head>
 
   <body>
-    <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
-    <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
+    <section id="adminLogin" class="admin-login">
+      <div class="login-card">
+        <div class="brand-area">
+          <div class="ev-badge">EV</div>
+
+          <span class="kicker">Painel Administrativo</span>
+
+          <h1>Bem-vinda ao painel do site.</h1>
+
+          <p>
+            Acesse para criar, revisar e publicar artigos no blog da Erica Vilar
+            com segurança, organização e praticidade.
+          </p>
+        </div>
+
+        <div class="action-panel">
+          <h2>Entrar no Decap CMS</h2>
+
+          <p>
+            Faça login com sua conta autorizada para acessar a área de edição do
+            conteúdo.
+          </p>
+
+          <button id="loginButton" class="login-button" type="button">
+            Entrar com Netlify Identity
+          </button>
+
+          <a href="/" class="back-link">← Voltar ao site</a>
+
+          <div id="statusText" class="status-text">
+            Verificando acesso...
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div id="decapLoading" class="decap-loading">
+      Carregando painel administrativo...
+    </div>
 
     <script>
-      if (window.netlifyIdentity) {
+      const adminLogin = document.getElementById("adminLogin");
+      const decapLoading = document.getElementById("decapLoading");
+      const loginButton = document.getElementById("loginButton");
+      const statusText = document.getElementById("statusText");
+
+      let cmsLoaded = false;
+
+      function showLogin() {
+        adminLogin.classList.remove("is-hidden");
+        decapLoading.classList.remove("is-visible");
+        loginButton.disabled = false;
+        statusText.textContent = "Aguardando login.";
+      }
+
+      function showLoading() {
+        adminLogin.classList.add("is-hidden");
+        decapLoading.classList.add("is-visible");
+      }
+
+      function loadCMS() {
+        if (cmsLoaded) return;
+
+        cmsLoaded = true;
+        showLoading();
+
+        const script = document.createElement("script");
+        script.src = "https://unpkg.com/decap-cms@^3/dist/decap-cms.js";
+        script.async = true;
+
+        script.onload = function () {
+          decapLoading.classList.remove("is-visible");
+        };
+
+        script.onerror = function () {
+          cmsLoaded = false;
+          adminLogin.classList.remove("is-hidden");
+          decapLoading.classList.remove("is-visible");
+          statusText.textContent =
+            "Não foi possível carregar o painel. Tente novamente.";
+        };
+
+        document.body.appendChild(script);
+      }
+
+      function initIdentity() {
+        if (!window.netlifyIdentity) {
+          statusText.textContent =
+            "Não foi possível carregar o login. Atualize a página.";
+          loginButton.disabled = true;
+          return;
+        }
+
+        window.netlifyIdentity.init();
+
         window.netlifyIdentity.on("init", function (user) {
-          if (!user) {
-            window.netlifyIdentity.on("login", function () {
-              document.location.href = "/admin/";
-            });
+          if (user) {
+            loadCMS();
+          } else {
+            showLogin();
           }
         });
 
-        window.netlifyIdentity.init();
+        window.netlifyIdentity.on("login", function () {
+          loginButton.disabled = true;
+          statusText.textContent = "Login realizado. Abrindo painel...";
+          window.netlifyIdentity.close();
+          loadCMS();
+        });
+
+        window.netlifyIdentity.on("logout", function () {
+          showLogin();
+        });
+
+        loginButton.addEventListener("click", function () {
+          loginButton.disabled = true;
+          statusText.textContent = "Abrindo janela de login...";
+          window.netlifyIdentity.open("login");
+
+          setTimeout(function () {
+            loginButton.disabled = false;
+            statusText.textContent = "Aguardando login.";
+          }, 1200);
+        });
       }
+
+      initIdentity();
     </script>
   </body>
 </html>
