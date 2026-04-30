@@ -15,9 +15,7 @@ export default function BlogPost({ post }) {
   const postUrl = post ? `${SITE_URL}/blog/${post.slug}` : SITE_URL;
   const shareText = post ? `${post.title} | Erica Vilar` : "Erica Vilar";
 
-  const ogImage = post?.thumbnail
-    ? `${SITE_URL}${post.thumbnail}`
-    : `${SITE_URL}/IMG_3092.webp`;
+  const ogImage = getAbsoluteImageUrl(post?.thumbnail || "/IMG_3092.webp");
 
   const storyBackgroundImage = useMemo(() => {
     return post?.thumbnail || "/IMG_3092.webp";
@@ -25,7 +23,7 @@ export default function BlogPost({ post }) {
 
   const shareLinks = {
     whatsapp: `https://wa.me/?text=${encodeURIComponent(
-      `${shareText} ${postUrl}`
+      `${postUrl}\n\n${shareText}`
     )}`,
 
     x: `https://twitter.com/intent/tweet?url=${encodeURIComponent(
@@ -161,16 +159,24 @@ export default function BlogPost({ post }) {
 
         <link rel="canonical" href={postUrl} />
 
+        <meta property="og:site_name" content="Erica Vilar Psicologia" />
+        <meta property="og:locale" content="pt_BR" />
         <meta property="og:title" content={`${post.title} | Erica Vilar`} />
         <meta property="og:description" content={post.excerpt || post.title} />
         <meta property="og:url" content={postUrl} />
         <meta property="og:type" content="article" />
+
         <meta property="og:image" content={ogImage} />
+        <meta property="og:image:secure_url" content={ogImage} />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta property="og:image:alt" content={post.title} />
 
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content={`${post.title} | Erica Vilar`} />
         <meta name="twitter:description" content={post.excerpt || post.title} />
         <meta name="twitter:image" content={ogImage} />
+        <meta name="twitter:image:alt" content={post.title} />
       </Head>
 
       <div className="app blog-post-app">
@@ -762,6 +768,18 @@ function createSafeFileName(title) {
     .slice(0, 70);
 
   return base || "story-erica-vilar";
+}
+
+function getAbsoluteImageUrl(imagePath) {
+  if (!imagePath) {
+    return `${SITE_URL}/IMG_3092.webp`;
+  }
+
+  if (imagePath.startsWith("http://") || imagePath.startsWith("https://")) {
+    return imagePath;
+  }
+
+  return `${SITE_URL}${imagePath.startsWith("/") ? "" : "/"}${imagePath}`;
 }
 
 async function copyTextToClipboard(text) {
