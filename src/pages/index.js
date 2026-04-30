@@ -8,6 +8,9 @@ const WHATSAPP_URL =
 
 const SITE_URL = 'https://ericavilarpsi.com.br';
 
+const HERO_IMAGE_640 = '/optimized/IMG_3092-640.webp';
+const HERO_IMAGE_1024 = '/optimized/IMG_3092-1024.webp';
+
 export default function Home({ posts = [] }) {
   const [heroIndex, setHeroIndex] = useState(0);
   const heroSliderRef = useRef(null);
@@ -99,28 +102,38 @@ export default function Home({ posts = [] }) {
         <meta name="robots" content="index, follow" />
         <link rel="canonical" href={`${SITE_URL}/`} />
 
-        <meta property="og:title" content="Erica Vilar | Psicóloga em Maceió e Online" />
+        <meta
+          property="og:title"
+          content="Erica Vilar | Psicóloga em Maceió e Online"
+        />
         <meta
           property="og:description"
           content="Atendimento psicológico para mulheres com escuta clínica, acolhimento, presença e profundidade."
         />
-        <meta property="og:image" content={`${SITE_URL}/IMG_3092.webp`} />
+        <meta property="og:image" content={`${SITE_URL}${HERO_IMAGE_1024}`} />
         <meta property="og:url" content={`${SITE_URL}/`} />
         <meta property="og:type" content="website" />
         <meta property="og:locale" content="pt_BR" />
 
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="Erica Vilar | Psicóloga em Maceió e Online" />
+        <meta
+          name="twitter:title"
+          content="Erica Vilar | Psicóloga em Maceió e Online"
+        />
         <meta
           name="twitter:description"
           content="Atendimento psicológico para mulheres com escuta clínica, acolhimento, presença e profundidade."
         />
-        <meta name="twitter:image" content={`${SITE_URL}/IMG_3092.webp`} />
+        <meta name="twitter:image" content={`${SITE_URL}${HERO_IMAGE_1024}`} />
 
-        <link rel="preload" as="image" href="/IMG_3092.webp" fetchPriority="high" />
-
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link
+          rel="preload"
+          as="image"
+          href={HERO_IMAGE_640}
+          imageSrcSet={`${HERO_IMAGE_640} 640w, ${HERO_IMAGE_1024} 1024w`}
+          imageSizes="(max-width: 768px) 92vw, 690px"
+          fetchPriority="high"
+        />
       </Head>
 
       <div className="app">
@@ -189,7 +202,9 @@ export default function Home({ posts = [] }) {
 
               <div className="mobile-avatar">
                 <img
-                  src="/IMG_3092.webp"
+                  src={HERO_IMAGE_640}
+                  srcSet={`${HERO_IMAGE_640} 640w, ${HERO_IMAGE_1024} 1024w`}
+                  sizes="96px"
                   alt="Erica Vilar"
                   width="96"
                   height="96"
@@ -211,11 +226,13 @@ export default function Home({ posts = [] }) {
                   <article className={`hero-slide ${heroIndex === 0 ? 'is-active' : ''}`}>
                     <div className="hero-slide-media">
                       <img
-                        src="/IMG_3092.webp"
+                        src={HERO_IMAGE_640}
+                        srcSet={`${HERO_IMAGE_640} 640w, ${HERO_IMAGE_1024} 1024w`}
+                        sizes="(max-width: 768px) 92vw, 690px"
                         alt="Retrato da psicóloga Erica Vilar"
                         className="img-destaque-1"
-                        width="4000"
-                        height="5279"
+                        width="640"
+                        height="845"
                         loading="eager"
                         decoding="async"
                         fetchPriority="high"
@@ -508,7 +525,7 @@ export default function Home({ posts = [] }) {
 
               {featuredPosts.length > 0 && (
                 <div className="blog-home-compact-grid">
-                  {featuredPosts.map((post, index) => (
+                  {featuredPosts.map((post) => (
                     <article className="blog-home-compact-card" key={post.slug}>
                       <Link
                         href={`/blog/${post.slug}`}
