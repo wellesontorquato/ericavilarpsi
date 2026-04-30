@@ -64,6 +64,73 @@ function normalizeSearchText(text = "") {
     .trim();
 }
 
+function normalizeImagePath(imagePath = "") {
+  if (!imagePath) return "";
+
+  const normalized = String(imagePath).trim();
+
+  if (!normalized) return "";
+
+  if (
+    normalized.startsWith("http://") ||
+    normalized.startsWith("https://") ||
+    normalized.startsWith("/")
+  ) {
+    return normalized;
+  }
+
+  return `/${normalized}`;
+}
+
+function getOptimizedThumbnail(thumbnail = "") {
+  const imagePath = normalizeImagePath(thumbnail);
+
+  if (!imagePath) return "";
+
+  if (!imagePath.startsWith("/uploads/")) {
+    return imagePath;
+  }
+
+  const extension = path.extname(imagePath);
+  const basePath = imagePath.replace(extension, "");
+  const fileName = path.basename(basePath);
+
+  const optimizedPath = `/uploads/optimized/${fileName}-640.webp`;
+  const optimizedFilePath = path.join(
+    process.cwd(),
+    "public",
+    optimizedPath
+  );
+
+  if (fs.existsSync(optimizedFilePath)) {
+    return optimizedPath;
+  }
+
+  return imagePath;
+}
+
+function addImagePerformanceAttributes(imageTag = "") {
+  let optimizedTag = imageTag;
+
+  if (!/\sloading=/.test(optimizedTag)) {
+    optimizedTag = optimizedTag.replace("<img", '<img loading="lazy"');
+  }
+
+  if (!/\sdecoding=/.test(optimizedTag)) {
+    optimizedTag = optimizedTag.replace("<img", '<img decoding="async"');
+  }
+
+  if (!/\swidth=/.test(optimizedTag)) {
+    optimizedTag = optimizedTag.replace("<img", '<img width="900"');
+  }
+
+  if (!/\sheight=/.test(optimizedTag)) {
+    optimizedTag = optimizedTag.replace("<img", '<img height="600"');
+  }
+
+  return optimizedTag;
+}
+
 function enhancePostImages(contentHtml = "") {
   let imageIndex = 0;
 
@@ -71,15 +138,24 @@ function enhancePostImages(contentHtml = "") {
     /<p>\s*(<img[^>]*>)\s*<\/p>/g,
     (match, imageTag) => {
       const alignment = imageIndex % 2 === 0 ? "align-left" : "align-right";
+      const optimizedImageTag = addImagePerformanceAttributes(imageTag);
+
       imageIndex += 1;
 
       return `
         <figure class="blog-post-image-block ${alignment}">
-          ${imageTag}
+          ${optimizedImageTag}
         </figure>
       `;
     }
   );
+}
+
+function readMarkdownPost(fileName) {
+  const fullPath = path.join(postsDirectory, fileName);
+  const fileContents = fs.readFileSync(fullPath, "utf8");
+
+  return matter(fileContents);
 }
 
 export function getAllPostSlugs() {
@@ -92,9 +168,7 @@ export function getAllPostSlugs() {
   return fileNames
     .filter((fileName) => fileName.endsWith(".md"))
     .map((fileName) => {
-      const fullPath = path.join(postsDirectory, fileName);
-      const fileContents = fs.readFileSync(fullPath, "utf8");
-      const { data } = matter(fileContents);
+      const { data } = readMarkdownPost(fileName);
 
       return {
         params: {
@@ -114,10 +188,7 @@ export async function getPostBySlug(slug) {
   const matchedFile = fileNames.find((fileName) => {
     if (!fileName.endsWith(".md")) return false;
 
-    const fullPath = path.join(postsDirectory, fileName);
-    const fileContents = fs.readFileSync(fullPath, "utf8");
-    const { data } = matter(fileContents);
-
+    const { data } = readMarkdownPost(fileName);
     const postSlug = getPostSlug(fileName, data);
 
     return postSlug === slug;
@@ -127,10 +198,7 @@ export async function getPostBySlug(slug) {
     return null;
   }
 
-  const fullPath = path.join(postsDirectory, matchedFile);
-  const fileContents = fs.readFileSync(fullPath, "utf8");
-
-  const matterResult = matter(fileContents);
+  const matterResult = readMarkdownPost(matchedFile);
 
   const processedContent = await remark()
     .use(html)
@@ -143,7 +211,7 @@ export async function getPostBySlug(slug) {
     title: matterResult.data.title || "",
     date: formatPostDate(matterResult.data.date),
     rawDate: normalizeDateValue(matterResult.data.date),
-    thumbnail: matterResult.data.thumbnail || "",
+    thumbnail: getOptimizedThumbnail(matterResult.data.thumbnail),
     excerpt: matterResult.data.excerpt || "",
     contentHtml,
     contentText: normalizeSearchText(matterResult.content),
@@ -160,10 +228,7 @@ export function getAllPosts() {
   const posts = fileNames
     .filter((fileName) => fileName.endsWith(".md"))
     .map((fileName) => {
-      const fullPath = path.join(postsDirectory, fileName);
-      const fileContents = fs.readFileSync(fullPath, "utf8");
-
-      const { data, content } = matter(fileContents);
+      const { data, content } = readMarkdownPost(fileName);
 
       return {
         slug: getPostSlug(fileName, data),
@@ -171,7 +236,7 @@ export function getAllPosts() {
         date: formatPostDate(data.date),
         rawDate: normalizeDateValue(data.date),
         timestamp: getPostTimestamp(data.date),
-        thumbnail: data.thumbnail || "",
+        thumbnail: getOptimizedThumbnail(data.thumbnail),
         excerpt: data.excerpt || "",
         contentText: normalizeSearchText(content),
       };

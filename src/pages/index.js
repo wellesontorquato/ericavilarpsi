@@ -1,13 +1,21 @@
 import Head from 'next/head';
 import Link from 'next/link';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { getAllPosts } from '@/lib/posts';
+
+const WHATSAPP_URL =
+  'https://wa.me/5582996657825?text=Ol%C3%A1%2C%20vim%20pelo%20site%20e%20gostaria%20de%20entender%20melhor%20como%20funciona%20o%20seu%20trabalho%20e%20quais%20seriam%20os%20pr%C3%B3ximos%20passos.';
+
+const SITE_URL = 'https://ericavilarpsi.com.br';
 
 export default function Home({ posts = [] }) {
   const [heroIndex, setHeroIndex] = useState(0);
   const heroSliderRef = useRef(null);
   const touchStartX = useRef(0);
   const touchEndX = useRef(0);
+
+  const featuredPosts = useMemo(() => posts.slice(0, 3), [posts]);
+  const totalSlides = 2;
 
   useEffect(() => {
     const navLinks = document.querySelectorAll('.nav-link, .tab-link');
@@ -38,28 +46,24 @@ export default function Home({ posts = [] }) {
 
     return () => {
       sections.forEach((section) => observer.unobserve(section));
+      observer.disconnect();
     };
   }, []);
 
   useEffect(() => {
-    const slides = document.querySelectorAll('.hero-slide');
-    if (!slides.length) return;
-
     const interval = setInterval(() => {
-      setHeroIndex((prev) => (prev + 1) % slides.length);
+      setHeroIndex((prev) => (prev + 1) % totalSlides);
     }, 6000);
 
     return () => clearInterval(interval);
   }, []);
 
   const handleNextSlide = () => {
-    const slides = document.querySelectorAll('.hero-slide');
-    setHeroIndex((prev) => (prev + 1) % slides.length);
+    setHeroIndex((prev) => (prev + 1) % totalSlides);
   };
 
   const handlePrevSlide = () => {
-    const slides = document.querySelectorAll('.hero-slide');
-    setHeroIndex((prev) => (prev - 1 + slides.length) % slides.length);
+    setHeroIndex((prev) => (prev - 1 + totalSlides) % totalSlides);
   };
 
   const handleTouchStart = (e) => {
@@ -84,11 +88,39 @@ export default function Home({ posts = [] }) {
       <Head>
         <meta charSet="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Erica Vilar | Psicóloga</title>
+
+        <title>Erica Vilar | Psicóloga em Maceió e Atendimento Online</title>
+
         <meta
           name="description"
-          content="Erica Vilar — Psicóloga para mulheres reais. Um espaço de escuta, identidade, maternidade e reconexão com quem você é."
+          content="Psicóloga em Maceió e atendimento online para mulheres. Um espaço de escuta, identidade, maternidade, vínculos e reconexão com quem você é."
         />
+
+        <meta name="robots" content="index, follow" />
+        <link rel="canonical" href={`${SITE_URL}/`} />
+
+        <meta property="og:title" content="Erica Vilar | Psicóloga em Maceió e Online" />
+        <meta
+          property="og:description"
+          content="Atendimento psicológico para mulheres com escuta clínica, acolhimento, presença e profundidade."
+        />
+        <meta property="og:image" content={`${SITE_URL}/IMG_3092.webp`} />
+        <meta property="og:url" content={`${SITE_URL}/`} />
+        <meta property="og:type" content="website" />
+        <meta property="og:locale" content="pt_BR" />
+
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="Erica Vilar | Psicóloga em Maceió e Online" />
+        <meta
+          name="twitter:description"
+          content="Atendimento psicológico para mulheres com escuta clínica, acolhimento, presença e profundidade."
+        />
+        <meta name="twitter:image" content={`${SITE_URL}/IMG_3092.webp`} />
+
+        <link rel="preload" as="image" href="/IMG_3092.webp" fetchPriority="high" />
+
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
       </Head>
 
       <div className="app">
@@ -98,9 +130,9 @@ export default function Home({ posts = [] }) {
             <div className="brand-vertical">Erica Vilar</div>
           </div>
 
-          <nav className="sidebar-nav">
+          <nav className="sidebar-nav" aria-label="Navegação principal">
             <a href="#inicio" className="nav-link active">
-              <svg viewBox="0 0 24 24">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
                 <path d="M3 10.5 12 3l9 7.5" />
                 <path d="M5 9.5V21h14V9.5" />
               </svg>
@@ -108,14 +140,14 @@ export default function Home({ posts = [] }) {
             </a>
 
             <a href="#sobre" className="nav-link">
-              <svg viewBox="0 0 24 24">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
                 <path d="M12 21s-7-4.6-9-8.7C1.2 8.7 3.8 5 7.7 5c2.1 0 3.5 1 4.3 2.2C12.8 6 14.2 5 16.3 5c3.9 0 6.5 3.7 4.7 7.3-2 4.1-9 8.7-9 8.7Z" />
               </svg>
               <span>Sobre</span>
             </a>
 
             <a href="#como-funciona" className="nav-link">
-              <svg viewBox="0 0 24 24">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
                 <path d="M4 6h16" />
                 <path d="M4 12h10" />
                 <path d="M4 18h7" />
@@ -124,14 +156,14 @@ export default function Home({ posts = [] }) {
             </a>
 
             <a href="#contato" className="nav-link">
-              <svg viewBox="0 0 24 24">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
                 <path d="M4 5h16v11H8l-4 4z" />
               </svg>
               <span>Contato</span>
             </a>
 
             <a href="/blog" className="nav-link">
-              <svg viewBox="0 0 24 24">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
                 <path d="M5 5h14v14H5z" />
                 <path d="M8 9h8" />
                 <path d="M8 13h8" />
@@ -156,7 +188,15 @@ export default function Home({ posts = [] }) {
               </div>
 
               <div className="mobile-avatar">
-                <img src="/IMG_3092.webp" alt="Erica Vilar" />
+                <img
+                  src="/IMG_3092.webp"
+                  alt="Erica Vilar"
+                  width="96"
+                  height="96"
+                  loading="eager"
+                  decoding="async"
+                  fetchPriority="high"
+                />
               </div>
             </div>
 
@@ -172,12 +212,17 @@ export default function Home({ posts = [] }) {
                     <div className="hero-slide-media">
                       <img
                         src="/IMG_3092.webp"
-                        alt="Retrato da psicóloga"
+                        alt="Retrato da psicóloga Erica Vilar"
                         className="img-destaque-1"
+                        width="4000"
+                        height="5279"
+                        loading="eager"
+                        decoding="async"
+                        fetchPriority="high"
                       />
                     </div>
 
-                    <div className="hero-slide-overlay"></div>
+                    <div className="hero-slide-overlay" aria-hidden="true"></div>
 
                     <div className="hero-slide-content">
                       <div className="hero-slide-eyebrow">
@@ -202,7 +247,7 @@ export default function Home({ posts = [] }) {
 
                       <div className="hero-actions hero-slide-actions">
                         <a
-                          href="https://wa.me/5582996657825?text=Ol%C3%A1%2C%20vim%20pelo%20site%20e%20gostaria%20de%20entender%20melhor%20como%20funciona%20o%20seu%20trabalho%20e%20quais%20seriam%20os%20pr%C3%B3ximos%20passos."
+                          href={WHATSAPP_URL}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="btn btn-primary"
@@ -222,10 +267,15 @@ export default function Home({ posts = [] }) {
                       <img
                         src="/erica.jfif"
                         alt="Psicóloga em momento de atendimento"
+                        width="728"
+                        height="728"
+                        loading="lazy"
+                        decoding="async"
+                        fetchPriority="low"
                       />
                     </div>
 
-                    <div className="hero-slide-overlay"></div>
+                    <div className="hero-slide-overlay" aria-hidden="true"></div>
 
                     <div className="hero-slide-content">
                       <div className="hero-slide-eyebrow">
@@ -249,7 +299,7 @@ export default function Home({ posts = [] }) {
 
                       <div className="hero-actions hero-slide-actions">
                         <a
-                          href="https://wa.me/5582996657825?text=Ol%C3%A1%2C%20vim%20pelo%20site%20e%20gostaria%20de%20entender%20melhor%20como%20funciona%20o%20seu%20trabalho%20e%20quais%20seriam%20os%20pr%C3%B3ximos%20passos."
+                          href={WHATSAPP_URL}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="btn btn-primary"
@@ -272,7 +322,7 @@ export default function Home({ posts = [] }) {
                     aria-label="Slide anterior"
                     onClick={handlePrevSlide}
                   >
-                    <svg viewBox="0 0 24 24">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
                       <path d="M15 18l-6-6 6-6" />
                     </svg>
                   </button>
@@ -283,7 +333,7 @@ export default function Home({ posts = [] }) {
                     aria-label="Próximo slide"
                     onClick={handleNextSlide}
                   >
-                    <svg viewBox="0 0 24 24">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
                       <path d="M9 6l6 6-6 6" />
                     </svg>
                   </button>
@@ -452,13 +502,13 @@ export default function Home({ posts = [] }) {
                 </p>
               </div>
 
-              {posts.length === 0 && (
+              {featuredPosts.length === 0 && (
                 <p className="blog-home-empty">Nenhum artigo publicado ainda.</p>
               )}
 
-              {posts.length > 0 && (
+              {featuredPosts.length > 0 && (
                 <div className="blog-home-compact-grid">
-                  {posts.slice(0, 3).map((post) => (
+                  {featuredPosts.map((post, index) => (
                     <article className="blog-home-compact-card" key={post.slug}>
                       <Link
                         href={`/blog/${post.slug}`}
@@ -466,9 +516,17 @@ export default function Home({ posts = [] }) {
                         aria-label={`Ler artigo: ${post.title}`}
                       >
                         {post.thumbnail ? (
-                          <img src={post.thumbnail} alt={post.title} />
+                          <img
+                            src={post.thumbnail}
+                            alt={post.title}
+                            width="320"
+                            height="420"
+                            loading="lazy"
+                            decoding="async"
+                            fetchPriority="low"
+                          />
                         ) : (
-                          <span>EV</span>
+                          <span aria-hidden="true">EV</span>
                         )}
                       </Link>
 
@@ -486,6 +544,7 @@ export default function Home({ posts = [] }) {
                         <Link
                           href={`/blog/${post.slug}`}
                           className="blog-home-compact-link"
+                          aria-label={`Ler artigo completo: ${post.title}`}
                         >
                           Ler artigo
                         </Link>
@@ -522,7 +581,7 @@ export default function Home({ posts = [] }) {
 
                     <div className="contact-actions">
                       <a
-                        href="https://wa.me/5582996657825?text=Ol%C3%A1%2C%20vim%20pelo%20site%20e%20gostaria%20de%20entender%20melhor%20como%20funciona%20o%20seu%20trabalho%20e%20quais%20seriam%20os%20pr%C3%B3ximos%20passos."
+                        href={WHATSAPP_URL}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="btn btn-primary btn-pulse"
@@ -558,9 +617,9 @@ export default function Home({ posts = [] }) {
           </div>
         </main>
 
-        <nav className="mobile-tabbar mobile-tabbar-five">
+        <nav className="mobile-tabbar mobile-tabbar-five" aria-label="Navegação mobile">
           <a href="#inicio" className="tab-link active">
-            <svg viewBox="0 0 24 24">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
               <path d="M3 10.5 12 3l9 7.5" />
               <path d="M5 9.5V21h14V9.5" />
             </svg>
@@ -568,14 +627,14 @@ export default function Home({ posts = [] }) {
           </a>
 
           <a href="#sobre" className="tab-link">
-            <svg viewBox="0 0 24 24">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
               <path d="M12 21s-7-4.6-9-8.7C1.2 8.7 3.8 5 7.7 5c2.1 0 3.5 1 4.3 2.2C12.8 6 14.2 5 16.3 5c3.9 0 6.5 3.7 4.7 7.3-2 4.1-9 8.7-9 8.7Z" />
             </svg>
             <span>Sobre</span>
           </a>
 
           <a href="#como-funciona" className="tab-link">
-            <svg viewBox="0 0 24 24">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
               <path d="M4 6h16" />
               <path d="M4 12h10" />
               <path d="M4 18h7" />
@@ -584,7 +643,7 @@ export default function Home({ posts = [] }) {
           </a>
 
           <a href="/blog" className="tab-link">
-            <svg viewBox="0 0 24 24">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
               <path d="M5 5h14v14H5z" />
               <path d="M8 9h8" />
               <path d="M8 13h8" />
@@ -594,7 +653,7 @@ export default function Home({ posts = [] }) {
           </a>
 
           <a href="#contato" className="tab-link">
-            <svg viewBox="0 0 24 24">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
               <path d="M4 5h16v11H8l-4 4z" />
             </svg>
             <span>Contato</span>

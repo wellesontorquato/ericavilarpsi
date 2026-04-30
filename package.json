@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "optimize-images": "node scripts/optimize-images.js",
+    "build": "npm run optimize-images && next build",
     "start": "next start",
     "lint": "eslint"
   },
@@ -15,7 +16,8 @@
     "react": "19.2.4",
     "react-dom": "19.2.4",
     "remark": "^15.0.1",
-    "remark-html": "^16.0.1"
+    "remark-html": "^16.0.1",
+    "sharp": "^0.34.5"
   },
   "devDependencies": {
     "babel-plugin-react-compiler": "1.0.0",
