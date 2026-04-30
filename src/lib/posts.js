@@ -95,7 +95,7 @@ function getOptimizedThumbnail(thumbnail = "") {
   const basePath = imagePath.replace(extension, "");
   const fileName = path.basename(basePath);
 
-  const optimizedPath = `/uploads/optimized/${fileName}-640.webp`;
+  const optimizedPath = `/uploads/optimized/${fileName}-320.webp`;
   const optimizedFilePath = path.join(
     process.cwd(),
     "public",
