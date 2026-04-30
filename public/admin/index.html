@@ -40,7 +40,7 @@
         .admin-login {
         position: fixed;
         inset: 0;
-        z-index: 999999;
+        z-index: 9999;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -226,7 +226,7 @@
         .decap-loading {
         position: fixed;
         inset: 0;
-        z-index: 999999;
+        z-index: 9999;
         display: none;
         align-items: center;
         justify-content: center;
@@ -327,92 +327,139 @@
     </div>
 
     <script>
-      const adminLogin = document.getElementById("adminLogin");
-      const decapLoading = document.getElementById("decapLoading");
-      const loginButton = document.getElementById("loginButton");
-      const statusText = document.getElementById("statusText");
+        const adminLogin = document.getElementById("adminLogin");
+        const decapLoading = document.getElementById("decapLoading");
+        const loginButton = document.getElementById("loginButton");
+        const statusText = document.getElementById("statusText");
 
-      let cmsLoaded = false;
+        let cmsLoaded = false;
 
-      function showLogin() {
-        adminLogin.classList.remove("is-hidden");
-        decapLoading.classList.remove("is-visible");
-        loginButton.disabled = false;
-        statusText.textContent = "Aguardando login.";
-      }
+        function showLogin() {
+            adminLogin.classList.remove("is-hidden");
+            decapLoading.classList.remove("is-visible");
 
-      function showLoading() {
-        adminLogin.classList.add("is-hidden");
-        decapLoading.classList.add("is-visible");
-      }
+            if (loginButton) {
+            loginButton.disabled = false;
+            }
 
-      function loadCMS() {
-        if (cmsLoaded) return;
-
-        cmsLoaded = true;
-        showLoading();
-
-        const script = document.createElement("script");
-        script.src = "https://unpkg.com/decap-cms@^3/dist/decap-cms.js";
-        script.async = true;
-
-        script.onload = function () {
-          decapLoading.classList.remove("is-visible");
-        };
-
-        script.onerror = function () {
-          cmsLoaded = false;
-          adminLogin.classList.remove("is-hidden");
-          decapLoading.classList.remove("is-visible");
-          statusText.textContent =
-            "Não foi possível carregar o painel. Tente novamente.";
-        };
-
-        document.body.appendChild(script);
-      }
-
-      function initIdentity() {
-        if (!window.netlifyIdentity) {
-          statusText.textContent =
-            "Não foi possível carregar o login. Atualize a página.";
-          loginButton.disabled = true;
-          return;
+            if (statusText) {
+            statusText.textContent = "Aguardando login.";
+            }
         }
 
-        window.netlifyIdentity.init();
+        function hideLogin() {
+            adminLogin.classList.add("is-hidden");
+        }
 
-        window.netlifyIdentity.on("init", function (user) {
-          if (user) {
-            loadCMS();
-          } else {
+        function showLoading() {
+            adminLogin.classList.add("is-hidden");
+            decapLoading.classList.add("is-visible");
+        }
+
+        function loadCMS() {
+            if (cmsLoaded) return;
+
+            cmsLoaded = true;
+            showLoading();
+
+            const script = document.createElement("script");
+            script.src = "https://unpkg.com/decap-cms@^3/dist/decap-cms.js";
+            script.async = true;
+
+            script.onload = function () {
+            decapLoading.classList.remove("is-visible");
+            };
+
+            script.onerror = function () {
+            cmsLoaded = false;
             showLogin();
-          }
-        });
 
-        window.netlifyIdentity.on("login", function () {
-          loginButton.disabled = true;
-          statusText.textContent = "Login realizado. Abrindo painel...";
-          window.netlifyIdentity.close();
-          loadCMS();
-        });
+            if (statusText) {
+                statusText.textContent =
+                "Não foi possível carregar o painel. Tente novamente.";
+            }
+            };
 
-        window.netlifyIdentity.on("logout", function () {
+            document.body.appendChild(script);
+        }
+
+        function initIdentity() {
+            if (!window.netlifyIdentity) {
+            if (statusText) {
+                statusText.textContent =
+                "Não foi possível carregar o login. Atualize a página.";
+            }
+
+            if (loginButton) {
+                loginButton.disabled = true;
+            }
+
+            return;
+            }
+
+            window.netlifyIdentity.on("init", function (user) {
+            if (user) {
+                loadCMS();
+            } else {
+                showLogin();
+            }
+            });
+
+            window.netlifyIdentity.on("login", function () {
+            if (loginButton) {
+                loginButton.disabled = true;
+            }
+
+            if (statusText) {
+                statusText.textContent = "Login realizado. Abrindo painel...";
+            }
+
+            window.netlifyIdentity.close();
+            loadCMS();
+            });
+
+            window.netlifyIdentity.on("logout", function () {
             window.location.reload();
-        });
+            });
 
-        loginButton.addEventListener("click", function () {
-          loginButton.disabled = true;
-          statusText.textContent = "Abrindo janela de login...";
-          window.netlifyIdentity.open("login");
+            window.netlifyIdentity.on("close", function () {
+            const user = window.netlifyIdentity.currentUser();
 
-          setTimeout(function () {
-            loginButton.disabled = false;
-            statusText.textContent = "Aguardando login.";
-          }, 1200);
-        });
-      }
+            if (!user && !cmsLoaded) {
+                showLogin();
+            }
+            });
 
-      initIdentity();
+            window.netlifyIdentity.init();
+
+            loginButton.addEventListener("click", function () {
+            if (!window.netlifyIdentity) return;
+
+            loginButton.disabled = true;
+            statusText.textContent = "Abrindo janela de login...";
+
+            /*
+                Escondemos a tela bonita antes de abrir o Netlify Identity.
+                Isso evita que o modal de login fique escondido atrás dela.
+            */
+            hideLogin();
+
+            setTimeout(function () {
+                window.netlifyIdentity.open("login");
+            }, 80);
+
+            setTimeout(function () {
+                const user = window.netlifyIdentity.currentUser();
+
+                if (!user && !cmsLoaded) {
+                loginButton.disabled = false;
+                statusText.textContent = "Aguardando login.";
+                }
+            }, 1500);
+            });
+        }
+
+        initIdentity();
     </script>
   </body>
 </html>
