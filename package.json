@@ -23,5 +23,13 @@
     "babel-plugin-react-compiler": "1.0.0",
     "eslint": "^9",
     "eslint-config-next": "16.2.4"
-  }
+  },
+  "browserslist": [
+    "Chrome >= 120",
+    "Edge >= 120",
+    "Firefox >= 120",
+    "Safari >= 17",
+    "iOS >= 17",
+    "not dead"
+  ]
 }
