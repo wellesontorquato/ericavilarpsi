@@ -37,9 +37,10 @@
         min-height: 100vh;
       }
 
-      .admin-login {
+        .admin-login {
         position: fixed;
         inset: 0;
+        z-index: 999999;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -222,9 +223,10 @@
         text-align: center;
       }
 
-      .decap-loading {
+        .decap-loading {
         position: fixed;
         inset: 0;
+        z-index: 999999;
         display: none;
         align-items: center;
         justify-content: center;
@@ -395,7 +397,7 @@
         });
 
         window.netlifyIdentity.on("logout", function () {
-          showLogin();
+            window.location.reload();
         });
 
         loginButton.addEventListener("click", function () {
