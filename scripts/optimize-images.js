@@ -23,6 +23,7 @@ const rootImageSizes = [
 // Imagens enviadas pelo CMS, como:
 // public/uploads/imagem-do-post.png
 const uploadImageSizes = [
+  { width: 240, suffix: "240", quality: 74 },
   { width: 320, suffix: "320", quality: 76 },
   { width: 640, suffix: "640", quality: 78 },
   { width: 1024, suffix: "1024", quality: 82 },
@@ -126,7 +127,6 @@ async function optimizeFolderImages(sourceDir, outputDir, sizes) {
 
   for (const fileName of files) {
     const inputPath = path.join(sourceDir, fileName);
-
     await createWebpVersions(inputPath, outputDir, fileName, sizes);
   }
 }

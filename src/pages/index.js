@@ -132,8 +132,8 @@ export default function Home({ posts = [] }) {
           rel="preload"
           as="image"
           href={HERO_IMAGE_768}
-          imageSrcSet={`${HERO_IMAGE_640} 640w, ${HERO_IMAGE_768} 768w, ${HERO_IMAGE_1024} 1024w`}
-          imageSizes="(max-width: 768px) 690px, 690px"
+          imageSrcSet={`${HERO_IMAGE_640} 640w, ${HERO_IMAGE_768} 768w`}
+          imageSizes="690px"
           fetchPriority="high"
         />
       </Head>
@@ -205,8 +205,6 @@ export default function Home({ posts = [] }) {
               <div className="mobile-avatar">
                 <img
                   src={HERO_IMAGE_96}
-                  srcSet={`${HERO_IMAGE_96} 96w, ${HERO_IMAGE_640} 640w`}
-                  sizes="96px"
                   alt="Erica Vilar"
                   width="96"
                   height="96"
@@ -229,8 +227,8 @@ export default function Home({ posts = [] }) {
                     <div className="hero-slide-media">
                       <img
                         src={HERO_IMAGE_768}
-                        srcSet={`${HERO_IMAGE_640} 640w, ${HERO_IMAGE_768} 768w, ${HERO_IMAGE_1024} 1024w`}
-                        sizes="(max-width: 768px) 690px, 690px"
+                        srcSet={`${HERO_IMAGE_640} 640w, ${HERO_IMAGE_768} 768w`}
+                        sizes="690px"
                         alt="Retrato da psicóloga Erica Vilar"
                         className="img-destaque-1"
                         width="768"

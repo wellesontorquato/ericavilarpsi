@@ -82,6 +82,18 @@ function normalizeImagePath(imagePath = "") {
   return `/${normalized}`;
 }
 
+function getExistingImagePath(paths = []) {
+  for (const imagePath of paths) {
+    const filePath = path.join(process.cwd(), "public", imagePath);
+
+    if (fs.existsSync(filePath)) {
+      return imagePath;
+    }
+  }
+
+  return "";
+}
+
 function getOptimizedThumbnail(thumbnail = "") {
   const imagePath = normalizeImagePath(thumbnail);
 
@@ -95,14 +107,13 @@ function getOptimizedThumbnail(thumbnail = "") {
   const basePath = imagePath.replace(extension, "");
   const fileName = path.basename(basePath);
 
-  const optimizedPath = `/uploads/optimized/${fileName}-320.webp`;
-  const optimizedFilePath = path.join(
-    process.cwd(),
-    "public",
-    optimizedPath
-  );
+  const optimizedPath = getExistingImagePath([
+    `/uploads/optimized/${fileName}-240.webp`,
+    `/uploads/optimized/${fileName}-320.webp`,
+    `/uploads/optimized/${fileName}-640.webp`,
+  ]);
 
-  if (fs.existsSync(optimizedFilePath)) {
+  if (optimizedPath) {
     return optimizedPath;
   }
 
