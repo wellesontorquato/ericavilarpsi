@@ -72,8 +72,42 @@ function shouldSkipOptimizedOutput(outputPath, inputPath) {
   return outputStat.mtimeMs >= inputStat.mtimeMs;
 }
 
+async function createAvatarVersion(inputPath, outputDir, fileName) {
+  const baseName = getBaseName(fileName);
+  const outputPath = path.join(outputDir, `${baseName}-avatar-96.webp`);
+
+  if (shouldSkipOptimizedOutput(outputPath, inputPath)) {
+    console.log(`Já otimizada: ${path.basename(outputPath)}`);
+    return;
+  }
+
+  try {
+    await sharp(inputPath)
+      .rotate()
+      .resize({
+        width: 96,
+        height: 96,
+        fit: "cover",
+        position: "top",
+      })
+      .webp({
+        quality: 76,
+        effort: 6,
+      })
+      .toFile(outputPath);
+
+    console.log(`Criada/atualizada: ${path.basename(outputPath)}`);
+  } catch (error) {
+    console.error(`Erro ao criar avatar ${fileName}:`, error.message);
+  }
+}
+
 async function createWebpVersions(inputPath, outputDir, fileName, sizes) {
   const baseName = getBaseName(fileName);
+
+  if (outputDir === optimizedRootDir && fileName === "IMG_3092.webp") {
+    await createAvatarVersion(inputPath, outputDir, fileName);
+  }
 
   for (const size of sizes) {
     const outputPath = path.join(outputDir, `${baseName}-${size.suffix}.webp`);

@@ -8,7 +8,7 @@ const WHATSAPP_URL =
 
 const SITE_URL = 'https://ericavilarpsi.com.br';
 
-const HERO_IMAGE_96 = '/optimized/IMG_3092-96.webp';
+const HERO_AVATAR_96 = '/optimized/IMG_3092-avatar-96.webp';
 const HERO_IMAGE_640 = '/optimized/IMG_3092-640.webp';
 const HERO_IMAGE_768 = '/optimized/IMG_3092-768.webp';
 const HERO_IMAGE_1024 = '/optimized/IMG_3092-1024.webp';
@@ -204,10 +204,10 @@ export default function Home({ posts = [] }) {
 
               <div className="mobile-avatar">
                 <img
-                  src={HERO_IMAGE_96}
+                  src={HERO_AVATAR_96}
                   alt="Erica Vilar"
                   width="96"
-                  height="127"
+                  height="96"
                   loading="eager"
                   decoding="async"
                   fetchPriority="low"
