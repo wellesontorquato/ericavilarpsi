@@ -120,6 +120,32 @@ function getOptimizedThumbnail(thumbnail = "") {
   return imagePath;
 }
 
+function getOptimizedHeroImage(thumbnail = "") {
+  const imagePath = normalizeImagePath(thumbnail);
+
+  if (!imagePath) return "";
+
+  if (!imagePath.startsWith("/uploads/")) {
+    return imagePath;
+  }
+
+  const extension = path.extname(imagePath);
+  const basePath = imagePath.replace(extension, "");
+  const fileName = path.basename(basePath);
+
+  const optimizedPath = getExistingImagePath([
+    `/uploads/optimized/${fileName}-1024.webp`,
+    `/uploads/optimized/${fileName}-640.webp`,
+    `/uploads/optimized/${fileName}-320.webp`,
+  ]);
+
+  if (optimizedPath) {
+    return optimizedPath;
+  }
+
+  return imagePath;
+}
+
 function addImagePerformanceAttributes(imageTag = "") {
   let optimizedTag = imageTag;
 
@@ -222,7 +248,16 @@ export async function getPostBySlug(slug) {
     title: matterResult.data.title || "",
     date: formatPostDate(matterResult.data.date),
     rawDate: normalizeDateValue(matterResult.data.date),
-    thumbnail: getOptimizedThumbnail(matterResult.data.thumbnail),
+
+    // Página individual do artigo: usa imagem maior para o hero.
+    thumbnail: getOptimizedHeroImage(matterResult.data.thumbnail),
+
+    // Campo extra, caso a gente queira usar separadamente no [slug].js.
+    heroImage: getOptimizedHeroImage(matterResult.data.thumbnail),
+
+    // Campo extra para cards/relacionados, se precisar.
+    cardThumbnail: getOptimizedThumbnail(matterResult.data.thumbnail),
+
     excerpt: matterResult.data.excerpt || "",
     contentHtml,
     contentText: normalizeSearchText(matterResult.content),
@@ -247,7 +282,10 @@ export function getAllPosts() {
         date: formatPostDate(data.date),
         rawDate: normalizeDateValue(data.date),
         timestamp: getPostTimestamp(data.date),
+
+        // Listagem/home: usa imagem pequena e leve.
         thumbnail: getOptimizedThumbnail(data.thumbnail),
+
         excerpt: data.excerpt || "",
         contentText: normalizeSearchText(content),
       };

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import Head from "next/head";
 import Link from "next/link";
 import { getAllPostSlugs, getPostBySlug } from "@/lib/posts";
@@ -6,6 +6,10 @@ import { getAllPostSlugs, getPostBySlug } from "@/lib/posts";
 const SITE_URL = "https://ericavilarpsi.com.br";
 const WHATSAPP_URL =
   "https://wa.me/5582996657825?text=Ol%C3%A1%2C%20vim%20pelo%20site%20e%20gostaria%20de%20entender%20melhor%20como%20funciona%20o%20seu%20trabalho%20e%20quais%20seriam%20os%20pr%C3%B3ximos%20passos.";
+
+const DEFAULT_HERO_IMAGE = "/optimized/IMG_3092-1024.webp";
+const DEFAULT_SIGNATURE_IMAGE = "/optimized/IMG_3092-768.webp";
+const DEFAULT_AVATAR_IMAGE = "/optimized/IMG_3092-avatar-96.webp";
 
 export default function BlogPost({ post }) {
   const [storyBlob, setStoryBlob] = useState(null);
@@ -15,11 +19,12 @@ export default function BlogPost({ post }) {
   const postUrl = post ? `${SITE_URL}/blog/${post.slug}` : SITE_URL;
   const shareText = post ? `${post.title} | Erica Vilar` : "Erica Vilar";
 
-  const ogImage = getAbsoluteImageUrl(post?.thumbnail || "/IMG_3092.webp");
+  const heroImage = post?.heroImage || post?.thumbnail || DEFAULT_HERO_IMAGE;
+  const ogImage = getAbsoluteImageUrl(heroImage);
 
   const storyBackgroundImage = useMemo(() => {
-    return post?.thumbnail || "/IMG_3092.webp";
-  }, [post?.thumbnail]);
+    return heroImage || DEFAULT_HERO_IMAGE;
+  }, [heroImage]);
 
   const shareLinks = {
     whatsapp: `https://wa.me/?text=${encodeURIComponent(
@@ -35,61 +40,40 @@ export default function BlogPost({ post }) {
     )}`,
   };
 
-  useEffect(() => {
-    if (!post) return;
-
-    let cancelled = false;
-
-    async function prepareInstagramStoryImage() {
-      try {
-        setIsStoryPreparing(true);
-        setStoryBlob(null);
-
-        const blob = await createInstagramStoryImage({
-          title: post.title,
-          subtitle: post.excerpt,
-          url: postUrl,
-          category: "Blog",
-          siteName: "Erica Vilar Psicologia",
-          backgroundImageSrc: storyBackgroundImage,
-        });
-
-        if (!cancelled) {
-          setStoryBlob(blob);
-        }
-      } catch (error) {
-        console.error("Erro ao preparar imagem do Instagram:", error);
-
-        if (!cancelled) {
-          setStoryBlob(null);
-        }
-      } finally {
-        if (!cancelled) {
-          setIsStoryPreparing(false);
-        }
-      }
-    }
-
-    prepareInstagramStoryImage();
-
-    return () => {
-      cancelled = true;
-    };
-  }, [post, postUrl, storyBackgroundImage]);
-
   if (!post) {
     return null;
   }
 
+  async function prepareStoryBlob() {
+    if (storyBlob) {
+      return storyBlob;
+    }
+
+    try {
+      setIsStoryPreparing(true);
+
+      const blob = await createInstagramStoryImage({
+        title: post.title,
+        subtitle: post.excerpt,
+        url: postUrl,
+        category: "Blog",
+        siteName: "Erica Vilar Psicologia",
+        backgroundImageSrc: storyBackgroundImage,
+      });
+
+      setStoryBlob(blob);
+      return blob;
+    } catch (error) {
+      console.error("Erro ao preparar imagem do Instagram:", error);
+      setStoryBlob(null);
+      return null;
+    } finally {
+      setIsStoryPreparing(false);
+    }
+  }
+
   async function shareInstagramStory(event) {
     const button = event?.currentTarget;
-
-    if (!storyBlob) {
-      alert(
-        "A imagem ainda está sendo preparada. Aguarde alguns segundos e toque novamente."
-      );
-      return;
-    }
 
     try {
       setIsStorySharing(true);
@@ -99,9 +83,20 @@ export default function BlogPost({ post }) {
         button.classList.add("is-loading");
       }
 
+      const preparedBlob = await prepareStoryBlob();
+
+      if (!preparedBlob) {
+        alert(
+          "Não foi possível preparar a imagem agora. O link do artigo será copiado para você compartilhar manualmente."
+        );
+
+        await copyTextToClipboard(postUrl);
+        return;
+      }
+
       const fileName = createSafeFileName(post.title);
 
-      const file = new File([storyBlob], `${fileName}.png`, {
+      const file = new File([preparedBlob], `${fileName}.png`, {
         type: "image/png",
       });
 
@@ -122,7 +117,7 @@ export default function BlogPost({ post }) {
       }
 
       await copyTextToClipboard(postUrl);
-      downloadBlob(storyBlob, `${fileName}.png`);
+      downloadBlob(preparedBlob, `${fileName}.png`);
 
       alert(
         "Seu navegador não permitiu abrir o compartilhamento nativo com imagem. A imagem foi baixada e o link do artigo foi copiado."
@@ -177,6 +172,15 @@ export default function BlogPost({ post }) {
         <meta name="twitter:description" content={post.excerpt || post.title} />
         <meta name="twitter:image" content={ogImage} />
         <meta name="twitter:image:alt" content={post.title} />
+
+        {heroImage && (
+          <link
+            rel="preload"
+            as="image"
+            href={heroImage}
+            fetchPriority="high"
+          />
+        )}
       </Head>
 
       <div className="app blog-post-app">
@@ -191,7 +195,7 @@ export default function BlogPost({ post }) {
 
           <nav className="sidebar-nav" aria-label="Navegação principal">
             <Link href="/#inicio" className="nav-link">
-              <svg viewBox="0 0 24 24">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
                 <path d="M3 10.5 12 3l9 7.5" />
                 <path d="M5 9.5V21h14V9.5" />
               </svg>
@@ -199,14 +203,14 @@ export default function BlogPost({ post }) {
             </Link>
 
             <Link href="/#sobre" className="nav-link">
-              <svg viewBox="0 0 24 24">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
                 <path d="M12 21s-7-4.6-9-8.7C1.2 8.7 3.8 5 7.7 5c2.1 0 3.5 1 4.3 2.2C12.8 6 14.2 5 16.3 5c3.9 0 6.5 3.7 4.7 7.3-2 4.1-9 8.7-9 8.7Z" />
               </svg>
               <span>Sobre</span>
             </Link>
 
             <Link href="/#como-funciona" className="nav-link">
-              <svg viewBox="0 0 24 24">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
                 <path d="M4 6h16" />
                 <path d="M4 12h10" />
                 <path d="M4 18h7" />
@@ -215,14 +219,14 @@ export default function BlogPost({ post }) {
             </Link>
 
             <Link href="/#contato" className="nav-link">
-              <svg viewBox="0 0 24 24">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
                 <path d="M4 5h16v11H8l-4 4z" />
               </svg>
               <span>Contato</span>
             </Link>
 
             <Link href="/blog" className="nav-link active">
-              <svg viewBox="0 0 24 24">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
                 <path d="M5 5h14v14H5z" />
                 <path d="M8 9h8" />
                 <path d="M8 13h8" />
@@ -247,23 +251,39 @@ export default function BlogPost({ post }) {
               </div>
 
               <Link href="/" className="mobile-avatar" aria-label="Ir para a home">
-                <img src="/IMG_3092.webp" alt="Erica Vilar" />
+                <img
+                  src={DEFAULT_AVATAR_IMAGE}
+                  alt="Erica Vilar"
+                  width="96"
+                  height="96"
+                  loading="eager"
+                  decoding="async"
+                  fetchPriority="low"
+                />
               </Link>
             </div>
 
             <article className="blog-post-page">
               <section
                 className={`blog-post-hero ${
-                  !post.thumbnail ? "without-image" : ""
+                  !heroImage ? "without-image" : ""
                 }`}
               >
-                {post.thumbnail && (
+                {heroImage && (
                   <div className="blog-post-hero-media">
-                    <img src={post.thumbnail} alt={post.title} />
+                    <img
+                      src={heroImage}
+                      alt={post.title}
+                      width="1024"
+                      height="768"
+                      loading="eager"
+                      decoding="async"
+                      fetchPriority="high"
+                    />
                   </div>
                 )}
 
-                <div className="blog-post-hero-overlay" />
+                <div className="blog-post-hero-overlay" aria-hidden="true" />
 
                 <div className="blog-post-hero-inner">
                   <div className="blog-post-hero-top">
@@ -295,7 +315,14 @@ export default function BlogPost({ post }) {
               <footer className="blog-post-footer">
                 <section className="post-signature">
                   <div className="post-signature-photo">
-                    <img src="/IMG_3092.webp" alt="Erica Vilar" />
+                    <img
+                      src={DEFAULT_SIGNATURE_IMAGE}
+                      alt="Erica Vilar"
+                      width="768"
+                      height="1014"
+                      loading="lazy"
+                      decoding="async"
+                    />
                   </div>
 
                   <div className="post-signature-content">
@@ -438,9 +465,9 @@ export default function BlogPost({ post }) {
           </div>
         </main>
 
-        <nav className="mobile-tabbar mobile-tabbar-five">
+        <nav className="mobile-tabbar mobile-tabbar-five" aria-label="Navegação mobile">
           <Link href="/#inicio" className="tab-link">
-            <svg viewBox="0 0 24 24">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
               <path d="M3 10.5 12 3l9 7.5" />
               <path d="M5 9.5V21h14V9.5" />
             </svg>
@@ -448,14 +475,14 @@ export default function BlogPost({ post }) {
           </Link>
 
           <Link href="/#sobre" className="tab-link">
-            <svg viewBox="0 0 24 24">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
               <path d="M12 21s-7-4.6-9-8.7C1.2 8.7 3.8 5 7.7 5c2.1 0 3.5 1 4.3 2.2C12.8 6 14.2 5 16.3 5c3.9 0 6.5 3.7 4.7 7.3-2 4.1-9 8.7-9 8.7Z" />
             </svg>
             <span>Sobre</span>
           </Link>
 
           <Link href="/#como-funciona" className="tab-link">
-            <svg viewBox="0 0 24 24">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
               <path d="M4 6h16" />
               <path d="M4 12h10" />
               <path d="M4 18h7" />
@@ -464,7 +491,7 @@ export default function BlogPost({ post }) {
           </Link>
 
           <Link href="/blog" className="tab-link active">
-            <svg viewBox="0 0 24 24">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
               <path d="M5 5h14v14H5z" />
               <path d="M8 9h8" />
               <path d="M8 13h8" />
@@ -474,7 +501,7 @@ export default function BlogPost({ post }) {
           </Link>
 
           <Link href="/#contato" className="tab-link">
-            <svg viewBox="0 0 24 24">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
               <path d="M4 5h16v11H8l-4 4z" />
             </svg>
             <span>Contato</span>
@@ -772,7 +799,7 @@ function createSafeFileName(title) {
 
 function getAbsoluteImageUrl(imagePath) {
   if (!imagePath) {
-    return `${SITE_URL}/IMG_3092.webp`;
+    return `${SITE_URL}${DEFAULT_HERO_IMAGE}`;
   }
 
   if (imagePath.startsWith("http://") || imagePath.startsWith("https://")) {
