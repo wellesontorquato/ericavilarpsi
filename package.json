@@ -10,6 +10,7 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "firebase": "^12.12.1",
     "gotrue-js": "^1.0.1",
     "gray-matter": "^4.0.3",
     "next": "16.2.4",

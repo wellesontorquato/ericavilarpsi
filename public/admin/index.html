@@ -11,12 +11,17 @@
       :root {
         --bg: #f6eeee;
         --rose-light: #f3dedb;
+        --rose-soft: #f8efed;
         --rose: #d9b8b0;
         --rose-dark: #9b6f67;
         --text: #2f2927;
         --muted: #786460;
         --dark: #1f302f;
         --white: #ffffff;
+        --danger: #8b2b2b;
+        --success: #276b48;
+        --warning: #9a6b25;
+        --shadow: 0 26px 70px rgba(70, 45, 40, 0.13);
       }
 
       * {
@@ -37,13 +42,17 @@
         min-height: 100vh;
       }
 
-        .admin-login {
-        position: fixed;
-        inset: 0;
-        z-index: 9999;
-        display: flex;
-        align-items: center;
-        justify-content: center;
+      button,
+      input,
+      select,
+      textarea {
+        font: inherit;
+      }
+
+      .admin-login,
+      .admin-dashboard,
+      .admin-moderation {
+        min-height: 100vh;
         padding: 24px;
         overflow: hidden;
         background:
@@ -53,9 +62,20 @@
           linear-gradient(135deg, #f8efed 0%, #ecd5d0 44%, #cdaaa1 100%);
       }
 
-      .admin-login::before {
+      .admin-login {
+        position: fixed;
+        inset: 0;
+        z-index: 9999;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .admin-login::before,
+      .admin-dashboard::before,
+      .admin-moderation::before {
         content: "";
-        position: absolute;
+        position: fixed;
         width: 620px;
         height: 620px;
         border-radius: 999px;
@@ -63,11 +83,14 @@
         bottom: -250px;
         background: rgba(255, 255, 255, 0.22);
         filter: blur(3px);
+        pointer-events: none;
       }
 
-      .admin-login::after {
+      .admin-login::after,
+      .admin-dashboard::after,
+      .admin-moderation::after {
         content: "";
-        position: absolute;
+        position: fixed;
         width: 460px;
         height: 460px;
         border-radius: 999px;
@@ -75,6 +98,7 @@
         top: -150px;
         background: rgba(255, 255, 255, 0.18);
         filter: blur(3px);
+        pointer-events: none;
       }
 
       .login-card {
@@ -90,7 +114,7 @@
         background: rgba(255, 255, 255, 0.72);
         border: 1px solid rgba(155, 111, 103, 0.14);
         box-shadow:
-          0 26px 70px rgba(70, 45, 40, 0.13),
+          var(--shadow),
           inset 0 1px 0 rgba(255, 255, 255, 0.7);
         backdrop-filter: blur(18px);
       }
@@ -165,33 +189,90 @@
         line-height: 1.6;
       }
 
-      .login-button {
+      .login-button,
+      .primary-button,
+      .secondary-button,
+      .danger-button,
+      .small-button,
+      .ghost-button {
+        border: 0;
+        cursor: pointer;
+        font-weight: 800;
+        transition:
+          transform 0.2s ease,
+          box-shadow 0.2s ease,
+          opacity 0.2s ease,
+          background 0.2s ease;
+      }
+
+      .login-button,
+      .primary-button {
         width: 100%;
         min-height: 56px;
-        border: 0;
         border-radius: 18px;
-        cursor: pointer;
         padding: 0 22px;
         color: #fff;
         background: linear-gradient(135deg, #1e302f, #30413f);
         font-size: 0.98rem;
-        font-weight: 800;
         box-shadow: 0 16px 34px rgba(31, 48, 47, 0.2);
-        transition:
-          transform 0.2s ease,
-          box-shadow 0.2s ease,
-          opacity 0.2s ease;
       }
 
-      .login-button:hover {
+      .login-button:hover,
+      .primary-button:hover,
+      .secondary-button:hover,
+      .danger-button:hover,
+      .small-button:hover,
+      .ghost-button:hover {
         transform: translateY(-2px);
-        box-shadow: 0 20px 42px rgba(31, 48, 47, 0.26);
       }
 
-      .login-button:disabled {
-        opacity: 0.7;
+      .login-button:disabled,
+      .primary-button:disabled,
+      .secondary-button:disabled,
+      .danger-button:disabled,
+      .small-button:disabled,
+      .ghost-button:disabled {
+        opacity: 0.62;
         cursor: not-allowed;
         transform: none;
+      }
+
+      .secondary-button {
+        width: 100%;
+        min-height: 52px;
+        border-radius: 18px;
+        padding: 0 20px;
+        color: var(--text);
+        background: rgba(255, 255, 255, 0.72);
+        border: 1px solid rgba(155, 111, 103, 0.16);
+        font-size: 0.96rem;
+      }
+
+      .danger-button {
+        min-height: 38px;
+        border-radius: 999px;
+        padding: 0 13px;
+        color: #fff;
+        background: #8b2b2b;
+        font-size: 0.76rem;
+      }
+
+      .small-button {
+        min-height: 38px;
+        border-radius: 999px;
+        padding: 0 13px;
+        color: #fff;
+        background: var(--dark);
+        font-size: 0.76rem;
+      }
+
+      .ghost-button {
+        min-height: 38px;
+        border-radius: 999px;
+        padding: 0 13px;
+        color: var(--text);
+        background: rgba(46, 38, 40, 0.08);
+        font-size: 0.76rem;
       }
 
       .back-link {
@@ -223,7 +304,7 @@
         text-align: center;
       }
 
-        .decap-loading {
+      .decap-loading {
         position: fixed;
         inset: 0;
         z-index: 9999;
@@ -239,29 +320,458 @@
         display: flex;
       }
 
-      .admin-login.is-hidden {
+      .admin-login.is-hidden,
+      .admin-dashboard.is-hidden,
+      .admin-moderation.is-hidden {
         display: none;
       }
 
+      .admin-dashboard {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .dashboard-card {
+        position: relative;
+        z-index: 2;
+        width: min(100%, 1080px);
+        padding: 38px;
+        border-radius: 34px;
+        background: rgba(255, 255, 255, 0.72);
+        border: 1px solid rgba(155, 111, 103, 0.14);
+        box-shadow:
+          var(--shadow),
+          inset 0 1px 0 rgba(255, 255, 255, 0.7);
+        backdrop-filter: blur(18px);
+      }
+
+      .dashboard-top {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 24px;
+        margin-bottom: 30px;
+      }
+
+      .dashboard-top h1 {
+        font-size: clamp(2.2rem, 5vw, 4.2rem);
+      }
+
+      .dashboard-top p {
+        max-width: 650px;
+        margin: 16px 0 0;
+        color: var(--muted);
+        line-height: 1.75;
+      }
+
+      .dashboard-user {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 12px;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.58);
+        border: 1px solid rgba(155, 111, 103, 0.12);
+        color: var(--muted);
+        font-size: 0.82rem;
+        white-space: nowrap;
+      }
+
+      .dashboard-actions {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 18px;
+      }
+
+      .dashboard-option {
+        min-height: 230px;
+        padding: 28px;
+        border-radius: 28px;
+        background:
+          radial-gradient(circle at top right, rgba(255, 255, 255, 0.82), transparent 38%),
+          rgba(255, 255, 255, 0.52);
+        border: 1px solid rgba(155, 111, 103, 0.14);
+        text-align: left;
+      }
+
+      .dashboard-option span {
+        display: inline-flex;
+        margin-bottom: 16px;
+        color: var(--rose-dark);
+        font-size: 0.76rem;
+        font-weight: 900;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+      }
+
+      .dashboard-option h2 {
+        margin: 0 0 12px;
+        font-family: Georgia, "Times New Roman", serif;
+        color: var(--text);
+        font-size: clamp(1.8rem, 3vw, 2.65rem);
+        line-height: 1;
+        letter-spacing: -0.04em;
+      }
+
+      .dashboard-option p {
+        margin: 0 0 24px;
+        color: var(--muted);
+        line-height: 1.7;
+      }
+
+      .dashboard-footer {
+        display: flex;
+        justify-content: space-between;
+        gap: 14px;
+        flex-wrap: wrap;
+        margin-top: 24px;
+      }
+
+      .dashboard-footer a {
+        color: #755f5a;
+        text-decoration: none;
+        font-weight: 800;
+      }
+
+      .admin-moderation {
+        position: relative;
+        z-index: 1;
+      }
+
+      .moderation-shell {
+        position: relative;
+        z-index: 2;
+        width: min(100%, 1180px);
+        margin: 0 auto;
+      }
+
+      .moderation-header {
+        display: flex;
+        justify-content: space-between;
+        gap: 24px;
+        align-items: flex-start;
+        margin-bottom: 22px;
+        padding: 28px;
+        border-radius: 30px;
+        background: rgba(255, 255, 255, 0.72);
+        border: 1px solid rgba(155, 111, 103, 0.14);
+        box-shadow: 0 18px 46px rgba(70, 45, 40, 0.1);
+        backdrop-filter: blur(18px);
+      }
+
+      .moderation-header h1 {
+        font-size: clamp(2rem, 4vw, 3.7rem);
+      }
+
+      .moderation-header p {
+        max-width: 670px;
+        margin: 14px 0 0;
+        color: var(--muted);
+        line-height: 1.7;
+      }
+
+      .moderation-header-actions {
+        display: grid;
+        gap: 10px;
+        min-width: 220px;
+      }
+
+      .firebase-login-card,
+      .comments-panel {
+        padding: 26px;
+        border-radius: 30px;
+        background: rgba(255, 255, 255, 0.74);
+        border: 1px solid rgba(155, 111, 103, 0.14);
+        box-shadow: 0 18px 46px rgba(70, 45, 40, 0.1);
+        backdrop-filter: blur(18px);
+      }
+
+      .firebase-login-card {
+        width: min(100%, 620px);
+        margin: 26px auto 0;
+      }
+
+      .firebase-login-card h2,
+      .comments-panel h2 {
+        margin: 0 0 10px;
+        font-family: Georgia, "Times New Roman", serif;
+        font-size: 2rem;
+        line-height: 1;
+        letter-spacing: -0.04em;
+      }
+
+      .firebase-login-card p {
+        margin: 0 0 18px;
+        color: var(--muted);
+        line-height: 1.65;
+      }
+
+      .firebase-login-form {
+        display: grid;
+        gap: 10px;
+        margin-top: 14px;
+      }
+
+      .firebase-login-form input {
+        width: 100%;
+        min-height: 48px;
+        border: 1px solid rgba(155, 111, 103, 0.16);
+        border-radius: 16px;
+        padding: 0 14px;
+        color: var(--text);
+        background: rgba(255, 255, 255, 0.78);
+        outline: none;
+      }
+
+      .firebase-login-form input:focus {
+        border-color: rgba(155, 111, 103, 0.46);
+        box-shadow: 0 0 0 4px rgba(155, 111, 103, 0.1);
+      }
+
+      .login-divider {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin: 18px 0;
+        color: var(--muted);
+        font-size: 0.76rem;
+        font-weight: 800;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+      }
+
+      .login-divider::before,
+      .login-divider::after {
+        content: "";
+        height: 1px;
+        flex: 1;
+        background: rgba(155, 111, 103, 0.16);
+      }
+
+      .message {
+        display: none;
+        margin-top: 14px;
+        padding: 12px 14px;
+        border-radius: 16px;
+        font-size: 0.88rem;
+        line-height: 1.5;
+      }
+
+      .message.is-visible {
+        display: block;
+      }
+
+      .message.error {
+        color: var(--danger);
+        background: rgba(160, 45, 45, 0.09);
+        border: 1px solid rgba(160, 45, 45, 0.16);
+      }
+
+      .message.success {
+        color: var(--success);
+        background: rgba(45, 125, 82, 0.1);
+        border: 1px solid rgba(45, 125, 82, 0.18);
+      }
+
+      .comments-panel {
+        margin-top: 22px;
+      }
+
+      .comments-toolbar {
+        display: flex;
+        justify-content: space-between;
+        gap: 14px;
+        flex-wrap: wrap;
+        align-items: center;
+        margin: 20px 0;
+      }
+
+      .comments-tabs {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+
+      .tab-button {
+        min-height: 38px;
+        border: 1px solid rgba(155, 111, 103, 0.16);
+        border-radius: 999px;
+        padding: 0 14px;
+        background: rgba(255, 255, 255, 0.62);
+        color: var(--muted);
+        cursor: pointer;
+        font-size: 0.78rem;
+        font-weight: 900;
+      }
+
+      .tab-button.is-active {
+        background: var(--text);
+        color: #fff;
+        border-color: transparent;
+      }
+
+      .comments-summary {
+        color: var(--muted);
+        font-size: 0.84rem;
+        font-weight: 800;
+      }
+
+      .comments-list {
+        display: grid;
+        gap: 14px;
+      }
+
+      .comment-card {
+        padding: 18px;
+        border-radius: 24px;
+        background: rgba(255, 255, 255, 0.72);
+        border: 1px solid rgba(155, 111, 103, 0.12);
+      }
+
+      .comment-card-header {
+        display: grid;
+        grid-template-columns: 42px minmax(0, 1fr) auto;
+        gap: 12px;
+        align-items: center;
+        margin-bottom: 14px;
+      }
+
+      .comment-avatar {
+        width: 42px;
+        height: 42px;
+        border-radius: 999px;
+        overflow: hidden;
+        display: grid;
+        place-items: center;
+        background: linear-gradient(135deg, #e3cbd2, #f2e3e6);
+        color: var(--rose-dark);
+        font-weight: 900;
+      }
+
+      .comment-avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .comment-author {
+        min-width: 0;
+        display: grid;
+        gap: 3px;
+      }
+
+      .comment-author strong {
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        font-size: 0.94rem;
+      }
+
+      .comment-author span {
+        color: var(--muted);
+        font-size: 0.78rem;
+      }
+
+      .status-badge {
+        justify-self: end;
+        border-radius: 999px;
+        padding: 6px 10px;
+        font-size: 0.68rem;
+        font-weight: 900;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      .status-badge.pending {
+        color: #8a5c17;
+        background: rgba(154, 107, 37, 0.12);
+      }
+
+      .status-badge.approved {
+        color: #276b48;
+        background: rgba(45, 125, 82, 0.12);
+      }
+
+      .status-badge.rejected {
+        color: #8b2b2b;
+        background: rgba(160, 45, 45, 0.1);
+      }
+
+      .comment-text {
+        margin: 0;
+        color: var(--muted);
+        line-height: 1.72;
+        white-space: pre-wrap;
+      }
+
+      .comment-meta {
+        margin-top: 12px;
+        color: #8b716b;
+        font-size: 0.78rem;
+        line-height: 1.5;
+      }
+
+      .comment-actions {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        margin-top: 16px;
+      }
+
+      .empty-state {
+        padding: 26px;
+        border-radius: 24px;
+        text-align: center;
+        color: var(--muted);
+        background: rgba(248, 235, 231, 0.48);
+        border: 1px solid rgba(155, 111, 103, 0.1);
+      }
+
       @media (max-width: 860px) {
-        .login-card {
+        .login-card,
+        .dashboard-card {
           grid-template-columns: 1fr;
           padding: 30px;
           gap: 24px;
         }
 
-        .action-panel {
-          padding: 20px;
+        .dashboard-top,
+        .moderation-header {
+          display: grid;
+        }
+
+        .dashboard-actions {
+          grid-template-columns: 1fr;
+        }
+
+        .comment-card-header {
+          grid-template-columns: 42px minmax(0, 1fr);
+        }
+
+        .status-badge {
+          grid-column: 1 / -1;
+          justify-self: start;
+        }
+
+        .moderation-header-actions {
+          width: 100%;
         }
       }
 
       @media (max-width: 520px) {
-        .admin-login {
+        .admin-login,
+        .admin-dashboard,
+        .admin-moderation {
           padding: 16px;
         }
 
-        .login-card {
-          padding: 24px;
+        .login-card,
+        .dashboard-card,
+        .moderation-header,
+        .firebase-login-card,
+        .comments-panel {
+          padding: 22px;
           border-radius: 26px;
         }
 
@@ -302,11 +812,11 @@
         </div>
 
         <div class="action-panel">
-          <h2>Entrar no Decap CMS</h2>
+          <h2>Entrar no painel</h2>
 
           <p>
-            Faça login com sua conta autorizada para acessar a área de edição do
-            conteúdo.
+            Faça login com sua conta autorizada para acessar a área de edição e
+            moderação do site.
           </p>
 
           <button id="loginButton" class="login-button" type="button">
@@ -322,144 +832,809 @@
       </div>
     </section>
 
+    <section id="adminDashboard" class="admin-dashboard is-hidden">
+      <div class="dashboard-card">
+        <div class="dashboard-top">
+          <div>
+            <div class="ev-badge">EV</div>
+
+            <span class="kicker">Painel Administrativo</span>
+
+            <h1>O que deseja fazer?</h1>
+
+            <p>
+              Gerencie os artigos do blog pelo Decap CMS ou modere os
+              comentários enviados pelos leitores.
+            </p>
+          </div>
+
+          <div id="dashboardUser" class="dashboard-user">
+            Usuária autenticada
+          </div>
+        </div>
+
+        <div class="dashboard-actions">
+          <article class="dashboard-option">
+            <span>Blog</span>
+
+            <h2>Editar artigos</h2>
+
+            <p>
+              Abrir o Decap CMS para criar, editar, revisar e publicar artigos
+              do blog.
+            </p>
+
+            <button id="openCmsButton" type="button" class="primary-button">
+              Abrir editor do blog
+            </button>
+          </article>
+
+          <article class="dashboard-option">
+            <span>Comentários</span>
+
+            <h2>Moderar comentários</h2>
+
+            <p>
+              Visualizar comentários pendentes, aprovar, rejeitar ou excluir
+              comentários publicados.
+            </p>
+
+            <button id="openModerationButton" type="button" class="secondary-button">
+              Abrir moderação
+            </button>
+          </article>
+        </div>
+
+        <div class="dashboard-footer">
+          <a href="/">← Voltar ao site</a>
+          <a href="#" id="netlifyLogoutLink">Sair do painel</a>
+        </div>
+      </div>
+    </section>
+
+    <section id="adminModeration" class="admin-moderation is-hidden">
+      <div class="moderation-shell">
+        <header class="moderation-header">
+          <div>
+            <span class="kicker">Moderação</span>
+
+            <h1>Comentários do blog</h1>
+
+            <p>
+              Aprove, rejeite ou exclua comentários enviados pelos leitores. Os
+              comentários só aparecem publicamente quando estão com status
+              aprovado.
+            </p>
+          </div>
+
+          <div class="moderation-header-actions">
+            <button id="backToDashboardButton" type="button" class="secondary-button">
+              ← Voltar ao painel
+            </button>
+
+            <button id="refreshCommentsButton" type="button" class="ghost-button">
+              Atualizar comentários
+            </button>
+          </div>
+        </header>
+
+        <div id="firebaseLoginCard" class="firebase-login-card">
+          <h2>Entrar na moderação</h2>
+
+          <p>
+            Para proteger os comentários, entre com uma conta administrativa do
+            Firebase.
+          </p>
+
+          <button id="firebaseGoogleButton" type="button" class="primary-button">
+            Entrar com Google
+          </button>
+
+          <div class="login-divider">ou</div>
+
+          <form id="firebaseEmailForm" class="firebase-login-form">
+            <input id="firebaseEmail" type="email" placeholder="E-mail" autocomplete="email" />
+            <input id="firebasePassword" type="password" placeholder="Senha" autocomplete="current-password" />
+
+            <button type="submit" class="secondary-button">
+              Entrar com e-mail e senha
+            </button>
+
+            <button id="resetPasswordButton" type="button" class="ghost-button">
+              Enviar recuperação de senha
+            </button>
+          </form>
+
+          <div id="firebaseMessage" class="message"></div>
+        </div>
+
+        <div id="commentsPanel" class="comments-panel is-hidden">
+          <div class="comments-toolbar">
+            <div class="comments-tabs">
+              <button class="tab-button is-active" data-status="pending" type="button">
+                Pendentes
+              </button>
+              <button class="tab-button" data-status="approved" type="button">
+                Aprovados
+              </button>
+              <button class="tab-button" data-status="rejected" type="button">
+                Rejeitados
+              </button>
+              <button class="tab-button" data-status="all" type="button">
+                Todos
+              </button>
+            </div>
+
+            <div id="commentsSummary" class="comments-summary">
+              Carregando...
+            </div>
+          </div>
+
+          <div id="commentsList" class="comments-list"></div>
+
+          <div id="commentsEmpty" class="empty-state is-hidden">
+            Nenhum comentário encontrado nesta categoria.
+          </div>
+        </div>
+      </div>
+    </section>
+
     <div id="decapLoading" class="decap-loading">
       Carregando painel administrativo...
     </div>
 
     <script>
-        const adminLogin = document.getElementById("adminLogin");
-        const decapLoading = document.getElementById("decapLoading");
-        const loginButton = document.getElementById("loginButton");
-        const statusText = document.getElementById("statusText");
+      const adminLogin = document.getElementById("adminLogin");
+      const adminDashboard = document.getElementById("adminDashboard");
+      const adminModeration = document.getElementById("adminModeration");
+      const decapLoading = document.getElementById("decapLoading");
 
-        let cmsLoaded = false;
+      const loginButton = document.getElementById("loginButton");
+      const statusText = document.getElementById("statusText");
+      const dashboardUser = document.getElementById("dashboardUser");
+      const openCmsButton = document.getElementById("openCmsButton");
+      const openModerationButton = document.getElementById("openModerationButton");
+      const netlifyLogoutLink = document.getElementById("netlifyLogoutLink");
+      const backToDashboardButton = document.getElementById("backToDashboardButton");
+      const refreshCommentsButton = document.getElementById("refreshCommentsButton");
 
-        function showLogin() {
-            adminLogin.classList.remove("is-hidden");
-            decapLoading.classList.remove("is-visible");
+      const firebaseLoginCard = document.getElementById("firebaseLoginCard");
+      const firebaseGoogleButton = document.getElementById("firebaseGoogleButton");
+      const firebaseEmailForm = document.getElementById("firebaseEmailForm");
+      const firebaseEmail = document.getElementById("firebaseEmail");
+      const firebasePassword = document.getElementById("firebasePassword");
+      const resetPasswordButton = document.getElementById("resetPasswordButton");
+      const firebaseMessage = document.getElementById("firebaseMessage");
 
-            if (loginButton) {
-            loginButton.disabled = false;
-            }
+      const commentsPanel = document.getElementById("commentsPanel");
+      const commentsList = document.getElementById("commentsList");
+      const commentsEmpty = document.getElementById("commentsEmpty");
+      const commentsSummary = document.getElementById("commentsSummary");
+      const tabButtons = document.querySelectorAll(".tab-button");
 
-            if (statusText) {
-            statusText.textContent = "Aguardando login.";
-            }
+      const ADMIN_EMAILS = [
+        "welleson.ism@gmail.com",
+        "ericavilar2014@icloud.com",
+      ];
+
+      let cmsLoaded = false;
+      let currentStatusFilter = "pending";
+      let allComments = [];
+      let firebaseApi = null;
+      let currentFirebaseUser = null;
+
+      function showLogin() {
+        adminLogin.classList.remove("is-hidden");
+        adminDashboard.classList.add("is-hidden");
+        adminModeration.classList.add("is-hidden");
+        decapLoading.classList.remove("is-visible");
+
+        if (loginButton) {
+          loginButton.disabled = false;
         }
 
-        function hideLogin() {
-            adminLogin.classList.add("is-hidden");
+        if (statusText) {
+          statusText.textContent = "Aguardando login.";
+        }
+      }
+
+      function hideLogin() {
+        adminLogin.classList.add("is-hidden");
+      }
+
+      function showDashboard() {
+        adminLogin.classList.add("is-hidden");
+        adminDashboard.classList.remove("is-hidden");
+        adminModeration.classList.add("is-hidden");
+        decapLoading.classList.remove("is-visible");
+
+        const user = window.netlifyIdentity?.currentUser();
+
+        if (dashboardUser) {
+          dashboardUser.textContent = user?.email
+            ? `Netlify: ${user.email}`
+            : "Usuária autenticada";
+        }
+      }
+
+      function showModeration() {
+        adminLogin.classList.add("is-hidden");
+        adminDashboard.classList.add("is-hidden");
+        adminModeration.classList.remove("is-hidden");
+        decapLoading.classList.remove("is-visible");
+      }
+
+      function showLoading() {
+        adminLogin.classList.add("is-hidden");
+        adminDashboard.classList.add("is-hidden");
+        adminModeration.classList.add("is-hidden");
+        decapLoading.classList.add("is-visible");
+      }
+
+      function loadCMS() {
+        if (cmsLoaded) return;
+
+        cmsLoaded = true;
+        showLoading();
+
+        const script = document.createElement("script");
+        script.src = "https://unpkg.com/decap-cms@^3/dist/decap-cms.js";
+        script.async = true;
+
+        script.onload = function () {
+          decapLoading.classList.remove("is-visible");
+        };
+
+        script.onerror = function () {
+          cmsLoaded = false;
+          showDashboard();
+
+          if (statusText) {
+            statusText.textContent =
+              "Não foi possível carregar o painel. Tente novamente.";
+          }
+        };
+
+        document.body.appendChild(script);
+      }
+
+      function initIdentity() {
+        if (!window.netlifyIdentity) {
+          if (statusText) {
+            statusText.textContent =
+              "Não foi possível carregar o login. Atualize a página.";
+          }
+
+          if (loginButton) {
+            loginButton.disabled = true;
+          }
+
+          return;
         }
 
-        function showLoading() {
-            adminLogin.classList.add("is-hidden");
-            decapLoading.classList.add("is-visible");
-        }
-
-        function loadCMS() {
-            if (cmsLoaded) return;
-
-            cmsLoaded = true;
-            showLoading();
-
-            const script = document.createElement("script");
-            script.src = "https://unpkg.com/decap-cms@^3/dist/decap-cms.js";
-            script.async = true;
-
-            script.onload = function () {
-            decapLoading.classList.remove("is-visible");
-            };
-
-            script.onerror = function () {
-            cmsLoaded = false;
+        window.netlifyIdentity.on("init", function (user) {
+          if (user) {
+            showDashboard();
+          } else {
             showLogin();
+          }
+        });
 
-            if (statusText) {
-                statusText.textContent =
-                "Não foi possível carregar o painel. Tente novamente.";
-            }
-            };
+        window.netlifyIdentity.on("login", function () {
+          if (loginButton) {
+            loginButton.disabled = true;
+          }
 
-            document.body.appendChild(script);
-        }
+          if (statusText) {
+            statusText.textContent = "Login realizado. Abrindo painel...";
+          }
 
-        function initIdentity() {
-            if (!window.netlifyIdentity) {
-            if (statusText) {
-                statusText.textContent =
-                "Não foi possível carregar o login. Atualize a página.";
-            }
+          window.netlifyIdentity.close();
+          showDashboard();
+        });
 
-            if (loginButton) {
-                loginButton.disabled = true;
-            }
+        window.netlifyIdentity.on("logout", function () {
+          window.location.reload();
+        });
 
-            return;
-            }
+        window.netlifyIdentity.on("close", function () {
+          const user = window.netlifyIdentity.currentUser();
 
-            window.netlifyIdentity.on("init", function (user) {
-            if (user) {
-                loadCMS();
-            } else {
-                showLogin();
-            }
-            });
+          if (!user && !cmsLoaded) {
+            showLogin();
+          }
+        });
 
-            window.netlifyIdentity.on("login", function () {
-            if (loginButton) {
-                loginButton.disabled = true;
-            }
+        window.netlifyIdentity.init();
 
-            if (statusText) {
-                statusText.textContent = "Login realizado. Abrindo painel...";
-            }
+        loginButton.addEventListener("click", function () {
+          if (!window.netlifyIdentity) return;
 
-            window.netlifyIdentity.close();
-            loadCMS();
-            });
+          loginButton.disabled = true;
+          statusText.textContent = "Abrindo janela de login...";
 
-            window.netlifyIdentity.on("logout", function () {
-            window.location.reload();
-            });
+          hideLogin();
 
-            window.netlifyIdentity.on("close", function () {
+          setTimeout(function () {
+            window.netlifyIdentity.open("login");
+          }, 80);
+
+          setTimeout(function () {
             const user = window.netlifyIdentity.currentUser();
 
             if (!user && !cmsLoaded) {
-                showLogin();
+              loginButton.disabled = false;
+              statusText.textContent = "Aguardando login.";
             }
-            });
+          }, 1500);
+        });
+      }
 
-            window.netlifyIdentity.init();
+      function showFirebaseMessage(text, type = "error") {
+        firebaseMessage.textContent = text;
+        firebaseMessage.className = `message ${type} is-visible`;
+      }
 
-            loginButton.addEventListener("click", function () {
-            if (!window.netlifyIdentity) return;
+      function clearFirebaseMessage() {
+        firebaseMessage.textContent = "";
+        firebaseMessage.className = "message";
+      }
 
-            loginButton.disabled = true;
-            statusText.textContent = "Abrindo janela de login...";
+      function isAdminEmail(email) {
+        return ADMIN_EMAILS.includes(String(email || "").toLowerCase());
+      }
 
-            /*
-                Escondemos a tela bonita antes de abrir o Netlify Identity.
-                Isso evita que o modal de login fique escondido atrás dela.
-            */
-            hideLogin();
+      function getInitials(name = "") {
+        const parts = String(name).trim().split(/\s+/).filter(Boolean);
 
-            setTimeout(function () {
-                window.netlifyIdentity.open("login");
-            }, 80);
+        if (parts.length === 0) return "EV";
+        if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
 
-            setTimeout(function () {
-                const user = window.netlifyIdentity.currentUser();
+        return `${parts[0][0]}${parts[parts.length - 1][0]}`.toUpperCase();
+      }
 
-                if (!user && !cmsLoaded) {
-                loginButton.disabled = false;
-                statusText.textContent = "Aguardando login.";
-                }
-            }, 1500);
-            });
+      function formatDate(value) {
+        try {
+          if (!value) return "Sem data";
+
+          const date =
+            typeof value.toDate === "function" ? value.toDate() : new Date(value);
+
+          if (Number.isNaN(date.getTime())) return "Sem data";
+
+          return new Intl.DateTimeFormat("pt-BR", {
+            day: "2-digit",
+            month: "long",
+            year: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
+          }).format(date);
+        } catch {
+          return "Sem data";
+        }
+      }
+
+      function normalizeFirebaseError(error) {
+        const code = error?.code || "";
+
+        if (code.includes("auth/invalid-credential")) {
+          return "E-mail ou senha inválidos.";
         }
 
-        initIdentity();
+        if (code.includes("auth/user-not-found")) {
+          return "Usuário não encontrado.";
+        }
+
+        if (code.includes("auth/wrong-password")) {
+          return "Senha incorreta.";
+        }
+
+        if (code.includes("auth/popup-closed-by-user")) {
+          return "Login cancelado.";
+        }
+
+        if (code.includes("permission-denied")) {
+          return "Você não tem permissão para acessar esta área.";
+        }
+
+        return "Ocorreu um erro. Tente novamente.";
+      }
+
+      function showCommentsPanel() {
+        firebaseLoginCard.classList.add("is-hidden");
+        commentsPanel.classList.remove("is-hidden");
+      }
+
+      function showFirebaseLogin() {
+        firebaseLoginCard.classList.remove("is-hidden");
+        commentsPanel.classList.add("is-hidden");
+      }
+
+      function setLoadingComments(isLoading) {
+        commentsSummary.textContent = isLoading
+          ? "Carregando comentários..."
+          : `${getFilteredComments().length} comentário(s)`;
+      }
+
+      function getFilteredComments() {
+        if (currentStatusFilter === "all") return allComments;
+
+        return allComments.filter(
+          (comment) => comment.status === currentStatusFilter
+        );
+      }
+
+      function renderComments() {
+        const filtered = getFilteredComments();
+
+        commentsSummary.textContent = `${filtered.length} comentário(s)`;
+        commentsList.innerHTML = "";
+
+        if (filtered.length === 0) {
+          commentsEmpty.classList.remove("is-hidden");
+          return;
+        }
+
+        commentsEmpty.classList.add("is-hidden");
+
+        filtered.forEach((comment) => {
+          const card = document.createElement("article");
+          card.className = "comment-card";
+
+          const avatarHtml = comment.userPhoto
+            ? `<img src="${escapeHtml(comment.userPhoto)}" alt="${escapeHtml(comment.userName)}" />`
+            : `<span>${escapeHtml(getInitials(comment.userName))}</span>`;
+
+          card.innerHTML = `
+            <div class="comment-card-header">
+              <div class="comment-avatar">${avatarHtml}</div>
+
+              <div class="comment-author">
+                <strong>${escapeHtml(comment.userName || "Leitora")}</strong>
+                <span>${escapeHtml(comment.userEmail || "E-mail não informado")}</span>
+              </div>
+
+              <span class="status-badge ${escapeHtml(comment.status)}">
+                ${getStatusLabel(comment.status)}
+              </span>
+            </div>
+
+            <p class="comment-text">${escapeHtml(comment.text || "")}</p>
+
+            <div class="comment-meta">
+              <strong>Post:</strong> ${escapeHtml(comment.postSlug || "")}
+              <br />
+              <strong>Data:</strong> ${escapeHtml(formatDate(comment.createdAt))}
+            </div>
+
+            <div class="comment-actions"></div>
+          `;
+
+          const actions = card.querySelector(".comment-actions");
+
+          if (comment.status !== "approved") {
+            actions.appendChild(
+              createActionButton("Aprovar", "small-button", function () {
+                updateCommentStatus(comment, "approved");
+              })
+            );
+          }
+
+          if (comment.status !== "rejected") {
+            actions.appendChild(
+              createActionButton("Rejeitar", "ghost-button", function () {
+                updateCommentStatus(comment, "rejected");
+              })
+            );
+          }
+
+          if (comment.status !== "pending") {
+            actions.appendChild(
+              createActionButton("Voltar para pendente", "ghost-button", function () {
+                updateCommentStatus(comment, "pending");
+              })
+            );
+          }
+
+          actions.appendChild(
+            createActionButton("Excluir", "danger-button", function () {
+              deleteComment(comment);
+            })
+          );
+
+          commentsList.appendChild(card);
+        });
+      }
+
+      function createActionButton(label, className, onClick) {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = className;
+        button.textContent = label;
+        button.addEventListener("click", onClick);
+        return button;
+      }
+
+      function getStatusLabel(status) {
+        if (status === "approved") return "Aprovado";
+        if (status === "rejected") return "Rejeitado";
+        return "Pendente";
+      }
+
+      function escapeHtml(value) {
+        return String(value || "")
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;")
+          .replace(/'/g, "&#039;");
+      }
+
+      async function loadComments() {
+        if (!firebaseApi || !currentFirebaseUser) return;
+
+        try {
+          setLoadingComments(true);
+
+          const snapshot = await firebaseApi.getDocs(
+            firebaseApi.collectionGroup(firebaseApi.db, "comments")
+          );
+
+          allComments = snapshot.docs
+            .map((item) => {
+              const data = item.data();
+
+              return {
+                id: item.id,
+                ref: item.ref,
+                postSlug: data.postSlug || "",
+                text: data.text || "",
+                status: data.status || "pending",
+                userName: data.userName || "Leitora",
+                userEmail: data.userEmail || "",
+                userPhoto: data.userPhoto || "",
+                createdAt: data.createdAt || null,
+                updatedAt: data.updatedAt || null,
+              };
+            })
+            .sort((a, b) => {
+              const dateA =
+                a.createdAt && typeof a.createdAt.toDate === "function"
+                  ? a.createdAt.toDate().getTime()
+                  : 0;
+
+              const dateB =
+                b.createdAt && typeof b.createdAt.toDate === "function"
+                  ? b.createdAt.toDate().getTime()
+                  : 0;
+
+              return dateB - dateA;
+            });
+
+          renderComments();
+        } catch (error) {
+          console.error("Erro ao carregar comentários:", error);
+          showFirebaseMessage(normalizeFirebaseError(error), "error");
+          commentsSummary.textContent = "Erro ao carregar";
+        }
+      }
+
+      async function updateCommentStatus(comment, status) {
+        if (!firebaseApi) return;
+
+        const confirmMessage =
+          status === "approved"
+            ? "Aprovar este comentário?"
+            : status === "rejected"
+              ? "Rejeitar este comentário?"
+              : "Voltar este comentário para pendente?";
+
+        if (!confirm(confirmMessage)) return;
+
+        try {
+          await firebaseApi.updateDoc(comment.ref, {
+            status,
+            updatedAt: firebaseApi.serverTimestamp(),
+          });
+
+          comment.status = status;
+          renderComments();
+        } catch (error) {
+          console.error("Erro ao atualizar comentário:", error);
+          alert(normalizeFirebaseError(error));
+        }
+      }
+
+      async function deleteComment(comment) {
+        if (!firebaseApi) return;
+
+        if (!confirm("Excluir este comentário definitivamente?")) return;
+
+        try {
+          await firebaseApi.deleteDoc(comment.ref);
+          allComments = allComments.filter((item) => item.id !== comment.id);
+          renderComments();
+        } catch (error) {
+          console.error("Erro ao excluir comentário:", error);
+          alert(normalizeFirebaseError(error));
+        }
+      }
+
+      openCmsButton.addEventListener("click", loadCMS);
+
+      openModerationButton.addEventListener("click", function () {
+        showModeration();
+
+        if (currentFirebaseUser && isAdminEmail(currentFirebaseUser.email)) {
+          showCommentsPanel();
+          loadComments();
+        } else {
+          showFirebaseLogin();
+        }
+      });
+
+      backToDashboardButton.addEventListener("click", showDashboard);
+
+      refreshCommentsButton.addEventListener("click", loadComments);
+
+      netlifyLogoutLink.addEventListener("click", function (event) {
+        event.preventDefault();
+
+        if (window.netlifyIdentity) {
+          window.netlifyIdentity.logout();
+        }
+      });
+
+      tabButtons.forEach((button) => {
+        button.addEventListener("click", function () {
+          tabButtons.forEach((item) => item.classList.remove("is-active"));
+          button.classList.add("is-active");
+          currentStatusFilter = button.dataset.status || "pending";
+          renderComments();
+        });
+      });
+
+      initIdentity();
+    </script>
+
+    <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
+      import {
+        getAuth,
+        GoogleAuthProvider,
+        signInWithPopup,
+        signInWithEmailAndPassword,
+        sendPasswordResetEmail,
+        signOut,
+        onAuthStateChanged,
+      } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
+      import {
+        getFirestore,
+        collectionGroup,
+        getDocs,
+        updateDoc,
+        deleteDoc,
+        serverTimestamp,
+      } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
+
+      const firebaseConfig = {
+        apiKey: "AIzaSyCFnnYHY6hpYAhoFAngQeD-lDVJh7ZXxnc",
+        authDomain: "ericavilarpsi.firebaseapp.com",
+        projectId: "ericavilarpsi",
+        storageBucket: "ericavilarpsi.firebasestorage.app",
+        messagingSenderId: "218150096075",
+        appId: "1:218150096075:web:7213231facb321eeaddf4e",
+        measurementId: "G-70339X4X6K",
+      };
+
+      const app = initializeApp(firebaseConfig);
+      const auth = getAuth(app);
+      const db = getFirestore(app);
+      const googleProvider = new GoogleAuthProvider();
+
+      window.firebaseApiReady = true;
+
+      firebaseApi = {
+        auth,
+        db,
+        googleProvider,
+        signInWithPopup,
+        signInWithEmailAndPassword,
+        sendPasswordResetEmail,
+        signOut,
+        onAuthStateChanged,
+        collectionGroup,
+        getDocs,
+        updateDoc,
+        deleteDoc,
+        serverTimestamp,
+      };
+
+      onAuthStateChanged(auth, async function (user) {
+        currentFirebaseUser = user || null;
+
+        if (!user) {
+          showFirebaseLogin();
+          return;
+        }
+
+        if (!isAdminEmail(user.email)) {
+          showFirebaseLogin();
+          showFirebaseMessage(
+            "Esta conta não está autorizada para moderar comentários.",
+            "error"
+          );
+
+          try {
+            await signOut(auth);
+          } catch {}
+
+          return;
+        }
+
+        clearFirebaseMessage();
+        showCommentsPanel();
+        loadComments();
+      });
+
+      firebaseGoogleButton.addEventListener("click", async function () {
+        try {
+          clearFirebaseMessage();
+          firebaseGoogleButton.disabled = true;
+          firebaseGoogleButton.textContent = "Entrando...";
+
+          await signInWithPopup(auth, googleProvider);
+        } catch (error) {
+          console.error("Erro no login Google:", error);
+          showFirebaseMessage(normalizeFirebaseError(error), "error");
+        } finally {
+          firebaseGoogleButton.disabled = false;
+          firebaseGoogleButton.textContent = "Entrar com Google";
+        }
+      });
+
+      firebaseEmailForm.addEventListener("submit", async function (event) {
+        event.preventDefault();
+
+        try {
+          clearFirebaseMessage();
+
+          const email = firebaseEmail.value.trim();
+          const password = firebasePassword.value;
+
+          if (!email || !password) {
+            showFirebaseMessage("Preencha e-mail e senha.", "error");
+            return;
+          }
+
+          await signInWithEmailAndPassword(auth, email, password);
+        } catch (error) {
+          console.error("Erro no login e-mail/senha:", error);
+          showFirebaseMessage(normalizeFirebaseError(error), "error");
+        }
+      });
+
+      resetPasswordButton.addEventListener("click", async function () {
+        try {
+          clearFirebaseMessage();
+
+          const email = firebaseEmail.value.trim();
+
+          if (!email) {
+            showFirebaseMessage("Digite o e-mail para recuperar a senha.", "error");
+            return;
+          }
+
+          await sendPasswordResetEmail(auth, email);
+          showFirebaseMessage(
+            "E-mail de recuperação enviado. Verifique a caixa de entrada.",
+            "success"
+          );
+        } catch (error) {
+          console.error("Erro ao enviar recuperação:", error);
+          showFirebaseMessage(normalizeFirebaseError(error), "error");
+        }
+      });
     </script>
   </body>
 </html>

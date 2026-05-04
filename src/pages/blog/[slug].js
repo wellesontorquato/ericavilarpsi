@@ -2,6 +2,8 @@ import { useMemo, useState } from "react";
 import Head from "next/head";
 import Link from "next/link";
 import { getAllPostSlugs, getPostBySlug } from "@/lib/posts";
+import PostReactions from "@/components/PostReactions";
+import PostComments from "@/components/PostComments";
 
 const SITE_URL = "https://ericavilarpsi.com.br";
 const WHATSAPP_URL =
@@ -149,7 +151,7 @@ export default function BlogPost({ post }) {
   return (
     <>
       <Head>
-        <title>{post.title} | Blog Erica Vilar</title>
+        <title>{`${post.title} | Blog Erica Vilar`}</title>
         <meta name="description" content={post.excerpt || post.title} />
 
         <link rel="canonical" href={postUrl} />
@@ -347,6 +349,10 @@ export default function BlogPost({ post }) {
                       </Link>
                     </div>
                   </div>
+
+                  <div className="post-signature-reactions">
+                    <PostReactions postSlug={post.slug} variant="compact" />
+                  </div>
                 </section>
 
                 <section className="post-share">
@@ -433,6 +439,8 @@ export default function BlogPost({ post }) {
                     </button>
                   </div>
                 </section>
+
+                <PostComments postSlug={post.slug} />
 
                 <div className="blog-post-final-actions">
                   <Link href="/blog" className="btn btn-secondary">
