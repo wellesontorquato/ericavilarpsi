@@ -1,4 +1,5 @@
 import Head from "next/head";
+import { useState } from "react";
 
 const subtemas = [
   "Corpo e mudanças na gestação",
@@ -16,7 +17,7 @@ export default function LiveMaio() {
         <title>Live Maio | Gestação sem filtro</title>
         <meta
           name="description"
-          content="Live gratuita no Instagram com Érica Vilar e Lizia Nascimento sobre gestação, corpo, emoções, preparação e pós-parto."
+          content="Live gratuita no Instagram com Erica Vilar e Lizia Nascimento sobre gestação, corpo, emoções, preparação e pós-parto."
         />
       </Head>
 
@@ -326,6 +327,7 @@ export default function LiveMaio() {
           color: #fff;
           font-size: 0.72rem;
           font-weight: 950;
+          flex: 0 0 auto;
         }
 
         .liveMaioPage .speakersBlock {
@@ -340,10 +342,19 @@ export default function LiveMaio() {
         }
 
         .liveMaioPage .speakerCard {
+          appearance: none;
+          border: 0;
+          padding: 0;
+          margin: 0;
+          width: 100%;
+          display: block;
           position: relative;
           min-height: 305px;
           overflow: hidden;
           border-radius: 24px;
+          cursor: pointer;
+          text-align: left;
+          font-family: inherit;
           background:
             radial-gradient(circle at 50% 12%, rgba(255, 236, 224, 0.96), transparent 45%),
             linear-gradient(180deg, #f5d9cc, #e8b7a6);
@@ -357,19 +368,6 @@ export default function LiveMaio() {
             linear-gradient(180deg, #f8dfd3, #e9b8a7);
         }
 
-        .liveMaioPage .speakerCard summary {
-          list-style: none;
-          cursor: pointer;
-          height: 100%;
-          min-height: inherit;
-          position: relative;
-          overflow: hidden;
-        }
-
-        .liveMaioPage .speakerCard summary::-webkit-details-marker {
-          display: none;
-        }
-
         .liveMaioPage .speakerCard img {
           position: absolute;
           inset: 0;
@@ -381,12 +379,7 @@ export default function LiveMaio() {
           transition: transform 0.35s ease;
         }
 
-        .liveMaioPage .speakerCard:hover img,
-        .liveMaioPage .speakerCard[open] img {
-          transform: scale(1.035);
-        }
-
-        .liveMaioPage .speakerCard summary::after {
+        .liveMaioPage .speakerCard::after {
           content: "";
           position: absolute;
           left: 0;
@@ -395,6 +388,11 @@ export default function LiveMaio() {
           z-index: 1;
           height: 58%;
           background: linear-gradient(180deg, transparent, rgba(44, 18, 18, 0.78));
+        }
+
+        .liveMaioPage .speakerCard:hover img,
+        .liveMaioPage .speakerCard.isOpen img {
+          transform: scale(1.035);
         }
 
         .liveMaioPage .speakerName {
@@ -408,6 +406,12 @@ export default function LiveMaio() {
           background: rgba(255, 250, 246, 0.9);
           backdrop-filter: blur(14px);
           box-shadow: 0 16px 36px rgba(49, 15, 15, 0.18);
+          transition: opacity 0.24s ease, transform 0.24s ease;
+        }
+
+        .liveMaioPage .speakerCard.isOpen .speakerName {
+          opacity: 0;
+          transform: translateY(16px);
         }
 
         .liveMaioPage .speakerName span {
@@ -453,7 +457,9 @@ export default function LiveMaio() {
 
         .liveMaioPage .speakerBio {
           position: absolute;
-          inset: auto 10px 10px 10px;
+          left: 10px;
+          right: 10px;
+          bottom: 10px;
           z-index: 5;
           padding: 14px;
           border-radius: 18px;
@@ -461,14 +467,12 @@ export default function LiveMaio() {
           box-shadow: 0 18px 45px rgba(49, 15, 15, 0.22);
           transform: translateY(110%);
           opacity: 0;
-          pointer-events: none;
           transition: transform 0.28s ease, opacity 0.28s ease;
         }
 
-        .liveMaioPage .speakerCard[open] .speakerBio {
+        .liveMaioPage .speakerCard.isOpen .speakerBio {
           transform: translateY(0);
           opacity: 1;
-          pointer-events: auto;
         }
 
         .liveMaioPage .speakerBio p {
@@ -479,11 +483,25 @@ export default function LiveMaio() {
         }
 
         .liveMaioPage .speakerBio small {
-          display: block;
-          margin-top: 8px;
+          display: inline-flex;
+          align-items: center;
+          gap: 6px;
+          margin-top: 9px;
           color: #a64c50;
           font-weight: 900;
           font-size: 0.68rem;
+        }
+
+        .liveMaioPage .speakerBio small::before {
+          content: "×";
+          display: grid;
+          place-items: center;
+          width: 18px;
+          height: 18px;
+          border-radius: 999px;
+          background: #a64c50;
+          color: #fff;
+          font-weight: 950;
         }
 
         .liveMaioPage .formCard {
@@ -960,42 +978,66 @@ export default function LiveMaio() {
         }
 
         @media (min-width: 1020px) {
+          .liveMaioPage {
+            padding: 32px;
+          }
+
+          .liveMaioPage .heroSection {
+            padding-top: 32px;
+          }
+
           .liveMaioPage .heroCard {
-            grid-template-columns: minmax(0, 1fr) 330px 380px;
-            gap: 26px;
+            grid-template-columns: minmax(0, 1fr) 400px;
+            grid-template-areas:
+              "copy form"
+              "speakers form";
+            gap: 24px 34px;
             align-items: start;
-            padding: 38px;
+            padding: 42px;
+            border-radius: 46px;
           }
 
           .liveMaioPage .heroCopy {
+            grid-area: copy;
             padding-top: 4px;
           }
 
-          .liveMaioPage .heroTitle {
-            font-size: clamp(3.45rem, 4.7vw, 4.9rem);
-          }
-
-          .liveMaioPage .heroCta {
-            width: min(380px, 100%);
-          }
-
-          .liveMaioPage .speakers {
-            grid-template-columns: 1fr;
-            gap: 14px;
-          }
-
-          .liveMaioPage .speakerCard {
-            min-height: 245px;
-          }
-
-          .liveMaioPage .speakerCard img {
-            object-position: center 18%;
+          .liveMaioPage .speakersBlock {
+            grid-area: speakers;
           }
 
           .liveMaioPage .formCard {
+            grid-area: form;
             position: sticky;
             top: 24px;
-            padding: 22px;
+            padding: 24px;
+          }
+
+          .liveMaioPage .heroTitle {
+            font-size: clamp(3.65rem, 5vw, 5.25rem);
+            max-width: 720px;
+          }
+
+          .liveMaioPage .heroText {
+            max-width: 520px;
+            font-size: 1.02rem;
+          }
+
+          .liveMaioPage .heroCta {
+            width: min(390px, 100%);
+          }
+
+          .liveMaioPage .speakers {
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+          }
+
+          .liveMaioPage .speakerCard {
+            min-height: 330px;
+          }
+
+          .liveMaioPage .speakerCard img {
+            object-position: center 16%;
           }
 
           .liveMaioPage .checkboxOptions {
@@ -1003,19 +1045,34 @@ export default function LiveMaio() {
           }
 
           .liveMaioPage .topicsSection {
-            padding-top: 28px;
+            padding-top: 30px;
+          }
+
+          .liveMaioPage .topicsGrid {
+            grid-template-columns: repeat(6, 1fr);
+          }
+
+          .liveMaioPage .topicsGrid article {
+            min-height: 116px;
+            align-items: flex-start;
+            flex-direction: column;
+            justify-content: space-between;
+          }
+
+          .liveMaioPage .topicsGrid p {
+            font-size: 0.82rem;
           }
         }
 
         @media (min-width: 1180px) {
           .liveMaioPage .heroCard {
-            grid-template-columns: minmax(0, 1fr) 350px 395px;
-            gap: 30px;
-            padding: 42px;
+            grid-template-columns: minmax(0, 1fr) 410px;
+            gap: 26px 38px;
+            padding: 48px;
           }
 
           .liveMaioPage .speakerCard {
-            min-height: 260px;
+            min-height: 350px;
           }
         }
 
@@ -1033,47 +1090,58 @@ export default function LiveMaio() {
 }
 
 function SpeakerPhotos() {
+  const [openSpeaker, setOpenSpeaker] = useState(null);
+
+  const speakers = [
+    {
+      id: "erica",
+      role: "Psicóloga",
+      name: "Erica Vilar",
+      image: "/erica-live.png",
+      alt: "Psicóloga Erica Vilar",
+      bio:
+        "Psicóloga clínica, fala sobre saúde emocional feminina, maternidade, vínculos e autocuidado com sensibilidade e profundidade.",
+    },
+    {
+      id: "lizia",
+      role: "Fisioterapeuta e doula",
+      name: "Lizia Nascimento",
+      image: "/lizia-live.png",
+      alt: "Fisioterapeuta e doula Lizia Nascimento",
+      bio:
+        "Atua no cuidado integral da mulher da gestação ao pós-parto, unindo técnica, acolhimento e escuta.",
+    },
+  ];
+
   return (
     <div className="speakers">
-      <details className="speakerCard">
-        <summary>
-          <img src="/erica-live.png" alt="Psicóloga Érica Vilar" />
+      {speakers.map((speaker) => {
+        const isOpen = openSpeaker === speaker.id;
 
-          <div className="speakerName">
-            <span>Psicóloga</span>
-            <strong>Érica Vilar</strong>
-            <small className="tapHint">Toque para saber mais</small>
-          </div>
-        </summary>
+        return (
+          <button
+            type="button"
+            className={`speakerCard ${isOpen ? "isOpen" : ""}`}
+            key={speaker.id}
+            onClick={() => setOpenSpeaker(isOpen ? null : speaker.id)}
+            aria-expanded={isOpen}
+            aria-label={`${isOpen ? "Fechar informações de" : "Abrir informações de"} ${speaker.name}`}
+          >
+            <img src={speaker.image} alt={speaker.alt} />
 
-        <div className="speakerBio">
-          <p>
-            Psicóloga clínica, fala sobre saúde emocional feminina, maternidade,
-            vínculos e autocuidado com sensibilidade e profundidade.
-          </p>
-          <small>Toque novamente para fechar</small>
-        </div>
-      </details>
+            <div className="speakerName">
+              <span>{speaker.role}</span>
+              <strong>{speaker.name}</strong>
+              <small className="tapHint">Clique/toque para saber mais</small>
+            </div>
 
-      <details className="speakerCard">
-        <summary>
-          <img src="/lizia-live.png" alt="Fisioterapeuta e doula Lizia Nascimento" />
-
-          <div className="speakerName">
-            <span>Fisioterapeuta e doula</span>
-            <strong>Lizia Nascimento</strong>
-            <small className="tapHint">Toque para saber mais</small>
-          </div>
-        </summary>
-
-        <div className="speakerBio">
-          <p>
-            Atua no cuidado integral da mulher da gestação ao pós-parto, unindo
-            técnica, acolhimento e escuta.
-          </p>
-          <small>Toque novamente para fechar</small>
-        </div>
-      </details>
+            <div className="speakerBio">
+              <p>{speaker.bio}</p>
+              <small>Clique/toque para fechar</small>
+            </div>
+          </button>
+        );
+      })}
     </div>
   );
 }
