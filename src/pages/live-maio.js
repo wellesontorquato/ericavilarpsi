@@ -17,7 +17,7 @@ export default function LiveMaio() {
         <title>Live Maio | Gestação sem filtro</title>
         <meta
           name="description"
-          content="Live gratuita no Instagram com Érica Vilar e Lizia Nascimento sobre gestação, corpo, emoções, preparação e pós-parto."
+          content="Live gratuita no Instagram com Erica Vilar e Lizia Nascimento sobre gestação, corpo, emoções, preparação e pós-parto."
         />
       </Head>
 
@@ -1233,9 +1233,9 @@ function SpeakerPhotos() {
     {
       id: "erica",
       role: "Psicóloga Clínica",
-      name: "Érica Vilar",
+      name: "Erica Vilar",
       image: "/erica-live.png",
-      alt: "Psicóloga Érica Vilar",
+      alt: "Psicóloga Erica Vilar",
       bio:
         "Psicóloga clínica, fala sobre saúde emocional feminina, maternidade, vínculos e autocuidado com sensibilidade e profundidade.",
     },
