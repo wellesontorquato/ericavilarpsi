@@ -49,6 +49,10 @@
         font: inherit;
       }
 
+      .is-hidden {
+        display: none !important;
+      }
+
       .admin-login,
       .admin-dashboard,
       .admin-moderation {
@@ -318,12 +322,6 @@
 
       .decap-loading.is-visible {
         display: flex;
-      }
-
-      .admin-login.is-hidden,
-      .admin-dashboard.is-hidden,
-      .admin-moderation.is-hidden {
-        display: none;
       }
 
       .admin-dashboard {
@@ -918,7 +916,7 @@
           </div>
         </header>
 
-        <div id="firebaseLoginCard" class="firebase-login-card">
+        <div id="firebaseLoginCard" class="firebase-login-card is-hidden">
           <h2>Entrar na moderação</h2>
 
           <p>
@@ -1022,6 +1020,35 @@
       let allComments = [];
       let firebaseApi = null;
       let currentFirebaseUser = null;
+      let shouldOpenModerationOnFirebaseReady = false;
+
+      function isDecapRoute() {
+        const hash = window.location.hash || "";
+
+        return (
+          hash.startsWith("#/") &&
+          !hash.startsWith("#/moderacao") &&
+          !hash.startsWith("#/moderation")
+        );
+      }
+
+      function isModerationRoute() {
+        return (
+          window.location.hash === "#moderacao" ||
+          window.location.hash === "#/moderacao" ||
+          window.location.hash === "#moderation" ||
+          window.location.hash === "#/moderation"
+        );
+      }
+
+      function setAdminHash(hash) {
+        if (!hash) {
+          history.replaceState(null, "", "/admin/");
+          return;
+        }
+
+        history.replaceState(null, "", `/admin/${hash}`);
+      }
 
       function showLogin() {
         adminLogin.classList.remove("is-hidden");
@@ -1055,6 +1082,10 @@
             ? `Netlify: ${user.email}`
             : "Usuária autenticada";
         }
+
+        if (!isDecapRoute()) {
+          setAdminHash("");
+        }
       }
 
       function showModeration() {
@@ -1062,6 +1093,15 @@
         adminDashboard.classList.add("is-hidden");
         adminModeration.classList.remove("is-hidden");
         decapLoading.classList.remove("is-visible");
+
+        setAdminHash("#moderacao");
+
+        if (currentFirebaseUser && isAdminEmail(currentFirebaseUser.email)) {
+          showCommentsPanel();
+          loadComments();
+        } else {
+          showFirebaseLogin();
+        }
       }
 
       function showLoading() {
@@ -1076,6 +1116,10 @@
 
         cmsLoaded = true;
         showLoading();
+
+        if (!isDecapRoute()) {
+          window.location.hash = "#/collections/posts";
+        }
 
         const script = document.createElement("script");
         script.src = "https://unpkg.com/decap-cms@^3/dist/decap-cms.js";
@@ -1114,7 +1158,13 @@
 
         window.netlifyIdentity.on("init", function (user) {
           if (user) {
-            showDashboard();
+            if (isDecapRoute()) {
+              loadCMS();
+            } else if (isModerationRoute()) {
+              showModeration();
+            } else {
+              showDashboard();
+            }
           } else {
             showLogin();
           }
@@ -1130,7 +1180,14 @@
           }
 
           window.netlifyIdentity.close();
-          showDashboard();
+
+          if (isDecapRoute()) {
+            loadCMS();
+          } else if (isModerationRoute()) {
+            showModeration();
+          } else {
+            showDashboard();
+          }
         });
 
         window.netlifyIdentity.on("logout", function () {
@@ -1460,20 +1517,18 @@
         }
       }
 
-      openCmsButton.addEventListener("click", loadCMS);
+      openCmsButton.addEventListener("click", function () {
+        window.location.hash = "#/collections/posts";
+        loadCMS();
+      });
 
       openModerationButton.addEventListener("click", function () {
         showModeration();
-
-        if (currentFirebaseUser && isAdminEmail(currentFirebaseUser.email)) {
-          showCommentsPanel();
-          loadComments();
-        } else {
-          showFirebaseLogin();
-        }
       });
 
-      backToDashboardButton.addEventListener("click", showDashboard);
+      backToDashboardButton.addEventListener("click", function () {
+        showDashboard();
+      });
 
       refreshCommentsButton.addEventListener("click", loadComments);
 
@@ -1552,6 +1607,10 @@
 
       onAuthStateChanged(auth, async function (user) {
         currentFirebaseUser = user || null;
+
+        if (!isModerationRoute()) {
+          return;
+        }
 
         if (!user) {
           showFirebaseLogin();
