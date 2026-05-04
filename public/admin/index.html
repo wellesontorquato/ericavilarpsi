@@ -1354,37 +1354,40 @@
         decapLoading.classList.add("is-visible");
       }
       function loadCMS() {
-        if (!isDecapRoute()) {
-          window.location.hash = "#/collections/posts";
-        }
+        showLoading();
 
-        if (cmsLoaded) {
-          showLoading();
+        if (!isDecapRoute()) {
           window.location.href = "/admin/#/collections/posts";
           return;
         }
 
+        if (cmsLoaded) {
+          return;
+        }
+
         cmsLoaded = true;
-        showLoading();
 
-        const s = document.createElement("script");
-        s.src = "https://unpkg.com/decap-cms@^3/dist/decap-cms.js";
-        s.async = true;
+        const script = document.createElement("script");
+        script.src = "https://unpkg.com/decap-cms@^3/dist/decap-cms.js";
+        script.async = true;
 
-        s.onload = function () {
-          decapLoading.classList.remove("is-visible");
+        script.onload = function () {
+          setTimeout(function () {
+            decapLoading.classList.remove("is-visible");
+          }, 500);
         };
 
-        s.onerror = function () {
+        script.onerror = function () {
           cmsLoaded = false;
+          decapLoading.classList.remove("is-visible");
           showDashboard();
 
           statusText &&
             (statusText.textContent =
-              "Não foi possível carregar o painel. Tente novamente.");
+              "Não foi possível carregar o editor do blog. Tente novamente.");
         };
 
-        document.body.appendChild(s);
+        document.body.appendChild(script);
       }
       function initIdentity() {
         if (!window.netlifyIdentity) {
@@ -1394,25 +1397,43 @@
           loginButton && (loginButton.disabled = true);
           return;
         }
-        window.netlifyIdentity.on("init", (u) => {
-          u
-            ? isDecapRoute()
-              ? loadCMS()
-              : isModerationRoute()
-                ? showModeration()
-                : showDashboard()
-            : showLogin();
+        window.netlifyIdentity.on("init", function (user) {
+          if (!user) {
+            showLogin();
+            return;
+          }
+
+          if (isDecapRoute()) {
+            loadCMS();
+            return;
+          }
+
+          if (isModerationRoute()) {
+            showModeration();
+            return;
+          }
+
+          showDashboard();
         });
-        window.netlifyIdentity.on("login", () => {
+        window.netlifyIdentity.on("login", function () {
           loginButton && (loginButton.disabled = true);
+
           statusText &&
             (statusText.textContent = "Login realizado. Abrindo painel...");
+
           window.netlifyIdentity.close();
-          isDecapRoute()
-            ? loadCMS()
-            : isModerationRoute()
-              ? showModeration()
-              : showDashboard();
+
+          if (isDecapRoute()) {
+            loadCMS();
+            return;
+          }
+
+          if (isModerationRoute()) {
+            showModeration();
+            return;
+          }
+
+          showDashboard();
         });
         window.netlifyIdentity.on("logout", () => {
           window.location.href = "/admin/";
@@ -1751,8 +1772,13 @@
           alert(normalizeFirebaseError(error));
         }
       }
-      openCmsButton.addEventListener("click", loadCMS);
-      topOpenCmsButton.addEventListener("click", loadCMS);
+      openCmsButton.addEventListener("click", function () {
+        window.location.href = "/admin/#/collections/posts";
+      });
+
+      topOpenCmsButton.addEventListener("click", function () {
+        window.location.href = "/admin/#/collections/posts";
+      });
       openModerationButton.addEventListener("click", showModeration);
       topBackToDashboardButton.addEventListener("click", showDashboard);
       refreshCommentsButton.addEventListener("click", loadComments);
