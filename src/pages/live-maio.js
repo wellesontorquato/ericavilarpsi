@@ -1295,7 +1295,7 @@ function FormCard() {
         </p>
       </div>
 
-      <form className="leadForm" action="/obrigado-live" method="GET">
+      <form className="leadForm" action="/api/leads/live-maio" method="POST">
         <div className="field">
           <label htmlFor="nome">Nome</label>
           <input id="nome" type="text" name="nome" placeholder="Seu nome" required />
