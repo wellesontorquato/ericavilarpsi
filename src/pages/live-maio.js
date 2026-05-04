@@ -12,28 +12,37 @@ export default function LiveMaio() {
       </Head>
 
       <main className="livePage">
-        <div className="backgroundText">LIVE MAIO</div>
-        <div className="glow glowOne" />
-        <div className="glow glowTwo" />
+        <div className="backgroundText">GESTAÇÃO</div>
+        <div className="orb orbOne" />
+        <div className="orb orbTwo" />
+        <div className="orb orbThree" />
 
-        <section className="heroMockup">
+        <section className="mockupArea">
+          <div className="handsLayer" aria-hidden="true">
+            <div className="hand handLeft">
+              <span className="thumb" />
+              <span className="finger fingerOne" />
+              <span className="finger fingerTwo" />
+            </div>
+
+            <div className="hand handRight">
+              <span className="thumb" />
+              <span className="finger fingerOne" />
+              <span className="finger fingerTwo" />
+            </div>
+          </div>
+
           <div className="tablet">
             <div className="tabletScreen">
-              <div className="topBadges">
-                <span>
-                  <strong>Live no Instagram</strong>
-                  Sábado, 24 de maio às 17h
-                </span>
+              <section className="hero">
+                <div className="heroCopy">
+                  <div className="badges">
+                    <span>Live gratuita no Instagram</span>
+                    <span>24 de maio • 17h</span>
+                    <span>60 minutos</span>
+                  </div>
 
-                <span>
-                  <strong>Duração</strong>
-                  60 minutos
-                </span>
-              </div>
-
-              <div className="heroContent">
-                <div className="heroText">
-                  <p className="eyebrow">Live gratuita</p>
+                  <p className="eyebrow">Para gestantes, tentantes e mães recentes</p>
 
                   <h1>
                     Gestação sem filtro:
@@ -41,121 +50,100 @@ export default function LiveMaio() {
                   </h1>
 
                   <p className="description">
-                    Um encontro leve, real e acolhedor sobre corpo, emoções,
-                    dores, medos, expectativas e os bastidores da gestação que
-                    quase ninguém fala com profundidade.
+                    Uma conversa real, acolhedora e sem romantização sobre corpo,
+                    emoções, medos, dores, culpa, preparação e pós-parto.
                   </p>
 
+                  <div className="promiseBox">
+                    <strong>Você vai sair dessa live com mais clareza, segurança e acolhimento.</strong>
+                    <span>Sem terrorismo. Sem julgamento. Sem frases prontas.</span>
+                  </div>
+
                   <form className="leadForm" action="/obrigado-live" method="GET">
-                    <div className="formGrid">
-                      <input type="text" name="nome" placeholder="Seu nome" />
-                      <input
-                        type="tel"
-                        name="whatsapp"
-                        placeholder="Seu WhatsApp"
-                      />
-                      <input
-                        type="email"
-                        name="email"
-                        placeholder="Seu e-mail"
-                      />
-                    </div>
+                    <input type="text" name="nome" placeholder="Seu nome" required />
+                    <input type="tel" name="whatsapp" placeholder="Seu WhatsApp" required />
 
                     <button type="submit">
-                      Quero participar da live
+                      Quero receber o lembrete
                       <span>↗</span>
                     </button>
 
-                    <div className="scarcity">
-                      <span className="dot" />
-                      Inscrição gratuita para receber o lembrete da live
-                    </div>
+                    <p className="microCopy">
+                      Inscrição gratuita para receber o aviso da live no dia.
+                    </p>
                   </form>
                 </div>
 
-                <div className="speakersArea">
-                  <div className="speaker speakerErica">
-                    <div className="imageWrap">
-                      <img
-                        src="/erica-live.png"
-                        alt="Psicóloga Érica Vilar"
-                      />
-                    </div>
-
-                    <div className="speakerInfo">
+                <div className="speakersWrap">
+                  <div className="speakerPhoto speakerPhotoErica">
+                    <img src="/erica-live.png" alt="Psicóloga Érica Vilar" />
+                    <div className="speakerTag">
                       <span>Psicóloga</span>
                       <strong>Érica Vilar</strong>
-                      <p>
-                        Psicóloga clínica, fala sobre saúde emocional feminina,
-                        maternidade, vínculos e autocuidado com sensibilidade e
-                        profundidade.
-                      </p>
                     </div>
                   </div>
 
-                  <div className="speaker speakerLizia">
-                    <div className="imageWrap">
-                      <img
-                        src="/lizia-live.png"
-                        alt="Fisioterapeuta e doula Lizia Nascimento"
-                      />
-                    </div>
-
-                    <div className="speakerInfo">
-                      <span>Fisioterapeuta e Doula</span>
+                  <div className="speakerPhoto speakerPhotoLizia">
+                    <img src="/lizia-live.png" alt="Fisioterapeuta e doula Lizia Nascimento" />
+                    <div className="speakerTag">
+                      <span>Fisioterapeuta e doula</span>
                       <strong>Lizia Nascimento</strong>
-                      <p>
-                        Lizia Nascimento atua no cuidado 
-                        integral da mulher da gestação ao pós-parto, 
-                        unindo técnica, acolhimento e escuta para promover mais conforto, 
-                        segurança e bem-estar em cada fase dessa jornada.
-                      </p>
                     </div>
                   </div>
                 </div>
-              </div>
+              </section>
 
-              <div className="knownAs">
-                <p>Uma conversa para mulheres que querem viver a gestação com</p>
+              <section className="authority">
+                <article>
+                  <span>Érica Vilar</span>
+                  <p>
+                    Psicóloga clínica, fala sobre saúde emocional feminina,
+                    maternidade, vínculos e autocuidado com sensibilidade e
+                    profundidade.
+                  </p>
+                </article>
 
-                <div>
-                  <span>Mais informação</span>
-                  <span>Menos culpa</span>
-                  <span>Mais acolhimento</span>
-                  <span>Mais segurança</span>
+                <article>
+                  <span>Lizia Nascimento</span>
+                  <p>
+                    Fisioterapeuta e doula, atua no cuidado integral da mulher
+                    da gestação ao pós-parto, unindo técnica, acolhimento e
+                    escuta.
+                  </p>
+                </article>
+              </section>
+
+              <section className="learn">
+                <div className="sectionTitle">
+                  <p>O que será conversado</p>
+                  <h2>Uma live para falar o que quase ninguém fala</h2>
                 </div>
-              </div>
-
-              <section className="learnSection">
-                <h2>
-                  O que você vai encontrar <em>nessa live</em>
-                </h2>
 
                 <div className="cards">
                   <article>
                     <span>01</span>
-                    <h3>O que ninguém fala sobre gestar</h3>
+                    <h3>As mudanças reais da gestação</h3>
                     <p>
-                      As mudanças físicas, emocionais e silenciosas que muitas
-                      mulheres só descobrem vivendo.
+                      Corpo, emoções, dores, desconfortos e expectativas que nem
+                      sempre aparecem nas conversas comuns.
                     </p>
                   </article>
 
                   <article>
                     <span>02</span>
-                    <h3>Corpo, dor e preparação</h3>
+                    <h3>Medos, culpa e autocobrança</h3>
                     <p>
-                      Cuidados importantes para atravessar a gestação e o
-                      pós-parto com mais consciência.
+                      Como atravessar essa fase com mais acolhimento e menos
+                      comparação.
                     </p>
                   </article>
 
                   <article>
                     <span>03</span>
-                    <h3>Medos, culpa e autocobrança</h3>
+                    <h3>Preparação e pós-parto</h3>
                     <p>
-                      Uma conversa real sobre expectativas, maternidade e saúde
-                      emocional feminina.
+                      Cuidados físicos e emocionais para viver essa jornada com
+                      mais presença e segurança.
                     </p>
                   </article>
                 </div>
@@ -170,55 +158,65 @@ export default function LiveMaio() {
           min-height: 100vh;
           position: relative;
           overflow: hidden;
-          padding: 72px 24px 90px;
-          background:
-            radial-gradient(circle at 50% 95%, rgba(248, 199, 166, 0.55), transparent 34%),
-            radial-gradient(circle at 9% 52%, rgba(174, 74, 52, 0.48), transparent 28%),
-            radial-gradient(circle at 92% 48%, rgba(128, 45, 55, 0.5), transparent 28%),
-            linear-gradient(180deg, #2a1114 0%, #4b1f1f 48%, #7b3f31 100%);
-          color: #2b1714;
+          padding: 22px 12px 52px;
+          color: #2d1717;
           font-family: "Montserrat", Arial, sans-serif;
+          background:
+            radial-gradient(circle at 50% 100%, rgba(255, 190, 151, 0.58), transparent 28%),
+            radial-gradient(circle at 8% 38%, rgba(189, 78, 90, 0.5), transparent 30%),
+            radial-gradient(circle at 95% 35%, rgba(236, 145, 106, 0.42), transparent 28%),
+            linear-gradient(180deg, #38141b 0%, #6f2f2b 48%, #c07154 100%);
         }
 
         .backgroundText {
           position: absolute;
-          top: -72px;
+          top: 8px;
           left: 50%;
           transform: translateX(-50%);
           z-index: 0;
           white-space: nowrap;
-          font-size: clamp(6rem, 18vw, 19rem);
-          font-weight: 900;
-          letter-spacing: -0.08em;
-          line-height: 0.9;
-          color: rgba(236, 162, 123, 0.35);
-          text-shadow: 0 28px 55px rgba(0, 0, 0, 0.5);
+          font-size: clamp(4.6rem, 22vw, 18rem);
+          font-weight: 950;
+          letter-spacing: -0.09em;
+          line-height: 0.8;
+          color: rgba(255, 206, 174, 0.18);
+          text-shadow: 0 30px 70px rgba(0, 0, 0, 0.38);
           pointer-events: none;
         }
 
-        .glow {
+        .orb {
           position: absolute;
-          width: 360px;
-          height: 360px;
           border-radius: 999px;
-          filter: blur(64px);
+          filter: blur(62px);
           opacity: 0.5;
           pointer-events: none;
         }
 
-        .glowOne {
-          left: -120px;
-          bottom: 120px;
-          background: #f1a577;
+        .orbOne {
+          width: 260px;
+          height: 260px;
+          background: #ffb58c;
+          left: -90px;
+          bottom: 80px;
         }
 
-        .glowTwo {
-          right: -110px;
-          bottom: 150px;
-          background: #9e3f4d;
+        .orbTwo {
+          width: 300px;
+          height: 300px;
+          background: #8d3147;
+          right: -120px;
+          top: 180px;
         }
 
-        .heroMockup {
+        .orbThree {
+          width: 220px;
+          height: 220px;
+          background: #ffd2bd;
+          left: 45%;
+          bottom: -80px;
+        }
+
+        .mockupArea {
           width: min(1180px, 100%);
           margin: 0 auto;
           position: relative;
@@ -227,468 +225,633 @@ export default function LiveMaio() {
 
         .tablet {
           position: relative;
-          z-index: 3;
-          border-radius: 38px;
-          padding: 15px;
-          background: linear-gradient(180deg, #1f1514, #070303);
+          z-index: 4;
+          border-radius: 34px;
+          padding: 10px;
+          background: linear-gradient(180deg, #1c1112, #060303);
           box-shadow:
-            0 50px 130px rgba(0, 0, 0, 0.62),
-            inset 0 0 0 2px rgba(255, 255, 255, 0.16);
+            0 38px 90px rgba(20, 5, 6, 0.56),
+            inset 0 0 0 1px rgba(255, 255, 255, 0.16);
         }
 
         .tablet::before {
           content: "";
           position: absolute;
-          top: 8px;
+          top: 5px;
           left: 50%;
           transform: translateX(-50%);
-          width: 220px;
-          height: 4px;
+          width: 120px;
+          height: 3px;
           border-radius: 999px;
-          background: rgba(255, 255, 255, 0.45);
+          background: rgba(255, 255, 255, 0.38);
+          z-index: 8;
         }
 
         .tabletScreen {
-          min-height: 720px;
-          overflow: hidden;
-          border-radius: 28px;
-          padding: 42px 56px 46px;
-          background:
-            linear-gradient(180deg, rgba(255, 248, 241, 0) 58%, #fff5ed 80%),
-            #fffaf5;
           position: relative;
+          overflow: hidden;
+          border-radius: 26px;
+          background:
+            linear-gradient(180deg, rgba(255, 251, 247, 0) 62%, #fff4ed 88%),
+            #fffaf6;
+          padding: 20px 16px 24px;
         }
 
-        .topBadges {
-          display: flex;
-          gap: 18px;
-          flex-wrap: wrap;
-          margin-bottom: 44px;
-        }
-
-        .topBadges span {
-          display: inline-flex;
-          flex-direction: column;
-          gap: 3px;
-          padding: 10px 18px;
-          border-radius: 999px;
-          background: #f7ebe2;
-          color: #8a5141;
-          font-size: 0.72rem;
-          box-shadow: inset 0 0 0 1px rgba(128, 45, 55, 0.06);
-        }
-
-        .topBadges strong {
-          color: #9e3f4d;
-          font-size: 0.75rem;
-        }
-
-        .heroContent {
+        .hero {
           display: grid;
-          grid-template-columns: 0.95fr 1.05fr;
-          gap: 44px;
-          align-items: center;
+          grid-template-columns: 1fr;
+          gap: 24px;
+        }
+
+        .badges {
+          display: flex;
+          gap: 8px;
+          flex-wrap: wrap;
+          margin-bottom: 22px;
+        }
+
+        .badges span {
+          border-radius: 999px;
+          background: #f7e5db;
+          color: #8d3d40;
+          padding: 9px 12px;
+          font-size: 0.72rem;
+          font-weight: 800;
+          box-shadow: inset 0 0 0 1px rgba(142, 53, 66, 0.08);
         }
 
         .eyebrow {
-          color: #a44648;
-          font-weight: 800;
-          font-size: 0.86rem;
+          margin: 0 0 10px;
+          color: #a94b4b;
           text-transform: uppercase;
           letter-spacing: 0.08em;
-          margin-bottom: 14px;
+          font-size: 0.75rem;
+          font-weight: 900;
         }
 
         h1 {
-          max-width: 610px;
           margin: 0;
+          max-width: 660px;
+          color: #251211;
           font-family: "Libre Bodoni", Georgia, serif;
-          font-size: clamp(2.5rem, 4.05vw, 4.55rem);
-          line-height: 0.94;
-          letter-spacing: -0.055em;
-          color: #24110f;
+          font-size: clamp(2.65rem, 12vw, 5rem);
+          line-height: 0.9;
+          letter-spacing: -0.06em;
         }
 
-        h1 em,
-        h2 em {
-          color: #a44648;
+        h1 em {
+          color: #a94b4b;
           font-style: italic;
           font-weight: 400;
         }
 
         .description {
-          max-width: 610px;
-          margin: 24px 0 28px;
-          color: #46302b;
-          font-size: 1rem;
-          line-height: 1.7;
-          font-weight: 500;
+          margin: 18px 0 16px;
+          max-width: 620px;
+          color: #543734;
+          font-size: 0.98rem;
+          line-height: 1.62;
+          font-weight: 550;
+        }
+
+        .promiseBox {
+          max-width: 570px;
+          margin: 0 0 16px;
+          padding: 14px;
+          border-radius: 18px;
+          background: linear-gradient(135deg, #fff1e8, #f8ddd0);
+          border: 1px solid rgba(169, 75, 75, 0.12);
+          box-shadow: 0 16px 34px rgba(86, 34, 32, 0.08);
+        }
+
+        .promiseBox strong {
+          display: block;
+          color: #341817;
+          font-size: 0.95rem;
+          line-height: 1.35;
+        }
+
+        .promiseBox span {
+          display: block;
+          margin-top: 6px;
+          color: #8a4b42;
+          font-size: 0.82rem;
+          line-height: 1.45;
         }
 
         .leadForm {
-          max-width: 470px;
-        }
-
-        .formGrid {
           display: grid;
           gap: 10px;
-          margin-bottom: 12px;
+          max-width: 520px;
         }
 
-        .formGrid input {
+        .leadForm input {
           width: 100%;
-          border: 1px solid rgba(158, 63, 77, 0.14);
-          background: #fff4ed;
-          border-radius: 14px;
-          padding: 15px 16px;
-          outline: none;
-          color: #2b1714;
+          border: 1px solid rgba(169, 75, 75, 0.16);
+          border-radius: 15px;
+          background: #fff6f0;
+          padding: 15px 15px;
+          color: #2d1717;
           font: inherit;
-          box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8);
+          outline: none;
         }
 
-        .formGrid input:focus {
-          border-color: rgba(164, 70, 72, 0.55);
-          box-shadow: 0 0 0 4px rgba(164, 70, 72, 0.12);
+        .leadForm input:focus {
+          border-color: rgba(169, 75, 75, 0.55);
+          box-shadow: 0 0 0 4px rgba(169, 75, 75, 0.12);
         }
 
-        button {
+        .leadForm button {
           width: 100%;
           border: 0;
-          border-radius: 14px;
-          padding: 17px 18px;
-          background: linear-gradient(135deg, #8f3744, #bc6045);
+          border-radius: 16px;
+          padding: 16px 16px;
+          background: linear-gradient(135deg, #8c2f46, #c7654b);
           color: #fff;
-          font-weight: 800;
+          font-weight: 950;
           font-size: 0.95rem;
           cursor: pointer;
           display: flex;
           align-items: center;
           justify-content: space-between;
-          transition:
-            transform 0.2s ease,
-            box-shadow 0.2s ease,
-            filter 0.2s ease;
-          box-shadow: 0 18px 35px rgba(143, 55, 68, 0.28);
+          box-shadow: 0 18px 36px rgba(140, 47, 70, 0.32);
+          transition: transform 0.18s ease, filter 0.18s ease, box-shadow 0.18s ease;
         }
 
-        button:hover {
+        .leadForm button:hover {
           transform: translateY(-2px);
           filter: brightness(1.04);
-          box-shadow: 0 22px 42px rgba(143, 55, 68, 0.34);
+          box-shadow: 0 24px 44px rgba(140, 47, 70, 0.38);
         }
 
-        button span {
+        .leadForm button span {
           width: 32px;
           height: 32px;
           display: grid;
           place-items: center;
           border-radius: 999px;
-          background: rgba(255, 255, 255, 0.14);
+          background: rgba(255, 255, 255, 0.16);
         }
 
-        .scarcity {
-          margin-top: 12px;
-          padding: 12px 14px;
-          border-radius: 12px;
-          background: #fff;
-          color: #66433c;
-          display: flex;
-          align-items: center;
-          gap: 10px;
+        .microCopy {
+          margin: 0;
+          color: #8a4b42;
           font-size: 0.78rem;
-          box-shadow: 0 12px 30px rgba(0, 0, 0, 0.06);
+          line-height: 1.4;
+          text-align: center;
         }
 
-        .dot {
-          width: 8px;
-          height: 8px;
-          border-radius: 999px;
-          background: #a44648;
-          box-shadow: 0 0 0 5px rgba(164, 70, 72, 0.12);
-        }
-
-        .speakersArea {
+        .speakersWrap {
           position: relative;
-          min-height: 520px;
+          min-height: 410px;
           display: grid;
           grid-template-columns: 1fr 1fr;
-          gap: 18px;
+          gap: 10px;
           align-items: end;
+          padding-top: 4px;
         }
 
-        .speakersArea::after {
+        .speakersWrap::after {
           content: "";
           position: absolute;
-          left: -10px;
-          right: -10px;
-          bottom: -14px;
-          height: 32%;
-          background: linear-gradient(180deg, transparent, #fffaf5 74%);
+          left: -16px;
+          right: -16px;
+          bottom: -8px;
+          height: 34%;
+          z-index: 6;
+          background: linear-gradient(180deg, transparent, #fffaf6 78%);
           pointer-events: none;
-          z-index: 5;
         }
 
-        .speaker {
+        .speakerPhoto {
           position: relative;
-          min-height: 500px;
+          min-height: 390px;
           border-radius: 28px;
           overflow: hidden;
           background:
-            radial-gradient(circle at 50% 20%, rgba(255, 222, 203, 0.9), transparent 42%),
-            linear-gradient(180deg, #f7ded0, #efd0c2);
-          box-shadow: 0 24px 55px rgba(81, 39, 35, 0.12);
-          border: 1px solid rgba(128, 45, 55, 0.08);
+            radial-gradient(circle at 50% 15%, rgba(255, 226, 211, 0.95), transparent 42%),
+            linear-gradient(180deg, #f4d5c6, #e9b9a7);
+          border: 1px solid rgba(142, 53, 66, 0.08);
+          box-shadow: 0 24px 48px rgba(85, 32, 29, 0.14);
         }
 
-        .speakerLizia {
+        .speakerPhotoLizia {
+          transform: translateY(24px);
           background:
-            radial-gradient(circle at 50% 20%, rgba(255, 226, 210, 0.9), transparent 42%),
-            linear-gradient(180deg, #f6e1d6, #eac5b8);
-          transform: translateY(34px);
+            radial-gradient(circle at 50% 15%, rgba(255, 236, 225, 0.95), transparent 42%),
+            linear-gradient(180deg, #f8ded1, #e8b5a4);
         }
 
-        .imageWrap {
+        .speakerPhoto img {
           position: absolute;
           inset: 0;
-          display: flex;
-          align-items: flex-end;
-          justify-content: center;
-          z-index: 1;
-        }
-
-        .imageWrap img {
           width: 100%;
           height: 92%;
           object-fit: cover;
           object-position: center bottom;
-          filter: drop-shadow(0 24px 34px rgba(0, 0, 0, 0.16));
+          filter: drop-shadow(0 20px 32px rgba(0, 0, 0, 0.16));
         }
 
-        .speakerInfo {
+        .speakerTag {
           position: absolute;
-          left: 16px;
-          right: 16px;
-          bottom: 16px;
-          z-index: 7;
-          border-radius: 20px;
-          padding: 17px;
-          background: rgba(255, 250, 245, 0.82);
+          left: 10px;
+          right: 10px;
+          bottom: 10px;
+          z-index: 8;
+          padding: 13px;
+          border-radius: 18px;
+          background: rgba(255, 250, 246, 0.84);
           backdrop-filter: blur(14px);
-          border: 1px solid rgba(255, 255, 255, 0.55);
-          box-shadow: 0 20px 40px rgba(67, 27, 28, 0.12);
+          box-shadow: 0 16px 36px rgba(69, 25, 22, 0.12);
         }
 
-        .speakerInfo span {
+        .speakerTag span {
           display: block;
-          color: #a44648;
-          font-size: 0.72rem;
-          font-weight: 800;
+          color: #a94b4b;
+          font-size: 0.62rem;
+          font-weight: 950;
           text-transform: uppercase;
           letter-spacing: 0.06em;
-          margin-bottom: 5px;
+          margin-bottom: 3px;
         }
 
-        .speakerInfo strong {
+        .speakerTag strong {
           display: block;
-          color: #24110f;
+          color: #251211;
           font-family: "Libre Bodoni", Georgia, serif;
-          font-size: 1.6rem;
+          font-size: 1.23rem;
           letter-spacing: -0.04em;
+          line-height: 1;
+        }
+
+        .authority {
+          position: relative;
+          z-index: 9;
+          display: grid;
+          grid-template-columns: 1fr;
+          gap: 10px;
+          margin: 34px 0 28px;
+        }
+
+        .authority article {
+          border-radius: 20px;
+          padding: 17px;
+          background: #fff1e8;
+          border: 1px solid rgba(142, 53, 66, 0.08);
+        }
+
+        .authority span {
+          display: block;
+          color: #a94b4b;
+          font-weight: 950;
           margin-bottom: 7px;
         }
 
-        .speakerInfo p {
+        .authority p {
           margin: 0;
-          color: #51362f;
-          font-size: 0.82rem;
-          line-height: 1.45;
+          color: #543734;
+          font-size: 0.9rem;
+          line-height: 1.55;
         }
 
-        .knownAs {
-          margin: 70px 0 42px;
+        .learn {
+          position: relative;
+          z-index: 9;
+        }
+
+        .sectionTitle {
           text-align: center;
+          max-width: 720px;
+          margin: 0 auto 22px;
         }
 
-        .knownAs p {
-          margin: 0 0 16px;
+        .sectionTitle p {
+          margin: 0 0 8px;
+          color: #a94b4b;
+          font-size: 0.78rem;
+          font-weight: 950;
+          text-transform: uppercase;
+          letter-spacing: 0.08em;
+        }
+
+        .sectionTitle h2 {
+          margin: 0;
+          color: #251211;
           font-family: "Libre Bodoni", Georgia, serif;
-          font-size: 1.55rem;
-          color: #8d4a3c;
-        }
-
-        .knownAs div {
-          display: grid;
-          grid-template-columns: repeat(4, 1fr);
-          gap: 0;
-          max-width: 860px;
-          margin: 0 auto;
-          color: #70534a;
-          font-size: 0.92rem;
-        }
-
-        .knownAs span {
-          padding: 0 18px;
-          border-right: 1px solid rgba(80, 42, 36, 0.13);
-        }
-
-        .knownAs span:last-child {
-          border-right: 0;
-        }
-
-        .learnSection {
-          text-align: center;
-        }
-
-        h2 {
-          margin: 0 0 30px;
-          font-family: "Libre Bodoni", Georgia, serif;
-          font-size: clamp(2rem, 3vw, 3.1rem);
-          line-height: 1;
-          letter-spacing: -0.04em;
-          color: #24110f;
+          font-size: clamp(2rem, 9vw, 3.3rem);
+          line-height: 0.95;
+          letter-spacing: -0.055em;
         }
 
         .cards {
           display: grid;
-          grid-template-columns: repeat(3, 1fr);
-          gap: 14px;
+          grid-template-columns: 1fr;
+          gap: 10px;
         }
 
         .cards article {
-          text-align: left;
-          min-height: 178px;
           border-radius: 20px;
-          padding: 24px;
-          background: #f8e9df;
-          border: 1px solid rgba(128, 45, 55, 0.07);
+          padding: 20px;
+          background: #f8e3d7;
+          border: 1px solid rgba(142, 53, 66, 0.08);
+          box-shadow: 0 14px 30px rgba(86, 34, 32, 0.06);
         }
 
         .cards article span {
-          color: #a44648;
-          font-weight: 900;
-          font-size: 0.82rem;
+          color: #a94b4b;
+          font-size: 0.78rem;
+          font-weight: 950;
         }
 
         .cards h3 {
-          margin: 12px 0 10px;
-          color: #2b1714;
-          font-size: 1.05rem;
+          margin: 10px 0 8px;
+          color: #2d1717;
+          font-size: 1.02rem;
           line-height: 1.25;
         }
 
         .cards p {
           margin: 0;
-          color: #60463f;
+          color: #60433d;
           font-size: 0.9rem;
           line-height: 1.55;
         }
 
-        @media (max-width: 980px) {
-          .livePage {
-            padding: 42px 14px 64px;
-          }
+        .handsLayer {
+          position: absolute;
+          inset: 0;
+          pointer-events: none;
+          z-index: 7;
+        }
 
-          .backgroundText {
-            top: -28px;
-            font-size: clamp(5rem, 24vw, 10rem);
+        .hand {
+          position: absolute;
+          top: 46%;
+          width: 72px;
+          height: 235px;
+          background:
+            radial-gradient(circle at 42% 18%, rgba(255, 255, 255, 0.08), transparent 10%),
+            linear-gradient(90deg, #030202, #181111 48%, #050303);
+          box-shadow:
+            inset 16px 0 34px rgba(255, 255, 255, 0.035),
+            0 28px 55px rgba(0, 0, 0, 0.44);
+          filter: blur(0.1px);
+        }
+
+        .handLeft {
+          left: -26px;
+          border-radius: 46px 34px 32px 48px;
+          transform: translateY(-50%) rotate(-9deg);
+        }
+
+        .handRight {
+          right: -26px;
+          border-radius: 34px 46px 48px 32px;
+          transform: translateY(-50%) rotate(9deg);
+        }
+
+        .thumb {
+          position: absolute;
+          top: 34px;
+          width: 48px;
+          height: 112px;
+          border-radius: 999px;
+          background:
+            radial-gradient(circle at 50% 20%, rgba(255, 255, 255, 0.07), transparent 12%),
+            linear-gradient(90deg, #050303, #171010 52%, #040303);
+          box-shadow: 0 18px 34px rgba(0, 0, 0, 0.38);
+        }
+
+        .handLeft .thumb {
+          right: -30px;
+          transform: rotate(-18deg);
+        }
+
+        .handRight .thumb {
+          left: -30px;
+          transform: rotate(18deg);
+        }
+
+        .finger {
+          position: absolute;
+          width: 42px;
+          height: 115px;
+          border-radius: 999px;
+          background: linear-gradient(90deg, #020202, #141010, #030202);
+          opacity: 0.95;
+        }
+
+        .fingerOne {
+          top: 82px;
+        }
+
+        .fingerTwo {
+          top: 158px;
+          height: 104px;
+          opacity: 0.86;
+        }
+
+        .handLeft .finger {
+          left: 9px;
+        }
+
+        .handRight .finger {
+          right: 9px;
+        }
+
+        @media (min-width: 760px) {
+          .livePage {
+            padding: 58px 24px 82px;
           }
 
           .tablet {
-            border-radius: 30px;
-            padding: 10px;
+            border-radius: 42px;
+            padding: 15px;
+          }
+
+          .tablet::before {
+            top: 8px;
+            width: 220px;
+            height: 4px;
           }
 
           .tabletScreen {
-            min-height: auto;
-            border-radius: 22px;
-            padding: 28px 20px 34px;
+            border-radius: 30px;
+            padding: 42px 52px 48px;
           }
 
-          .heroContent {
-            grid-template-columns: 1fr;
-            gap: 28px;
+          .hero {
+            grid-template-columns: 0.92fr 1.08fr;
+            gap: 42px;
+            align-items: center;
           }
 
-          .topBadges {
-            margin-bottom: 28px;
+          .badges {
+            margin-bottom: 34px;
           }
 
-          h1 {
-            font-size: clamp(2.45rem, 12vw, 4.1rem);
-          }
-
-          .description {
-            font-size: 0.95rem;
-          }
-
-          .speakersArea {
-            min-height: auto;
+          .leadForm {
             grid-template-columns: 1fr 1fr;
           }
 
-          .speaker {
-            min-height: 460px;
+          .leadForm button,
+          .microCopy {
+            grid-column: 1 / -1;
           }
 
-          .speakerLizia {
-            transform: translateY(22px);
+          .speakersWrap {
+            min-height: 520px;
+            gap: 18px;
           }
 
-          .knownAs {
-            margin-top: 62px;
+          .speakerPhoto {
+            min-height: 500px;
           }
 
-          .knownAs div {
-            grid-template-columns: repeat(2, 1fr);
-            row-gap: 14px;
+          .speakerPhotoLizia {
+            transform: translateY(34px);
           }
 
-          .knownAs span:nth-child(2) {
-            border-right: 0;
+          .speakerTag {
+            left: 16px;
+            right: 16px;
+            bottom: 16px;
+            padding: 16px;
+          }
+
+          .speakerTag strong {
+            font-size: 1.52rem;
+          }
+
+          .authority {
+            grid-template-columns: 1fr 1fr;
+            margin: 62px 0 44px;
           }
 
           .cards {
-            grid-template-columns: 1fr;
+            grid-template-columns: repeat(3, 1fr);
+          }
+
+          .cards article {
+            min-height: 190px;
+            padding: 24px;
+          }
+
+          .hand {
+            top: 52%;
+            width: 138px;
+            height: 430px;
+          }
+
+          .handLeft {
+            left: -72px;
+            transform: translateY(-50%) rotate(-13deg);
+            border-radius: 86px 64px 44px 72px;
+          }
+
+          .handRight {
+            right: -72px;
+            transform: translateY(-50%) rotate(13deg);
+            border-radius: 64px 86px 72px 44px;
+          }
+
+          .thumb {
+            top: 62px;
+            width: 78px;
+            height: 175px;
+          }
+
+          .handLeft .thumb {
+            right: -42px;
+          }
+
+          .handRight .thumb {
+            left: -42px;
+          }
+
+          .finger {
+            width: 74px;
+            height: 180px;
+          }
+
+          .fingerOne {
+            top: 150px;
+          }
+
+          .fingerTwo {
+            top: 255px;
+            height: 150px;
+          }
+
+          .handLeft .finger {
+            left: 22px;
+          }
+
+          .handRight .finger {
+            right: 22px;
           }
         }
 
-        @media (max-width: 680px) {
-          .topBadges {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 10px;
+        @media (min-width: 1040px) {
+          .tabletScreen {
+            padding: 46px 62px 54px;
           }
 
-          .speakersArea {
-            grid-template-columns: 1fr;
-            gap: 14px;
+          .hero {
+            grid-template-columns: 0.86fr 1.14fr;
+            gap: 50px;
           }
 
-          .speaker {
-            min-height: 430px;
+          .speakersWrap {
+            min-height: 550px;
           }
 
-          .speakerLizia {
-            transform: none;
+          .speakerPhoto {
+            min-height: 530px;
           }
 
-          .knownAs {
-            margin: 36px 0 32px;
+          .handLeft {
+            left: -92px;
           }
 
-          .knownAs div {
-            grid-template-columns: 1fr;
+          .handRight {
+            right: -92px;
+          }
+        }
+
+        @media (max-width: 390px) {
+          .tabletScreen {
+            padding: 18px 13px 22px;
           }
 
-          .knownAs span {
-            border-right: 0;
-            border-bottom: 1px solid rgba(80, 42, 36, 0.13);
-            padding: 10px 0;
+          h1 {
+            font-size: 2.45rem;
           }
 
-          .knownAs span:last-child {
-            border-bottom: 0;
+          .speakersWrap {
+            min-height: 370px;
+          }
+
+          .speakerPhoto {
+            min-height: 355px;
+            border-radius: 22px;
+          }
+
+          .speakerTag strong {
+            font-size: 1.05rem;
+          }
+
+          .hand {
+            width: 58px;
+            height: 210px;
+          }
+
+          .handLeft {
+            left: -30px;
+          }
+
+          .handRight {
+            right: -30px;
           }
         }
       `}</style>
