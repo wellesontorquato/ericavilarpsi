@@ -17,7 +17,7 @@ export default function LiveMaio() {
         <title>Live Maio | Gestação sem filtro</title>
         <meta
           name="description"
-          content="Live gratuita no Instagram com Erica Vilar e Lizia Nascimento sobre gestação, corpo, emoções, preparação e pós-parto."
+          content="Live gratuita no Instagram com Érica Vilar e Lizia Nascimento sobre gestação, corpo, emoções, preparação e pós-parto."
         />
       </Head>
 
@@ -53,14 +53,30 @@ export default function LiveMaio() {
               </p>
 
               <a href="#inscricao" className="heroCta">
-                Quero receber o lembrete
+                Quero entrar na lista VIP
                 <span>↗</span>
               </a>
 
-              <div className="quickProof">
-                <span>Sem romantização</span>
-                <span>Com acolhimento</span>
-                <span>Com orientação profissional</span>
+              <div className="proofColumns">
+                <div className="proofGroup">
+                  <p>Na live</p>
+
+                  <div className="quickProof">
+                    <span>Sem romantização</span>
+                    <span>Com acolhimento</span>
+                    <span>Com orientação profissional</span>
+                  </div>
+                </div>
+
+                <div className="proofGroup proofGroupVip">
+                  <p>Na lista VIP</p>
+
+                  <div className="quickProof">
+                    <span>Grupo VIP da live</span>
+                    <span>Mimos e materiais após a live</span>
+                    <span>Lembretes exclusivos no WhatsApp</span>
+                  </div>
+                </div>
               </div>
             </div>
 
@@ -88,7 +104,7 @@ export default function LiveMaio() {
           </div>
 
           <a href="#inscricao" className="bottomCta">
-            Fazer minha inscrição gratuita
+            Garantir meu lugar no grupo VIP
             <span>↗</span>
           </a>
         </section>
@@ -297,37 +313,79 @@ export default function LiveMaio() {
           flex: 0 0 auto;
         }
 
+        .liveMaioPage .proofColumns {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 10px;
+          margin-top: 12px;
+        }
+
+        .liveMaioPage .proofGroup {
+          min-width: 0;
+          padding: 10px;
+          border-radius: 20px;
+          background: rgba(255, 245, 238, 0.78);
+          border: 1px solid rgba(166, 76, 80, 0.1);
+        }
+
+        .liveMaioPage .proofGroupVip {
+          background:
+            radial-gradient(circle at 16% 12%, rgba(255, 255, 255, 0.58), transparent 38%),
+            linear-gradient(135deg, rgba(255, 239, 229, 0.92), rgba(247, 214, 200, 0.88));
+          box-shadow: 0 14px 32px rgba(143, 48, 72, 0.1);
+        }
+
+        .liveMaioPage .proofGroup p {
+          margin: 0 0 8px;
+          color: #9d4450;
+          font-size: 0.68rem;
+          font-weight: 950;
+          letter-spacing: 0.07em;
+          text-transform: uppercase;
+        }
+
         .liveMaioPage .quickProof {
           display: grid;
           grid-template-columns: 1fr;
           gap: 8px;
-          margin-top: 12px;
         }
 
         .liveMaioPage .quickProof span {
           display: flex;
           align-items: center;
           gap: 8px;
-          padding: 10px 12px;
-          border-radius: 16px;
-          background: rgba(255, 240, 231, 0.8);
+          min-height: 42px;
+          padding: 9px 10px;
+          border-radius: 15px;
+          background: rgba(255, 250, 247, 0.82);
           color: #72443d;
-          font-size: 0.82rem;
-          font-weight: 800;
+          font-size: 0.76rem;
+          line-height: 1.25;
+          font-weight: 850;
+        }
+
+        .liveMaioPage .proofGroupVip .quickProof span {
+          background: rgba(255, 255, 255, 0.76);
+          color: #7f293f;
         }
 
         .liveMaioPage .quickProof span::before {
           content: "✓";
           display: grid;
           place-items: center;
-          width: 20px;
-          height: 20px;
+          width: 19px;
+          height: 19px;
           border-radius: 999px;
           background: #a64c50;
           color: #fff;
-          font-size: 0.72rem;
+          font-size: 0.68rem;
           font-weight: 950;
           flex: 0 0 auto;
+        }
+
+        .liveMaioPage .proofGroupVip .quickProof span::before {
+          content: "✦";
+          background: linear-gradient(135deg, #8f3048, #d86f4f);
         }
 
         .liveMaioPage .speakersBlock {
@@ -594,6 +652,47 @@ export default function LiveMaio() {
         .liveMaioPage .field input:focus {
           border-color: rgba(166, 76, 80, 0.58);
           box-shadow: 0 0 0 4px rgba(166, 76, 80, 0.12);
+        }
+
+        .liveMaioPage .vipNotice {
+          display: flex;
+          gap: 12px;
+          padding: 13px;
+          border-radius: 18px;
+          background:
+            radial-gradient(circle at 12% 18%, rgba(255, 255, 255, 0.75), transparent 35%),
+            linear-gradient(135deg, #fff0e7, #f7d6c8);
+          border: 1px solid rgba(166, 76, 80, 0.16);
+          box-shadow: 0 14px 34px rgba(143, 48, 72, 0.12);
+        }
+
+        .liveMaioPage .vipIcon {
+          width: 34px;
+          height: 34px;
+          display: grid;
+          place-items: center;
+          flex: 0 0 auto;
+          border-radius: 999px;
+          background: linear-gradient(135deg, #8f3048, #d86f4f);
+          color: #fff;
+          font-weight: 950;
+          box-shadow: 0 10px 24px rgba(143, 48, 72, 0.28);
+          animation: livePulse 1.45s ease-in-out infinite;
+        }
+
+        .liveMaioPage .vipNotice strong {
+          display: block;
+          color: #351817;
+          font-size: 0.86rem;
+          line-height: 1.32;
+          font-weight: 950;
+        }
+
+        .liveMaioPage .vipNotice p {
+          margin: 6px 0 0;
+          color: #704740;
+          font-size: 0.78rem;
+          line-height: 1.42;
         }
 
         .liveMaioPage .checkboxGroup {
@@ -896,6 +995,32 @@ export default function LiveMaio() {
             font-size: 0.92rem;
           }
 
+          .liveMaioPage .proofColumns {
+            gap: 8px;
+          }
+
+          .liveMaioPage .proofGroup {
+            padding: 8px;
+            border-radius: 17px;
+          }
+
+          .liveMaioPage .proofGroup p {
+            font-size: 0.62rem;
+          }
+
+          .liveMaioPage .quickProof span {
+            min-height: 40px;
+            padding: 8px;
+            font-size: 0.69rem;
+            gap: 6px;
+          }
+
+          .liveMaioPage .quickProof span::before {
+            width: 17px;
+            height: 17px;
+            font-size: 0.62rem;
+          }
+
           .liveMaioPage .speakers {
             gap: 8px;
           }
@@ -945,8 +1070,12 @@ export default function LiveMaio() {
             border-radius: 40px;
           }
 
-          .liveMaioPage .quickProof {
-            grid-template-columns: repeat(3, 1fr);
+          .liveMaioPage .proofColumns {
+            gap: 12px;
+          }
+
+          .liveMaioPage .proofGroup {
+            padding: 12px;
           }
 
           .liveMaioPage .speakers {
@@ -1027,6 +1156,14 @@ export default function LiveMaio() {
             width: min(390px, 100%);
           }
 
+          .liveMaioPage .proofColumns {
+            width: min(640px, 100%);
+          }
+
+          .liveMaioPage .quickProof span {
+            font-size: 0.78rem;
+          }
+
           .liveMaioPage .speakers {
             grid-template-columns: 1fr 1fr;
             gap: 16px;
@@ -1096,9 +1233,9 @@ function SpeakerPhotos() {
     {
       id: "erica",
       role: "Psicóloga",
-      name: "Erica Vilar",
+      name: "Érica Vilar",
       image: "/erica-live.png",
-      alt: "Psicóloga Erica Vilar",
+      alt: "Psicóloga Érica Vilar",
       bio:
         "Psicóloga clínica, fala sobre saúde emocional feminina, maternidade, vínculos e autocuidado com sensibilidade e profundidade.",
     },
@@ -1150,9 +1287,12 @@ function FormCard() {
   return (
     <aside className="formCard" id="inscricao">
       <div className="formHeader">
-        <span>Inscrição gratuita</span>
-        <h2>Receba o lembrete da live</h2>
-        <p>Preencha em menos de 1 minuto e escolha os temas que mais quer ver.</p>
+        <span>Acesso VIP gratuito</span>
+        <h2>Entre na lista exclusiva da live</h2>
+        <p>
+          Preencha em menos de 1 minuto para receber o lembrete, acessar o grupo
+          VIP e ganhar os materiais enviados depois da live.
+        </p>
       </div>
 
       <form className="leadForm" action="/obrigado-live" method="GET">
@@ -1183,6 +1323,18 @@ function FormCard() {
           />
         </div>
 
+        <div className="vipNotice">
+          <div className="vipIcon">✦</div>
+
+          <div>
+            <strong>Após a inscrição, você será direcionada para o grupo VIP.</strong>
+            <p>
+              Por lá, você recebe os lembretes da live, avisos importantes e os
+              mimos com materiais de apoio depois do encontro.
+            </p>
+          </div>
+        </div>
+
         <div className="checkboxGroup">
           <div className="checkboxTitle">
             <span>Subtemas de interesse</span>
@@ -1208,12 +1360,12 @@ function FormCard() {
         </label>
 
         <button className="submit" type="submit">
-          Quero garantir meu lembrete
+          Quero meu acesso VIP
           <span>↗</span>
         </button>
 
         <p className="safeNote">
-          A inscrição só será enviada após marcar o consentimento obrigatório.
+          Ao enviar, você será direcionada para entrar no grupo VIP da live.
         </p>
       </form>
     </aside>
