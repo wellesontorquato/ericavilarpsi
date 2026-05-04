@@ -1272,30 +1272,40 @@
       }
 
       function normalizeFirebaseError(error) {
-        const code = error?.code || "";
+      const code = error?.code || "";
 
-        if (code.includes("auth/invalid-credential")) {
-          return "E-mail ou senha inválidos.";
-        }
-
-        if (code.includes("auth/user-not-found")) {
-          return "Usuário não encontrado.";
-        }
-
-        if (code.includes("auth/wrong-password")) {
-          return "Senha incorreta.";
-        }
-
-        if (code.includes("auth/popup-closed-by-user")) {
-          return "Login cancelado.";
-        }
-
-        if (code.includes("permission-denied")) {
-          return "Você não tem permissão para acessar esta área.";
-        }
-
-        return "Ocorreu um erro. Tente novamente.";
+      if (code.includes("auth/unauthorized-domain")) {
+        return "Este domínio ainda não está autorizado no Firebase. Adicione ericavilarpsi.com.br em Authentication > Configurações > Domínios autorizados.";
       }
+
+      if (code.includes("auth/operation-not-allowed")) {
+        return "Este método de login ainda não está ativado no Firebase.";
+      }
+
+      if (code.includes("auth/invalid-credential")) {
+        return "E-mail ou senha inválidos.";
+      }
+
+      if (code.includes("auth/user-not-found")) {
+        return "Usuário não encontrado.";
+      }
+
+      if (code.includes("auth/wrong-password")) {
+        return "Senha incorreta.";
+      }
+
+      if (code.includes("auth/popup-closed-by-user")) {
+        return "Login cancelado.";
+      }
+
+      if (code.includes("permission-denied")) {
+        return "Você não tem permissão para acessar esta área.";
+      }
+
+      console.error("Erro Firebase não tratado:", error);
+
+      return "Ocorreu um erro. Tente novamente.";
+    }
 
       function showCommentsPanel() {
         firebaseLoginCard.classList.add("is-hidden");
