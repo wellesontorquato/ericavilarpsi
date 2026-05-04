@@ -985,7 +985,8 @@
             moderação do site.
           </p>
           <button id="loginButton" class="login-button" type="button">
-            Entrar com Netlify Identity</button>
+            Entrar com Netlify Identity
+          </button>
           <a href="/" class="back-link">← Voltar ao site</a>
           <div id="statusText" class="status-text">Verificando acesso...</div>
         </div>
@@ -1061,7 +1062,8 @@
             >
               Painel</button>
             <button id="topOpenCmsButton" type="button" class="nav-button">
-              Editor do blog</button
+              Editor do blog
+            </button
             ><a
               href="/"
               class="nav-button"
@@ -1132,7 +1134,8 @@
               placeholder="Senha"
               autocomplete="current-password"
             /><button type="submit" class="secondary-button">
-              Entrar com e-mail e senha</button>
+              Entrar com e-mail e senha
+            </button>
             <button
               id="resetPasswordButton"
               type="button"
@@ -1167,11 +1170,14 @@
                 data-status="pending"
                 type="button"
               >
-                Pendentes</button
+                Pendentes
+              </button
               ><button class="tab-button" data-status="approved" type="button">
-                Aprovados</button
+                Aprovados
+              </button
               ><button class="tab-button" data-status="rejected" type="button">
-                Rejeitados</button
+                Rejeitados
+              </button
               ><button class="tab-button" data-status="all" type="button">
                 Todos
               </button>
@@ -1362,32 +1368,44 @@
         }
 
         if (cmsLoaded) {
+          decapLoading.classList.remove("is-visible");
           return;
         }
 
         cmsLoaded = true;
 
+        adminLogin.classList.add("is-hidden");
+        adminDashboard.classList.add("is-hidden");
+        adminModeration.classList.add("is-hidden");
+
         const script = document.createElement("script");
         script.src = "https://unpkg.com/decap-cms@^3/dist/decap-cms.js";
         script.async = true;
 
+        const removeLoading = function () {
+          decapLoading.classList.remove("is-visible");
+        };
+
         script.onload = function () {
-          setTimeout(function () {
-            decapLoading.classList.remove("is-visible");
-          }, 500);
+          setTimeout(removeLoading, 900);
         };
 
         script.onerror = function () {
           cmsLoaded = false;
-          decapLoading.classList.remove("is-visible");
-          showDashboard();
+          removeLoading();
 
-          statusText &&
-            (statusText.textContent =
-              "Não foi possível carregar o editor do blog. Tente novamente.");
+          alert(
+            "Não foi possível carregar o editor do blog. Atualize a página e tente novamente."
+          );
+
+          window.location.href = "/admin/";
         };
 
         document.body.appendChild(script);
+
+        // Segurança extra: se o Decap carregar, mas o evento onload demorar ou falhar,
+        // removemos o overlay para não deixar a tela presa no carregamento.
+        setTimeout(removeLoading, 3500);
       }
       function initIdentity() {
         if (!window.netlifyIdentity) {
@@ -1772,13 +1790,12 @@
           alert(normalizeFirebaseError(error));
         }
       }
-      openCmsButton.addEventListener("click", function () {
+      function openBlogEditor() {
         window.location.href = "/admin/#/collections/posts";
-      });
+      }
 
-      topOpenCmsButton.addEventListener("click", function () {
-        window.location.href = "/admin/#/collections/posts";
-      });
+      openCmsButton.addEventListener("click", openBlogEditor);
+      topOpenCmsButton.addEventListener("click", openBlogEditor);
       openModerationButton.addEventListener("click", showModeration);
       topBackToDashboardButton.addEventListener("click", showDashboard);
       refreshCommentsButton.addEventListener("click", loadComments);
@@ -1815,7 +1832,11 @@
       document.addEventListener("keydown", (e) => {
         if (e.key === "Escape") closeCommentModal();
       });
-      initIdentity();
+      if (isDecapRoute()) {
+        loadCMS();
+      } else {
+        initIdentity();
+      }
     </script>
 
     <script type="module">
