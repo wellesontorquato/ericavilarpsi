@@ -1,12 +1,12 @@
 import Head from "next/head";
 
 const subtemas = [
-  "Mudanças no corpo durante a gestação",
-  "Medos, ansiedade e inseguranças",
-  "Dores, desconfortos e preparação física",
-  "Parto, pós-parto e puerpério real",
-  "Culpa, autocobrança e comparação",
-  "Rede de apoio e cuidado emocional",
+  "Corpo e mudanças na gestação",
+  "Medos e ansiedade",
+  "Dores e desconfortos",
+  "Parto e preparação",
+  "Pós-parto real",
+  "Culpa e autocobrança",
 ];
 
 export default function LiveMaio() {
@@ -43,46 +43,28 @@ export default function LiveMaio() {
 
               <h1 className="heroTitle">
                 Gestação sem filtro:
-                <em> tudo que você precisa saber e nunca te contaram.</em>
+                <em> o que você precisa saber e quase ninguém te contou.</em>
               </h1>
 
               <p className="heroText">
-                Uma conversa real, acolhedora e sem romantização sobre corpo,
-                emoções, medos, dores, culpa, preparação e pós-parto.
+                Uma conversa real sobre corpo, emoções, medos, preparação,
+                parto e pós-parto.
               </p>
 
-              <div className="promiseBox">
-                <strong>Você não precisa passar por essa fase cheia de dúvidas.</strong>
-                <p>
-                  Essa live é um espaço para falar com honestidade sobre o que
-                  muitas mulheres sentem, mas quase ninguém explica com cuidado.
-                </p>
+              <a href="#inscricao" className="heroCta">
+                Quero receber o lembrete
+                <span>↗</span>
+              </a>
+
+              <div className="quickProof">
+                <span>Sem romantização</span>
+                <span>Com acolhimento</span>
+                <span>Com orientação profissional</span>
               </div>
             </div>
 
             <div className="speakersBlock">
               <SpeakerPhotos />
-
-              <div className="miniBioGrid">
-                <article>
-                  <span>Psicóloga</span>
-                  <strong>Érica Vilar</strong>
-                  <p>
-                    Psicóloga clínica, fala sobre saúde emocional feminina,
-                    maternidade, vínculos e autocuidado com sensibilidade e
-                    profundidade.
-                  </p>
-                </article>
-
-                <article>
-                  <span>Fisioterapeuta e doula</span>
-                  <strong>Lizia Nascimento</strong>
-                  <p>
-                    Atua no cuidado integral da mulher da gestação ao pós-parto,
-                    unindo técnica, acolhimento e escuta.
-                  </p>
-                </article>
-              </div>
             </div>
 
             <FormCard />
@@ -92,41 +74,22 @@ export default function LiveMaio() {
         <section className="topicsSection">
           <div className="topicsHeader">
             <span>O que será conversado</span>
-            <h2>Uma live para falar o que quase ninguém fala sobre gestar</h2>
-            <p>
-              Informação, acolhimento e orientação para viver essa fase com mais
-              consciência, menos culpa e mais segurança.
-            </p>
+            <h2>Escolha no formulário os temas que mais importam para você</h2>
           </div>
 
           <div className="topicsGrid">
-            <article>
-              <span>01</span>
-              <h3>O corpo muda. E isso mexe com tudo.</h3>
-              <p>
-                Dores, desconfortos, alterações físicas e sensações que muitas
-                mulheres só descobrem quando já estão vivendo.
-              </p>
-            </article>
-
-            <article>
-              <span>02</span>
-              <h3>Nem toda gestação parece propaganda.</h3>
-              <p>
-                Medos, inseguranças, culpa e autocobrança também fazem parte da
-                experiência de muitas mulheres.
-              </p>
-            </article>
-
-            <article>
-              <span>03</span>
-              <h3>Preparação também é cuidado emocional.</h3>
-              <p>
-                Como olhar para parto, pós-parto, rede de apoio e puerpério de
-                um jeito mais real e possível.
-              </p>
-            </article>
+            {subtemas.map((tema) => (
+              <article key={tema}>
+                <span>✓</span>
+                <p>{tema}</p>
+              </article>
+            ))}
           </div>
+
+          <a href="#inscricao" className="bottomCta">
+            Fazer minha inscrição gratuita
+            <span>↗</span>
+          </a>
         </section>
       </main>
 
@@ -140,19 +103,19 @@ export default function LiveMaio() {
           min-height: 100vh;
           position: relative;
           overflow: hidden;
-          padding: 18px;
+          padding: 14px;
           color: #2d1717;
           font-family: "Montserrat", Arial, sans-serif;
           background:
-            radial-gradient(circle at 16% 12%, rgba(255, 207, 184, 0.2), transparent 32%),
-            radial-gradient(circle at 86% 18%, rgba(187, 76, 91, 0.28), transparent 34%),
+            radial-gradient(circle at 16% 12%, rgba(255, 207, 184, 0.22), transparent 32%),
+            radial-gradient(circle at 86% 18%, rgba(187, 76, 91, 0.3), transparent 34%),
             radial-gradient(circle at 50% 100%, rgba(240, 143, 101, 0.22), transparent 36%),
             linear-gradient(135deg, #321217 0%, #5a2328 43%, #9a5545 100%);
         }
 
         .liveMaioPage .backgroundWord {
           position: absolute;
-          top: 12px;
+          top: 10px;
           left: 50%;
           transform: translateX(-50%);
           z-index: 0;
@@ -198,18 +161,18 @@ export default function LiveMaio() {
         }
 
         .liveMaioPage .heroSection {
-          padding: 12px 0 34px;
+          padding: 10px 0 22px;
         }
 
         .liveMaioPage .heroCard {
           display: grid;
           grid-template-columns: 1fr;
-          gap: 22px;
+          gap: 18px;
           overflow: hidden;
-          border-radius: 34px;
-          padding: 18px;
+          border-radius: 30px;
+          padding: 16px;
           background:
-            linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(255, 247, 242, 0.98)),
+            linear-gradient(180deg, rgba(255, 255, 255, 0.94), rgba(255, 247, 242, 0.98)),
             #fff8f4;
           box-shadow:
             0 34px 95px rgba(24, 6, 8, 0.38),
@@ -229,7 +192,7 @@ export default function LiveMaio() {
           border-radius: 999px;
           background: #ffffff;
           color: #a64c50;
-          font-size: 0.7rem;
+          font-size: 0.68rem;
           font-weight: 950;
           letter-spacing: 0.055em;
           text-transform: uppercase;
@@ -242,13 +205,14 @@ export default function LiveMaio() {
           border-radius: 999px;
           background: #b04b58;
           box-shadow: 0 0 0 5px rgba(176, 75, 88, 0.12);
+          animation: livePulse 1.35s ease-in-out infinite;
         }
 
         .liveMaioPage .eventInfo {
           display: flex;
           flex-wrap: wrap;
           gap: 8px;
-          margin: 16px 0 18px;
+          margin: 14px 0 16px;
         }
 
         .liveMaioPage .eventInfo span {
@@ -256,14 +220,14 @@ export default function LiveMaio() {
           border-radius: 999px;
           background: #f7e5dc;
           color: #7f3d3a;
-          font-size: 0.78rem;
+          font-size: 0.76rem;
           font-weight: 850;
         }
 
         .liveMaioPage .preTitle {
           margin: 0 0 10px;
           color: #a64c50;
-          font-size: 0.73rem;
+          font-size: 0.72rem;
           font-weight: 950;
           letter-spacing: 0.08em;
           text-transform: uppercase;
@@ -274,7 +238,7 @@ export default function LiveMaio() {
           max-width: 670px;
           color: #291211;
           font-family: "Libre Bodoni", Georgia, serif;
-          font-size: clamp(2.55rem, 11vw, 5.1rem);
+          font-size: clamp(2.45rem, 10.5vw, 4.9rem);
           line-height: 0.9;
           letter-spacing: -0.065em;
           font-weight: 600;
@@ -288,37 +252,80 @@ export default function LiveMaio() {
         }
 
         .liveMaioPage .heroText {
-          margin: 18px 0 0;
-          max-width: 610px;
+          margin: 16px 0 0;
+          max-width: 560px;
           color: #563936;
-          font-size: 1rem;
-          line-height: 1.62;
+          font-size: 0.98rem;
+          line-height: 1.5;
           font-weight: 560;
         }
 
-        .liveMaioPage .promiseBox {
+        .liveMaioPage .heroCta,
+        .liveMaioPage .bottomCta {
+          text-decoration: none;
+        }
+
+        .liveMaioPage .heroCta {
+          width: 100%;
           margin-top: 18px;
-          padding: 16px;
-          border-radius: 22px;
-          background:
-            linear-gradient(135deg, rgba(255, 242, 233, 0.94), rgba(248, 218, 205, 0.9));
-          border: 1px solid rgba(166, 76, 80, 0.12);
-          box-shadow: 0 16px 38px rgba(92, 38, 35, 0.08);
-        }
-
-        .liveMaioPage .promiseBox strong {
-          display: block;
-          color: #351817;
-          font-size: 0.98rem;
-          line-height: 1.35;
+          min-height: 56px;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 14px;
+          border-radius: 18px;
+          padding: 15px 16px;
+          background: linear-gradient(135deg, #8f3048, #d86f4f);
+          color: #fff;
           font-weight: 950;
+          box-shadow:
+            0 18px 42px rgba(143, 48, 72, 0.36),
+            0 0 0 0 rgba(216, 111, 79, 0.42);
+          animation: ctaPulse 1.6s ease-in-out infinite;
         }
 
-        .liveMaioPage .promiseBox p {
-          margin: 8px 0 0;
-          color: #714942;
-          font-size: 0.9rem;
-          line-height: 1.55;
+        .liveMaioPage .heroCta span,
+        .liveMaioPage .bottomCta span,
+        .liveMaioPage .submit span {
+          display: grid;
+          place-items: center;
+          width: 32px;
+          height: 32px;
+          border-radius: 999px;
+          background: rgba(255, 255, 255, 0.16);
+          flex: 0 0 auto;
+        }
+
+        .liveMaioPage .quickProof {
+          display: grid;
+          grid-template-columns: 1fr;
+          gap: 8px;
+          margin-top: 12px;
+        }
+
+        .liveMaioPage .quickProof span {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          padding: 10px 12px;
+          border-radius: 16px;
+          background: rgba(255, 240, 231, 0.8);
+          color: #72443d;
+          font-size: 0.82rem;
+          font-weight: 800;
+        }
+
+        .liveMaioPage .quickProof span::before {
+          content: "✓";
+          display: grid;
+          place-items: center;
+          width: 20px;
+          height: 20px;
+          border-radius: 999px;
+          background: #a64c50;
+          color: #fff;
+          font-size: 0.72rem;
+          font-weight: 950;
         }
 
         .liveMaioPage .speakersBlock {
@@ -332,11 +339,11 @@ export default function LiveMaio() {
           width: 100%;
         }
 
-        .liveMaioPage .speaker {
+        .liveMaioPage .speakerCard {
           position: relative;
-          min-height: 310px;
+          min-height: 305px;
           overflow: hidden;
-          border-radius: 26px;
+          border-radius: 24px;
           background:
             radial-gradient(circle at 50% 12%, rgba(255, 236, 224, 0.96), transparent 45%),
             linear-gradient(180deg, #f5d9cc, #e8b7a6);
@@ -344,13 +351,26 @@ export default function LiveMaio() {
           box-shadow: 0 20px 45px rgba(92, 38, 35, 0.13);
         }
 
-        .liveMaioPage .speaker:nth-child(2) {
+        .liveMaioPage .speakerCard:nth-child(2) {
           background:
             radial-gradient(circle at 50% 12%, rgba(255, 241, 232, 0.96), transparent 45%),
             linear-gradient(180deg, #f8dfd3, #e9b8a7);
         }
 
-        .liveMaioPage .speaker img {
+        .liveMaioPage .speakerCard summary {
+          list-style: none;
+          cursor: pointer;
+          height: 100%;
+          min-height: inherit;
+          position: relative;
+          overflow: hidden;
+        }
+
+        .liveMaioPage .speakerCard summary::-webkit-details-marker {
+          display: none;
+        }
+
+        .liveMaioPage .speakerCard img {
           position: absolute;
           inset: 0;
           width: 100%;
@@ -358,17 +378,23 @@ export default function LiveMaio() {
           display: block;
           object-fit: cover;
           object-position: center top;
+          transition: transform 0.35s ease;
         }
 
-        .liveMaioPage .speaker::after {
+        .liveMaioPage .speakerCard:hover img,
+        .liveMaioPage .speakerCard[open] img {
+          transform: scale(1.035);
+        }
+
+        .liveMaioPage .speakerCard summary::after {
           content: "";
           position: absolute;
           left: 0;
           right: 0;
           bottom: 0;
           z-index: 1;
-          height: 54%;
-          background: linear-gradient(180deg, transparent, rgba(44, 18, 18, 0.74));
+          height: 58%;
+          background: linear-gradient(180deg, transparent, rgba(44, 18, 18, 0.78));
         }
 
         .liveMaioPage .speakerName {
@@ -379,7 +405,7 @@ export default function LiveMaio() {
           z-index: 2;
           padding: 12px;
           border-radius: 18px;
-          background: rgba(255, 250, 246, 0.88);
+          background: rgba(255, 250, 246, 0.9);
           backdrop-filter: blur(14px);
           box-shadow: 0 16px 36px rgba(49, 15, 15, 0.18);
         }
@@ -388,7 +414,7 @@ export default function LiveMaio() {
           display: block;
           margin-bottom: 4px;
           color: #a64c50;
-          font-size: 0.6rem;
+          font-size: 0.58rem;
           font-weight: 950;
           letter-spacing: 0.06em;
           text-transform: uppercase;
@@ -398,97 +424,127 @@ export default function LiveMaio() {
           display: block;
           color: #291211;
           font-family: "Libre Bodoni", Georgia, serif;
-          font-size: 1.08rem;
+          font-size: 1.05rem;
           line-height: 1;
           letter-spacing: -0.04em;
         }
 
-        .liveMaioPage .miniBioGrid {
-          display: grid;
-          grid-template-columns: 1fr;
-          gap: 10px;
-          margin-top: 12px;
-        }
-
-        .liveMaioPage .miniBioGrid article {
-          padding: 15px;
-          border-radius: 22px;
-          background: rgba(255, 255, 255, 0.7);
-          border: 1px solid rgba(166, 76, 80, 0.08);
-        }
-
-        .liveMaioPage .miniBioGrid span {
-          display: block;
-          margin-bottom: 5px;
-          color: #a64c50;
+        .liveMaioPage .tapHint {
+          display: inline-flex;
+          align-items: center;
+          gap: 5px;
+          margin-top: 8px;
+          color: #8f3048;
           font-size: 0.68rem;
+          font-weight: 900;
+        }
+
+        .liveMaioPage .tapHint::before {
+          content: "+";
+          display: grid;
+          place-items: center;
+          width: 18px;
+          height: 18px;
+          border-radius: 999px;
+          background: #f3d7cc;
+          color: #8f3048;
           font-weight: 950;
-          letter-spacing: 0.06em;
-          text-transform: uppercase;
         }
 
-        .liveMaioPage .miniBioGrid strong {
-          display: block;
-          margin-bottom: 8px;
-          color: #291211;
-          font-family: "Libre Bodoni", Georgia, serif;
-          font-size: 1.38rem;
-          line-height: 1;
-          letter-spacing: -0.04em;
+        .liveMaioPage .speakerBio {
+          position: absolute;
+          inset: auto 10px 10px 10px;
+          z-index: 5;
+          padding: 14px;
+          border-radius: 18px;
+          background: rgba(255, 250, 246, 0.96);
+          box-shadow: 0 18px 45px rgba(49, 15, 15, 0.22);
+          transform: translateY(110%);
+          opacity: 0;
+          pointer-events: none;
+          transition: transform 0.28s ease, opacity 0.28s ease;
         }
 
-        .liveMaioPage .miniBioGrid p {
+        .liveMaioPage .speakerCard[open] .speakerBio {
+          transform: translateY(0);
+          opacity: 1;
+          pointer-events: auto;
+        }
+
+        .liveMaioPage .speakerBio p {
           margin: 0;
-          color: #60413b;
-          font-size: 0.87rem;
-          line-height: 1.52;
+          color: #573934;
+          font-size: 0.8rem;
+          line-height: 1.42;
+        }
+
+        .liveMaioPage .speakerBio small {
+          display: block;
+          margin-top: 8px;
+          color: #a64c50;
+          font-weight: 900;
+          font-size: 0.68rem;
         }
 
         .liveMaioPage .formCard {
           align-self: start;
-          border-radius: 30px;
+          border-radius: 28px;
           padding: 18px;
           background:
-            linear-gradient(180deg, rgba(255, 255, 255, 0.95), rgba(255, 244, 238, 0.98)),
+            linear-gradient(180deg, rgba(255, 255, 255, 0.97), rgba(255, 244, 238, 0.99)),
             #fff8f4;
-          border: 1px solid rgba(166, 76, 80, 0.12);
-          box-shadow: 0 24px 60px rgba(49, 15, 15, 0.16);
+          border: 1px solid rgba(166, 76, 80, 0.14);
+          box-shadow:
+            0 24px 60px rgba(49, 15, 15, 0.18),
+            inset 0 0 0 1px rgba(255, 255, 255, 0.65);
         }
 
         .liveMaioPage .formHeader {
-          margin-bottom: 16px;
+          margin-bottom: 14px;
         }
 
         .liveMaioPage .formHeader span {
-          display: inline-block;
+          display: inline-flex;
+          align-items: center;
+          gap: 7px;
           margin-bottom: 8px;
           color: #a64c50;
-          font-size: 0.72rem;
+          font-size: 0.7rem;
           font-weight: 950;
           letter-spacing: 0.07em;
           text-transform: uppercase;
+        }
+
+        .liveMaioPage .formHeader span::before {
+          content: "";
+          width: 8px;
+          height: 8px;
+          border-radius: 999px;
+          background: #b04b58;
+          box-shadow: 0 0 0 5px rgba(176, 75, 88, 0.12);
+          animation: livePulse 1.35s ease-in-out infinite;
         }
 
         .liveMaioPage .formHeader h2 {
           margin: 0;
           color: #291211;
           font-family: "Libre Bodoni", Georgia, serif;
-          font-size: clamp(2rem, 8vw, 2.65rem);
+          font-size: clamp(2rem, 7.4vw, 2.55rem);
           line-height: 0.95;
           letter-spacing: -0.055em;
           font-weight: 500;
         }
 
         .liveMaioPage .formHeader p {
-          margin: 10px 0 0;
+          margin: 9px 0 0;
           color: #67443e;
-          font-size: 0.9rem;
-          line-height: 1.5;
+          font-size: 0.88rem;
+          line-height: 1.45;
         }
 
         .liveMaioPage .leadForm {
           display: grid;
-          gap: 11px;
+          gap: 10px;
           width: 100%;
         }
 
@@ -500,7 +556,7 @@ export default function LiveMaio() {
         .liveMaioPage .field label,
         .liveMaioPage .checkboxTitle {
           color: #3a1b1a;
-          font-size: 0.82rem;
+          font-size: 0.8rem;
           font-weight: 850;
         }
 
@@ -525,7 +581,19 @@ export default function LiveMaio() {
         .liveMaioPage .checkboxGroup {
           display: grid;
           gap: 9px;
-          margin-top: 2px;
+        }
+
+        .liveMaioPage .checkboxTitle {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 8px;
+        }
+
+        .liveMaioPage .checkboxTitle small {
+          color: #a64c50;
+          font-size: 0.7rem;
+          font-weight: 900;
         }
 
         .liveMaioPage .checkboxOptions {
@@ -546,22 +614,22 @@ export default function LiveMaio() {
         .liveMaioPage .checkOption span {
           position: relative;
           display: block;
-          min-height: 46px;
-          padding: 11px 12px 11px 38px;
-          border-radius: 16px;
+          min-height: 44px;
+          padding: 10px 11px 10px 36px;
+          border-radius: 15px;
           background: #fffaf7;
           border: 1px solid rgba(166, 76, 80, 0.13);
           color: #5b3a36;
-          font-size: 0.82rem;
-          line-height: 1.35;
+          font-size: 0.8rem;
+          line-height: 1.32;
           transition: border-color 0.18s ease, background 0.18s ease, color 0.18s ease;
         }
 
         .liveMaioPage .checkOption span::before {
           content: "";
           position: absolute;
-          left: 12px;
-          top: 13px;
+          left: 11px;
+          top: 12px;
           width: 17px;
           height: 17px;
           border-radius: 6px;
@@ -572,8 +640,8 @@ export default function LiveMaio() {
         .liveMaioPage .checkOption span::after {
           content: "✓";
           position: absolute;
-          left: 15px;
-          top: 10px;
+          left: 14px;
+          top: 9px;
           color: #ffffff;
           font-size: 0.82rem;
           font-weight: 950;
@@ -606,68 +674,69 @@ export default function LiveMaio() {
           border-radius: 16px;
           background: #f8e5dc;
           color: #5b3a36;
-          font-size: 0.8rem;
-          line-height: 1.42;
+          font-size: 0.78rem;
+          line-height: 1.38;
           cursor: pointer;
+          border: 1px solid rgba(166, 76, 80, 0.12);
         }
 
         .liveMaioPage .consent input {
-          width: 17px;
-          height: 17px;
+          width: 18px;
+          height: 18px;
           margin-top: 1px;
           flex: 0 0 auto;
           accent-color: #a64c50;
         }
 
+        .liveMaioPage .consent strong {
+          color: #8f3048;
+        }
+
         .liveMaioPage .submit {
           width: 100%;
-          min-height: 54px;
+          min-height: 56px;
           border: 0;
           border-radius: 18px;
           padding: 15px 16px;
-          background: linear-gradient(135deg, #8f3048, #ca6a50);
+          background: linear-gradient(135deg, #8f3048, #d86f4f);
           color: #fff;
           font-family: "Montserrat", Arial, sans-serif;
           font-weight: 950;
-          font-size: 0.94rem;
+          font-size: 0.95rem;
           cursor: pointer;
           display: flex;
           align-items: center;
           justify-content: space-between;
-          box-shadow: 0 18px 38px rgba(143, 48, 72, 0.3);
+          box-shadow:
+            0 18px 38px rgba(143, 48, 72, 0.34),
+            0 0 0 0 rgba(216, 111, 79, 0.42);
+          animation: ctaPulse 1.6s ease-in-out infinite;
           transition: transform 0.18s ease, filter 0.18s ease, box-shadow 0.18s ease;
         }
 
         .liveMaioPage .submit:hover {
           transform: translateY(-2px);
           filter: brightness(1.04);
-          box-shadow: 0 22px 45px rgba(143, 48, 72, 0.36);
-        }
-
-        .liveMaioPage .submit span {
-          display: grid;
-          place-items: center;
-          width: 32px;
-          height: 32px;
-          border-radius: 999px;
-          background: rgba(255, 255, 255, 0.16);
+          box-shadow:
+            0 24px 48px rgba(143, 48, 72, 0.4),
+            0 0 0 8px rgba(216, 111, 79, 0.1);
         }
 
         .liveMaioPage .safeNote {
           margin: 0;
           text-align: center;
           color: #86534b;
-          font-size: 0.76rem;
-          line-height: 1.4;
+          font-size: 0.74rem;
+          line-height: 1.35;
         }
 
         .liveMaioPage .topicsSection {
-          padding: 16px 0 42px;
+          padding: 12px 0 38px;
         }
 
         .liveMaioPage .topicsHeader {
-          max-width: 790px;
-          margin: 0 auto 20px;
+          max-width: 720px;
+          margin: 0 auto 18px;
           text-align: center;
           color: #fff5ee;
         }
@@ -676,7 +745,7 @@ export default function LiveMaio() {
           display: inline-block;
           margin-bottom: 10px;
           color: #ffd1bd;
-          font-size: 0.76rem;
+          font-size: 0.74rem;
           font-weight: 950;
           letter-spacing: 0.08em;
           text-transform: uppercase;
@@ -685,59 +754,110 @@ export default function LiveMaio() {
         .liveMaioPage .topicsHeader h2 {
           margin: 0;
           font-family: "Libre Bodoni", Georgia, serif;
-          font-size: clamp(2.05rem, 8vw, 4.25rem);
+          font-size: clamp(2rem, 7.5vw, 3.5rem);
           line-height: 0.95;
           letter-spacing: -0.055em;
           font-weight: 500;
         }
 
-        .liveMaioPage .topicsHeader p {
-          margin: 14px auto 0;
-          max-width: 650px;
-          color: rgba(255, 245, 238, 0.82);
-          font-size: 0.98rem;
-          line-height: 1.58;
-        }
-
         .liveMaioPage .topicsGrid {
           display: grid;
-          grid-template-columns: 1fr;
-          gap: 12px;
+          grid-template-columns: 1fr 1fr;
+          gap: 10px;
         }
 
         .liveMaioPage .topicsGrid article {
-          padding: 20px;
-          border-radius: 26px;
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          padding: 14px;
+          border-radius: 20px;
           background: rgba(255, 248, 243, 0.94);
           border: 1px solid rgba(255, 255, 255, 0.35);
-          box-shadow: 0 22px 50px rgba(29, 7, 9, 0.18);
+          box-shadow: 0 18px 40px rgba(29, 7, 9, 0.14);
         }
 
         .liveMaioPage .topicsGrid article span {
-          display: inline-grid;
+          display: grid;
           place-items: center;
-          width: 38px;
-          height: 38px;
+          width: 28px;
+          height: 28px;
           border-radius: 999px;
           background: #f4d9ce;
           color: #a64c50;
           font-weight: 950;
-          font-size: 0.8rem;
-          margin-bottom: 14px;
-        }
-
-        .liveMaioPage .topicsGrid h3 {
-          margin: 0 0 9px;
-          color: #2d1717;
-          font-size: 1.05rem;
-          line-height: 1.28;
+          font-size: 0.75rem;
+          flex: 0 0 auto;
         }
 
         .liveMaioPage .topicsGrid p {
           margin: 0;
           color: #60413b;
-          font-size: 0.92rem;
-          line-height: 1.55;
+          font-size: 0.86rem;
+          line-height: 1.3;
+          font-weight: 800;
+        }
+
+        .liveMaioPage .bottomCta {
+          width: min(420px, 100%);
+          min-height: 56px;
+          margin: 18px auto 0;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 14px;
+          border-radius: 18px;
+          padding: 15px 16px;
+          background: linear-gradient(135deg, #fff2e9, #ffd2bc);
+          color: #7f293f;
+          font-weight: 950;
+          box-shadow: 0 22px 50px rgba(29, 7, 9, 0.22);
+          animation: softPulse 1.8s ease-in-out infinite;
+        }
+
+        .liveMaioPage .bottomCta span {
+          background: rgba(127, 41, 63, 0.12);
+        }
+
+        @keyframes livePulse {
+          0%,
+          100% {
+            transform: scale(1);
+            box-shadow: 0 0 0 5px rgba(176, 75, 88, 0.12);
+          }
+
+          50% {
+            transform: scale(1.18);
+            box-shadow: 0 0 0 8px rgba(176, 75, 88, 0.08);
+          }
+        }
+
+        @keyframes ctaPulse {
+          0%,
+          100% {
+            transform: translateY(0);
+            box-shadow:
+              0 18px 38px rgba(143, 48, 72, 0.34),
+              0 0 0 0 rgba(216, 111, 79, 0.38);
+          }
+
+          50% {
+            transform: translateY(-1px);
+            box-shadow:
+              0 22px 46px rgba(143, 48, 72, 0.42),
+              0 0 0 8px rgba(216, 111, 79, 0.1);
+          }
+        }
+
+        @keyframes softPulse {
+          0%,
+          100% {
+            transform: translateY(0);
+          }
+
+          50% {
+            transform: translateY(-2px);
+          }
         }
 
         @media (max-width: 420px) {
@@ -747,20 +867,24 @@ export default function LiveMaio() {
 
           .liveMaioPage .heroCard {
             padding: 14px;
-            border-radius: 28px;
+            border-radius: 26px;
           }
 
           .liveMaioPage .heroTitle {
-            font-size: 2.32rem;
+            font-size: 2.24rem;
+          }
+
+          .liveMaioPage .heroText {
+            font-size: 0.92rem;
           }
 
           .liveMaioPage .speakers {
             gap: 8px;
           }
 
-          .liveMaioPage .speaker {
-            min-height: 275px;
-            border-radius: 22px;
+          .liveMaioPage .speakerCard {
+            min-height: 270px;
+            border-radius: 20px;
           }
 
           .liveMaioPage .speakerName {
@@ -772,12 +896,20 @@ export default function LiveMaio() {
           }
 
           .liveMaioPage .speakerName strong {
-            font-size: 0.98rem;
+            font-size: 0.96rem;
+          }
+
+          .liveMaioPage .tapHint {
+            font-size: 0.64rem;
           }
 
           .liveMaioPage .formCard {
             padding: 15px;
             border-radius: 24px;
+          }
+
+          .liveMaioPage .topicsGrid {
+            grid-template-columns: 1fr;
           }
         }
 
@@ -787,20 +919,24 @@ export default function LiveMaio() {
           }
 
           .liveMaioPage .heroSection {
-            padding-top: 24px;
+            padding-top: 22px;
           }
 
           .liveMaioPage .heroCard {
             padding: 28px;
-            border-radius: 42px;
+            border-radius: 40px;
+          }
+
+          .liveMaioPage .quickProof {
+            grid-template-columns: repeat(3, 1fr);
           }
 
           .liveMaioPage .speakers {
             gap: 14px;
           }
 
-          .liveMaioPage .speaker {
-            min-height: 420px;
+          .liveMaioPage .speakerCard {
+            min-height: 390px;
           }
 
           .liveMaioPage .speakerName {
@@ -811,11 +947,7 @@ export default function LiveMaio() {
           }
 
           .liveMaioPage .speakerName strong {
-            font-size: 1.35rem;
-          }
-
-          .liveMaioPage .miniBioGrid {
-            grid-template-columns: 1fr 1fr;
+            font-size: 1.26rem;
           }
 
           .liveMaioPage .checkboxOptions {
@@ -825,43 +957,39 @@ export default function LiveMaio() {
           .liveMaioPage .topicsGrid {
             grid-template-columns: repeat(3, 1fr);
           }
-
-          .liveMaioPage .topicsGrid article {
-            min-height: 245px;
-            padding: 24px;
-          }
         }
 
         @media (min-width: 1020px) {
           .liveMaioPage .heroCard {
-            grid-template-columns: minmax(0, 1fr) 330px 360px;
-            gap: 24px;
+            grid-template-columns: minmax(0, 1fr) 330px 380px;
+            gap: 26px;
             align-items: start;
-            padding: 36px;
+            padding: 38px;
           }
 
           .liveMaioPage .heroCopy {
-            padding-top: 6px;
+            padding-top: 4px;
           }
 
           .liveMaioPage .heroTitle {
-            font-size: clamp(3.7rem, 4.8vw, 5rem);
+            font-size: clamp(3.45rem, 4.7vw, 4.9rem);
           }
 
-          .liveMaioPage .heroText {
-            font-size: 1.04rem;
+          .liveMaioPage .heroCta {
+            width: min(380px, 100%);
           }
 
           .liveMaioPage .speakers {
-            gap: 12px;
-          }
-
-          .liveMaioPage .speaker {
-            min-height: 405px;
-          }
-
-          .liveMaioPage .miniBioGrid {
             grid-template-columns: 1fr;
+            gap: 14px;
+          }
+
+          .liveMaioPage .speakerCard {
+            min-height: 245px;
+          }
+
+          .liveMaioPage .speakerCard img {
+            object-position: center 18%;
           }
 
           .liveMaioPage .formCard {
@@ -875,19 +1003,28 @@ export default function LiveMaio() {
           }
 
           .liveMaioPage .topicsSection {
-            padding-top: 32px;
+            padding-top: 28px;
           }
         }
 
         @media (min-width: 1180px) {
           .liveMaioPage .heroCard {
-            grid-template-columns: minmax(0, 1fr) 350px 380px;
-            gap: 28px;
+            grid-template-columns: minmax(0, 1fr) 350px 395px;
+            gap: 30px;
             padding: 42px;
           }
 
-          .liveMaioPage .speaker {
-            min-height: 430px;
+          .liveMaioPage .speakerCard {
+            min-height: 260px;
+          }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .liveMaioPage *,
+          .liveMaioPage *::before,
+          .liveMaioPage *::after {
+            animation: none !important;
+            transition: none !important;
           }
         }
       `}</style>
@@ -898,35 +1035,56 @@ export default function LiveMaio() {
 function SpeakerPhotos() {
   return (
     <div className="speakers">
-      <article className="speaker">
-        <img src="/erica-live.png" alt="Psicóloga Érica Vilar" />
-        <div className="speakerName">
-          <span>Psicóloga</span>
-          <strong>Érica Vilar</strong>
-        </div>
-      </article>
+      <details className="speakerCard">
+        <summary>
+          <img src="/erica-live.png" alt="Psicóloga Érica Vilar" />
 
-      <article className="speaker">
-        <img src="/lizia-live.png" alt="Fisioterapeuta e doula Lizia Nascimento" />
-        <div className="speakerName">
-          <span>Fisioterapeuta e doula</span>
-          <strong>Lizia Nascimento</strong>
+          <div className="speakerName">
+            <span>Psicóloga</span>
+            <strong>Érica Vilar</strong>
+            <small className="tapHint">Toque para saber mais</small>
+          </div>
+        </summary>
+
+        <div className="speakerBio">
+          <p>
+            Psicóloga clínica, fala sobre saúde emocional feminina, maternidade,
+            vínculos e autocuidado com sensibilidade e profundidade.
+          </p>
+          <small>Toque novamente para fechar</small>
         </div>
-      </article>
+      </details>
+
+      <details className="speakerCard">
+        <summary>
+          <img src="/lizia-live.png" alt="Fisioterapeuta e doula Lizia Nascimento" />
+
+          <div className="speakerName">
+            <span>Fisioterapeuta e doula</span>
+            <strong>Lizia Nascimento</strong>
+            <small className="tapHint">Toque para saber mais</small>
+          </div>
+        </summary>
+
+        <div className="speakerBio">
+          <p>
+            Atua no cuidado integral da mulher da gestação ao pós-parto, unindo
+            técnica, acolhimento e escuta.
+          </p>
+          <small>Toque novamente para fechar</small>
+        </div>
+      </details>
     </div>
   );
 }
 
 function FormCard() {
   return (
-    <aside className="formCard">
+    <aside className="formCard" id="inscricao">
       <div className="formHeader">
         <span>Inscrição gratuita</span>
         <h2>Receba o lembrete da live</h2>
-        <p>
-          Preencha seus dados e marque os temas que você mais quer ver nessa
-          conversa.
-        </p>
+        <p>Preencha em menos de 1 minuto e escolha os temas que mais quer ver.</p>
       </div>
 
       <form className="leadForm" action="/obrigado-live" method="GET">
@@ -958,7 +1116,10 @@ function FormCard() {
         </div>
 
         <div className="checkboxGroup">
-          <div className="checkboxTitle">Quais temas mais te interessam?</div>
+          <div className="checkboxTitle">
+            <span>Subtemas de interesse</span>
+            <small>opcional</small>
+          </div>
 
           <div className="checkboxOptions">
             {subtemas.map((tema) => (
@@ -973,18 +1134,18 @@ function FormCard() {
         <label className="consent">
           <input type="checkbox" name="consentimento" required />
           <span>
-            Aceito receber comunicações sobre esta live e conteúdos relacionados
-            por WhatsApp e e-mail.
+            <strong>Obrigatório:</strong> aceito receber comunicações sobre esta
+            live e conteúdos relacionados por WhatsApp e e-mail.
           </span>
         </label>
 
         <button className="submit" type="submit">
-          Quero participar da live
+          Quero garantir meu lembrete
           <span>↗</span>
         </button>
 
         <p className="safeNote">
-          Seus dados serão usados apenas para comunicação sobre a live.
+          A inscrição só será enviada após marcar o consentimento obrigatório.
         </p>
       </form>
     </aside>
