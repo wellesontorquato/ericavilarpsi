@@ -1,7 +1,44 @@
 import Head from "next/head";
+import { useEffect, useState } from "react";
+
+const WHATSAPP_GROUP_CODE = "GlhIV0ElLnw2RB4SsMOTJI";
+const WHATSAPP_WEB_LINK = `https://chat.whatsapp.com/${WHATSAPP_GROUP_CODE}`;
+const WHATSAPP_APP_LINK = `whatsapp://chat?code=${WHATSAPP_GROUP_CODE}`;
 
 export default function ObrigadoLive() {
-  const whatsappGroupLink = "https://chat.whatsapp.com/GlhIV0ElLnw2RB4SsMOTJI";
+  const [secondsLeft, setSecondsLeft] = useState(5);
+
+  function openWhatsappGroup() {
+    if (typeof window === "undefined") return;
+
+    window.location.href = WHATSAPP_APP_LINK;
+
+    setTimeout(() => {
+      window.location.href = WHATSAPP_WEB_LINK;
+    }, 900);
+  }
+
+  useEffect(() => {
+    const countdown = setInterval(() => {
+      setSecondsLeft((current) => {
+        if (current <= 1) {
+          clearInterval(countdown);
+          return 0;
+        }
+
+        return current - 1;
+      });
+    }, 1000);
+
+    const redirect = setTimeout(() => {
+      openWhatsappGroup();
+    }, 5000);
+
+    return () => {
+      clearInterval(countdown);
+      clearTimeout(redirect);
+    };
+  }, []);
 
   return (
     <>
@@ -24,16 +61,29 @@ export default function ObrigadoLive() {
             Inscrição confirmada
           </div>
 
-          <h1>
-            Agora entre no grupo VIP da live.
-          </h1>
+          <h1>Agora entre no grupo VIP da live.</h1>
 
           <p className="lead">
             Sua inscrição para a live <strong>Gestação sem filtro</strong> foi
-            registrada com sucesso. O próximo passo é entrar no grupo exclusivo
-            para receber os lembretes, avisos importantes e os mimos com
-            materiais de apoio depois da live.
+            registrada com sucesso. Você será direcionada automaticamente para o
+            grupo exclusivo em alguns segundos.
           </p>
+
+          <div className="autoRedirectBox">
+            <div className="redirectCircle">
+              <span>{secondsLeft}</span>
+            </div>
+
+            <div>
+              <strong>
+                Estamos abrindo o WhatsApp para você entrar no grupo VIP.
+              </strong>
+              <p>
+                Se não abrir automaticamente, toque no botão abaixo para entrar
+                direto.
+              </p>
+            </div>
+          </div>
 
           <div className="vipBox">
             <div className="vipIcon">✦</div>
@@ -41,20 +91,24 @@ export default function ObrigadoLive() {
             <div>
               <strong>Grupo VIP da live</strong>
               <p>
-                O grupo será usado apenas para informações sobre a live,
-                lembretes e envio dos materiais prometidos.
+                O grupo será usado apenas para lembretes, avisos importantes e
+                envio dos mimos com materiais de apoio depois da live.
               </p>
             </div>
           </div>
 
+          <button type="button" className="mainCta" onClick={openWhatsappGroup}>
+            Abrir WhatsApp e entrar no grupo VIP
+            <span>↗</span>
+          </button>
+
           <a
-            href={whatsappGroupLink}
+            href={WHATSAPP_WEB_LINK}
             target="_blank"
             rel="noopener noreferrer"
-            className="mainCta"
+            className="fallbackLink"
           >
-            Entrar no grupo VIP do WhatsApp
-            <span>↗</span>
+            Ou abrir pelo link normal do convite
           </a>
 
           <div className="steps">
@@ -205,8 +259,53 @@ export default function ObrigadoLive() {
           color: #a64c50;
         }
 
+        .autoRedirectBox {
+          margin: 20px 0 14px;
+          display: flex;
+          gap: 13px;
+          text-align: left;
+          align-items: center;
+          padding: 15px;
+          border-radius: 20px;
+          background: rgba(255, 240, 231, 0.82);
+          border: 1px solid rgba(166, 76, 80, 0.13);
+        }
+
+        .redirectCircle {
+          width: 48px;
+          height: 48px;
+          flex: 0 0 auto;
+          display: grid;
+          place-items: center;
+          border-radius: 999px;
+          background: linear-gradient(135deg, #8f3048, #d86f4f);
+          color: #fff;
+          box-shadow: 0 12px 26px rgba(143, 48, 72, 0.28);
+          animation: pulse 1.2s ease-in-out infinite;
+        }
+
+        .redirectCircle span {
+          font-size: 1.1rem;
+          font-weight: 950;
+        }
+
+        .autoRedirectBox strong {
+          display: block;
+          color: #351817;
+          font-size: 0.92rem;
+          line-height: 1.32;
+          font-weight: 950;
+        }
+
+        .autoRedirectBox p {
+          margin: 5px 0 0;
+          color: #704740;
+          font-size: 0.82rem;
+          line-height: 1.42;
+        }
+
         .vipBox {
-          margin: 20px 0 16px;
+          margin: 0 0 16px;
           display: flex;
           gap: 12px;
           text-align: left;
@@ -251,6 +350,7 @@ export default function ObrigadoLive() {
         .mainCta {
           width: 100%;
           min-height: 58px;
+          border: 0;
           display: flex;
           align-items: center;
           justify-content: space-between;
@@ -259,8 +359,11 @@ export default function ObrigadoLive() {
           padding: 16px;
           background: linear-gradient(135deg, #8f3048, #d86f4f);
           color: #fff;
+          font-family: "Montserrat", Arial, sans-serif;
+          font-size: 0.98rem;
           font-weight: 950;
           text-decoration: none;
+          cursor: pointer;
           box-shadow:
             0 18px 42px rgba(143, 48, 72, 0.36),
             0 0 0 0 rgba(216, 111, 79, 0.42);
@@ -275,6 +378,16 @@ export default function ObrigadoLive() {
           flex: 0 0 auto;
           border-radius: 999px;
           background: rgba(255, 255, 255, 0.16);
+        }
+
+        .fallbackLink {
+          display: inline-block;
+          margin-top: 12px;
+          color: #8f3048;
+          font-size: 0.82rem;
+          font-weight: 850;
+          text-decoration: underline;
+          text-underline-offset: 4px;
         }
 
         .steps {
