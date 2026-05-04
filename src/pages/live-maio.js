@@ -12,37 +12,38 @@ export default function LiveMaio() {
       </Head>
 
       <main className="livePage">
-        <div className="backgroundText">GESTAÇÃO</div>
-        <div className="orb orbOne" />
-        <div className="orb orbTwo" />
-        <div className="orb orbThree" />
+        <div className="bgWord">GESTAÇÃO</div>
+        <div className="blur blurOne" />
+        <div className="blur blurTwo" />
 
-        <section className="mockupArea">
-          <div className="handsLayer" aria-hidden="true">
-            <div className="hand handLeft">
-              <span className="thumb" />
-              <span className="finger fingerOne" />
-              <span className="finger fingerTwo" />
-            </div>
+        <section className="mockupWrap">
+          <img
+            src="/hand-right.png"
+            alt=""
+            aria-hidden="true"
+            className="hand handLeft"
+          />
 
-            <div className="hand handRight">
-              <span className="thumb" />
-              <span className="finger fingerOne" />
-              <span className="finger fingerTwo" />
-            </div>
-          </div>
+          <img
+            src="/hand-right.png"
+            alt=""
+            aria-hidden="true"
+            className="hand handRight"
+          />
 
           <div className="tablet">
             <div className="tabletScreen">
               <section className="hero">
-                <div className="heroCopy">
-                  <div className="badges">
+                <div className="heroLeft">
+                  <div className="topBadges">
                     <span>Live gratuita no Instagram</span>
-                    <span>24 de maio • 17h</span>
+                    <span>24 de maio às 17h</span>
                     <span>60 minutos</span>
                   </div>
 
-                  <p className="eyebrow">Para gestantes, tentantes e mães recentes</p>
+                  <p className="eyebrow">
+                    Para gestantes, tentantes e mães recentes
+                  </p>
 
                   <h1>
                     Gestação sem filtro:
@@ -50,73 +51,104 @@ export default function LiveMaio() {
                   </h1>
 
                   <p className="description">
-                    Uma conversa real, acolhedora e sem romantização sobre corpo,
-                    emoções, medos, dores, culpa, preparação e pós-parto.
+                    Uma conversa real, acolhedora e sem romantização sobre
+                    corpo, emoções, medos, dores, culpa, preparação e
+                    pós-parto.
                   </p>
 
-                  <div className="promiseBox">
-                    <strong>Você vai sair dessa live com mais clareza, segurança e acolhimento.</strong>
-                    <span>Sem terrorismo. Sem julgamento. Sem frases prontas.</span>
+                  <div className="highlightBox">
+                    <strong>
+                      Você vai sair dessa live com mais clareza, segurança e
+                      acolhimento.
+                    </strong>
+                    <span>
+                      Sem terrorismo. Sem julgamento. Sem frases prontas.
+                    </span>
                   </div>
 
                   <form className="leadForm" action="/obrigado-live" method="GET">
-                    <input type="text" name="nome" placeholder="Seu nome" required />
-                    <input type="tel" name="whatsapp" placeholder="Seu WhatsApp" required />
+                    <input
+                      type="text"
+                      name="nome"
+                      placeholder="Seu nome"
+                      required
+                    />
+                    <input
+                      type="tel"
+                      name="whatsapp"
+                      placeholder="Seu WhatsApp"
+                      required
+                    />
 
                     <button type="submit">
                       Quero receber o lembrete
                       <span>↗</span>
                     </button>
 
-                    <p className="microCopy">
+                    <p className="formNote">
                       Inscrição gratuita para receber o aviso da live no dia.
                     </p>
                   </form>
                 </div>
 
-                <div className="speakersWrap">
-                  <div className="speakerPhoto speakerPhotoErica">
-                    <img src="/erica-live.png" alt="Psicóloga Érica Vilar" />
-                    <div className="speakerTag">
-                      <span>Psicóloga</span>
-                      <strong>Érica Vilar</strong>
-                    </div>
-                  </div>
+                <div className="heroRight">
+                  <div className="speakersGrid">
+                    <article className="speakerCard">
+                      <div className="speakerImageWrap">
+                        <img
+                          src="/erica-live.png"
+                          alt="Psicóloga Érica Vilar"
+                          className="speakerImage"
+                        />
+                      </div>
 
-                  <div className="speakerPhoto speakerPhotoLizia">
-                    <img src="/lizia-live.png" alt="Fisioterapeuta e doula Lizia Nascimento" />
-                    <div className="speakerTag">
-                      <span>Fisioterapeuta e doula</span>
-                      <strong>Lizia Nascimento</strong>
-                    </div>
+                      <div className="speakerInfo">
+                        <span>Psicóloga</span>
+                        <strong>Érica Vilar</strong>
+                        <p>
+                          Psicóloga clínica, fala sobre saúde emocional
+                          feminina, maternidade, vínculos e autocuidado com
+                          sensibilidade e profundidade.
+                        </p>
+                      </div>
+                    </article>
+
+                    <article className="speakerCard">
+                      <div className="speakerImageWrap">
+                        <img
+                          src="/lizia-live.png"
+                          alt="Fisioterapeuta e doula Lizia Nascimento"
+                          className="speakerImage"
+                        />
+                      </div>
+
+                      <div className="speakerInfo">
+                        <span>Fisioterapeuta e doula</span>
+                        <strong>Lizia Nascimento</strong>
+                        <p>
+                          Atua no cuidado integral da mulher da gestação ao
+                          pós-parto, unindo técnica, acolhimento e escuta.
+                        </p>
+                      </div>
+                    </article>
                   </div>
                 </div>
               </section>
 
-              <section className="authority">
-                <article>
-                  <span>Érica Vilar</span>
-                  <p>
-                    Psicóloga clínica, fala sobre saúde emocional feminina,
-                    maternidade, vínculos e autocuidado com sensibilidade e
-                    profundidade.
-                  </p>
-                </article>
+              <section className="contentSection">
+                <div className="midText">
+                  <p>Uma conversa para mulheres que desejam viver a gestação com</p>
+                  <div className="midTags">
+                    <span>Mais informação</span>
+                    <span>Menos culpa</span>
+                    <span>Mais acolhimento</span>
+                    <span>Mais segurança</span>
+                  </div>
+                </div>
 
-                <article>
-                  <span>Lizia Nascimento</span>
-                  <p>
-                    Fisioterapeuta e doula, atua no cuidado integral da mulher
-                    da gestação ao pós-parto, unindo técnica, acolhimento e
-                    escuta.
-                  </p>
-                </article>
-              </section>
-
-              <section className="learn">
                 <div className="sectionTitle">
-                  <p>O que será conversado</p>
-                  <h2>Uma live para falar o que quase ninguém fala</h2>
+                  <p>O que você vai encontrar nessa live</p>
+                  <h2>Uma conversa sobre o que quase ninguém fala</h2>
                 </div>
 
                 <div className="cards">
@@ -124,8 +156,8 @@ export default function LiveMaio() {
                     <span>01</span>
                     <h3>As mudanças reais da gestação</h3>
                     <p>
-                      Corpo, emoções, dores, desconfortos e expectativas que nem
-                      sempre aparecem nas conversas comuns.
+                      Corpo, emoções, dores, desconfortos e expectativas que
+                      muitas mulheres descobrem só vivendo.
                     </p>
                   </article>
 
@@ -158,65 +190,57 @@ export default function LiveMaio() {
           min-height: 100vh;
           position: relative;
           overflow: hidden;
-          padding: 22px 12px 52px;
-          color: #2d1717;
-          font-family: "Montserrat", Arial, sans-serif;
+          padding: 20px 12px 48px;
           background:
-            radial-gradient(circle at 50% 100%, rgba(255, 190, 151, 0.58), transparent 28%),
-            radial-gradient(circle at 8% 38%, rgba(189, 78, 90, 0.5), transparent 30%),
-            radial-gradient(circle at 95% 35%, rgba(236, 145, 106, 0.42), transparent 28%),
-            linear-gradient(180deg, #38141b 0%, #6f2f2b 48%, #c07154 100%);
+            radial-gradient(circle at 50% 100%, rgba(255, 190, 151, 0.55), transparent 28%),
+            radial-gradient(circle at 10% 28%, rgba(165, 52, 74, 0.55), transparent 30%),
+            radial-gradient(circle at 95% 32%, rgba(232, 139, 98, 0.42), transparent 28%),
+            linear-gradient(180deg, #351218 0%, #6d2e2b 50%, #ba6f56 100%);
+          color: #2c1817;
+          font-family: "Montserrat", Arial, sans-serif;
         }
 
-        .backgroundText {
+        .bgWord {
           position: absolute;
           top: 8px;
           left: 50%;
           transform: translateX(-50%);
           z-index: 0;
           white-space: nowrap;
-          font-size: clamp(4.6rem, 22vw, 18rem);
-          font-weight: 950;
-          letter-spacing: -0.09em;
-          line-height: 0.8;
-          color: rgba(255, 206, 174, 0.18);
-          text-shadow: 0 30px 70px rgba(0, 0, 0, 0.38);
           pointer-events: none;
+          font-size: clamp(4rem, 18vw, 15rem);
+          line-height: 0.85;
+          font-weight: 900;
+          letter-spacing: -0.08em;
+          color: rgba(255, 220, 196, 0.14);
+          text-shadow: 0 24px 56px rgba(0, 0, 0, 0.28);
         }
 
-        .orb {
+        .blur {
           position: absolute;
           border-radius: 999px;
-          filter: blur(62px);
-          opacity: 0.5;
+          filter: blur(70px);
+          opacity: 0.45;
           pointer-events: none;
         }
 
-        .orbOne {
-          width: 260px;
-          height: 260px;
-          background: #ffb58c;
-          left: -90px;
-          bottom: 80px;
+        .blurOne {
+          width: 240px;
+          height: 240px;
+          left: -80px;
+          bottom: 60px;
+          background: #ffb78a;
         }
 
-        .orbTwo {
-          width: 300px;
-          height: 300px;
-          background: #8d3147;
-          right: -120px;
-          top: 180px;
+        .blurTwo {
+          width: 280px;
+          height: 280px;
+          right: -100px;
+          top: 160px;
+          background: #8f2f4a;
         }
 
-        .orbThree {
-          width: 220px;
-          height: 220px;
-          background: #ffd2bd;
-          left: 45%;
-          bottom: -80px;
-        }
-
-        .mockupArea {
+        .mockupWrap {
           width: min(1180px, 100%);
           margin: 0 auto;
           position: relative;
@@ -225,13 +249,13 @@ export default function LiveMaio() {
 
         .tablet {
           position: relative;
-          z-index: 4;
-          border-radius: 34px;
-          padding: 10px;
-          background: linear-gradient(180deg, #1c1112, #060303);
+          z-index: 3;
+          border-radius: 30px;
+          padding: 9px;
+          background: linear-gradient(180deg, #1e1212, #070303);
           box-shadow:
-            0 38px 90px rgba(20, 5, 6, 0.56),
-            inset 0 0 0 1px rgba(255, 255, 255, 0.16);
+            0 30px 90px rgba(0, 0, 0, 0.42),
+            inset 0 0 0 1px rgba(255, 255, 255, 0.14);
         }
 
         .tablet::before {
@@ -240,21 +264,20 @@ export default function LiveMaio() {
           top: 5px;
           left: 50%;
           transform: translateX(-50%);
-          width: 120px;
+          width: 110px;
           height: 3px;
           border-radius: 999px;
-          background: rgba(255, 255, 255, 0.38);
-          z-index: 8;
+          background: rgba(255, 255, 255, 0.35);
         }
 
         .tabletScreen {
           position: relative;
           overflow: hidden;
-          border-radius: 26px;
+          border-radius: 24px;
           background:
-            linear-gradient(180deg, rgba(255, 251, 247, 0) 62%, #fff4ed 88%),
+            linear-gradient(180deg, rgba(255, 251, 248, 0) 62%, #fff4ed 88%),
             #fffaf6;
-          padding: 20px 16px 24px;
+          padding: 18px 14px 24px;
         }
 
         .hero {
@@ -263,78 +286,78 @@ export default function LiveMaio() {
           gap: 24px;
         }
 
-        .badges {
+        .topBadges {
           display: flex;
-          gap: 8px;
           flex-wrap: wrap;
-          margin-bottom: 22px;
+          gap: 8px;
+          margin-bottom: 18px;
         }
 
-        .badges span {
-          border-radius: 999px;
-          background: #f7e5db;
-          color: #8d3d40;
+        .topBadges span {
           padding: 9px 12px;
+          border-radius: 999px;
+          background: #f7e8df;
+          color: #924346;
           font-size: 0.72rem;
           font-weight: 800;
-          box-shadow: inset 0 0 0 1px rgba(142, 53, 66, 0.08);
+          box-shadow: inset 0 0 0 1px rgba(146, 67, 70, 0.08);
         }
 
         .eyebrow {
-          margin: 0 0 10px;
-          color: #a94b4b;
-          text-transform: uppercase;
-          letter-spacing: 0.08em;
-          font-size: 0.75rem;
+          margin: 0 0 8px;
+          color: #a84a4c;
+          font-size: 0.74rem;
           font-weight: 900;
+          letter-spacing: 0.08em;
+          text-transform: uppercase;
         }
 
         h1 {
           margin: 0;
-          max-width: 660px;
-          color: #251211;
+          max-width: 640px;
           font-family: "Libre Bodoni", Georgia, serif;
-          font-size: clamp(2.65rem, 12vw, 5rem);
-          line-height: 0.9;
+          font-size: clamp(2.3rem, 11vw, 4.8rem);
+          line-height: 0.92;
           letter-spacing: -0.06em;
+          color: #271313;
         }
 
         h1 em {
-          color: #a94b4b;
+          color: #b25757;
           font-style: italic;
           font-weight: 400;
         }
 
         .description {
-          margin: 18px 0 16px;
-          max-width: 620px;
-          color: #543734;
+          margin: 16px 0 14px;
+          max-width: 580px;
+          color: #543835;
           font-size: 0.98rem;
-          line-height: 1.62;
+          line-height: 1.6;
           font-weight: 550;
         }
 
-        .promiseBox {
-          max-width: 570px;
-          margin: 0 0 16px;
+        .highlightBox {
+          max-width: 560px;
+          margin-bottom: 16px;
           padding: 14px;
           border-radius: 18px;
-          background: linear-gradient(135deg, #fff1e8, #f8ddd0);
-          border: 1px solid rgba(169, 75, 75, 0.12);
-          box-shadow: 0 16px 34px rgba(86, 34, 32, 0.08);
+          background: linear-gradient(135deg, #fff0e8, #f8ded1);
+          border: 1px solid rgba(168, 74, 76, 0.12);
+          box-shadow: 0 14px 32px rgba(96, 40, 34, 0.08);
         }
 
-        .promiseBox strong {
+        .highlightBox strong {
           display: block;
           color: #341817;
-          font-size: 0.95rem;
+          font-size: 0.94rem;
           line-height: 1.35;
         }
 
-        .promiseBox span {
+        .highlightBox span {
           display: block;
           margin-top: 6px;
-          color: #8a4b42;
+          color: #8a4a43;
           font-size: 0.82rem;
           line-height: 1.45;
         }
@@ -347,41 +370,40 @@ export default function LiveMaio() {
 
         .leadForm input {
           width: 100%;
-          border: 1px solid rgba(169, 75, 75, 0.16);
-          border-radius: 15px;
-          background: #fff6f0;
-          padding: 15px 15px;
-          color: #2d1717;
-          font: inherit;
+          padding: 15px 14px;
+          border-radius: 14px;
+          border: 1px solid rgba(168, 74, 76, 0.16);
+          background: #fff5ef;
+          color: #2c1817;
           outline: none;
+          font: inherit;
         }
 
         .leadForm input:focus {
-          border-color: rgba(169, 75, 75, 0.55);
-          box-shadow: 0 0 0 4px rgba(169, 75, 75, 0.12);
+          border-color: rgba(168, 74, 76, 0.5);
+          box-shadow: 0 0 0 4px rgba(168, 74, 76, 0.12);
         }
 
         .leadForm button {
           width: 100%;
           border: 0;
-          border-radius: 16px;
+          border-radius: 15px;
           padding: 16px 16px;
-          background: linear-gradient(135deg, #8c2f46, #c7654b);
+          background: linear-gradient(135deg, #8b2f46, #c8674d);
           color: #fff;
-          font-weight: 950;
+          font-weight: 900;
           font-size: 0.95rem;
           cursor: pointer;
           display: flex;
           align-items: center;
           justify-content: space-between;
-          box-shadow: 0 18px 36px rgba(140, 47, 70, 0.32);
-          transition: transform 0.18s ease, filter 0.18s ease, box-shadow 0.18s ease;
+          box-shadow: 0 18px 35px rgba(139, 47, 70, 0.28);
+          transition: transform 0.18s ease, filter 0.18s ease;
         }
 
         .leadForm button:hover {
           transform: translateY(-2px);
-          filter: brightness(1.04);
-          box-shadow: 0 24px 44px rgba(140, 47, 70, 0.38);
+          filter: brightness(1.03);
         }
 
         .leadForm button span {
@@ -393,154 +415,142 @@ export default function LiveMaio() {
           background: rgba(255, 255, 255, 0.16);
         }
 
-        .microCopy {
+        .formNote {
           margin: 0;
-          color: #8a4b42;
           font-size: 0.78rem;
           line-height: 1.4;
+          color: #8a4a43;
           text-align: center;
         }
 
-        .speakersWrap {
+        .heroRight {
           position: relative;
-          min-height: 410px;
+        }
+
+        .speakersGrid {
+          display: grid;
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+          gap: 12px;
+          align-items: stretch;
+        }
+
+        .speakerCard {
+          display: flex;
+          flex-direction: column;
+          height: 100%;
+          min-height: 390px;
+          border-radius: 24px;
+          overflow: hidden;
+          background:
+            radial-gradient(circle at 50% 12%, rgba(255, 230, 216, 0.95), transparent 40%),
+            linear-gradient(180deg, #f5d9cd, #e8b8a9);
+          border: 1px solid rgba(146, 67, 70, 0.08);
+          box-shadow: 0 20px 46px rgba(86, 35, 30, 0.12);
+        }
+
+        .speakerImageWrap {
+          position: relative;
+          height: 260px;
+          background: transparent;
+          overflow: hidden;
+        }
+
+        .speakerImage {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          object-position: center top;
+          display: block;
+        }
+
+        .speakerInfo {
+          padding: 14px 14px 16px;
+          background: rgba(255, 250, 245, 0.78);
+          backdrop-filter: blur(10px);
+          flex: 1;
+        }
+
+        .speakerInfo span {
+          display: block;
+          color: #a84a4c;
+          font-size: 0.67rem;
+          font-weight: 900;
+          letter-spacing: 0.06em;
+          text-transform: uppercase;
+          margin-bottom: 4px;
+        }
+
+        .speakerInfo strong {
+          display: block;
+          font-family: "Libre Bodoni", Georgia, serif;
+          font-size: 1.25rem;
+          line-height: 1;
+          letter-spacing: -0.04em;
+          color: #271313;
+          margin-bottom: 8px;
+        }
+
+        .speakerInfo p {
+          margin: 0;
+          color: #573834;
+          font-size: 0.82rem;
+          line-height: 1.45;
+        }
+
+        .contentSection {
+          margin-top: 28px;
+        }
+
+        .midText {
+          text-align: center;
+          margin-bottom: 26px;
+        }
+
+        .midText p {
+          margin: 0 0 14px;
+          font-family: "Libre Bodoni", Georgia, serif;
+          font-size: 1.35rem;
+          color: #8e4a3f;
+        }
+
+        .midTags {
           display: grid;
           grid-template-columns: 1fr 1fr;
           gap: 10px;
-          align-items: end;
-          padding-top: 4px;
         }
 
-        .speakersWrap::after {
-          content: "";
-          position: absolute;
-          left: -16px;
-          right: -16px;
-          bottom: -8px;
-          height: 34%;
-          z-index: 6;
-          background: linear-gradient(180deg, transparent, #fffaf6 78%);
-          pointer-events: none;
-        }
-
-        .speakerPhoto {
-          position: relative;
-          min-height: 390px;
-          border-radius: 28px;
-          overflow: hidden;
-          background:
-            radial-gradient(circle at 50% 15%, rgba(255, 226, 211, 0.95), transparent 42%),
-            linear-gradient(180deg, #f4d5c6, #e9b9a7);
-          border: 1px solid rgba(142, 53, 66, 0.08);
-          box-shadow: 0 24px 48px rgba(85, 32, 29, 0.14);
-        }
-
-        .speakerPhotoLizia {
-          transform: translateY(24px);
-          background:
-            radial-gradient(circle at 50% 15%, rgba(255, 236, 225, 0.95), transparent 42%),
-            linear-gradient(180deg, #f8ded1, #e8b5a4);
-        }
-
-        .speakerPhoto img {
-          position: absolute;
-          inset: 0;
-          width: 100%;
-          height: 92%;
-          object-fit: cover;
-          object-position: center bottom;
-          filter: drop-shadow(0 20px 32px rgba(0, 0, 0, 0.16));
-        }
-
-        .speakerTag {
-          position: absolute;
-          left: 10px;
-          right: 10px;
-          bottom: 10px;
-          z-index: 8;
-          padding: 13px;
-          border-radius: 18px;
-          background: rgba(255, 250, 246, 0.84);
-          backdrop-filter: blur(14px);
-          box-shadow: 0 16px 36px rgba(69, 25, 22, 0.12);
-        }
-
-        .speakerTag span {
-          display: block;
-          color: #a94b4b;
-          font-size: 0.62rem;
-          font-weight: 950;
-          text-transform: uppercase;
-          letter-spacing: 0.06em;
-          margin-bottom: 3px;
-        }
-
-        .speakerTag strong {
-          display: block;
-          color: #251211;
-          font-family: "Libre Bodoni", Georgia, serif;
-          font-size: 1.23rem;
-          letter-spacing: -0.04em;
-          line-height: 1;
-        }
-
-        .authority {
-          position: relative;
-          z-index: 9;
-          display: grid;
-          grid-template-columns: 1fr;
-          gap: 10px;
-          margin: 34px 0 28px;
-        }
-
-        .authority article {
-          border-radius: 20px;
-          padding: 17px;
-          background: #fff1e8;
-          border: 1px solid rgba(142, 53, 66, 0.08);
-        }
-
-        .authority span {
-          display: block;
-          color: #a94b4b;
-          font-weight: 950;
-          margin-bottom: 7px;
-        }
-
-        .authority p {
-          margin: 0;
-          color: #543734;
-          font-size: 0.9rem;
-          line-height: 1.55;
-        }
-
-        .learn {
-          position: relative;
-          z-index: 9;
+        .midTags span {
+          padding: 12px 10px;
+          border-radius: 16px;
+          background: #fff0e6;
+          border: 1px solid rgba(146, 67, 70, 0.08);
+          color: #6f4a43;
+          font-size: 0.86rem;
+          font-weight: 700;
         }
 
         .sectionTitle {
           text-align: center;
-          max-width: 720px;
-          margin: 0 auto 22px;
+          max-width: 760px;
+          margin: 0 auto 18px;
         }
 
         .sectionTitle p {
           margin: 0 0 8px;
-          color: #a94b4b;
-          font-size: 0.78rem;
-          font-weight: 950;
-          text-transform: uppercase;
+          color: #a84a4c;
+          font-size: 0.76rem;
+          font-weight: 900;
           letter-spacing: 0.08em;
+          text-transform: uppercase;
         }
 
         .sectionTitle h2 {
           margin: 0;
-          color: #251211;
           font-family: "Libre Bodoni", Georgia, serif;
-          font-size: clamp(2rem, 9vw, 3.3rem);
-          line-height: 0.95;
-          letter-spacing: -0.055em;
+          font-size: clamp(1.9rem, 8vw, 3.1rem);
+          line-height: 0.96;
+          letter-spacing: -0.05em;
+          color: #271313;
         }
 
         .cards {
@@ -550,144 +560,159 @@ export default function LiveMaio() {
         }
 
         .cards article {
-          border-radius: 20px;
-          padding: 20px;
-          background: #f8e3d7;
-          border: 1px solid rgba(142, 53, 66, 0.08);
-          box-shadow: 0 14px 30px rgba(86, 34, 32, 0.06);
+          padding: 18px;
+          border-radius: 18px;
+          background: #f8e4d8;
+          border: 1px solid rgba(146, 67, 70, 0.08);
+          box-shadow: 0 12px 28px rgba(90, 35, 31, 0.05);
         }
 
         .cards article span {
-          color: #a94b4b;
+          display: inline-block;
+          color: #a84a4c;
           font-size: 0.78rem;
-          font-weight: 950;
+          font-weight: 900;
+          margin-bottom: 8px;
         }
 
         .cards h3 {
-          margin: 10px 0 8px;
-          color: #2d1717;
-          font-size: 1.02rem;
+          margin: 0 0 8px;
+          color: #2c1817;
+          font-size: 1rem;
           line-height: 1.25;
         }
 
         .cards p {
           margin: 0;
-          color: #60433d;
+          color: #62433d;
           font-size: 0.9rem;
           line-height: 1.55;
         }
 
-        .handsLayer {
-          position: absolute;
-          inset: 0;
-          pointer-events: none;
-          z-index: 7;
-        }
-
         .hand {
           position: absolute;
-          top: 46%;
-          width: 72px;
-          height: 235px;
-          background:
-            radial-gradient(circle at 42% 18%, rgba(255, 255, 255, 0.08), transparent 10%),
-            linear-gradient(90deg, #030202, #181111 48%, #050303);
-          box-shadow:
-            inset 16px 0 34px rgba(255, 255, 255, 0.035),
-            0 28px 55px rgba(0, 0, 0, 0.44);
-          filter: blur(0.1px);
+          z-index: 5;
+          pointer-events: none;
+          user-select: none;
+          opacity: 0.98;
+          filter: drop-shadow(0 18px 28px rgba(0, 0, 0, 0.35));
         }
 
         .handLeft {
-          left: -26px;
-          border-radius: 46px 34px 32px 48px;
-          transform: translateY(-50%) rotate(-9deg);
+          left: -18px;
+          bottom: 30px;
+          width: 96px;
+          transform: scaleX(-1) rotate(-4deg);
+          transform-origin: center;
         }
 
         .handRight {
-          right: -26px;
-          border-radius: 34px 46px 48px 32px;
-          transform: translateY(-50%) rotate(9deg);
+          right: -18px;
+          bottom: 30px;
+          width: 96px;
+          transform: rotate(-4deg);
+          transform-origin: center;
         }
 
-        .thumb {
-          position: absolute;
-          top: 34px;
-          width: 48px;
-          height: 112px;
-          border-radius: 999px;
-          background:
-            radial-gradient(circle at 50% 20%, rgba(255, 255, 255, 0.07), transparent 12%),
-            linear-gradient(90deg, #050303, #171010 52%, #040303);
-          box-shadow: 0 18px 34px rgba(0, 0, 0, 0.38);
+        @media (max-width: 640px) {
+          .speakerCard {
+            min-height: 350px;
+          }
+
+          .speakerImageWrap {
+            height: 220px;
+          }
+
+          .speakerInfo p {
+            font-size: 0.78rem;
+          }
+
+          .handLeft {
+            left: -22px;
+            bottom: 74px;
+            width: 88px;
+          }
+
+          .handRight {
+            right: -22px;
+            bottom: 74px;
+            width: 88px;
+          }
         }
 
-        .handLeft .thumb {
-          right: -30px;
-          transform: rotate(-18deg);
-        }
+        @media (max-width: 420px) {
+          .tabletScreen {
+            padding: 16px 12px 22px;
+          }
 
-        .handRight .thumb {
-          left: -30px;
-          transform: rotate(18deg);
-        }
+          h1 {
+            font-size: 2.12rem;
+          }
 
-        .finger {
-          position: absolute;
-          width: 42px;
-          height: 115px;
-          border-radius: 999px;
-          background: linear-gradient(90deg, #020202, #141010, #030202);
-          opacity: 0.95;
-        }
+          .speakersGrid {
+            gap: 10px;
+          }
 
-        .fingerOne {
-          top: 82px;
-        }
+          .speakerCard {
+            min-height: 320px;
+            border-radius: 20px;
+          }
 
-        .fingerTwo {
-          top: 158px;
-          height: 104px;
-          opacity: 0.86;
-        }
+          .speakerImageWrap {
+            height: 190px;
+          }
 
-        .handLeft .finger {
-          left: 9px;
-        }
+          .speakerInfo {
+            padding: 12px;
+          }
 
-        .handRight .finger {
-          right: 9px;
+          .speakerInfo strong {
+            font-size: 1.08rem;
+          }
+
+          .speakerInfo p {
+            font-size: 0.75rem;
+            line-height: 1.4;
+          }
+
+          .handLeft {
+            left: -20px;
+            bottom: 88px;
+            width: 76px;
+          }
+
+          .handRight {
+            right: -20px;
+            bottom: 88px;
+            width: 76px;
+          }
         }
 
         @media (min-width: 760px) {
           .livePage {
-            padding: 58px 24px 82px;
+            padding: 54px 22px 80px;
           }
 
           .tablet {
-            border-radius: 42px;
-            padding: 15px;
+            border-radius: 40px;
+            padding: 14px;
           }
 
           .tablet::before {
             top: 8px;
-            width: 220px;
+            width: 200px;
             height: 4px;
           }
 
           .tabletScreen {
             border-radius: 30px;
-            padding: 42px 52px 48px;
+            padding: 40px 42px 46px;
           }
 
           .hero {
-            grid-template-columns: 0.92fr 1.08fr;
-            gap: 42px;
+            grid-template-columns: 0.95fr 1.05fr;
+            gap: 36px;
             align-items: center;
-          }
-
-          .badges {
-            margin-bottom: 34px;
           }
 
           .leadForm {
@@ -695,37 +720,37 @@ export default function LiveMaio() {
           }
 
           .leadForm button,
-          .microCopy {
+          .formNote {
             grid-column: 1 / -1;
           }
 
-          .speakersWrap {
-            min-height: 520px;
-            gap: 18px;
+          .speakersGrid {
+            gap: 16px;
           }
 
-          .speakerPhoto {
-            min-height: 500px;
+          .speakerCard {
+            min-height: 510px;
+            border-radius: 28px;
           }
 
-          .speakerPhotoLizia {
-            transform: translateY(34px);
+          .speakerImageWrap {
+            height: 340px;
           }
 
-          .speakerTag {
-            left: 16px;
-            right: 16px;
-            bottom: 16px;
-            padding: 16px;
+          .speakerInfo {
+            padding: 18px;
           }
 
-          .speakerTag strong {
-            font-size: 1.52rem;
+          .speakerInfo strong {
+            font-size: 1.45rem;
           }
 
-          .authority {
-            grid-template-columns: 1fr 1fr;
-            margin: 62px 0 44px;
+          .speakerInfo p {
+            font-size: 0.86rem;
+          }
+
+          .midTags {
+            grid-template-columns: repeat(4, 1fr);
           }
 
           .cards {
@@ -734,124 +759,50 @@ export default function LiveMaio() {
 
           .cards article {
             min-height: 190px;
-            padding: 24px;
-          }
-
-          .hand {
-            top: 52%;
-            width: 138px;
-            height: 430px;
+            padding: 22px;
           }
 
           .handLeft {
-            left: -72px;
-            transform: translateY(-50%) rotate(-13deg);
-            border-radius: 86px 64px 44px 72px;
+            left: -70px;
+            bottom: 36px;
+            width: 150px;
           }
 
           .handRight {
-            right: -72px;
-            transform: translateY(-50%) rotate(13deg);
-            border-radius: 64px 86px 72px 44px;
-          }
-
-          .thumb {
-            top: 62px;
-            width: 78px;
-            height: 175px;
-          }
-
-          .handLeft .thumb {
-            right: -42px;
-          }
-
-          .handRight .thumb {
-            left: -42px;
-          }
-
-          .finger {
-            width: 74px;
-            height: 180px;
-          }
-
-          .fingerOne {
-            top: 150px;
-          }
-
-          .fingerTwo {
-            top: 255px;
-            height: 150px;
-          }
-
-          .handLeft .finger {
-            left: 22px;
-          }
-
-          .handRight .finger {
-            right: 22px;
+            right: -70px;
+            bottom: 36px;
+            width: 150px;
           }
         }
 
         @media (min-width: 1040px) {
           .tabletScreen {
-            padding: 46px 62px 54px;
+            padding: 44px 54px 52px;
           }
 
           .hero {
-            grid-template-columns: 0.86fr 1.14fr;
-            gap: 50px;
+            grid-template-columns: 0.9fr 1.1fr;
+            gap: 52px;
           }
 
-          .speakersWrap {
-            min-height: 550px;
+          .speakerCard {
+            min-height: 560px;
           }
 
-          .speakerPhoto {
-            min-height: 530px;
+          .speakerImageWrap {
+            height: 375px;
           }
 
           .handLeft {
             left: -92px;
+            bottom: 44px;
+            width: 185px;
           }
 
           .handRight {
             right: -92px;
-          }
-        }
-
-        @media (max-width: 390px) {
-          .tabletScreen {
-            padding: 18px 13px 22px;
-          }
-
-          h1 {
-            font-size: 2.45rem;
-          }
-
-          .speakersWrap {
-            min-height: 370px;
-          }
-
-          .speakerPhoto {
-            min-height: 355px;
-            border-radius: 22px;
-          }
-
-          .speakerTag strong {
-            font-size: 1.05rem;
-          }
-
-          .hand {
-            width: 58px;
-            height: 210px;
-          }
-
-          .handLeft {
-            left: -30px;
-          }
-
-          .handRight {
-            right: -30px;
+            bottom: 44px;
+            width: 185px;
           }
         }
       `}</style>
