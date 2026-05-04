@@ -1232,7 +1232,7 @@ function SpeakerPhotos() {
   const speakers = [
     {
       id: "erica",
-      role: "Psicóloga",
+      role: "Psicóloga Clínica",
       name: "Érica Vilar",
       image: "/erica-live.png",
       alt: "Psicóloga Érica Vilar",
