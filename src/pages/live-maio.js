@@ -77,7 +77,7 @@ export default function LiveMaio() {
                   <div className="speaker speakerErica">
                     <div className="imageWrap">
                       <img
-                        src="/images/erica-live.png"
+                        src="/erica-live.png"
                         alt="Psicóloga Érica Vilar"
                       />
                     </div>
@@ -96,7 +96,7 @@ export default function LiveMaio() {
                   <div className="speaker speakerLizia">
                     <div className="imageWrap">
                       <img
-                        src="/images/lizia-live.png"
+                        src="/lizia-live.png"
                         alt="Fisioterapeuta e doula Lizia Nascimento"
                       />
                     </div>
