@@ -1,4 +1,4 @@
-import { admin, adminDb } from "@/lib/firebaseAdmin";
+import { getFirebaseAdmin } from "@/lib/firebaseAdmin";
 
 const LIVE_ID = "gestacao-sem-filtro-maio";
 const LIVE_TITULO = "Gestação sem filtro";
@@ -27,17 +27,18 @@ function normalizeSubtemas(value) {
 
 export default async function handler(req, res) {
   if (req.method !== "POST") {
-    return res.status(405).json({
-      error: "Método não permitido.",
-    });
+    return res.status(405).send("Esta rota aceita apenas envio via formulário.");
   }
 
   try {
+    const { admin, adminDb } = getFirebaseAdmin();
+
     const nome = normalizeText(req.body.nome);
     const whatsapp = normalizeWhatsapp(req.body.whatsapp);
     const email = normalizeEmail(req.body.email);
     const subtemas = normalizeSubtemas(req.body.subtemas);
-    const consentimento = req.body.consentimento === "on" || req.body.consentimento === true;
+    const consentimento =
+      req.body.consentimento === "on" || req.body.consentimento === true;
 
     if (!nome || nome.length < 2) {
       return res.status(400).send("Informe um nome válido.");
@@ -52,7 +53,9 @@ export default async function handler(req, res) {
     }
 
     if (!consentimento) {
-      return res.status(400).send("O consentimento é obrigatório para concluir a inscrição.");
+      return res
+        .status(400)
+        .send("O consentimento é obrigatório para concluir a inscrição.");
     }
 
     const now = admin.firestore.FieldValue.serverTimestamp();
@@ -85,8 +88,8 @@ export default async function handler(req, res) {
   } catch (error) {
     console.error("Erro ao salvar lead da live:", error);
 
-    return res.status(500).send(
-      "Não foi possível concluir sua inscrição agora. Tente novamente em instantes."
-    );
+    return res
+      .status(500)
+      .send("Não foi possível concluir sua inscrição agora. Tente novamente.");
   }
 }
