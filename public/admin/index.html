@@ -985,8 +985,8 @@
             moderação do site.
           </p>
           <button id="loginButton" class="login-button" type="button">
-            Entrar com Netlify Identity</button
-          ><a href="/" class="back-link">← Voltar ao site</a>
+            Entrar com Netlify Identity</button>
+          <a href="/" class="back-link">← Voltar ao site</a>
           <div id="statusText" class="status-text">Verificando acesso...</div>
         </div>
       </div>
@@ -1037,8 +1037,8 @@
           </article>
         </div>
         <div class="dashboard-footer">
-          <a href="/">← Voltar ao site</a
-          ><a href="#" id="netlifyLogoutLink">Sair do painel</a>
+          <a href="/">← Voltar ao site</a>
+          <a href="#" id="netlifyLogoutLink">Sair do painel</a>
         </div>
       </div>
     </section>
@@ -1049,8 +1049,8 @@
           <div class="moderation-brand">
             <div class="ev-badge">EV</div>
             <div>
-              <strong>Erica Vilar</strong
-              ><span id="moderationUserLabel">Moderação de comentários</span>
+              <strong>Erica Vilar</strong>
+              <span id="moderationUserLabel">Moderação de comentários</span>
             </div>
           </div>
           <div class="moderation-nav">
@@ -1059,8 +1059,8 @@
               type="button"
               class="nav-button"
             >
-              Painel</button
-            ><button id="topOpenCmsButton" type="button" class="nav-button">
+              Painel</button>
+            <button id="topOpenCmsButton" type="button" class="nav-button">
               Editor do blog</button
             ><a
               href="/"
@@ -1070,8 +1070,8 @@
                 align-items: center;
                 text-decoration: none;
               "
-              >Site</a
-            ><button
+              >Site</a>
+            <button
               id="firebaseLogoutButton"
               type="button"
               class="nav-button danger is-hidden"
@@ -1080,7 +1080,7 @@
             </button>
           </div>
         </nav>
-        <header class="moderation-header">
+        <header id="moderationHeader" class="moderation-header is-hidden">
           <div>
             <span class="kicker">Moderação</span>
             <h1>Comentários do blog</h1>
@@ -1125,14 +1125,15 @@
               type="email"
               placeholder="E-mail"
               autocomplete="email"
-            /><input
+            />
+            <input
               id="firebasePassword"
               type="password"
               placeholder="Senha"
               autocomplete="current-password"
             /><button type="submit" class="secondary-button">
-              Entrar com e-mail e senha</button
-            ><button
+              Entrar com e-mail e senha</button>
+            <button
               id="resetPasswordButton"
               type="button"
               class="ghost-button"
@@ -1254,6 +1255,7 @@
           "refreshCommentsButton",
         ),
         moderationUserLabel = document.getElementById("moderationUserLabel"),
+        moderationHeader = document.getElementById("moderationHeader"),
         pendingStat = document.getElementById("pendingStat"),
         approvedStat = document.getElementById("approvedStat"),
         rejectedStat = document.getElementById("rejectedStat"),
@@ -1352,24 +1354,36 @@
         decapLoading.classList.add("is-visible");
       }
       function loadCMS() {
-        if (cmsLoaded) return;
+        if (!isDecapRoute()) {
+          window.location.hash = "#/collections/posts";
+        }
+
+        if (cmsLoaded) {
+          showLoading();
+          window.location.href = "/admin/#/collections/posts";
+          return;
+        }
+
         cmsLoaded = true;
         showLoading();
+
         const s = document.createElement("script");
         s.src = "https://unpkg.com/decap-cms@^3/dist/decap-cms.js";
         s.async = true;
+
         s.onload = function () {
           decapLoading.classList.remove("is-visible");
-          if (window.location.hash && window.location.hash !== "#")
-            history.replaceState(null, "", "/admin/");
         };
+
         s.onerror = function () {
           cmsLoaded = false;
           showDashboard();
+
           statusText &&
             (statusText.textContent =
               "Não foi possível carregar o painel. Tente novamente.");
         };
+
         document.body.appendChild(s);
       }
       function initIdentity() {
@@ -1477,6 +1491,7 @@
       function showCommentsPanel() {
         firebaseLoginCard.classList.add("is-hidden");
         commentsPanel.classList.remove("is-hidden");
+        moderationHeader.classList.remove("is-hidden");
         firebaseLogoutButton.classList.remove("is-hidden");
         moderationUserLabel.textContent = currentFirebaseUser?.email
           ? `Conta: ${currentFirebaseUser.email}`
@@ -1485,6 +1500,7 @@
       function showFirebaseLogin() {
         firebaseLoginCard.classList.remove("is-hidden");
         commentsPanel.classList.add("is-hidden");
+        moderationHeader.classList.add("is-hidden");
         firebaseLogoutButton.classList.add("is-hidden");
         moderationUserLabel.textContent = "Moderação de comentários";
       }
