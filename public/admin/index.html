@@ -985,8 +985,7 @@
             moderação do site.
           </p>
           <button id="loginButton" class="login-button" type="button">
-            Entrar com Netlify Identity
-          </button>
+            Entrar com Netlify Identity</button>
           <a href="/" class="back-link">← Voltar ao site</a>
           <div id="statusText" class="status-text">Verificando acesso...</div>
         </div>
@@ -1062,8 +1061,7 @@
             >
               Painel</button>
             <button id="topOpenCmsButton" type="button" class="nav-button">
-              Editor do blog
-            </button
+              Editor do blog</button
             ><a
               href="/"
               class="nav-button"
@@ -1134,8 +1132,7 @@
               placeholder="Senha"
               autocomplete="current-password"
             /><button type="submit" class="secondary-button">
-              Entrar com e-mail e senha
-            </button>
+              Entrar com e-mail e senha</button>
             <button
               id="resetPasswordButton"
               type="button"
@@ -1170,14 +1167,11 @@
                 data-status="pending"
                 type="button"
               >
-                Pendentes
-              </button
+                Pendentes</button
               ><button class="tab-button" data-status="approved" type="button">
-                Aprovados
-              </button
+                Aprovados</button
               ><button class="tab-button" data-status="rejected" type="button">
-                Rejeitados
-              </button
+                Rejeitados</button
               ><button class="tab-button" data-status="all" type="button">
                 Todos
               </button>
@@ -1363,9 +1357,12 @@
         showLoading();
 
         if (!isDecapRoute()) {
-          window.location.href = "/admin/#/collections/posts";
-          return;
+          window.location.hash = "#/collections/posts";
         }
+
+        adminLogin.classList.add("is-hidden");
+        adminDashboard.classList.add("is-hidden");
+        adminModeration.classList.add("is-hidden");
 
         if (cmsLoaded) {
           decapLoading.classList.remove("is-visible");
@@ -1374,13 +1371,19 @@
 
         cmsLoaded = true;
 
-        adminLogin.classList.add("is-hidden");
-        adminDashboard.classList.add("is-hidden");
-        adminModeration.classList.add("is-hidden");
+        const alreadyLoadedScript = document.querySelector(
+          'script[data-decap-cms="true"]'
+        );
+
+        if (alreadyLoadedScript) {
+          decapLoading.classList.remove("is-visible");
+          return;
+        }
 
         const script = document.createElement("script");
         script.src = "https://unpkg.com/decap-cms@^3/dist/decap-cms.js";
         script.async = true;
+        script.dataset.decapCms = "true";
 
         const removeLoading = function () {
           decapLoading.classList.remove("is-visible");
@@ -1403,9 +1406,9 @@
 
         document.body.appendChild(script);
 
-        // Segurança extra: se o Decap carregar, mas o evento onload demorar ou falhar,
+        // Segurança extra: se o Decap carregar, mas o evento onload demorar,
         // removemos o overlay para não deixar a tela presa no carregamento.
-        setTimeout(removeLoading, 3500);
+        setTimeout(removeLoading, 4500);
       }
       function initIdentity() {
         if (!window.netlifyIdentity) {
@@ -1791,7 +1794,7 @@
         }
       }
       function openBlogEditor() {
-        window.location.href = "/admin/#/collections/posts";
+        loadCMS();
       }
 
       openCmsButton.addEventListener("click", openBlogEditor);
@@ -1832,6 +1835,12 @@
       document.addEventListener("keydown", (e) => {
         if (e.key === "Escape") closeCommentModal();
       });
+      window.addEventListener("hashchange", function () {
+        if (isDecapRoute() && !cmsLoaded) {
+          loadCMS();
+        }
+      });
+
       if (isDecapRoute()) {
         loadCMS();
       } else {
