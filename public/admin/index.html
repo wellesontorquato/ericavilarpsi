@@ -892,6 +892,88 @@
         line-height: 1.78;
         white-space: pre-wrap;
       }
+
+      .reactions-panel {
+        margin-top: 22px;
+      }
+
+      .reactions-grid {
+        display: grid;
+        gap: 12px;
+      }
+
+      .reaction-card {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 16px;
+        align-items: center;
+        padding: 16px;
+        border-radius: 22px;
+        background: rgba(255, 255, 255, 0.78);
+        border: 1px solid rgba(155, 111, 103, 0.12);
+      }
+
+      .reaction-info {
+        min-width: 0;
+      }
+
+      .reaction-info strong {
+        display: block;
+        color: var(--text);
+        font-size: 0.95rem;
+        line-height: 1.35;
+      }
+
+      .reaction-info span {
+        display: block;
+        margin-top: 4px;
+        color: var(--muted);
+        font-size: 0.78rem;
+        line-height: 1.45;
+        word-break: break-word;
+      }
+
+      .reaction-type-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        width: fit-content;
+        margin-top: 10px;
+        padding: 7px 10px;
+        border-radius: 999px;
+        background: rgba(46, 38, 40, 0.08);
+        color: var(--text);
+        font-size: 0.72rem;
+        font-weight: 900;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+      }
+
+      .reaction-actions {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+
+      .reaction-select {
+        min-height: 38px;
+        border: 1px solid rgba(155, 111, 103, 0.16);
+        border-radius: 999px;
+        padding: 0 12px;
+        background: rgba(255, 255, 255, 0.84);
+        color: var(--text);
+        font-size: 0.78rem;
+        font-weight: 800;
+        outline: none;
+      }
+
+      .reaction-select:focus {
+        border-color: rgba(155, 111, 103, 0.46);
+        box-shadow: 0 0 0 4px rgba(155, 111, 103, 0.1);
+      }
+
       @media (max-width: 860px) {
         .login-card,
         .dashboard-card {
@@ -923,6 +1005,14 @@
           grid-template-columns: 1fr;
         }
         .post-row-counts {
+          justify-content: flex-start;
+        }
+
+        .reaction-card {
+          grid-template-columns: 1fr;
+        }
+
+        .reaction-actions {
           justify-content: flex-start;
         }
       }
@@ -1062,6 +1152,12 @@
               Painel</button>
             <button id="topOpenCmsButton" type="button" class="nav-button">
               Editor do blog</button
+            ><button
+              id="topReactionsButton"
+              type="button"
+              class="nav-button is-hidden"
+            >
+              Reações</button
             ><a
               href="/"
               class="nav-button"
@@ -1201,6 +1297,45 @@
             Nenhum comentário encontrado nesta categoria.
           </div>
         </div>
+
+        <div id="reactionsPanel" class="comments-panel reactions-panel is-hidden">
+          <div class="comments-panel-top">
+            <div class="comments-panel-title">
+              <span class="kicker">Controle de reações</span>
+              <h2>Reações dos artigos</h2>
+              <p>
+                Visualize, altere ou exclua reações registradas nos artigos do
+                blog.
+              </p>
+            </div>
+            <input
+              id="reactionSearchInput"
+              class="search-input"
+              type="search"
+              placeholder="Buscar por post, usuário ou reação..."
+            />
+          </div>
+
+          <div class="comments-toolbar">
+            <div class="comments-summary" id="reactionsSummary">
+              Carregando reações...
+            </div>
+
+            <button
+              id="refreshReactionsButton"
+              type="button"
+              class="ghost-button"
+            >
+              Atualizar reações
+            </button>
+          </div>
+
+          <div id="reactionsList" class="reactions-grid"></div>
+
+          <div id="reactionsEmpty" class="empty-state is-hidden">
+            Nenhuma reação encontrada.
+          </div>
+        </div>
       </div>
     </section>
 
@@ -1250,6 +1385,7 @@
           "topBackToDashboardButton",
         ),
         topOpenCmsButton = document.getElementById("topOpenCmsButton"),
+        topReactionsButton = document.getElementById("topReactionsButton"),
         firebaseLogoutButton = document.getElementById("firebaseLogoutButton"),
         refreshCommentsButton = document.getElementById(
           "refreshCommentsButton",
@@ -1268,6 +1404,12 @@
         resetPasswordButton = document.getElementById("resetPasswordButton"),
         firebaseMessage = document.getElementById("firebaseMessage"),
         commentsPanel = document.getElementById("commentsPanel"),
+        reactionsPanel = document.getElementById("reactionsPanel"),
+        reactionsList = document.getElementById("reactionsList"),
+        reactionsEmpty = document.getElementById("reactionsEmpty"),
+        reactionsSummary = document.getElementById("reactionsSummary"),
+        reactionSearchInput = document.getElementById("reactionSearchInput"),
+        refreshReactionsButton = document.getElementById("refreshReactionsButton"),
         postsList = document.getElementById("postsList"),
         commentsEmpty = document.getElementById("commentsEmpty"),
         commentsSummary = document.getElementById("commentsSummary"),
@@ -1288,10 +1430,12 @@
       let cmsLoaded = false,
         currentStatusFilter = "pending",
         allComments = [],
+        allReactions = [],
         firebaseApi = null,
         currentFirebaseUser = null,
         openPostSlug = "",
-        searchTerm = "";
+        searchTerm = "",
+        reactionSearchTerm = "";
       function isDecapRoute() {
         const h = window.location.hash || "";
         return (
@@ -1533,7 +1677,9 @@
       function showCommentsPanel() {
         firebaseLoginCard.classList.add("is-hidden");
         commentsPanel.classList.remove("is-hidden");
+        reactionsPanel.classList.remove("is-hidden");
         moderationHeader.classList.remove("is-hidden");
+        topReactionsButton.classList.remove("is-hidden");
         firebaseLogoutButton.classList.remove("is-hidden");
         moderationUserLabel.textContent = currentFirebaseUser?.email
           ? `Conta: ${currentFirebaseUser.email}`
@@ -1542,7 +1688,9 @@
       function showFirebaseLogin() {
         firebaseLoginCard.classList.remove("is-hidden");
         commentsPanel.classList.add("is-hidden");
+        reactionsPanel.classList.add("is-hidden");
         moderationHeader.classList.add("is-hidden");
+        topReactionsButton.classList.add("is-hidden");
         firebaseLogoutButton.classList.add("is-hidden");
         moderationUserLabel.textContent = "Moderação de comentários";
       }
@@ -1797,11 +1945,193 @@
         loadCMS();
       }
 
+
+      function getReactionLabel(type) {
+        const labels = {
+          amei: "💗 Amei",
+          acolheu: "🌿 Me acolheu",
+          refletir: "☁️ Me fez refletir",
+          gostei: "👏 Gostei",
+        };
+
+        return labels[type] || type || "Sem reação";
+      }
+
+      function getReactionPostSlug(item) {
+        try {
+          return item.ref.parent.parent.id || "";
+        } catch {
+          return "";
+        }
+      }
+
+      function getFilteredReactions() {
+        const q = normalizeText(reactionSearchTerm);
+
+        return allReactions.filter((reaction) => {
+          if (!q) return true;
+
+          return normalizeText(
+            [
+              reaction.postSlug,
+              reaction.type,
+              reaction.userId,
+              reaction.userName,
+              reaction.userEmail,
+            ].join(" "),
+          ).includes(q);
+        });
+      }
+
+      function renderReactions() {
+        const filtered = getFilteredReactions();
+
+        reactionsSummary.textContent = `${filtered.length} reação(ões)`;
+        reactionsList.innerHTML = "";
+
+        if (!filtered.length) {
+          reactionsEmpty.classList.remove("is-hidden");
+          return;
+        }
+
+        reactionsEmpty.classList.add("is-hidden");
+
+        filtered.forEach((reaction) => {
+          const card = document.createElement("article");
+          card.className = "reaction-card";
+
+          card.innerHTML = `
+            <div class="reaction-info">
+              <strong>${escapeHtml(formatPostTitle(reaction.postSlug))}</strong>
+              <span><strong>Post:</strong> ${escapeHtml(reaction.postSlug || "Sem post")}</span>
+              <span><strong>Usuário:</strong> ${escapeHtml(reaction.userName || reaction.userEmail || reaction.userId || "Usuário não identificado")}</span>
+              <span><strong>ID:</strong> ${escapeHtml(reaction.userId || reaction.id || "")}</span>
+              <span class="reaction-type-badge">${escapeHtml(getReactionLabel(reaction.type))}</span>
+            </div>
+
+            <div class="reaction-actions">
+              <select class="reaction-select" aria-label="Editar reação">
+                <option value="amei" ${reaction.type === "amei" ? "selected" : ""}>💗 Amei</option>
+                <option value="acolheu" ${reaction.type === "acolheu" ? "selected" : ""}>🌿 Me acolheu</option>
+                <option value="refletir" ${reaction.type === "refletir" ? "selected" : ""}>☁️ Me fez refletir</option>
+                <option value="gostei" ${reaction.type === "gostei" ? "selected" : ""}>👏 Gostei</option>
+              </select>
+            </div>
+          `;
+
+          const actions = card.querySelector(".reaction-actions");
+          const select = card.querySelector(".reaction-select");
+
+          actions.appendChild(
+            createActionButton("Salvar", "small-button", function () {
+              updateReactionType(reaction, select.value);
+            }),
+          );
+
+          actions.appendChild(
+            createActionButton("Excluir", "danger-button", function () {
+              deleteReaction(reaction);
+            }),
+          );
+
+          reactionsList.appendChild(card);
+        });
+      }
+
+      async function loadReactions() {
+        if (!firebaseApi || !currentFirebaseUser) return;
+
+        try {
+          reactionsSummary.textContent = "Carregando reações...";
+
+          const snap = await firebaseApi.getDocs(
+            firebaseApi.collectionGroup(firebaseApi.db, "reactions"),
+          );
+
+          allReactions = snap.docs
+            .map((item) => {
+              const data = item.data();
+
+              return {
+                id: item.id,
+                ref: item.ref,
+                postSlug: data.postSlug || getReactionPostSlug(item),
+                type: data.type || "",
+                userId: data.userId || item.id || "",
+                userName: data.userName || "",
+                userEmail: data.userEmail || "",
+                createdAt: data.createdAt || null,
+                updatedAt: data.updatedAt || null,
+              };
+            })
+            .sort((a, b) => {
+              const postCompare = String(a.postSlug || "").localeCompare(
+                String(b.postSlug || ""),
+              );
+
+              if (postCompare !== 0) return postCompare;
+
+              return String(a.userId || "").localeCompare(String(b.userId || ""));
+            });
+
+          renderReactions();
+        } catch (error) {
+          console.error("Erro ao carregar reações:", error);
+          reactionsSummary.textContent = "Erro ao carregar reações";
+          showFirebaseMessage(normalizeFirebaseError(error), "error");
+        }
+      }
+
+      async function updateReactionType(reaction, type) {
+        if (!firebaseApi) return;
+
+        if (!["amei", "acolheu", "refletir", "gostei"].includes(type)) {
+          alert("Tipo de reação inválido.");
+          return;
+        }
+
+        if (!confirm("Alterar esta reação?")) return;
+
+        try {
+          await firebaseApi.updateDoc(reaction.ref, {
+            type,
+            updatedAt: firebaseApi.serverTimestamp(),
+          });
+
+          reaction.type = type;
+          renderReactions();
+        } catch (error) {
+          console.error("Erro ao alterar reação:", error);
+          alert(normalizeFirebaseError(error));
+        }
+      }
+
+      async function deleteReaction(reaction) {
+        if (!firebaseApi) return;
+
+        if (!confirm("Excluir esta reação definitivamente?")) return;
+
+        try {
+          await firebaseApi.deleteDoc(reaction.ref);
+          allReactions = allReactions.filter(
+            (item) => item.ref.path !== reaction.ref.path,
+          );
+          renderReactions();
+        } catch (error) {
+          console.error("Erro ao excluir reação:", error);
+          alert(normalizeFirebaseError(error));
+        }
+      }
+
       openCmsButton.addEventListener("click", openBlogEditor);
       topOpenCmsButton.addEventListener("click", openBlogEditor);
       openModerationButton.addEventListener("click", showModeration);
       topBackToDashboardButton.addEventListener("click", showDashboard);
       refreshCommentsButton.addEventListener("click", loadComments);
+      refreshReactionsButton.addEventListener("click", loadReactions);
+      topReactionsButton.addEventListener("click", function () {
+        reactionsPanel.scrollIntoView({ behavior: "smooth", block: "start" });
+      });
       firebaseLogoutButton.addEventListener("click", async () => {
         try {
           if (firebaseApi?.auth && firebaseApi?.signOut)
@@ -1827,6 +2157,11 @@
       commentSearchInput.addEventListener("input", (e) => {
         searchTerm = e.target.value || "";
         renderComments();
+      });
+
+      reactionSearchInput.addEventListener("input", (e) => {
+        reactionSearchTerm = e.target.value || "";
+        renderReactions();
       });
       commentModalCloseButton.addEventListener("click", closeCommentModal);
       commentModal.addEventListener("click", (e) => {
@@ -1917,6 +2252,7 @@
         clearFirebaseMessage();
         showCommentsPanel();
         loadComments();
+        loadReactions();
       });
       firebaseGoogleButton.addEventListener("click", async () => {
         try {
