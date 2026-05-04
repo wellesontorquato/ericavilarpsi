@@ -1,26 +1,39 @@
 import admin from "firebase-admin";
 
 function formatPrivateKey(key) {
-  return key?.replace(/\\n/g, "\n");
+  if (!key) return undefined;
+
+  return key
+    .replace(/^"|"$/g, "") // remove aspas extras no começo/fim, se existirem
+    .replace(/\\n/g, "\n"); // transforma \n em quebra de linha real
 }
 
 export function getFirebaseAdmin() {
-  if (!process.env.FIREBASE_CLIENT_EMAIL) {
+  const projectId =
+    process.env.FIREBASE_PROJECT_ID ||
+    process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID;
+
+  const clientEmail = process.env.FIREBASE_CLIENT_EMAIL;
+  const privateKey = formatPrivateKey(process.env.FIREBASE_PRIVATE_KEY);
+
+  if (!projectId) {
+    throw new Error("FIREBASE_PROJECT_ID não configurado.");
+  }
+
+  if (!clientEmail) {
     throw new Error("FIREBASE_CLIENT_EMAIL não configurado.");
   }
 
-  if (!process.env.FIREBASE_PRIVATE_KEY) {
+  if (!privateKey) {
     throw new Error("FIREBASE_PRIVATE_KEY não configurada.");
   }
 
   if (!admin.apps.length) {
     admin.initializeApp({
       credential: admin.credential.cert({
-        projectId:
-          process.env.FIREBASE_PROJECT_ID ||
-          process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
-        clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
-        privateKey: formatPrivateKey(process.env.FIREBASE_PRIVATE_KEY),
+        projectId,
+        clientEmail,
+        privateKey,
       }),
     });
   }
