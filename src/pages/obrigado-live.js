@@ -2,8 +2,18 @@ import Head from "next/head";
 import { useEffect, useState } from "react";
 
 const WHATSAPP_GROUP_CODE = "GlhIV0ElLnw2RB4SsMOTJI";
+
 const WHATSAPP_WEB_LINK = `https://chat.whatsapp.com/${WHATSAPP_GROUP_CODE}`;
+
 const WHATSAPP_APP_LINK = `whatsapp://chat?code=${WHATSAPP_GROUP_CODE}`;
+
+const WHATSAPP_ANDROID_INTENT = `intent://chat?code=${WHATSAPP_GROUP_CODE}#Intent;scheme=whatsapp;package=com.whatsapp;S.browser_fallback_url=${encodeURIComponent(
+  WHATSAPP_WEB_LINK
+)};end`;
+
+const WHATSAPP_ANDROID_BUSINESS_INTENT = `intent://chat?code=${WHATSAPP_GROUP_CODE}#Intent;scheme=whatsapp;package=com.whatsapp.w4b;S.browser_fallback_url=${encodeURIComponent(
+  WHATSAPP_WEB_LINK
+)};end`;
 
 export default function ObrigadoLive() {
   const [secondsLeft, setSecondsLeft] = useState(5);
@@ -11,11 +21,75 @@ export default function ObrigadoLive() {
   function openWhatsappGroup() {
     if (typeof window === "undefined") return;
 
-    window.location.href = WHATSAPP_APP_LINK;
+    const userAgent = navigator.userAgent || "";
+    const isAndroid = /Android/i.test(userAgent);
+    const isIOS = /iPhone|iPad|iPod/i.test(userAgent);
 
-    setTimeout(() => {
-      window.location.href = WHATSAPP_WEB_LINK;
-    }, 900);
+    let pageWasHidden = false;
+
+    const markAsHidden = () => {
+      pageWasHidden = true;
+    };
+
+    document.addEventListener("visibilitychange", markAsHidden, { once: true });
+    window.addEventListener("pagehide", markAsHidden, { once: true });
+
+    if (isAndroid) {
+      window.location.href = WHATSAPP_ANDROID_INTENT;
+
+      setTimeout(() => {
+        if (!pageWasHidden) {
+          window.location.href = WHATSAPP_APP_LINK;
+        }
+      }, 900);
+
+      setTimeout(() => {
+        if (!pageWasHidden) {
+          window.location.href = WHATSAPP_WEB_LINK;
+        }
+      }, 1800);
+
+      return;
+    }
+
+    if (isIOS) {
+      window.location.href = WHATSAPP_APP_LINK;
+
+      setTimeout(() => {
+        if (!pageWasHidden) {
+          window.location.href = WHATSAPP_WEB_LINK;
+        }
+      }, 1600);
+
+      return;
+    }
+
+    window.location.href = WHATSAPP_WEB_LINK;
+  }
+
+  function openWhatsappBusiness() {
+    if (typeof window === "undefined") return;
+
+    const userAgent = navigator.userAgent || "";
+    const isAndroid = /Android/i.test(userAgent);
+    const isIOS = /iPhone|iPad|iPod/i.test(userAgent);
+
+    if (isAndroid) {
+      window.location.href = WHATSAPP_ANDROID_BUSINESS_INTENT;
+      return;
+    }
+
+    if (isIOS) {
+      window.location.href = WHATSAPP_APP_LINK;
+
+      setTimeout(() => {
+        window.location.href = WHATSAPP_WEB_LINK;
+      }, 1200);
+
+      return;
+    }
+
+    window.location.href = WHATSAPP_WEB_LINK;
   }
 
   useEffect(() => {
@@ -100,6 +174,14 @@ export default function ObrigadoLive() {
           <button type="button" className="mainCta" onClick={openWhatsappGroup}>
             Abrir WhatsApp e entrar no grupo VIP
             <span>↗</span>
+          </button>
+
+          <button
+            type="button"
+            className="businessCta"
+            onClick={openWhatsappBusiness}
+          >
+            Uso WhatsApp Business
           </button>
 
           <a
@@ -378,6 +460,19 @@ export default function ObrigadoLive() {
           flex: 0 0 auto;
           border-radius: 999px;
           background: rgba(255, 255, 255, 0.16);
+        }
+
+        .businessCta {
+          margin-top: 10px;
+          border: 0;
+          background: transparent;
+          color: #8f3048;
+          font-family: "Montserrat", Arial, sans-serif;
+          font-weight: 850;
+          font-size: 0.82rem;
+          text-decoration: underline;
+          text-underline-offset: 4px;
+          cursor: pointer;
         }
 
         .fallbackLink {
