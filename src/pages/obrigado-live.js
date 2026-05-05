@@ -6,13 +6,16 @@ const WHATSAPP_GROUP_CODE = "GlhIV0ElLnw2RB4SsMOTJI";
 
 const WHATSAPP_WEB_LINK = `https://chat.whatsapp.com/${WHATSAPP_GROUP_CODE}`;
 
+// Fallback para iOS ou navegadores que aceitam deep link direto
 const WHATSAPP_APP_LINK = `whatsapp://chat?code=${WHATSAPP_GROUP_CODE}`;
 
-const WHATSAPP_ANDROID_INTENT = `intent://chat?code=${WHATSAPP_GROUP_CODE}#Intent;scheme=whatsapp;package=com.whatsapp;S.browser_fallback_url=${encodeURIComponent(
+// Melhor formato para Chrome Android: abre o link do grupo direcionando ao pacote do WhatsApp
+const WHATSAPP_ANDROID_INTENT = `intent://chat.whatsapp.com/${WHATSAPP_GROUP_CODE}#Intent;scheme=https;package=com.whatsapp;action=android.intent.action.VIEW;category=android.intent.category.BROWSABLE;S.browser_fallback_url=${encodeURIComponent(
   WHATSAPP_WEB_LINK
 )};end`;
 
-const WHATSAPP_ANDROID_BUSINESS_INTENT = `intent://chat?code=${WHATSAPP_GROUP_CODE}#Intent;scheme=whatsapp;package=com.whatsapp.w4b;S.browser_fallback_url=${encodeURIComponent(
+// Versão para WhatsApp Business
+const WHATSAPP_ANDROID_BUSINESS_INTENT = `intent://chat.whatsapp.com/${WHATSAPP_GROUP_CODE}#Intent;scheme=https;package=com.whatsapp.w4b;action=android.intent.action.VIEW;category=android.intent.category.BROWSABLE;S.browser_fallback_url=${encodeURIComponent(
   WHATSAPP_WEB_LINK
 )};end`;
 
@@ -24,7 +27,7 @@ export default function ObrigadoLive() {
 
   const [secondsLeft, setSecondsLeft] = useState(REDIRECT_DELAY_SECONDS);
 
-  function openWhatsappGroup() {
+  function openWhatsappGroup({ automatic = false } = {}) {
     if (typeof window === "undefined") return;
 
     const userAgent = navigator.userAgent || "";
@@ -44,16 +47,16 @@ export default function ObrigadoLive() {
       window.location.href = WHATSAPP_ANDROID_INTENT;
 
       setTimeout(() => {
-        if (!pageWasHidden) {
+        if (!pageWasHidden && !automatic) {
           window.location.href = WHATSAPP_APP_LINK;
         }
-      }, 900);
+      }, 1200);
 
       setTimeout(() => {
         if (!pageWasHidden) {
           window.location.href = WHATSAPP_WEB_LINK;
         }
-      }, 1800);
+      }, automatic ? 2600 : 3200);
 
       return;
     }
@@ -65,7 +68,7 @@ export default function ObrigadoLive() {
         if (!pageWasHidden) {
           window.location.href = WHATSAPP_WEB_LINK;
         }
-      }, 1600);
+      }, 1800);
 
       return;
     }
@@ -82,6 +85,11 @@ export default function ObrigadoLive() {
 
     if (isAndroid) {
       window.location.href = WHATSAPP_ANDROID_BUSINESS_INTENT;
+
+      setTimeout(() => {
+        window.location.href = WHATSAPP_WEB_LINK;
+      }, 2600);
+
       return;
     }
 
@@ -90,7 +98,7 @@ export default function ObrigadoLive() {
 
       setTimeout(() => {
         window.location.href = WHATSAPP_WEB_LINK;
-      }, 1200);
+      }, 1600);
 
       return;
     }
@@ -111,7 +119,7 @@ export default function ObrigadoLive() {
     }, 1000);
 
     const redirect = setTimeout(() => {
-        openWhatsappGroup();
+      openWhatsappGroup({ automatic: true });
     }, REDIRECT_DELAY_SECONDS * 1000);
 
     return () => {
@@ -194,29 +202,33 @@ export default function ObrigadoLive() {
             </div>
           </div>
 
-          <button type="button" className="mainCta" onClick={openWhatsappGroup}>
+          <button
+            type="button"
+            className="mainCta"
+            onClick={() => openWhatsappGroup({ automatic: false })}
+          >
             Abrir WhatsApp e entrar no grupo VIP
             <span>↗</span>
           </button>
 
           <div className="alternativeLinks">
-                <button
-                    type="button"
-                    className="businessCta"
-                    onClick={openWhatsappBusiness}
-                >
-                    Uso WhatsApp Business
-                </button>
+            <button
+              type="button"
+              className="businessCta"
+              onClick={openWhatsappBusiness}
+            >
+              Uso WhatsApp Business
+            </button>
 
-                <a
-                    href={WHATSAPP_WEB_LINK}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="fallbackLink"
-                >
-                    Ou abrir pelo link normal do convite
-                </a>
-            </div>
+            <a
+              href={WHATSAPP_WEB_LINK}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="fallbackLink"
+            >
+              Ou abrir pelo link normal do convite
+            </a>
+          </div>
 
           <div className="steps">
             <article>
@@ -488,32 +500,32 @@ export default function ObrigadoLive() {
         }
 
         .alternativeLinks {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 8px;
-            margin-top: 12px;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 8px;
+          margin-top: 12px;
         }
 
         .businessCta {
-            border: 0;
-            background: transparent;
-            color: #8f3048;
-            font-family: "Montserrat", Arial, sans-serif;
-            font-weight: 850;
-            font-size: 0.82rem;
-            text-decoration: underline;
-            text-underline-offset: 4px;
-            cursor: pointer;
+          border: 0;
+          background: transparent;
+          color: #8f3048;
+          font-family: "Montserrat", Arial, sans-serif;
+          font-weight: 850;
+          font-size: 0.82rem;
+          text-decoration: underline;
+          text-underline-offset: 4px;
+          cursor: pointer;
         }
 
         .fallbackLink {
-            display: inline-block;
-            color: #8f3048;
-            font-size: 0.82rem;
-            font-weight: 850;
-            text-decoration: underline;
-            text-underline-offset: 4px;
+          display: inline-block;
+          color: #8f3048;
+          font-size: 0.82rem;
+          font-weight: 850;
+          text-decoration: underline;
+          text-underline-offset: 4px;
         }
 
         .steps {
