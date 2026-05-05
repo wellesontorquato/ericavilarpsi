@@ -16,11 +16,13 @@ const WHATSAPP_ANDROID_BUSINESS_INTENT = `intent://chat?code=${WHATSAPP_GROUP_CO
   WHATSAPP_WEB_LINK
 )};end`;
 
+const REDIRECT_DELAY_SECONDS = 15;
+
 export default function ObrigadoLive() {
   const router = useRouter();
   const isAlreadyRegistered = router.query.status === "ja-inscrito";
 
-  const [secondsLeft, setSecondsLeft] = useState(5);
+  const [secondsLeft, setSecondsLeft] = useState(REDIRECT_DELAY_SECONDS);
 
   function openWhatsappGroup() {
     if (typeof window === "undefined") return;
@@ -109,8 +111,8 @@ export default function ObrigadoLive() {
     }, 1000);
 
     const redirect = setTimeout(() => {
-      openWhatsappGroup();
-    }, 5000);
+        openWhatsappGroup();
+    }, REDIRECT_DELAY_SECONDS * 1000);
 
     return () => {
       clearInterval(countdown);
@@ -197,22 +199,24 @@ export default function ObrigadoLive() {
             <span>↗</span>
           </button>
 
-          <button
-            type="button"
-            className="businessCta"
-            onClick={openWhatsappBusiness}
-          >
-            Uso WhatsApp Business
-          </button>
+          <div className="alternativeLinks">
+                <button
+                    type="button"
+                    className="businessCta"
+                    onClick={openWhatsappBusiness}
+                >
+                    Uso WhatsApp Business
+                </button>
 
-          <a
-            href={WHATSAPP_WEB_LINK}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="fallbackLink"
-          >
-            Ou abrir pelo link normal do convite
-          </a>
+                <a
+                    href={WHATSAPP_WEB_LINK}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="fallbackLink"
+                >
+                    Ou abrir pelo link normal do convite
+                </a>
+            </div>
 
           <div className="steps">
             <article>
@@ -483,27 +487,33 @@ export default function ObrigadoLive() {
           background: rgba(255, 255, 255, 0.16);
         }
 
+        .alternativeLinks {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            margin-top: 12px;
+        }
+
         .businessCta {
-          margin-top: 10px;
-          border: 0;
-          background: transparent;
-          color: #8f3048;
-          font-family: "Montserrat", Arial, sans-serif;
-          font-weight: 850;
-          font-size: 0.82rem;
-          text-decoration: underline;
-          text-underline-offset: 4px;
-          cursor: pointer;
+            border: 0;
+            background: transparent;
+            color: #8f3048;
+            font-family: "Montserrat", Arial, sans-serif;
+            font-weight: 850;
+            font-size: 0.82rem;
+            text-decoration: underline;
+            text-underline-offset: 4px;
+            cursor: pointer;
         }
 
         .fallbackLink {
-          display: inline-block;
-          margin-top: 12px;
-          color: #8f3048;
-          font-size: 0.82rem;
-          font-weight: 850;
-          text-decoration: underline;
-          text-underline-offset: 4px;
+            display: inline-block;
+            color: #8f3048;
+            font-size: 0.82rem;
+            font-weight: 850;
+            text-decoration: underline;
+            text-underline-offset: 4px;
         }
 
         .steps {
