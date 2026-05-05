@@ -1,4 +1,5 @@
 import Head from "next/head";
+import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 
 const WHATSAPP_GROUP_CODE = "GlhIV0ElLnw2RB4SsMOTJI";
@@ -16,6 +17,9 @@ const WHATSAPP_ANDROID_BUSINESS_INTENT = `intent://chat?code=${WHATSAPP_GROUP_CO
 )};end`;
 
 export default function ObrigadoLive() {
+  const router = useRouter();
+  const isAlreadyRegistered = router.query.status === "ja-inscrito";
+
   const [secondsLeft, setSecondsLeft] = useState(5);
 
   function openWhatsappGroup() {
@@ -117,7 +121,11 @@ export default function ObrigadoLive() {
   return (
     <>
       <Head>
-        <title>Inscrição confirmada | Gestação sem filtro</title>
+        <title>
+          {isAlreadyRegistered
+            ? "Você já estava inscrita | Gestação sem filtro"
+            : "Inscrição confirmada | Gestação sem filtro"}
+        </title>
         <meta
           name="description"
           content="Sua inscrição na live Gestação sem filtro foi confirmada. Entre no grupo VIP para receber lembretes e materiais exclusivos."
@@ -132,15 +140,28 @@ export default function ObrigadoLive() {
         <section className="thanksCard">
           <div className="statusBadge">
             <span />
-            Inscrição confirmada
+            {isAlreadyRegistered ? "Inscrição já encontrada" : "Inscrição confirmada"}
           </div>
 
-          <h1>Agora entre no grupo VIP da live.</h1>
+          <h1>
+            {isAlreadyRegistered
+              ? "Você já estava na lista VIP."
+              : "Agora entre no grupo VIP da live."}
+          </h1>
 
           <p className="lead">
-            Sua inscrição para a live <strong>Gestação sem filtro</strong> foi
-            registrada com sucesso. Você será direcionada automaticamente para o
-            grupo exclusivo em alguns segundos.
+            {isAlreadyRegistered ? (
+              <>
+                Encontramos uma inscrição anterior para esta live. Se você ainda
+                não entrou no grupo VIP, toque no botão abaixo para acessar agora.
+              </>
+            ) : (
+              <>
+                Sua inscrição para a live <strong>Gestação sem filtro</strong>{" "}
+                foi registrada com sucesso. Você será direcionada automaticamente
+                para o grupo exclusivo em alguns segundos.
+              </>
+            )}
           </p>
 
           <div className="autoRedirectBox">

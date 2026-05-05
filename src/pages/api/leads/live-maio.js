@@ -25,6 +25,50 @@ function normalizeSubtemas(value) {
   return [normalizeText(value)].filter(Boolean);
 }
 
+function formatWhatsappDisplay(value) {
+  const digits = normalizeWhatsapp(value);
+
+  if (digits.length !== 11) {
+    return digits;
+  }
+
+  return `(${digits.slice(0, 2)}) ${digits.slice(2, 7)}-${digits.slice(7)}`;
+}
+
+async function findExistingLead({ adminDb, email, whatsapp }) {
+  const leadsRef = adminDb.collection("leads");
+
+  const emailSnapshot = await leadsRef
+    .where("email", "==", email)
+    .limit(10)
+    .get();
+
+  const existingByEmail = emailSnapshot.docs.find((doc) => {
+    const data = doc.data();
+    return data.liveId === LIVE_ID;
+  });
+
+  if (existingByEmail) {
+    return existingByEmail;
+  }
+
+  const whatsappSnapshot = await leadsRef
+    .where("whatsapp", "==", whatsapp)
+    .limit(10)
+    .get();
+
+  const existingByWhatsapp = whatsappSnapshot.docs.find((doc) => {
+    const data = doc.data();
+    return data.liveId === LIVE_ID;
+  });
+
+  if (existingByWhatsapp) {
+    return existingByWhatsapp;
+  }
+
+  return null;
+}
+
 export default async function handler(req, res) {
   if (req.method !== "POST") {
     return res.status(405).send("Esta rota aceita apenas envio via formulário.");
@@ -35,6 +79,7 @@ export default async function handler(req, res) {
 
     const nome = normalizeText(req.body.nome);
     const whatsapp = normalizeWhatsapp(req.body.whatsapp);
+    const whatsappFormatado = formatWhatsappDisplay(req.body.whatsapp);
     const email = normalizeEmail(req.body.email);
     const subtemas = normalizeSubtemas(req.body.subtemas);
     const consentimento =
@@ -60,9 +105,29 @@ export default async function handler(req, res) {
 
     const now = admin.firestore.FieldValue.serverTimestamp();
 
+    const existingLead = await findExistingLead({
+      adminDb,
+      email,
+      whatsapp,
+    });
+
+    if (existingLead) {
+      await existingLead.ref.set(
+        {
+          lastAttemptAt: now,
+          duplicateAttempts: admin.firestore.FieldValue.increment(1),
+          updatedAt: now,
+        },
+        { merge: true }
+      );
+
+      return res.redirect(303, "/obrigado-live?status=ja-inscrito");
+    }
+
     await adminDb.collection("leads").add({
       nome,
       whatsapp,
+      whatsappFormatado,
       email,
       subtemas,
       consentimento: true,
@@ -75,6 +140,7 @@ export default async function handler(req, res) {
       canal: "landing-page",
       status: "novo",
       entrouGrupoVip: false,
+      duplicateAttempts: 0,
       createdAt: now,
       updatedAt: now,
       userAgent: req.headers["user-agent"] || "",
@@ -84,9 +150,13 @@ export default async function handler(req, res) {
         "",
     });
 
-    return res.redirect(303, "/obrigado-live");
+    return res.redirect(303, "/obrigado-live?status=confirmado");
   } catch (error) {
-    console.error("Erro ao salvar lead da live:", error);
+    console.error("Erro ao salvar lead da live:", {
+      message: error.message,
+      code: error.code,
+      stack: error.stack,
+    });
 
     return res
       .status(500)

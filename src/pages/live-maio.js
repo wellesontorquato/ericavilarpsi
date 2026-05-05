@@ -10,6 +10,20 @@ const subtemas = [
   "Culpa e autocobrança",
 ];
 
+function formatBrazilianWhatsapp(value) {
+  const digits = String(value || "").replace(/\D/g, "").slice(0, 11);
+
+  if (digits.length <= 2) {
+    return digits;
+  }
+
+  if (digits.length <= 7) {
+    return `(${digits.slice(0, 2)}) ${digits.slice(2)}`;
+  }
+
+  return `(${digits.slice(0, 2)}) ${digits.slice(2, 7)}-${digits.slice(7)}`;
+}
+
 export default function LiveMaio() {
   return (
     <>
@@ -1288,6 +1302,8 @@ function SpeakerPhotos() {
 }
 
 function FormCard() {
+  const [whatsapp, setWhatsapp] = useState("");
+
   return (
     <aside className="formCard" id="inscricao">
       <div className="formHeader">
@@ -1311,7 +1327,14 @@ function FormCard() {
             id="whatsapp"
             type="tel"
             name="whatsapp"
+            inputMode="numeric"
+            autoComplete="tel"
             placeholder="(00) 00000-0000"
+            value={whatsapp}
+            maxLength={15}
+            onChange={(event) => {
+              setWhatsapp(formatBrazilianWhatsapp(event.target.value));
+            }}
             required
           />
         </div>
