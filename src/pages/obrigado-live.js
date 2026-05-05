@@ -21,11 +21,30 @@ const WHATSAPP_ANDROID_BUSINESS_INTENT = `intent://chat.whatsapp.com/${WHATSAPP_
 
 const REDIRECT_DELAY_SECONDS = 15;
 
+function shouldDisableAutoRedirect() {
+  if (typeof navigator === "undefined") return false;
+
+  const userAgent = navigator.userAgent || "";
+
+  const isAndroid = /Android/i.test(userAgent);
+  const isIOS = /iPhone|iPad|iPod/i.test(userAgent);
+
+  const isChromeAndroid =
+    isAndroid &&
+    /Chrome/i.test(userAgent) &&
+    !/EdgA|OPR|Opera|SamsungBrowser|Firefox|DuckDuckGo/i.test(userAgent);
+
+  const isChromeIOS = isIOS && /CriOS/i.test(userAgent);
+
+  return isChromeAndroid || isChromeIOS;
+}
+
 export default function ObrigadoLive() {
   const router = useRouter();
   const isAlreadyRegistered = router.query.status === "ja-inscrito";
 
   const [secondsLeft, setSecondsLeft] = useState(REDIRECT_DELAY_SECONDS);
+  const [autoRedirectEnabled, setAutoRedirectEnabled] = useState(true);
 
   function openWhatsappGroup({ automatic = false } = {}) {
     if (typeof window === "undefined") return;
@@ -107,6 +126,17 @@ export default function ObrigadoLive() {
   }
 
   useEffect(() => {
+    const disableAutoRedirect = shouldDisableAutoRedirect();
+
+    if (disableAutoRedirect) {
+      setAutoRedirectEnabled(false);
+      setSecondsLeft(0);
+      return;
+    }
+
+    setAutoRedirectEnabled(true);
+    setSecondsLeft(REDIRECT_DELAY_SECONDS);
+
     const countdown = setInterval(() => {
       setSecondsLeft((current) => {
         if (current <= 1) {
@@ -168,24 +198,30 @@ export default function ObrigadoLive() {
             ) : (
               <>
                 Sua inscrição para a live <strong>Gestação sem filtro</strong>{" "}
-                foi registrada com sucesso. Você será direcionada automaticamente
-                para o grupo exclusivo em alguns segundos.
+                foi registrada com sucesso.{" "}
+                {autoRedirectEnabled
+                  ? "Você será direcionada automaticamente para o grupo exclusivo em alguns segundos."
+                  : "Agora toque no botão abaixo para entrar no grupo VIP pelo WhatsApp."}
               </>
             )}
           </p>
 
           <div className="autoRedirectBox">
             <div className="redirectCircle">
-              <span>{secondsLeft}</span>
+              <span>{autoRedirectEnabled ? secondsLeft : "↗"}</span>
             </div>
 
             <div>
               <strong>
-                Estamos abrindo o WhatsApp para você entrar no grupo VIP.
+                {autoRedirectEnabled
+                  ? "Estamos abrindo o WhatsApp para você entrar no grupo VIP."
+                  : "Toque no botão abaixo para abrir o grupo no WhatsApp."}
               </strong>
+
               <p>
-                Se não abrir automaticamente, toque no botão abaixo para entrar
-                direto.
+                {autoRedirectEnabled
+                  ? "Se não abrir automaticamente, toque no botão abaixo para entrar direto."
+                  : "No Chrome do celular, a abertura automática pode ser bloqueada. O botão abaixo é o caminho mais seguro para abrir direto no app."}
               </p>
             </div>
           </div>
