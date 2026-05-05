@@ -56,32 +56,32 @@ export default function LiveMaio() {
                 Quero entrar na lista VIP
                 <span>↗</span>
               </a>
-
-              <div className="proofColumns">
-                <div className="proofGroup">
-                  <p>Na live</p>
-
-                  <div className="quickProof">
-                    <span>Sem romantização</span>
-                    <span>Com acolhimento</span>
-                    <span>Com orientação profissional</span>
-                  </div>
-                </div>
-
-                <div className="proofGroup proofGroupVip">
-                  <p>Na lista VIP</p>
-
-                  <div className="quickProof">
-                    <span>Grupo VIP da live</span>
-                    <span>Mimos e materiais após a live</span>
-                    <span>Lembretes exclusivos no WhatsApp</span>
-                  </div>
-                </div>
-              </div>
             </div>
 
             <div className="speakersBlock">
               <SpeakerPhotos />
+            </div>
+
+            <div className="proofColumns">
+              <div className="proofGroup">
+                <p>Na live</p>
+
+                <div className="quickProof">
+                  <span>Sem romantização</span>
+                  <span>Com acolhimento</span>
+                  <span>Com orientação profissional</span>
+                </div>
+              </div>
+
+              <div className="proofGroup proofGroupVip">
+                <p>Na lista VIP</p>
+
+                <div className="quickProof">
+                  <span>Grupo VIP da live</span>
+                  <span>Mimos e materiais após a live</span>
+                  <span>Lembretes exclusivos no WhatsApp</span>
+                </div>
+              </div>
             </div>
 
             <FormCard />
@@ -317,7 +317,7 @@ export default function LiveMaio() {
           display: grid;
           grid-template-columns: 1fr 1fr;
           gap: 10px;
-          margin-top: 12px;
+          margin-top: 0;
         }
 
         .liveMaioPage .proofGroup {
@@ -1119,7 +1119,8 @@ export default function LiveMaio() {
             grid-template-columns: minmax(0, 1fr) 400px;
             grid-template-areas:
               "copy form"
-              "speakers form";
+              "speakers form"
+              "proof form";
             gap: 24px 34px;
             align-items: start;
             padding: 42px;
@@ -1133,6 +1134,11 @@ export default function LiveMaio() {
 
           .liveMaioPage .speakersBlock {
             grid-area: speakers;
+          }
+
+          .liveMaioPage .proofColumns {
+            grid-area: proof;
+            width: min(640px, 100%);
           }
 
           .liveMaioPage .formCard {
@@ -1154,10 +1160,6 @@ export default function LiveMaio() {
 
           .liveMaioPage .heroCta {
             width: min(390px, 100%);
-          }
-
-          .liveMaioPage .proofColumns {
-            width: min(640px, 100%);
           }
 
           .liveMaioPage .quickProof span {
@@ -1262,7 +1264,9 @@ function SpeakerPhotos() {
             key={speaker.id}
             onClick={() => setOpenSpeaker(isOpen ? null : speaker.id)}
             aria-expanded={isOpen}
-            aria-label={`${isOpen ? "Fechar informações de" : "Abrir informações de"} ${speaker.name}`}
+            aria-label={`${
+              isOpen ? "Fechar informações de" : "Abrir informações de"
+            } ${speaker.name}`}
           >
             <img src={speaker.image} alt={speaker.alt} />
 
