@@ -1425,6 +1425,12 @@
               class="nav-button is-hidden"
             >
               Reações</button
+            ><button
+              id="topLiveLeadsButton"
+              type="button"
+              class="nav-button is-hidden"
+            >
+              Inscrições</button
             ><a
               href="/"
               class="nav-button"
@@ -2086,7 +2092,7 @@
         liveLeadsPanel.classList.remove("is-hidden");
         moderationHeader.classList.remove("is-hidden");
         topReactionsButton.classList.remove("is-hidden");
-        topLiveLeadsButton.classList.remove("is-hidden");
+        topLiveLeadsButton?.classList.remove("is-hidden");
         firebaseLogoutButton.classList.remove("is-hidden");
         moderationUserLabel.textContent = currentFirebaseUser?.email
           ? `Conta: ${currentFirebaseUser.email}`
@@ -2103,7 +2109,7 @@
         liveLeadsPanel.classList.add("is-hidden");
         moderationHeader.classList.add("is-hidden");
         topReactionsButton.classList.add("is-hidden");
-        topLiveLeadsButton.classList.add("is-hidden");
+        topLiveLeadsButton?.classList.add("is-hidden");
         firebaseLogoutButton.classList.add("is-hidden");
         moderationUserLabel.textContent = "Moderação, reações e inscrições";
       }
@@ -2846,10 +2852,10 @@
       refreshReactionsButton.addEventListener("click", loadReactions);
       refreshLiveLeadsButton.addEventListener("click", loadLiveLeads);
       exportLiveLeadsButton.addEventListener("click", exportLiveLeadsCsv);
-      topReactionsButton.addEventListener("click", function () {
+      topReactionsButton?.addEventListener("click", function () {
         reactionsPanel.scrollIntoView({ behavior: "smooth", block: "start" });
       });
-      topLiveLeadsButton.addEventListener("click", function () {
+      topLiveLeadsButton?.addEventListener("click", function () {
         scrollToLiveLeadsPanel();
       });
       firebaseLogoutButton.addEventListener("click", async () => {
