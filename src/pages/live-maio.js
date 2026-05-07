@@ -1,13 +1,40 @@
 import Head from "next/head";
 import { useState } from "react";
 
-const subtemas = [
-  "Corpo e mudanças na gestação",
-  "Medos e ansiedade",
-  "Dores e desconfortos",
-  "Parto e preparação",
-  "Pós-parto real",
-  "Culpa e autocobrança",
+const LIMITE_SUBTEMAS = 5;
+
+const gruposSubtemas = [
+  {
+    id: "fisio",
+    titulo: "Da Fisio",
+    resumo: "Corpo, dor, movimento e preparação física",
+    subtemas: [
+      "O corpo da gestante sem filtro",
+      "Dor na gestação: até onde é normal?",
+      "Movimento na gestação: medo x necessidade",
+      "Recursos para alívio físico na gestação",
+      "O peso físico da gestação",
+      "Preparação do corpo para o parto",
+      "Mitos sobre o corpo na gestação",
+      "Cuidado individualizado na gestação",
+      "Conexão com o corpo durante a gestação",
+    ],
+  },
+  {
+    id: "psicologa",
+    titulo: "Da Psicóloga",
+    resumo: "Emoções, medos, autocobrança e maternidade real",
+    subtemas: [],
+  },
+];
+
+const temasResumo = [
+  "Corpo real da gestante",
+  "Dor, desconfortos e limites do normal",
+  "Movimento, medo e preparação para o parto",
+  "Cuidado individualizado e conexão com o corpo",
+  "Emoções, medos e maternidade sem romantização",
+  "Pós-parto, autocobrança e acolhimento",
 ];
 
 function formatBrazilianWhatsapp(value) {
@@ -105,11 +132,11 @@ export default function LiveMaio() {
         <section className="topicsSection">
           <div className="topicsHeader">
             <span>O que será conversado</span>
-            <h2>Escolha no formulário os temas que mais importam para você</h2>
+            <h2>Uma conversa ampla, mas com espaço para o que você mais precisa</h2>
           </div>
 
           <div className="topicsGrid">
-            {subtemas.map((tema) => (
+            {temasResumo.map((tema) => (
               <article key={tema}>
                 <span>✓</span>
                 <p>{tema}</p>
@@ -643,8 +670,7 @@ export default function LiveMaio() {
           gap: 6px;
         }
 
-        .liveMaioPage .field label,
-        .liveMaioPage .checkboxTitle {
+        .liveMaioPage .field label {
           color: #3a1b1a;
           font-size: 0.8rem;
           font-weight: 850;
@@ -709,92 +735,237 @@ export default function LiveMaio() {
           line-height: 1.42;
         }
 
-        .liveMaioPage .checkboxGroup {
+        .liveMaioPage .topicPicker {
           display: grid;
           gap: 9px;
+          padding: 12px;
+          border-radius: 20px;
+          background: #fffaf7;
+          border: 1px solid rgba(166, 76, 80, 0.14);
         }
 
-        .liveMaioPage .checkboxTitle {
+        .liveMaioPage .topicPickerTop {
+          display: flex;
+          align-items: flex-start;
+          justify-content: space-between;
+          gap: 12px;
+        }
+
+        .liveMaioPage .topicPickerTop > div {
+          display: grid;
+          gap: 3px;
+        }
+
+        .liveMaioPage .topicEyebrow {
+          color: #a64c50;
+          font-size: 0.66rem;
+          font-weight: 950;
+          letter-spacing: 0.08em;
+          text-transform: uppercase;
+        }
+
+        .liveMaioPage .topicPickerTop strong {
+          color: #321817;
+          font-size: 0.84rem;
+          line-height: 1.25;
+          font-weight: 950;
+        }
+
+        .liveMaioPage .topicCounter {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          min-width: 46px;
+          height: 28px;
+          padding: 0 9px;
+          border-radius: 999px;
+          background: #f8e4dc;
+          color: #8f3048;
+          font-size: 0.72rem;
+          font-weight: 950;
+          font-style: normal;
+          white-space: nowrap;
+        }
+
+        .liveMaioPage .topicHelp {
+          margin: -2px 0 0;
+          color: #77504a;
+          font-size: 0.74rem;
+          line-height: 1.35;
+        }
+
+        .liveMaioPage .topicCategory {
+          overflow: hidden;
+          border-radius: 17px;
+          border: 1px solid rgba(166, 76, 80, 0.12);
+          background: rgba(255, 255, 255, 0.64);
+        }
+
+        .liveMaioPage .topicCategoryHeader {
+          width: 100%;
+          border: 0;
+          padding: 11px;
+          background: transparent;
           display: flex;
           align-items: center;
           justify-content: space-between;
-          gap: 8px;
-        }
-
-        .liveMaioPage .checkboxTitle small {
-          color: #a64c50;
-          font-size: 0.7rem;
-          font-weight: 900;
-        }
-
-        .liveMaioPage .checkboxOptions {
-          display: grid;
-          gap: 8px;
-        }
-
-        .liveMaioPage .checkOption {
+          gap: 12px;
+          font-family: inherit;
+          text-align: left;
           cursor: pointer;
         }
 
-        .liveMaioPage .checkOption input {
-          position: absolute;
-          opacity: 0;
-          pointer-events: none;
+        .liveMaioPage .topicCategoryHeader span {
+          display: grid;
+          gap: 3px;
         }
 
-        .liveMaioPage .checkOption span {
-          position: relative;
-          display: block;
-          min-height: 44px;
-          padding: 10px 11px 10px 36px;
-          border-radius: 15px;
-          background: #fffaf7;
-          border: 1px solid rgba(166, 76, 80, 0.13);
-          color: #5b3a36;
-          font-size: 0.8rem;
-          line-height: 1.32;
-          transition: border-color 0.18s ease, background 0.18s ease, color 0.18s ease;
-        }
-
-        .liveMaioPage .checkOption span::before {
-          content: "";
-          position: absolute;
-          left: 11px;
-          top: 12px;
-          width: 17px;
-          height: 17px;
-          border-radius: 6px;
-          border: 1.5px solid rgba(166, 76, 80, 0.42);
-          background: #ffffff;
-        }
-
-        .liveMaioPage .checkOption span::after {
-          content: "✓";
-          position: absolute;
-          left: 14px;
-          top: 9px;
-          color: #ffffff;
+        .liveMaioPage .topicCategoryHeader strong {
+          color: #351817;
           font-size: 0.82rem;
           font-weight: 950;
-          opacity: 0;
-          transform: scale(0.7);
-          transition: opacity 0.18s ease, transform 0.18s ease;
         }
 
-        .liveMaioPage .checkOption input:checked + span {
+        .liveMaioPage .topicCategoryHeader small {
+          color: #89564f;
+          font-size: 0.7rem;
+          line-height: 1.3;
+          font-weight: 800;
+        }
+
+        .liveMaioPage .topicCategoryHeader b {
+          width: 28px;
+          height: 28px;
+          display: grid;
+          place-items: center;
+          flex: 0 0 auto;
+          border-radius: 999px;
           background: #f8e4dc;
-          border-color: rgba(166, 76, 80, 0.45);
+          color: #8f3048;
+          font-size: 1rem;
+          line-height: 1;
+        }
+
+        .liveMaioPage .topicCategory.isOpen .topicCategoryHeader {
+          background:
+            radial-gradient(circle at 12% 18%, rgba(255, 255, 255, 0.72), transparent 38%),
+            linear-gradient(135deg, #fff0e7, #f8dfd3);
+        }
+
+        .liveMaioPage .topicChips {
+          display: grid;
+          grid-template-columns: 1fr;
+          gap: 7px;
+          max-height: 270px;
+          overflow: auto;
+          padding: 10px;
+          border-top: 1px solid rgba(166, 76, 80, 0.1);
+        }
+
+        .liveMaioPage .topicChip {
+          width: 100%;
+          min-height: 42px;
+          border: 1px solid rgba(166, 76, 80, 0.14);
+          border-radius: 999px;
+          padding: 8px 11px;
+          background: #fffaf7;
+          color: #5d3b36;
+          font-family: inherit;
+          font-size: 0.76rem;
+          font-weight: 850;
+          line-height: 1.25;
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          text-align: left;
+          transition:
+            background 0.18s ease,
+            border-color 0.18s ease,
+            color 0.18s ease,
+            transform 0.18s ease,
+            opacity 0.18s ease;
+        }
+
+        .liveMaioPage .topicChip:hover {
+          transform: translateY(-1px);
+          border-color: rgba(166, 76, 80, 0.34);
+        }
+
+        .liveMaioPage .topicChip span {
+          width: 22px;
+          height: 22px;
+          display: grid;
+          place-items: center;
+          flex: 0 0 auto;
+          border-radius: 999px;
+          background: #f3d7cc;
+          color: #8f3048;
+          font-size: 0.72rem;
+          font-weight: 950;
+        }
+
+        .liveMaioPage .topicChip.isSelected {
+          background: #f8e4dc;
+          border-color: rgba(166, 76, 80, 0.48);
           color: #351817;
         }
 
-        .liveMaioPage .checkOption input:checked + span::before {
+        .liveMaioPage .topicChip.isSelected span {
           background: #a64c50;
-          border-color: #a64c50;
+          color: #ffffff;
         }
 
-        .liveMaioPage .checkOption input:checked + span::after {
-          opacity: 1;
-          transform: scale(1);
+        .liveMaioPage .topicChip.isDisabled {
+          opacity: 0.45;
+          cursor: not-allowed;
+          transform: none;
+        }
+
+        .liveMaioPage .topicEmpty {
+          margin: 0;
+          padding: 12px;
+          border-radius: 14px;
+          background: #fff6f0;
+          color: #86534b;
+          font-size: 0.76rem;
+          line-height: 1.4;
+          font-weight: 760;
+        }
+
+        .liveMaioPage .selectedTopics {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 6px;
+          padding-top: 2px;
+        }
+
+        .liveMaioPage .selectedTopics span {
+          display: inline-flex;
+          align-items: center;
+          gap: 5px;
+          padding: 6px 8px;
+          border-radius: 999px;
+          background: #f8e4dc;
+          color: #7f293f;
+          font-size: 0.66rem;
+          font-weight: 900;
+        }
+
+        .liveMaioPage .selectedTopics span::before {
+          content: "✓";
+          font-weight: 950;
+        }
+
+        .liveMaioPage .limitAlert {
+          margin: 0;
+          padding: 9px 10px;
+          border-radius: 14px;
+          background: rgba(143, 48, 72, 0.08);
+          color: #8f3048;
+          font-size: 0.72rem;
+          line-height: 1.35;
+          font-weight: 850;
         }
 
         .liveMaioPage .consent {
@@ -866,7 +1037,7 @@ export default function LiveMaio() {
         }
 
         .liveMaioPage .topicsHeader {
-          max-width: 720px;
+          max-width: 760px;
           margin: 0 auto 18px;
           text-align: center;
           color: #fff5ee;
@@ -1068,6 +1239,10 @@ export default function LiveMaio() {
           .liveMaioPage .topicsGrid {
             grid-template-columns: 1fr;
           }
+
+          .liveMaioPage .topicChips {
+            max-height: 250px;
+          }
         }
 
         @media (min-width: 700px) {
@@ -1111,7 +1286,7 @@ export default function LiveMaio() {
             font-size: 1.26rem;
           }
 
-          .liveMaioPage .checkboxOptions {
+          .liveMaioPage .topicChips {
             grid-template-columns: 1fr 1fr;
           }
 
@@ -1193,7 +1368,7 @@ export default function LiveMaio() {
             object-position: center 16%;
           }
 
-          .liveMaioPage .checkboxOptions {
+          .liveMaioPage .topicChips {
             grid-template-columns: 1fr;
           }
 
@@ -1303,6 +1478,31 @@ function SpeakerPhotos() {
 
 function FormCard() {
   const [whatsapp, setWhatsapp] = useState("");
+  const [grupoAberto, setGrupoAberto] = useState("fisio");
+  const [subtemasSelecionados, setSubtemasSelecionados] = useState([]);
+
+  const atingiuLimite = subtemasSelecionados.length >= LIMITE_SUBTEMAS;
+
+  function toggleSubtema(subtema) {
+    setSubtemasSelecionados((atuais) => {
+      const jaSelecionado = atuais.includes(subtema);
+
+      if (jaSelecionado) {
+        return atuais.filter((item) => item !== subtema);
+      }
+
+      if (atuais.length >= LIMITE_SUBTEMAS) {
+        return atuais;
+      }
+
+      return [...atuais, subtema];
+    });
+  }
+
+  function contarSelecionadosDoGrupo(subtemas) {
+    return subtemas.filter((subtema) => subtemasSelecionados.includes(subtema))
+      .length;
+  }
 
   return (
     <aside className="formCard" id="inscricao">
@@ -1362,20 +1562,104 @@ function FormCard() {
           </div>
         </div>
 
-        <div className="checkboxGroup">
-          <div className="checkboxTitle">
-            <span>Subtemas de interesse</span>
-            <small>opcional</small>
+        <div className="topicPicker">
+          <div className="topicPickerTop">
+            <div>
+              <span className="topicEyebrow">Subtemas de interesse</span>
+              <strong>Opcional: escolha até 5 temas</strong>
+            </div>
+
+            <em className="topicCounter">
+              {subtemasSelecionados.length}/{LIMITE_SUBTEMAS}
+            </em>
           </div>
 
-          <div className="checkboxOptions">
-            {subtemas.map((tema) => (
-              <label className="checkOption" key={tema}>
-                <input type="checkbox" name="subtemas" value={tema} />
-                <span>{tema}</span>
-              </label>
-            ))}
-          </div>
+          <p className="topicHelp">
+            Essa escolha ajuda a direcionar a conversa, mas não é obrigatória.
+          </p>
+
+          {gruposSubtemas.map((grupo) => {
+            const isOpen = grupoAberto === grupo.id;
+            const selecionadosDoGrupo = contarSelecionadosDoGrupo(grupo.subtemas);
+
+            return (
+              <section
+                className={`topicCategory ${isOpen ? "isOpen" : ""}`}
+                key={grupo.id}
+              >
+                <button
+                  type="button"
+                  className="topicCategoryHeader"
+                  onClick={() => setGrupoAberto(isOpen ? null : grupo.id)}
+                  aria-expanded={isOpen}
+                >
+                  <span>
+                    <strong>{grupo.titulo}</strong>
+                    <small>
+                      {selecionadosDoGrupo > 0
+                        ? `${selecionadosDoGrupo} selecionado${
+                            selecionadosDoGrupo > 1 ? "s" : ""
+                          }`
+                        : grupo.resumo}
+                    </small>
+                  </span>
+
+                  <b>{isOpen ? "−" : "+"}</b>
+                </button>
+
+                {isOpen && (
+                  <div className="topicChips">
+                    {grupo.subtemas.length > 0 ? (
+                      grupo.subtemas.map((subtema) => {
+                        const isSelected = subtemasSelecionados.includes(subtema);
+                        const isDisabled = atingiuLimite && !isSelected;
+
+                        return (
+                          <button
+                            type="button"
+                            key={subtema}
+                            className={`topicChip ${
+                              isSelected ? "isSelected" : ""
+                            } ${isDisabled ? "isDisabled" : ""}`}
+                            onClick={() => toggleSubtema(subtema)}
+                            disabled={isDisabled}
+                            aria-pressed={isSelected}
+                          >
+                            <span>{isSelected ? "✓" : "+"}</span>
+                            {subtema}
+                          </button>
+                        );
+                      })
+                    ) : (
+                      <p className="topicEmpty">
+                        Os subtemas da psicóloga podem ser adicionados aqui
+                        quando estiverem definidos.
+                      </p>
+                    )}
+                  </div>
+                )}
+              </section>
+            );
+          })}
+
+          {subtemasSelecionados.length > 0 && (
+            <div className="selectedTopics">
+              {subtemasSelecionados.map((subtema) => (
+                <span key={subtema}>{subtema}</span>
+              ))}
+            </div>
+          )}
+
+          {atingiuLimite && (
+            <p className="limitAlert">
+              Você selecionou o máximo de 5 subtemas. Para escolher outro,
+              remova um dos temas selecionados.
+            </p>
+          )}
+
+          {subtemasSelecionados.map((subtema) => (
+            <input type="hidden" name="subtemas" value={subtema} key={subtema} />
+          ))}
         </div>
 
         <label className="consent">
