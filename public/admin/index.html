@@ -354,7 +354,7 @@
       }
       .dashboard-actions {
         display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-template-columns: repeat(3, minmax(0, 1fr));
         gap: 18px;
       }
       .dashboard-option {
@@ -974,6 +974,245 @@
         box-shadow: 0 0 0 4px rgba(155, 111, 103, 0.1);
       }
 
+
+      .live-leads-panel {
+        margin-top: 22px;
+      }
+
+      .live-leads-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 12px;
+        margin: 10px 0 22px;
+      }
+
+      .live-lead-stat {
+        padding: 16px;
+        border-radius: 22px;
+        background: rgba(255, 255, 255, 0.7);
+        border: 1px solid rgba(155, 111, 103, 0.12);
+      }
+
+      .live-lead-stat span {
+        display: block;
+        color: var(--muted);
+        font-size: 0.68rem;
+        font-weight: 900;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+      }
+
+      .live-lead-stat strong {
+        display: block;
+        margin-top: 8px;
+        color: var(--text);
+        font-family: Georgia, "Times New Roman", serif;
+        font-size: 2rem;
+        line-height: 1;
+      }
+
+      .live-lead-stat small {
+        display: block;
+        margin-top: 8px;
+        color: #8b716b;
+        font-size: 0.74rem;
+        line-height: 1.45;
+      }
+
+      .lead-insights-grid {
+        display: grid;
+        grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+        gap: 14px;
+        margin: 18px 0 22px;
+      }
+
+      .lead-insight-card {
+        min-width: 0;
+        padding: 18px;
+        border-radius: 24px;
+        background: rgba(255, 255, 255, 0.7);
+        border: 1px solid rgba(155, 111, 103, 0.12);
+      }
+
+      .lead-insight-card h3 {
+        margin: 0 0 10px;
+        color: var(--text);
+        font-size: 1rem;
+        letter-spacing: -0.02em;
+      }
+
+      .lead-insight-card p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 0.84rem;
+        line-height: 1.55;
+      }
+
+      .lead-topic-list {
+        display: grid;
+        gap: 10px;
+        margin-top: 14px;
+      }
+
+      .lead-topic-row {
+        display: grid;
+        gap: 7px;
+      }
+
+      .lead-topic-row-top {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 12px;
+        color: var(--text);
+        font-size: 0.82rem;
+        line-height: 1.35;
+        font-weight: 850;
+      }
+
+      .lead-topic-row-top span:last-child {
+        flex: 0 0 auto;
+        color: var(--rose-dark);
+        font-weight: 950;
+      }
+
+      .lead-topic-bar {
+        height: 9px;
+        overflow: hidden;
+        border-radius: 999px;
+        background: rgba(46, 38, 40, 0.08);
+      }
+
+      .lead-topic-bar span {
+        display: block;
+        height: 100%;
+        border-radius: inherit;
+        background: linear-gradient(135deg, #9b6f67, #cdaaa1);
+      }
+
+      .lead-professional-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+        margin-top: 14px;
+      }
+
+      .lead-professional-card {
+        padding: 14px;
+        border-radius: 18px;
+        background: rgba(248, 235, 231, 0.58);
+        border: 1px solid rgba(155, 111, 103, 0.1);
+      }
+
+      .lead-professional-card span {
+        display: block;
+        color: var(--muted);
+        font-size: 0.68rem;
+        font-weight: 900;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+      }
+
+      .lead-professional-card strong {
+        display: block;
+        margin-top: 7px;
+        color: var(--text);
+        font-family: Georgia, "Times New Roman", serif;
+        font-size: 1.7rem;
+        line-height: 1;
+      }
+
+      .leads-list {
+        display: grid;
+        gap: 12px;
+      }
+
+      .lead-card {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 16px;
+        padding: 18px;
+        border-radius: 24px;
+        background: rgba(255, 255, 255, 0.76);
+        border: 1px solid rgba(155, 111, 103, 0.12);
+      }
+
+      .lead-person {
+        min-width: 0;
+      }
+
+      .lead-person strong {
+        display: block;
+        color: var(--text);
+        font-size: 1rem;
+        line-height: 1.35;
+      }
+
+      .lead-person span {
+        display: block;
+        margin-top: 4px;
+        color: var(--muted);
+        font-size: 0.8rem;
+        line-height: 1.45;
+        word-break: break-word;
+      }
+
+      .lead-meta {
+        min-width: 210px;
+        display: grid;
+        justify-items: end;
+        align-content: start;
+        gap: 7px;
+        color: #8b716b;
+        font-size: 0.76rem;
+        line-height: 1.45;
+        text-align: right;
+      }
+
+      .lead-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin-top: 12px;
+      }
+
+      .lead-tag {
+        display: inline-flex;
+        align-items: center;
+        max-width: 100%;
+        padding: 7px 10px;
+        border-radius: 999px;
+        background: rgba(155, 111, 103, 0.1);
+        color: #6f514c;
+        font-size: 0.72rem;
+        line-height: 1.25;
+        font-weight: 850;
+      }
+
+      .lead-tag.empty {
+        color: #8b716b;
+        background: rgba(46, 38, 40, 0.07);
+      }
+
+      .lead-status-pill {
+        display: inline-flex;
+        align-items: center;
+        width: fit-content;
+        padding: 7px 10px;
+        border-radius: 999px;
+        background: rgba(45, 125, 82, 0.12);
+        color: var(--success);
+        font-size: 0.68rem;
+        font-weight: 900;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      .lead-status-pill.duplicate {
+        background: rgba(154, 107, 37, 0.12);
+        color: #8a5c17;
+      }
+
       @media (max-width: 860px) {
         .login-card,
         .dashboard-card {
@@ -1008,12 +1247,26 @@
           justify-content: flex-start;
         }
 
-        .reaction-card {
+        .reaction-card,
+        .lead-card {
           grid-template-columns: 1fr;
         }
 
-        .reaction-actions {
+        .reaction-actions,
+        .lead-meta {
           justify-content: flex-start;
+          justify-items: start;
+          text-align: left;
+          min-width: 0;
+        }
+
+        .live-leads-grid,
+        .lead-insights-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .lead-professional-grid {
+          grid-template-columns: 1fr;
         }
       }
       @media (max-width: 520px) {
@@ -1027,7 +1280,10 @@
         .moderation-header,
         .firebase-login-card,
         .comments-panel,
-        .moderation-topbar {
+        .moderation-topbar,
+        .live-lead-stat,
+        .lead-insight-card,
+        .lead-card {
           padding: 22px;
           border-radius: 26px;
         }
@@ -1090,8 +1346,8 @@
             <span class="kicker">Painel Administrativo</span>
             <h1>O que deseja fazer?</h1>
             <p>
-              Gerencie os artigos do blog pelo Decap CMS ou modere os
-              comentários enviados pelos leitores.
+              Gerencie os artigos do blog pelo Decap CMS, modere comentários
+              e acompanhe as inscrições da live.
             </p>
           </div>
           <div id="dashboardUser" class="dashboard-user">
@@ -1123,6 +1379,17 @@
               class="secondary-button"
             >
               Abrir moderação
+            </button>
+          </article>
+          <article class="dashboard-option">
+            <span>Live</span>
+            <h2>Inscrições da live</h2>
+            <p>
+              Acompanhar total de inscrições, lista de participantes e temas
+              mais pedidos para a live Gestação sem filtro.
+            </p>
+            <button id="openLeadsButton" type="button" class="secondary-button">
+              Ver inscrições
             </button>
           </article>
         </div>
@@ -1178,12 +1445,11 @@
         </nav>
         <header id="moderationHeader" class="moderation-header is-hidden">
           <div>
-            <span class="kicker">Moderação</span>
-            <h1>Comentários do blog</h1>
+            <span class="kicker">Firebase</span>
+            <h1>Dados do site</h1>
             <p>
-              Visualize os comentários por postagem. Abra uma postagem para ver
-              a lista de comentários, aprovar, rejeitar, excluir ou ler o texto
-              completo.
+              Visualize comentários, reações dos artigos e inscrições da live.
+              Use os painéis abaixo para atualizar, filtrar e acompanhar os dados.
             </p>
           </div>
           <div class="moderation-stats">
@@ -1336,6 +1602,107 @@
             Nenhuma reação encontrada.
           </div>
         </div>
+
+        <div id="liveLeadsPanel" class="comments-panel live-leads-panel is-hidden">
+          <div class="comments-panel-top">
+            <div class="comments-panel-title">
+              <span class="kicker">Inscrições da live</span>
+              <h2>Gestação sem filtro</h2>
+              <p>
+                Acompanhe quem se inscreveu, quais subtemas foram escolhidos e
+                quais assuntos estão sendo mais pedidos para a live.
+              </p>
+            </div>
+            <input
+              id="liveLeadSearchInput"
+              class="search-input"
+              type="search"
+              placeholder="Buscar por nome, WhatsApp, e-mail ou subtema..."
+            />
+          </div>
+
+          <div class="live-leads-grid">
+            <div class="live-lead-stat">
+              <span>Total</span>
+              <strong id="liveLeadsTotalStat">0</strong>
+              <small>Inscrições confirmadas na coleção leads.</small>
+            </div>
+            <div class="live-lead-stat">
+              <span>Hoje</span>
+              <strong id="liveLeadsTodayStat">0</strong>
+              <small>Inscrições feitas na data atual.</small>
+            </div>
+            <div class="live-lead-stat">
+              <span>Com subtemas</span>
+              <strong id="liveLeadsWithTopicsStat">0</strong>
+              <small>Pessoas que escolheram pelo menos um tema.</small>
+            </div>
+            <div class="live-lead-stat">
+              <span>Tentativas duplicadas</span>
+              <strong id="liveLeadsDuplicateStat">0</strong>
+              <small>Reenvios de pessoas já cadastradas.</small>
+            </div>
+          </div>
+
+          <div class="lead-insights-grid">
+            <section class="lead-insight-card">
+              <h3>Por profissional</h3>
+              <p>
+                Contagem considerando todos os subtemas selecionados. A mesma
+                pessoa pode contar para mais de uma profissional.
+              </p>
+              <div class="lead-professional-grid">
+                <div class="lead-professional-card">
+                  <span>Psicóloga</span>
+                  <strong id="psychologyTopicsStat">0</strong>
+                </div>
+                <div class="lead-professional-card">
+                  <span>Fisio</span>
+                  <strong id="fisioTopicsStat">0</strong>
+                </div>
+              </div>
+            </section>
+
+            <section class="lead-insight-card">
+              <h3>Temas mais pedidos</h3>
+              <p>
+                Ranking dos subtemas escolhidos no formulário, ordenado do mais
+                pedido para o menos pedido.
+              </p>
+              <div id="topSubthemesList" class="lead-topic-list"></div>
+              <div id="topSubthemesEmpty" class="empty-state is-hidden">
+                Nenhum subtema escolhido ainda.
+              </div>
+            </section>
+          </div>
+
+          <div class="comments-toolbar">
+            <div id="liveLeadsSummary" class="comments-summary">
+              Carregando inscrições...
+            </div>
+            <div
+              style="
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                flex-wrap: wrap;
+              "
+            >
+              <button id="exportLiveLeadsButton" type="button" class="ghost-button">
+                Exportar CSV
+              </button>
+              <button id="refreshLiveLeadsButton" type="button" class="ghost-button">
+                Atualizar inscrições
+              </button>
+            </div>
+          </div>
+
+          <div id="liveLeadsList" class="leads-list"></div>
+
+          <div id="liveLeadsEmpty" class="empty-state is-hidden">
+            Nenhuma inscrição encontrada para esta live.
+          </div>
+        </div>
       </div>
     </section>
 
@@ -1380,12 +1747,14 @@
         dashboardUser = document.getElementById("dashboardUser"),
         openCmsButton = document.getElementById("openCmsButton"),
         openModerationButton = document.getElementById("openModerationButton"),
+        openLeadsButton = document.getElementById("openLeadsButton"),
         netlifyLogoutLink = document.getElementById("netlifyLogoutLink"),
         topBackToDashboardButton = document.getElementById(
           "topBackToDashboardButton",
         ),
         topOpenCmsButton = document.getElementById("topOpenCmsButton"),
         topReactionsButton = document.getElementById("topReactionsButton"),
+        topLiveLeadsButton = document.getElementById("topLiveLeadsButton"),
         firebaseLogoutButton = document.getElementById("firebaseLogoutButton"),
         refreshCommentsButton = document.getElementById(
           "refreshCommentsButton",
@@ -1410,6 +1779,21 @@
         reactionsSummary = document.getElementById("reactionsSummary"),
         reactionSearchInput = document.getElementById("reactionSearchInput"),
         refreshReactionsButton = document.getElementById("refreshReactionsButton"),
+        liveLeadsPanel = document.getElementById("liveLeadsPanel"),
+        liveLeadsTotalStat = document.getElementById("liveLeadsTotalStat"),
+        liveLeadsTodayStat = document.getElementById("liveLeadsTodayStat"),
+        liveLeadsWithTopicsStat = document.getElementById("liveLeadsWithTopicsStat"),
+        liveLeadsDuplicateStat = document.getElementById("liveLeadsDuplicateStat"),
+        psychologyTopicsStat = document.getElementById("psychologyTopicsStat"),
+        fisioTopicsStat = document.getElementById("fisioTopicsStat"),
+        topSubthemesList = document.getElementById("topSubthemesList"),
+        topSubthemesEmpty = document.getElementById("topSubthemesEmpty"),
+        liveLeadsList = document.getElementById("liveLeadsList"),
+        liveLeadsEmpty = document.getElementById("liveLeadsEmpty"),
+        liveLeadsSummary = document.getElementById("liveLeadsSummary"),
+        liveLeadSearchInput = document.getElementById("liveLeadSearchInput"),
+        refreshLiveLeadsButton = document.getElementById("refreshLiveLeadsButton"),
+        exportLiveLeadsButton = document.getElementById("exportLiveLeadsButton"),
         postsList = document.getElementById("postsList"),
         commentsEmpty = document.getElementById("commentsEmpty"),
         commentsSummary = document.getElementById("commentsSummary"),
@@ -1427,15 +1811,36 @@
         "welleson.ism@gmail.com",
         "ericavilar2014@icloud.com",
       ];
+      const LIVE_ID = "gestacao-sem-filtro-maio";
+      const PSYCHOLOGY_SUBTHEMES = [
+        "A carga mental da mulher grávida",
+        "Gestação e vulnerabilidade emocional: por que algumas mulheres adoecem psicologicamente?",
+        "Ansiedade materna",
+        "Picos hormonais e impactos emocionais",
+      ];
+      const FISIO_SUBTHEMES = [
+        "O corpo da gestante sem filtro",
+        "Dor na gestação: até onde é normal?",
+        "Movimento na gestação: medo x necessidade",
+        "Recursos para alívio físico na gestação",
+        "O peso físico da gestação",
+        "Preparação do corpo para o parto",
+        "Mitos sobre o corpo na gestação",
+        "Cuidado individualizado na gestação",
+        "Conexão com o corpo durante a gestação",
+      ];
       let cmsLoaded = false,
         currentStatusFilter = "pending",
         allComments = [],
         allReactions = [],
+        allLiveLeads = [],
         firebaseApi = null,
         currentFirebaseUser = null,
         openPostSlug = "",
         searchTerm = "",
-        reactionSearchTerm = "";
+        reactionSearchTerm = "",
+        liveLeadSearchTerm = "",
+        shouldFocusLeadsPanel = false;
       function isDecapRoute() {
         const h = window.location.hash || "";
         return (
@@ -1488,7 +1893,7 @@
         decapLoading.classList.remove("is-visible");
         setAdminHash("#moderacao");
         currentFirebaseUser && isAdminEmail(currentFirebaseUser.email)
-          ? (showCommentsPanel(), loadComments())
+          ? (showCommentsPanel(), loadComments(), loadReactions(), loadLiveLeads())
           : showFirebaseLogin();
       }
       function showLoading() {
@@ -1678,21 +2083,29 @@
         firebaseLoginCard.classList.add("is-hidden");
         commentsPanel.classList.remove("is-hidden");
         reactionsPanel.classList.remove("is-hidden");
+        liveLeadsPanel.classList.remove("is-hidden");
         moderationHeader.classList.remove("is-hidden");
         topReactionsButton.classList.remove("is-hidden");
+        topLiveLeadsButton.classList.remove("is-hidden");
         firebaseLogoutButton.classList.remove("is-hidden");
         moderationUserLabel.textContent = currentFirebaseUser?.email
           ? `Conta: ${currentFirebaseUser.email}`
-          : "Moderação de comentários";
+          : "Painel Firebase";
+
+        if (shouldFocusLeadsPanel) {
+          setTimeout(scrollToLiveLeadsPanel, 450);
+        }
       }
       function showFirebaseLogin() {
         firebaseLoginCard.classList.remove("is-hidden");
         commentsPanel.classList.add("is-hidden");
         reactionsPanel.classList.add("is-hidden");
+        liveLeadsPanel.classList.add("is-hidden");
         moderationHeader.classList.add("is-hidden");
         topReactionsButton.classList.add("is-hidden");
+        topLiveLeadsButton.classList.add("is-hidden");
         firebaseLogoutButton.classList.add("is-hidden");
-        moderationUserLabel.textContent = "Moderação de comentários";
+        moderationUserLabel.textContent = "Moderação, reações e inscrições";
       }
       function setLoadingComments(l) {
         commentsSummary.textContent = l
@@ -2123,14 +2536,321 @@
         }
       }
 
+
+      function scrollToLiveLeadsPanel() {
+        shouldFocusLeadsPanel = false;
+        if (!liveLeadsPanel || liveLeadsPanel.classList.contains("is-hidden")) {
+          return;
+        }
+        liveLeadsPanel.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+
+      function openLiveLeadsArea() {
+        shouldFocusLeadsPanel = true;
+        showModeration();
+        setTimeout(scrollToLiveLeadsPanel, 700);
+      }
+
+      function getLeadTime(lead) {
+        try {
+          const value = lead?.createdAt || lead?.createdAtIso;
+          if (!value) return 0;
+          const date = typeof value.toDate === "function" ? value.toDate() : new Date(value);
+          return date.getTime() || 0;
+        } catch {
+          return 0;
+        }
+      }
+
+      function getTodayDateKey() {
+        const parts = new Intl.DateTimeFormat("pt-BR", {
+          timeZone: "America/Maceio",
+          year: "numeric",
+          month: "2-digit",
+          day: "2-digit",
+        }).formatToParts(new Date());
+
+        const day = parts.find((part) => part.type === "day")?.value;
+        const month = parts.find((part) => part.type === "month")?.value;
+        const year = parts.find((part) => part.type === "year")?.value;
+
+        return `${year}-${month}-${day}`;
+      }
+
+      function getLeadSubthemes(lead) {
+        return Array.isArray(lead.subtemas) ? lead.subtemas.filter(Boolean) : [];
+      }
+
+      function getLeadProfessionalCounts(leads = allLiveLeads) {
+        return leads.reduce(
+          (acc, lead) => {
+            getLeadSubthemes(lead).forEach((theme) => {
+              if (PSYCHOLOGY_SUBTHEMES.includes(theme)) acc.psicologia += 1;
+              if (FISIO_SUBTHEMES.includes(theme)) acc.fisio += 1;
+            });
+            return acc;
+          },
+          { psicologia: 0, fisio: 0 },
+        );
+      }
+
+      function getLeadTopicRanking(leads = allLiveLeads) {
+        const counter = new Map();
+
+        leads.forEach((lead) => {
+          getLeadSubthemes(lead).forEach((theme) => {
+            counter.set(theme, (counter.get(theme) || 0) + 1);
+          });
+        });
+
+        return Array.from(counter.entries())
+          .map(([theme, total]) => ({ theme, total }))
+          .sort((a, b) => b.total - a.total || a.theme.localeCompare(b.theme));
+      }
+
+      function getFilteredLiveLeads() {
+        const query = normalizeText(liveLeadSearchTerm);
+
+        return allLiveLeads.filter((lead) => {
+          if (!query) return true;
+
+          return normalizeText(
+            [
+              lead.nome,
+              lead.email,
+              lead.whatsapp,
+              lead.whatsappFormatado,
+              lead.status,
+              lead.liveTitulo,
+              getLeadSubthemes(lead).join(" "),
+            ].join(" "),
+          ).includes(query);
+        });
+      }
+
+      function updateLiveLeadStats() {
+        const todayKey = getTodayDateKey();
+        const total = allLiveLeads.length;
+        const today = allLiveLeads.filter(
+          (lead) => (lead.createdAtDateKey || "") === todayKey,
+        ).length;
+        const withTopics = allLiveLeads.filter(
+          (lead) => getLeadSubthemes(lead).length > 0,
+        ).length;
+        const duplicates = allLiveLeads.reduce(
+          (sum, lead) => sum + Number(lead.duplicateAttempts || 0),
+          0,
+        );
+        const professionalCounts = getLeadProfessionalCounts();
+
+        liveLeadsTotalStat.textContent = total;
+        liveLeadsTodayStat.textContent = today;
+        liveLeadsWithTopicsStat.textContent = withTopics;
+        liveLeadsDuplicateStat.textContent = duplicates;
+        psychologyTopicsStat.textContent = professionalCounts.psicologia;
+        fisioTopicsStat.textContent = professionalCounts.fisio;
+      }
+
+      function renderTopSubthemes() {
+        const ranking = getLeadTopicRanking();
+        const max = Math.max(...ranking.map((item) => item.total), 1);
+
+        topSubthemesList.innerHTML = "";
+
+        if (!ranking.length) {
+          topSubthemesEmpty.classList.remove("is-hidden");
+          return;
+        }
+
+        topSubthemesEmpty.classList.add("is-hidden");
+
+        ranking.forEach((item) => {
+          const row = document.createElement("div");
+          row.className = "lead-topic-row";
+          const width = Math.max(8, Math.round((item.total / max) * 100));
+
+          row.innerHTML = `
+            <div class="lead-topic-row-top">
+              <span>${escapeHtml(item.theme)}</span>
+              <span>${item.total}</span>
+            </div>
+            <div class="lead-topic-bar"><span style="width: ${width}%"></span></div>
+          `;
+
+          topSubthemesList.appendChild(row);
+        });
+      }
+
+      function createLeadCard(lead) {
+        const card = document.createElement("article");
+        card.className = "lead-card";
+
+        const subthemes = getLeadSubthemes(lead);
+        const tags = subthemes.length
+          ? subthemes
+              .map((theme) => `<span class="lead-tag">${escapeHtml(theme)}</span>`)
+              .join("")
+          : `<span class="lead-tag empty">Nenhum subtema escolhido</span>`;
+
+        const duplicateAttempts = Number(lead.duplicateAttempts || 0);
+        const statusClass = duplicateAttempts > 0 ? "duplicate" : "";
+        const statusText = duplicateAttempts > 0 ? "Reenvio detectado" : "Novo lead";
+
+        card.innerHTML = `
+          <div class="lead-person">
+            <strong>${escapeHtml(lead.nome || "Nome não informado")}</strong>
+            <span><strong>WhatsApp:</strong> ${escapeHtml(lead.whatsappFormatado || lead.whatsapp || "Não informado")}</span>
+            <span><strong>E-mail:</strong> ${escapeHtml(lead.email || "Não informado")}</span>
+            <div class="lead-tags">${tags}</div>
+          </div>
+          <div class="lead-meta">
+            <span class="lead-status-pill ${statusClass}">${escapeHtml(statusText)}</span>
+            <span><strong>Data:</strong> ${escapeHtml(formatDate(lead.createdAt || lead.createdAtIso))}</span>
+            <span><strong>Status:</strong> ${escapeHtml(lead.status || "novo")}</span>
+            <span><strong>Duplicadas:</strong> ${duplicateAttempts}</span>
+            <span><strong>Grupo VIP:</strong> ${lead.entrouGrupoVip ? "Sim" : "Não"}</span>
+          </div>
+        `;
+
+        return card;
+      }
+
+      function renderLiveLeads() {
+        const filtered = getFilteredLiveLeads();
+
+        updateLiveLeadStats();
+        renderTopSubthemes();
+
+        liveLeadsSummary.textContent = `${filtered.length} inscrição(ões) exibida(s)`;
+        liveLeadsList.innerHTML = "";
+
+        if (!filtered.length) {
+          liveLeadsEmpty.classList.remove("is-hidden");
+          return;
+        }
+
+        liveLeadsEmpty.classList.add("is-hidden");
+        filtered.forEach((lead) => liveLeadsList.appendChild(createLeadCard(lead)));
+      }
+
+      async function loadLiveLeads() {
+        if (!firebaseApi || !currentFirebaseUser) return;
+
+        try {
+          liveLeadsSummary.textContent = "Carregando inscrições...";
+
+          const leadsQuery = firebaseApi.query(
+            firebaseApi.collection(firebaseApi.db, "leads"),
+            firebaseApi.where("liveId", "==", LIVE_ID),
+          );
+
+          const snapshot = await firebaseApi.getDocs(leadsQuery);
+
+          allLiveLeads = snapshot.docs
+            .map((item) => {
+              const data = item.data();
+
+              return {
+                id: item.id,
+                ref: item.ref,
+                nome: data.nome || "",
+                whatsapp: data.whatsapp || "",
+                whatsappFormatado: data.whatsappFormatado || "",
+                email: data.email || "",
+                subtemas: Array.isArray(data.subtemas) ? data.subtemas : [],
+                subtemasCount: Number(data.subtemasCount || 0),
+                hasSubtemas: Boolean(data.hasSubtemas),
+                subtemasTexto: data.subtemasTexto || "",
+                liveId: data.liveId || "",
+                liveTitulo: data.liveTitulo || "",
+                origem: data.origem || "",
+                campanha: data.campanha || "",
+                canal: data.canal || "",
+                status: data.status || "novo",
+                entrouGrupoVip: Boolean(data.entrouGrupoVip),
+                duplicateAttempts: Number(data.duplicateAttempts || 0),
+                createdAt: data.createdAt || null,
+                createdAtIso: data.createdAtIso || "",
+                createdAtDateKey: data.createdAtDateKey || "",
+                updatedAt: data.updatedAt || null,
+                updatedAtIso: data.updatedAtIso || "",
+              };
+            })
+            .sort((a, b) => getLeadTime(b) - getLeadTime(a));
+
+          renderLiveLeads();
+        } catch (error) {
+          console.error("Erro ao carregar inscrições da live:", error);
+          liveLeadsSummary.textContent = "Erro ao carregar inscrições";
+          showFirebaseMessage(normalizeFirebaseError(error), "error");
+        }
+      }
+
+      function exportLiveLeadsCsv() {
+        const rows = getFilteredLiveLeads();
+
+        if (!rows.length) {
+          alert("Não há inscrições para exportar.");
+          return;
+        }
+
+        const headers = [
+          "Nome",
+          "WhatsApp",
+          "E-mail",
+          "Subtemas",
+          "Status",
+          "Grupo VIP",
+          "Tentativas duplicadas",
+          "Data",
+        ];
+
+        const csvRows = rows.map((lead) => [
+          lead.nome || "",
+          lead.whatsappFormatado || lead.whatsapp || "",
+          lead.email || "",
+          getLeadSubthemes(lead).join(" | "),
+          lead.status || "novo",
+          lead.entrouGrupoVip ? "Sim" : "Não",
+          String(lead.duplicateAttempts || 0),
+          formatDate(lead.createdAt || lead.createdAtIso),
+        ]);
+
+        const csv = [headers, ...csvRows]
+          .map((row) =>
+            row
+              .map((value) => `"${String(value || "").replace(/"/g, '""')}"`)
+              .join(";"),
+          )
+          .join("\n");
+
+        const blob = new Blob(["\ufeff" + csv], {
+          type: "text/csv;charset=utf-8;",
+        });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = `inscricoes-${LIVE_ID}.csv`;
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        URL.revokeObjectURL(url);
+      }
+
       openCmsButton.addEventListener("click", openBlogEditor);
       topOpenCmsButton.addEventListener("click", openBlogEditor);
       openModerationButton.addEventListener("click", showModeration);
+      openLeadsButton.addEventListener("click", openLiveLeadsArea);
       topBackToDashboardButton.addEventListener("click", showDashboard);
       refreshCommentsButton.addEventListener("click", loadComments);
       refreshReactionsButton.addEventListener("click", loadReactions);
+      refreshLiveLeadsButton.addEventListener("click", loadLiveLeads);
+      exportLiveLeadsButton.addEventListener("click", exportLiveLeadsCsv);
       topReactionsButton.addEventListener("click", function () {
         reactionsPanel.scrollIntoView({ behavior: "smooth", block: "start" });
+      });
+      topLiveLeadsButton.addEventListener("click", function () {
+        scrollToLiveLeadsPanel();
       });
       firebaseLogoutButton.addEventListener("click", async () => {
         try {
@@ -2162,6 +2882,10 @@
       reactionSearchInput.addEventListener("input", (e) => {
         reactionSearchTerm = e.target.value || "";
         renderReactions();
+      });
+      liveLeadSearchInput.addEventListener("input", (e) => {
+        liveLeadSearchTerm = e.target.value || "";
+        renderLiveLeads();
       });
       commentModalCloseButton.addEventListener("click", closeCommentModal);
       commentModal.addEventListener("click", (e) => {
@@ -2196,7 +2920,10 @@
       } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
       import {
         getFirestore,
+        collection,
         collectionGroup,
+        query,
+        where,
         getDocs,
         updateDoc,
         deleteDoc,
@@ -2225,7 +2952,10 @@
         sendPasswordResetEmail,
         signOut,
         onAuthStateChanged,
+        collection,
         collectionGroup,
+        query,
+        where,
         getDocs,
         updateDoc,
         deleteDoc,
@@ -2253,6 +2983,7 @@
         showCommentsPanel();
         loadComments();
         loadReactions();
+        loadLiveLeads();
       });
       firebaseGoogleButton.addEventListener("click", async () => {
         try {
