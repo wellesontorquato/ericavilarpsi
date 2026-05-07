@@ -818,6 +818,7 @@ export default function LiveMaio() {
           font-family: inherit;
           text-align: left;
           cursor: pointer;
+          transition: background 0.28s ease;
         }
 
         .liveMaioPage .topicCategoryHeader span {
@@ -849,12 +850,40 @@ export default function LiveMaio() {
           color: #8f3048;
           font-size: 1rem;
           line-height: 1;
+          transition:
+            transform 0.34s cubic-bezier(0.22, 1, 0.36, 1),
+            background 0.28s ease,
+            color 0.28s ease;
         }
 
         .liveMaioPage .topicCategory.isOpen .topicCategoryHeader {
           background:
             radial-gradient(circle at 12% 18%, rgba(255, 255, 255, 0.72), transparent 38%),
             linear-gradient(135deg, #fff0e7, #f8dfd3);
+        }
+
+        .liveMaioPage .topicCategory.isOpen .topicCategoryHeader b {
+          transform: rotate(180deg);
+          background: #a64c50;
+          color: #ffffff;
+        }
+
+        .liveMaioPage .topicCategoryBody {
+          max-height: 0;
+          overflow: hidden;
+          opacity: 0;
+          transform: translateY(-6px);
+          transition:
+            max-height 0.46s cubic-bezier(0.22, 1, 0.36, 1),
+            opacity 0.28s ease,
+            transform 0.38s cubic-bezier(0.22, 1, 0.36, 1);
+          will-change: max-height, opacity, transform;
+        }
+
+        .liveMaioPage .topicCategory.isOpen .topicCategoryBody {
+          max-height: 360px;
+          opacity: 1;
+          transform: translateY(0);
         }
 
         .liveMaioPage .topicChips {
@@ -1270,6 +1299,17 @@ export default function LiveMaio() {
           .liveMaioPage .formCard {
             padding: 15px;
             border-radius: 24px;
+          }
+
+          .liveMaioPage .topicCategoryBody {
+            transition:
+              max-height 0.52s cubic-bezier(0.22, 1, 0.36, 1),
+              opacity 0.3s ease,
+              transform 0.42s cubic-bezier(0.22, 1, 0.36, 1);
+          }
+
+          .liveMaioPage .topicCategory.isOpen .topicCategoryBody {
+            max-height: 305px;
           }
 
           .liveMaioPage .topicChips {
@@ -1689,7 +1729,10 @@ function FormCard() {
                   <b>{isOpen ? "−" : "+"}</b>
                 </button>
 
-                {isOpen && (
+                <div
+                  className="topicCategoryBody"
+                  aria-hidden={!isOpen}
+                >
                   <div
                     className="topicChips"
                     onWheel={handleTopicWheel}
@@ -1709,6 +1752,7 @@ function FormCard() {
                           } ${isDisabled ? "isDisabled" : ""}`}
                           onClick={() => toggleSubtema(subtema)}
                           disabled={isDisabled}
+                          tabIndex={isOpen ? 0 : -1}
                           aria-pressed={isSelected}
                         >
                           <span>{isSelected ? "✓" : "+"}</span>
@@ -1717,7 +1761,7 @@ function FormCard() {
                       );
                     })}
                   </div>
-                )}
+                </div>
               </section>
             );
           })}
