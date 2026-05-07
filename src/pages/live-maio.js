@@ -869,21 +869,38 @@ export default function LiveMaio() {
         }
 
         .liveMaioPage .topicCategoryBody {
-          max-height: 0;
-          overflow: hidden;
+          display: grid;
+          grid-template-rows: 0fr;
           opacity: 0;
-          transform: translateY(-6px);
           transition:
-            max-height 0.46s cubic-bezier(0.22, 1, 0.36, 1),
-            opacity 0.28s ease,
-            transform 0.38s cubic-bezier(0.22, 1, 0.36, 1);
-          will-change: max-height, opacity, transform;
+            grid-template-rows 0.42s cubic-bezier(0.22, 1, 0.36, 1),
+            opacity 0.24s ease;
         }
 
         .liveMaioPage .topicCategory.isOpen .topicCategoryBody {
-          max-height: 360px;
+          grid-template-rows: 1fr;
           opacity: 1;
-          transform: translateY(0);
+        }
+
+        .liveMaioPage .topicCategoryInner {
+          min-height: 0;
+          overflow: hidden;
+        }
+
+        .liveMaioPage .topicCategory.isOpen .topicCategoryInner {
+          animation: topicContentFade 0.34s cubic-bezier(0.22, 1, 0.36, 1) both;
+        }
+
+        @keyframes topicContentFade {
+          from {
+            opacity: 0;
+            transform: translateY(-8px);
+          }
+
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
         }
 
         .liveMaioPage .topicChips {
@@ -1303,13 +1320,8 @@ export default function LiveMaio() {
 
           .liveMaioPage .topicCategoryBody {
             transition:
-              max-height 0.52s cubic-bezier(0.22, 1, 0.36, 1),
-              opacity 0.3s ease,
-              transform 0.42s cubic-bezier(0.22, 1, 0.36, 1);
-          }
-
-          .liveMaioPage .topicCategory.isOpen .topicCategoryBody {
-            max-height: 305px;
+              grid-template-rows 0.46s cubic-bezier(0.22, 1, 0.36, 1),
+              opacity 0.24s ease;
           }
 
           .liveMaioPage .topicChips {
@@ -1729,37 +1741,36 @@ function FormCard() {
                   <b>{isOpen ? "−" : "+"}</b>
                 </button>
 
-                <div
-                  className="topicCategoryBody"
-                  aria-hidden={!isOpen}
-                >
-                  <div
-                    className="topicChips"
-                    onWheel={handleTopicWheel}
-                    onTouchStart={handleTopicTouchStart}
-                    onTouchMove={handleTopicTouchMove}
-                  >
-                    {grupo.subtemas.map((subtema) => {
-                      const isSelected = subtemasSelecionados.includes(subtema);
-                      const isDisabled = atingiuLimite && !isSelected;
+                <div className="topicCategoryBody" aria-hidden={!isOpen}>
+                  <div className="topicCategoryInner">
+                    <div
+                      className="topicChips"
+                      onWheel={handleTopicWheel}
+                      onTouchStart={handleTopicTouchStart}
+                      onTouchMove={handleTopicTouchMove}
+                    >
+                      {grupo.subtemas.map((subtema) => {
+                        const isSelected = subtemasSelecionados.includes(subtema);
+                        const isDisabled = atingiuLimite && !isSelected;
 
-                      return (
-                        <button
-                          type="button"
-                          key={subtema}
-                          className={`topicChip ${
-                            isSelected ? "isSelected" : ""
-                          } ${isDisabled ? "isDisabled" : ""}`}
-                          onClick={() => toggleSubtema(subtema)}
-                          disabled={isDisabled}
-                          tabIndex={isOpen ? 0 : -1}
-                          aria-pressed={isSelected}
-                        >
-                          <span>{isSelected ? "✓" : "+"}</span>
-                          {subtema}
-                        </button>
-                      );
-                    })}
+                        return (
+                          <button
+                            type="button"
+                            key={subtema}
+                            className={`topicChip ${
+                              isSelected ? "isSelected" : ""
+                            } ${isDisabled ? "isDisabled" : ""}`}
+                            onClick={() => toggleSubtema(subtema)}
+                            disabled={isDisabled}
+                            tabIndex={isOpen ? 0 : -1}
+                            aria-pressed={isSelected}
+                          >
+                            <span>{isSelected ? "✓" : "+"}</span>
+                            {subtema}
+                          </button>
+                        );
+                      })}
+                    </div>
                   </div>
                 </div>
               </section>
