@@ -1,9 +1,20 @@
 import Head from "next/head";
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 const LIMITE_SUBTEMAS = 5;
 
 const gruposSubtemas = [
+  {
+    id: "psicologia",
+    titulo: "Da Psicóloga",
+    resumo: "Carga mental, ansiedade e vulnerabilidade emocional",
+    subtemas: [
+      "A carga mental da mulher grávida",
+      "Gestação e vulnerabilidade emocional: por que algumas mulheres adoecem psicologicamente?",
+      "Ansiedade materna",
+      "Picos hormonais e impactos emocionais",
+    ],
+  },
   {
     id: "fisio",
     titulo: "Da Fisio",
@@ -20,21 +31,15 @@ const gruposSubtemas = [
       "Conexão com o corpo durante a gestação",
     ],
   },
-  {
-    id: "psicologa",
-    titulo: "Da Psicóloga",
-    resumo: "Emoções, medos, autocobrança e maternidade real",
-    subtemas: [],
-  },
 ];
 
 const temasResumo = [
+  "Carga mental, ansiedade e vulnerabilidade emocional",
+  "Picos hormonais e impactos emocionais",
   "Corpo real da gestante",
   "Dor, desconfortos e limites do normal",
   "Movimento, medo e preparação para o parto",
   "Cuidado individualizado e conexão com o corpo",
-  "Emoções, medos e maternidade sem romantização",
-  "Pós-parto, autocobrança e acolhimento",
 ];
 
 function formatBrazilianWhatsapp(value) {
@@ -857,9 +862,51 @@ export default function LiveMaio() {
           grid-template-columns: 1fr;
           gap: 7px;
           max-height: 270px;
-          overflow: auto;
+          overflow-y: auto;
+          overflow-x: hidden;
           padding: 10px;
+          padding-right: 8px;
           border-top: 1px solid rgba(166, 76, 80, 0.1);
+          overscroll-behavior: contain;
+          -webkit-overflow-scrolling: touch;
+          touch-action: pan-y;
+          scrollbar-gutter: stable;
+          scrollbar-width: thin;
+          scrollbar-color: rgba(166, 76, 80, 0.55) rgba(248, 228, 220, 0.75);
+        }
+
+        .liveMaioPage .topicChips::-webkit-scrollbar {
+          width: 8px;
+        }
+
+        .liveMaioPage .topicChips::-webkit-scrollbar-track {
+          border-radius: 999px;
+          background:
+            linear-gradient(
+              180deg,
+              rgba(255, 250, 247, 0.95),
+              rgba(248, 228, 220, 0.82)
+            );
+        }
+
+        .liveMaioPage .topicChips::-webkit-scrollbar-thumb {
+          border: 2px solid rgba(255, 250, 247, 0.95);
+          border-radius: 999px;
+          background:
+            linear-gradient(
+              180deg,
+              rgba(166, 76, 80, 0.82),
+              rgba(216, 111, 79, 0.82)
+            );
+        }
+
+        .liveMaioPage .topicChips::-webkit-scrollbar-thumb:hover {
+          background:
+            linear-gradient(
+              180deg,
+              rgba(143, 48, 72, 0.95),
+              rgba(216, 111, 79, 0.95)
+            );
         }
 
         .liveMaioPage .topicChip {
@@ -920,17 +967,6 @@ export default function LiveMaio() {
           opacity: 0.45;
           cursor: not-allowed;
           transform: none;
-        }
-
-        .liveMaioPage .topicEmpty {
-          margin: 0;
-          padding: 12px;
-          border-radius: 14px;
-          background: #fff6f0;
-          color: #86534b;
-          font-size: 0.76rem;
-          line-height: 1.4;
-          font-weight: 760;
         }
 
         .liveMaioPage .selectedTopics {
@@ -1236,12 +1272,18 @@ export default function LiveMaio() {
             border-radius: 24px;
           }
 
-          .liveMaioPage .topicsGrid {
-            grid-template-columns: 1fr;
+          .liveMaioPage .topicChips {
+            max-height: 225px;
+            padding-right: 7px;
+            scrollbar-width: thin;
           }
 
-          .liveMaioPage .topicChips {
-            max-height: 250px;
+          .liveMaioPage .topicChips::-webkit-scrollbar {
+            width: 6px;
+          }
+
+          .liveMaioPage .topicsGrid {
+            grid-template-columns: 1fr;
           }
         }
 
@@ -1478,8 +1520,9 @@ function SpeakerPhotos() {
 
 function FormCard() {
   const [whatsapp, setWhatsapp] = useState("");
-  const [grupoAberto, setGrupoAberto] = useState("fisio");
+  const [grupoAberto, setGrupoAberto] = useState("psicologia");
   const [subtemasSelecionados, setSubtemasSelecionados] = useState([]);
+  const touchStartY = useRef(0);
 
   const atingiuLimite = subtemasSelecionados.length >= LIMITE_SUBTEMAS;
 
@@ -1502,6 +1545,45 @@ function FormCard() {
   function contarSelecionadosDoGrupo(subtemas) {
     return subtemas.filter((subtema) => subtemasSelecionados.includes(subtema))
       .length;
+  }
+
+  function handleTopicWheel(event) {
+    const element = event.currentTarget;
+
+    const isAtTop = element.scrollTop <= 0;
+    const isAtBottom =
+      Math.ceil(element.scrollTop + element.clientHeight) >= element.scrollHeight;
+
+    const isScrollingUp = event.deltaY < 0;
+    const isScrollingDown = event.deltaY > 0;
+
+    if ((isAtTop && isScrollingUp) || (isAtBottom && isScrollingDown)) {
+      event.preventDefault();
+    }
+
+    event.stopPropagation();
+  }
+
+  function handleTopicTouchStart(event) {
+    touchStartY.current = event.touches[0].clientY;
+  }
+
+  function handleTopicTouchMove(event) {
+    const element = event.currentTarget;
+    const currentY = event.touches[0].clientY;
+
+    const isAtTop = element.scrollTop <= 0;
+    const isAtBottom =
+      Math.ceil(element.scrollTop + element.clientHeight) >= element.scrollHeight;
+
+    const fingerMovingDown = currentY > touchStartY.current;
+    const fingerMovingUp = currentY < touchStartY.current;
+
+    if ((isAtTop && fingerMovingDown) || (isAtBottom && fingerMovingUp)) {
+      event.preventDefault();
+    }
+
+    event.stopPropagation();
   }
 
   return (
@@ -1608,34 +1690,32 @@ function FormCard() {
                 </button>
 
                 {isOpen && (
-                  <div className="topicChips">
-                    {grupo.subtemas.length > 0 ? (
-                      grupo.subtemas.map((subtema) => {
-                        const isSelected = subtemasSelecionados.includes(subtema);
-                        const isDisabled = atingiuLimite && !isSelected;
+                  <div
+                    className="topicChips"
+                    onWheel={handleTopicWheel}
+                    onTouchStart={handleTopicTouchStart}
+                    onTouchMove={handleTopicTouchMove}
+                  >
+                    {grupo.subtemas.map((subtema) => {
+                      const isSelected = subtemasSelecionados.includes(subtema);
+                      const isDisabled = atingiuLimite && !isSelected;
 
-                        return (
-                          <button
-                            type="button"
-                            key={subtema}
-                            className={`topicChip ${
-                              isSelected ? "isSelected" : ""
-                            } ${isDisabled ? "isDisabled" : ""}`}
-                            onClick={() => toggleSubtema(subtema)}
-                            disabled={isDisabled}
-                            aria-pressed={isSelected}
-                          >
-                            <span>{isSelected ? "✓" : "+"}</span>
-                            {subtema}
-                          </button>
-                        );
-                      })
-                    ) : (
-                      <p className="topicEmpty">
-                        Os subtemas da psicóloga podem ser adicionados aqui
-                        quando estiverem definidos.
-                      </p>
-                    )}
+                      return (
+                        <button
+                          type="button"
+                          key={subtema}
+                          className={`topicChip ${
+                            isSelected ? "isSelected" : ""
+                          } ${isDisabled ? "isDisabled" : ""}`}
+                          onClick={() => toggleSubtema(subtema)}
+                          disabled={isDisabled}
+                          aria-pressed={isSelected}
+                        >
+                          <span>{isSelected ? "✓" : "+"}</span>
+                          {subtema}
+                        </button>
+                      );
+                    })}
                   </div>
                 )}
               </section>
