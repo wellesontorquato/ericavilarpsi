@@ -1806,7 +1806,7 @@ function FormCard() {
         </label>
 
         <button className="submit" type="submit">
-          Quero meu acesso VIP
+          Finalizar inscrição e entrar no grupo
           <span>↗</span>
         </button>
 
