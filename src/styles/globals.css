@@ -5912,3 +5912,166 @@
   }
 }
 
+/* =========================================================
+   AJUSTE FINAL MOBILE — REFINO APÓS TESTE REAL
+   Objetivo: manter o texto sobre a imagem, mas deixar o hero
+   menos "template pronto", com texto menor e foto respirando mais.
+   Afeta somente mobile.
+   ========================================================= */
+
+@media (max-width: 768px) {
+  .hero-slider {
+    height: 68vh;
+    min-height: 585px;
+    max-height: 660px;
+    border-radius: 30px;
+  }
+
+  .hero-slide,
+  .hero-slide.is-active {
+    border-radius: 30px;
+  }
+
+  .hero-slide-media img,
+  .hero-slide:first-child .hero-slide-media img.img-destaque-1,
+  .hero-slide:first-child.is-active .hero-slide-media img.img-destaque-1 {
+    object-fit: cover !important;
+    object-position: 69% center !important;
+    transform: none !important;
+  }
+
+  .hero-slide-overlay,
+  .hero-slide:first-child .hero-slide-overlay {
+    background:
+      linear-gradient(
+        90deg,
+        rgba(42, 29, 27, 0.78) 0%,
+        rgba(55, 38, 35, 0.56) 34%,
+        rgba(55, 38, 35, 0.20) 62%,
+        rgba(55, 38, 35, 0.04) 100%
+      ),
+      linear-gradient(
+        180deg,
+        rgba(33, 23, 22, 0.04) 0%,
+        rgba(33, 23, 22, 0.08) 45%,
+        rgba(33, 23, 22, 0.68) 100%
+      ) !important;
+  }
+
+  .hero-slide-content,
+  .hero-slide:first-child .hero-slide-content {
+    max-width: 74%;
+    padding: 0 18px 22px 18px;
+    justify-content: flex-end;
+  }
+
+  .hero-slide-eyebrow {
+    margin-bottom: 10px;
+    padding: 7px 11px;
+    font-size: 9px;
+    letter-spacing: 0.08em;
+  }
+
+  .hero-slide h1,
+  .hero-slide h2,
+  .hero-slide-content h1,
+  .hero-slide-content h2 {
+    max-width: 265px;
+    font-size: clamp(29px, 7.8vw, 36px) !important;
+    line-height: 0.96;
+    letter-spacing: -0.055em;
+  }
+
+  .hero-slide p,
+  .hero-slide-content p {
+    max-width: 255px;
+    margin-top: 13px;
+    font-size: 12px !important;
+    line-height: 1.52;
+  }
+
+  .hero-slide-meta {
+    gap: 7px;
+    margin-top: 14px;
+  }
+
+  .hero-slide-meta span {
+    min-height: auto;
+    padding: 7px 10px;
+    font-size: 9.5px;
+  }
+
+  .hero-slide-actions {
+    width: 100%;
+    max-width: 230px;
+    gap: 9px;
+    margin-top: 16px;
+  }
+
+  .hero-slide-actions .btn {
+    width: 100%;
+    min-height: 43px;
+    max-width: 230px;
+    font-size: 12px !important;
+  }
+
+  .hero-slide-actions .btn-primary,
+  .hero-slide-actions .btn-secondary {
+    width: 100%;
+  }
+
+  .hero-highlights {
+    margin-top: 14px;
+    padding-bottom: 96px;
+  }
+
+  .hero-highlight-card {
+    flex: 0 0 82%;
+    min-width: 82%;
+    min-height: 104px;
+    padding: 16px;
+    border-radius: 22px;
+  }
+
+  .hero-highlight-card strong {
+    font-size: 13px;
+  }
+
+  .hero-highlight-card span {
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 390px) {
+  .hero-slider {
+    min-height: 560px;
+  }
+
+  .hero-slide-content,
+  .hero-slide:first-child .hero-slide-content {
+    max-width: 76%;
+    padding-bottom: 20px;
+  }
+
+  .hero-slide h1,
+  .hero-slide h2,
+  .hero-slide-content h1,
+  .hero-slide-content h2 {
+    max-width: 250px;
+    font-size: 29px !important;
+  }
+
+  .hero-slide p,
+  .hero-slide-content p {
+    max-width: 240px;
+    font-size: 11.5px !important;
+  }
+
+  .hero-slide-actions {
+    max-width: 215px;
+  }
+
+  .hero-slide-actions .btn {
+    max-width: 215px;
+  }
+}
