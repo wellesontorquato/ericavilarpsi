@@ -10,12 +10,12 @@ const CARD_LINKS = {
 
 const PIX_PAYMENTS = {
   individual: {
-    imagem: "/pix197.jpeg",
+    imagem: "/pix197.png",
     codigo:
       "00020101021226760014BR.GOV.BCB.PIX0122liz.rafaela@icloud.com0228Imersao- Gestacao sem filtro5204000053039865406197.005802BR5925LIZIA RAFAELA CORDEIRO DO6006MACEIO62290525QRCCTZ0NCVL4utMwEIwa1KznP6304523E",
   },
   casal: {
-    imagem: "/pix297.jpeg",
+    imagem: "/pix297.png",
     codigo:
       "00020101021226700014BR.GOV.BCB.PIX0122liz.rafaela@icloud.com0222Pagamento lizianascime5204000053039865406297.005802BR5925LIZIA RAFAELA CORDEIRO DO6006MACEIO62290525QRCCZUgc8SO3XQC3OvOamoRRm6304AA8C",
   },
@@ -26,15 +26,15 @@ const planos = {
     id: "individual",
     nome: "Individual",
     valor: "R$ 197",
-    descricao: "Para quem deseja viver a imersão individualmente.",
-    destaque: "1 participante",
+    descricao: "Para participar individualmente da imersão.",
+    participantes: "1 participante",
   },
   casal: {
     id: "casal",
     nome: "Casal",
     valor: "R$ 297",
-    descricao: "Para viver essa experiência ao lado do companheiro.",
-    destaque: "2 participantes",
+    descricao: "Para viver essa experiência junto com o companheiro.",
+    participantes: "2 participantes",
   },
 };
 
@@ -42,23 +42,14 @@ const metodosPagamento = {
   pix: {
     id: "pix",
     nome: "Pix",
-    descricao: "Pagamento à vista, sem acréscimo.",
+    detalhe: "sem acréscimo",
   },
   cartao: {
     id: "cartao",
     nome: "Cartão",
-    descricao: "Pagamento via cartão pela InfinitePay com acréscimo de taxas.",
+    detalhe: "com acréscimo",
   },
 };
-
-const temasResumo = [
-  "Muito acolhimento em um ambiente íntimo e seguro",
-  "Coffee break especial para conexão e descanso",
-  "Aprendizado profundo com profissionais reunidas",
-  "Exercícios para cada fase do trabalho de parto",
-  "Seu companheiro como seu maior aliado",
-  "Preparação para gestação, parto e pós-parto",
-];
 
 function formatBrazilianWhatsapp(value) {
   const digits = String(value || "").replace(/\D/g, "").slice(0, 11);
@@ -72,113 +63,75 @@ function formatBrazilianWhatsapp(value) {
   return `(${digits.slice(0, 2)}) ${digits.slice(2, 7)}-${digits.slice(7)}`;
 }
 
-export default function ImersaoGestacaoSemFiltro() {
+export default function PagamentoImersao() {
   return (
     <>
       <Head>
-        <title>Imersão Gestação Sem Filtro</title>
+        <title>Pagamento | Imersão Gestação Sem Filtro</title>
         <meta
           name="description"
-          content="Imersão Gestação Sem Filtro: preparação para gestação, parto e pós-parto com acolhimento, aprendizado profundo e segurança."
+          content="Garanta sua vaga na Imersão Gestação Sem Filtro."
         />
       </Head>
 
-      <main className="liveMaioPage">
-        <div className="backgroundWord">GESTAÇÃO</div>
-        <div className="light lightOne" />
-        <div className="light lightTwo" />
+      <main className="checkoutPage">
+        <div className="bgWord">GESTAÇÃO</div>
+        <div className="orb orbOne" />
+        <div className="orb orbTwo" />
 
-        <section className="heroSection">
-          <div className="heroCard">
-            <div className="heroCopy">
-              <div className="liveBadge">
-                <span />
-                Imersão presencial
-              </div>
-
-              <div className="eventInfo">
-                <span>Apenas 10 vagas</span>
-                <span>Gestação</span>
-                <span>Parto e pós-parto</span>
-              </div>
-
-              <p className="preTitle">Para mulheres e casais</p>
-
-              <h1 className="heroTitle">
-                Gestação sem filtro
-                <em> uma vivência real, acolhedora e transformadora.</em>
-              </h1>
-
-              <p className="heroText">
-                Uma experiência profunda para mulheres e casais que desejam viver
-                a maternidade com mais consciência, preparo e segurança.
-              </p>
-
-              <a href="#inscricao" className="heroCta">
-                Escolher minha vaga
-                <span>↗</span>
-              </a>
+        <section className="checkoutShell">
+          <div className="heroArea">
+            <div className="badge">
+              <span />
+              Imersão presencial
             </div>
 
-            <div className="speakersBlock">
-              <SpeakerPhotos />
+            <div className="dateRow">
+              <span>Apenas 10 vagas</span>
+              <span>Gestação</span>
+              <span>Parto e pós-parto</span>
             </div>
 
-            <div className="proofColumns">
-              <div className="proofGroup">
-                <p>Na imersão</p>
+            <p className="eyebrow">Para mulheres e casais</p>
 
-                <div className="quickProof">
-                  <span>Muito acolhimento</span>
-                  <span>Coffee break especial</span>
-                  <span>Aprendizado profundo</span>
-                </div>
-              </div>
+            <h1>
+              Gestação sem filtro
+              <em> uma vivência real, acolhedora e transformadora.</em>
+            </h1>
 
-              <div className="proofGroup proofGroupVip">
-                <p>Preparação prática</p>
+            <p className="heroText">
+              Uma experiência profunda para viver a gestação com mais
+              consciência, preparo, segurança e acolhimento.
+            </p>
 
-                <div className="quickProof">
-                  <span>Exercícios para o parto</span>
-                  <span>Companheiro como aliado</span>
-                  <span>Consciência, preparo e segurança</span>
-                </div>
-              </div>
+            <div className="includedList">
+              <span>Muito acolhimento</span>
+              <span>Coffee break especial</span>
+              <span>Exercícios para o trabalho de parto</span>
+              <span>Preparação para o pós-parto</span>
             </div>
-
-            <CheckoutRedirectCard />
-          </div>
-        </section>
-
-        <section className="topicsSection">
-          <div className="topicsHeader">
-            <span>O que está incluso</span>
-            <h2>Mais do que um evento, uma vivência real</h2>
           </div>
 
-          <div className="topicsGrid">
-            {temasResumo.map((tema) => (
-              <article key={tema}>
-                <span>✓</span>
-                <p>{tema}</p>
-              </article>
-            ))}
+          <div className="modelsArea" aria-hidden="true">
+            <div className="modelsGlow" />
+            <img
+              src="/modelos%20transparente.png"
+              alt=""
+              className="modelsImage"
+            />
           </div>
 
-          <a href="#inscricao" className="bottomCta">
-            Reservar minha vaga
-            <span>↗</span>
-          </a>
+          <CheckoutCard />
         </section>
       </main>
 
       <style jsx global>{`
-        .liveMaioPage,
-        .liveMaioPage * {
+        .checkoutPage,
+        .checkoutPage * {
           box-sizing: border-box;
         }
 
-        .liveMaioPage {
+        .checkoutPage {
           min-height: 100vh;
           position: relative;
           overflow: hidden;
@@ -186,20 +139,20 @@ export default function ImersaoGestacaoSemFiltro() {
           color: #2d1717;
           font-family: "Montserrat", Arial, sans-serif;
           background:
-            radial-gradient(circle at 16% 12%, rgba(255, 207, 184, 0.22), transparent 32%),
-            radial-gradient(circle at 86% 18%, rgba(187, 76, 91, 0.3), transparent 34%),
-            radial-gradient(circle at 50% 100%, rgba(240, 143, 101, 0.22), transparent 36%),
-            linear-gradient(135deg, #321217 0%, #5a2328 43%, #9a5545 100%);
+            radial-gradient(circle at 14% 12%, rgba(255, 210, 184, 0.23), transparent 30%),
+            radial-gradient(circle at 84% 20%, rgba(187, 76, 91, 0.32), transparent 34%),
+            radial-gradient(circle at 50% 100%, rgba(240, 143, 101, 0.22), transparent 34%),
+            linear-gradient(135deg, #321217 0%, #5a2328 46%, #9a5545 100%);
         }
 
-        .liveMaioPage .backgroundWord {
+        .bgWord {
           position: absolute;
           top: 10px;
           left: 50%;
           transform: translateX(-50%);
           z-index: 0;
           color: rgba(255, 235, 224, 0.075);
-          font-size: clamp(4rem, 18vw, 16rem);
+          font-size: clamp(4rem, 18vw, 15rem);
           font-weight: 950;
           letter-spacing: -0.09em;
           line-height: 0.8;
@@ -207,23 +160,23 @@ export default function ImersaoGestacaoSemFiltro() {
           pointer-events: none;
         }
 
-        .liveMaioPage .light {
+        .orb {
           position: absolute;
           z-index: 0;
           border-radius: 999px;
-          filter: blur(72px);
+          filter: blur(74px);
           pointer-events: none;
         }
 
-        .liveMaioPage .lightOne {
-          width: 330px;
-          height: 330px;
-          left: -140px;
-          bottom: 18%;
+        .orbOne {
+          width: 300px;
+          height: 300px;
+          left: -120px;
+          bottom: 20%;
           background: rgba(255, 181, 137, 0.42);
         }
 
-        .liveMaioPage .lightTwo {
+        .orbTwo {
           width: 360px;
           height: 360px;
           right: -150px;
@@ -231,34 +184,34 @@ export default function ImersaoGestacaoSemFiltro() {
           background: rgba(129, 42, 63, 0.52);
         }
 
-        .liveMaioPage .heroSection,
-        .liveMaioPage .topicsSection {
-          width: min(1180px, 100%);
+        .checkoutShell {
+          width: min(1140px, 100%);
           margin: 0 auto;
           position: relative;
           z-index: 1;
-        }
-
-        .liveMaioPage .heroSection {
+          display: grid;
+          gap: 16px;
           padding: 10px 0 22px;
         }
 
-        .liveMaioPage .heroCard {
-          display: grid;
-          grid-template-columns: 1fr;
-          gap: 18px;
-          overflow: hidden;
+        .heroArea,
+        .paymentCard,
+        .modelsArea {
+          min-width: 0;
+        }
+
+        .heroArea {
           border-radius: 30px;
-          padding: 16px;
+          padding: 20px;
           background:
             linear-gradient(180deg, rgba(255, 255, 255, 0.94), rgba(255, 247, 242, 0.98)),
             #fff8f4;
           box-shadow:
-            0 34px 95px rgba(24, 6, 8, 0.38),
+            0 30px 80px rgba(24, 6, 8, 0.28),
             inset 0 0 0 1px rgba(255, 255, 255, 0.76);
         }
 
-        .liveMaioPage .liveBadge {
+        .badge {
           width: fit-content;
           display: inline-flex;
           align-items: center;
@@ -274,32 +227,32 @@ export default function ImersaoGestacaoSemFiltro() {
           box-shadow: 0 12px 30px rgba(90, 35, 38, 0.08);
         }
 
-        .liveMaioPage .liveBadge span {
+        .badge span {
           width: 8px;
           height: 8px;
           border-radius: 999px;
           background: #b04b58;
           box-shadow: 0 0 0 5px rgba(176, 75, 88, 0.12);
-          animation: livePulse 1.35s ease-in-out infinite;
+          animation: pulseDot 1.35s ease-in-out infinite;
         }
 
-        .liveMaioPage .eventInfo {
+        .dateRow {
           display: flex;
           flex-wrap: wrap;
           gap: 8px;
           margin: 14px 0 16px;
         }
 
-        .liveMaioPage .eventInfo span {
+        .dateRow span {
           padding: 9px 12px;
           border-radius: 999px;
           background: #f7e5dc;
           color: #7f3d3a;
-          font-size: 0.76rem;
+          font-size: 0.75rem;
           font-weight: 850;
         }
 
-        .liveMaioPage .preTitle {
+        .eyebrow {
           margin: 0 0 10px;
           color: #a64c50;
           font-size: 0.72rem;
@@ -308,118 +261,55 @@ export default function ImersaoGestacaoSemFiltro() {
           text-transform: uppercase;
         }
 
-        .liveMaioPage .heroTitle {
+        .heroArea h1 {
           margin: 0;
-          max-width: 670px;
           color: #291211;
           font-family: "Libre Bodoni", Georgia, serif;
-          font-size: clamp(2.45rem, 10.5vw, 4.9rem);
+          font-size: clamp(2.35rem, 11vw, 5rem);
           line-height: 0.9;
           letter-spacing: -0.065em;
           font-weight: 600;
         }
 
-        .liveMaioPage .heroTitle em {
+        .heroArea h1 em {
           display: block;
           color: #a64c50;
           font-style: italic;
           font-weight: 400;
         }
 
-        .liveMaioPage .heroText {
+        .heroText {
           margin: 16px 0 0;
           max-width: 560px;
           color: #563936;
-          font-size: 0.98rem;
+          font-size: 0.96rem;
           line-height: 1.5;
           font-weight: 560;
         }
 
-        .liveMaioPage .heroCta,
-        .liveMaioPage .bottomCta {
-          text-decoration: none;
-        }
-
-        .liveMaioPage .heroCta {
-          width: 100%;
-          margin-top: 18px;
-          min-height: 56px;
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          gap: 14px;
-          border-radius: 18px;
-          padding: 15px 16px;
-          background: linear-gradient(135deg, #8f3048, #d86f4f);
-          color: #fff;
-          font-weight: 950;
-          box-shadow: 0 18px 42px rgba(143, 48, 72, 0.36);
-          animation: ctaPulse 1.6s ease-in-out infinite;
-        }
-
-        .liveMaioPage .heroCta span,
-        .liveMaioPage .bottomCta span,
-        .liveMaioPage .submit span {
-          display: grid;
-          place-items: center;
-          width: 32px;
-          height: 32px;
-          border-radius: 999px;
-          background: rgba(255, 255, 255, 0.16);
-          flex: 0 0 auto;
-        }
-
-        .liveMaioPage .proofColumns {
-          display: grid;
-          grid-template-columns: 1fr 1fr;
-          gap: 10px;
-        }
-
-        .liveMaioPage .proofGroup {
-          min-width: 0;
-          padding: 10px;
-          border-radius: 20px;
-          background: rgba(255, 245, 238, 0.78);
-          border: 1px solid rgba(166, 76, 80, 0.1);
-        }
-
-        .liveMaioPage .proofGroupVip {
-          background:
-            radial-gradient(circle at 16% 12%, rgba(255, 255, 255, 0.58), transparent 38%),
-            linear-gradient(135deg, rgba(255, 239, 229, 0.92), rgba(247, 214, 200, 0.88));
-          box-shadow: 0 14px 32px rgba(143, 48, 72, 0.1);
-        }
-
-        .liveMaioPage .proofGroup p {
-          margin: 0 0 8px;
-          color: #9d4450;
-          font-size: 0.68rem;
-          font-weight: 950;
-          letter-spacing: 0.07em;
-          text-transform: uppercase;
-        }
-
-        .liveMaioPage .quickProof {
+        .includedList {
           display: grid;
           grid-template-columns: 1fr;
           gap: 8px;
+          margin-top: 16px;
         }
 
-        .liveMaioPage .quickProof span {
+        .includedList span {
           display: flex;
           align-items: center;
           gap: 8px;
           min-height: 42px;
-          padding: 9px 10px;
+          padding: 10px 11px;
           border-radius: 15px;
           background: rgba(255, 250, 247, 0.82);
           color: #72443d;
-          font-size: 0.76rem;
+          font-size: 0.78rem;
           line-height: 1.25;
           font-weight: 850;
+          border: 1px solid rgba(166, 76, 80, 0.09);
         }
 
-        .liveMaioPage .quickProof span::before {
+        .includedList span::before {
           content: "✓";
           display: grid;
           place-items: center;
@@ -433,199 +323,55 @@ export default function ImersaoGestacaoSemFiltro() {
           flex: 0 0 auto;
         }
 
-        .liveMaioPage .proofGroupVip .quickProof span::before {
-          content: "✦";
-          background: linear-gradient(135deg, #8f3048, #d86f4f);
-        }
-
-        .liveMaioPage .speakers {
-          display: grid;
-          grid-template-columns: 1fr 1fr;
-          gap: 10px;
-          width: 100%;
-        }
-
-        .liveMaioPage .speakerCard {
-          appearance: none;
-          border: 0;
-          padding: 0;
-          margin: 0;
-          width: 100%;
-          display: block;
+        .modelsArea {
           position: relative;
-          min-height: 305px;
+          display: grid;
+          place-items: center;
+          min-height: 310px;
+          border-radius: 30px;
           overflow: hidden;
-          border-radius: 24px;
-          cursor: pointer;
-          text-align: left;
-          font-family: inherit;
           background:
-            radial-gradient(circle at 50% 12%, rgba(255, 236, 224, 0.96), transparent 45%),
-            linear-gradient(180deg, #f5d9cc, #e8b7a6);
-          border: 1px solid rgba(166, 76, 80, 0.1);
-          box-shadow: 0 20px 45px rgba(92, 38, 35, 0.13);
+            radial-gradient(circle at 50% 10%, rgba(255, 236, 224, 0.6), transparent 40%),
+            linear-gradient(180deg, rgba(255, 248, 243, 0.18), rgba(255, 248, 243, 0.04));
         }
 
-        .liveMaioPage .speakerCard:nth-child(2) {
-          background:
-            radial-gradient(circle at 50% 12%, rgba(255, 241, 232, 0.96), transparent 45%),
-            linear-gradient(180deg, #f8dfd3, #e9b8a7);
-        }
-
-        .liveMaioPage .speakerCard img {
+        .modelsGlow {
           position: absolute;
-          inset: 0;
-          width: 100%;
-          height: 100%;
-          display: block;
-          object-fit: cover;
-          object-position: center top;
-          transition: transform 0.35s ease;
+          width: 280px;
+          height: 280px;
+          border-radius: 999px;
+          background: rgba(255, 207, 184, 0.35);
+          filter: blur(36px);
         }
 
-        .liveMaioPage .speakerCard::after {
-          content: "";
-          position: absolute;
-          left: 0;
-          right: 0;
-          bottom: 0;
+        .modelsImage {
+          position: relative;
           z-index: 1;
-          height: 58%;
-          background: linear-gradient(180deg, transparent, rgba(44, 18, 18, 0.78));
-        }
-
-        .liveMaioPage .speakerCard:hover img,
-        .liveMaioPage .speakerCard.isOpen img {
-          transform: scale(1.035);
-        }
-
-        .liveMaioPage .speakerName {
-          position: absolute;
-          left: 10px;
-          right: 10px;
-          bottom: 10px;
-          z-index: 2;
-          padding: 12px;
-          border-radius: 18px;
-          background: rgba(255, 250, 246, 0.9);
-          backdrop-filter: blur(14px);
-          box-shadow: 0 16px 36px rgba(49, 15, 15, 0.18);
-          transition: opacity 0.24s ease, transform 0.24s ease;
-        }
-
-        .liveMaioPage .speakerCard.isOpen .speakerName {
-          opacity: 0;
-          transform: translateY(16px);
-        }
-
-        .liveMaioPage .speakerName span {
+          width: min(360px, 100%);
+          max-height: 390px;
+          object-fit: contain;
+          object-position: center bottom;
           display: block;
-          margin-bottom: 4px;
-          color: #a64c50;
-          font-size: 0.58rem;
-          font-weight: 950;
-          letter-spacing: 0.06em;
-          text-transform: uppercase;
+          filter: drop-shadow(0 30px 34px rgba(35, 8, 10, 0.28));
         }
 
-        .liveMaioPage .speakerName strong {
-          display: block;
-          color: #291211;
-          font-family: "Libre Bodoni", Georgia, serif;
-          font-size: 1.05rem;
-          line-height: 1;
-          letter-spacing: -0.04em;
-        }
-
-        .liveMaioPage .tapHint {
-          display: inline-flex;
-          align-items: center;
-          gap: 5px;
-          margin-top: 8px;
-          color: #8f3048;
-          font-size: 0.68rem;
-          font-weight: 900;
-        }
-
-        .liveMaioPage .tapHint::before {
-          content: "+";
-          display: grid;
-          place-items: center;
-          width: 18px;
-          height: 18px;
-          border-radius: 999px;
-          background: #f3d7cc;
-          color: #8f3048;
-          font-weight: 950;
-        }
-
-        .liveMaioPage .speakerBio {
-          position: absolute;
-          left: 10px;
-          right: 10px;
-          bottom: 10px;
-          z-index: 5;
-          padding: 14px;
-          border-radius: 18px;
-          background: rgba(255, 250, 246, 0.96);
-          box-shadow: 0 18px 45px rgba(49, 15, 15, 0.22);
-          transform: translateY(110%);
-          opacity: 0;
-          transition: transform 0.28s ease, opacity 0.28s ease;
-        }
-
-        .liveMaioPage .speakerCard.isOpen .speakerBio {
-          transform: translateY(0);
-          opacity: 1;
-        }
-
-        .liveMaioPage .speakerBio p {
-          margin: 0;
-          color: #573934;
-          font-size: 0.8rem;
-          line-height: 1.42;
-        }
-
-        .liveMaioPage .speakerBio small {
-          display: inline-flex;
-          align-items: center;
-          gap: 6px;
-          margin-top: 9px;
-          color: #a64c50;
-          font-weight: 900;
-          font-size: 0.68rem;
-        }
-
-        .liveMaioPage .speakerBio small::before {
-          content: "×";
-          display: grid;
-          place-items: center;
-          width: 18px;
-          height: 18px;
-          border-radius: 999px;
-          background: #a64c50;
-          color: #fff;
-          font-weight: 950;
-        }
-
-        .liveMaioPage .formCard {
-          align-self: start;
-          border-radius: 28px;
+        .paymentCard {
+          border-radius: 30px;
           padding: 18px;
           background:
-            linear-gradient(180deg, rgba(255, 255, 255, 0.97), rgba(255, 244, 238, 0.99)),
+            linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(255, 244, 238, 0.99)),
             #fff8f4;
           border: 1px solid rgba(166, 76, 80, 0.14);
           box-shadow:
-            0 24px 60px rgba(49, 15, 15, 0.18),
+            0 26px 70px rgba(49, 15, 15, 0.2),
             inset 0 0 0 1px rgba(255, 255, 255, 0.65);
         }
 
-        .liveMaioPage .formHeader {
+        .paymentHeader {
           margin-bottom: 14px;
         }
 
-        .liveMaioPage .formHeader span {
+        .paymentHeader span {
           display: inline-flex;
           align-items: center;
           gap: 7px;
@@ -637,52 +383,52 @@ export default function ImersaoGestacaoSemFiltro() {
           text-transform: uppercase;
         }
 
-        .liveMaioPage .formHeader span::before {
+        .paymentHeader span::before {
           content: "";
           width: 8px;
           height: 8px;
           border-radius: 999px;
           background: #b04b58;
           box-shadow: 0 0 0 5px rgba(176, 75, 88, 0.12);
-          animation: livePulse 1.35s ease-in-out infinite;
+          animation: pulseDot 1.35s ease-in-out infinite;
         }
 
-        .liveMaioPage .formHeader h2 {
+        .paymentHeader h2 {
           margin: 0;
           color: #291211;
           font-family: "Libre Bodoni", Georgia, serif;
-          font-size: clamp(2rem, 7.4vw, 2.55rem);
+          font-size: clamp(2rem, 8vw, 2.55rem);
           line-height: 0.95;
           letter-spacing: -0.055em;
           font-weight: 500;
         }
 
-        .liveMaioPage .formHeader p {
+        .paymentHeader p {
           margin: 9px 0 0;
           color: #67443e;
           font-size: 0.88rem;
           line-height: 1.45;
         }
 
-        .liveMaioPage .leadForm {
+        .leadForm {
           display: grid;
-          gap: 10px;
-          width: 100%;
+          gap: 11px;
         }
 
-        .liveMaioPage .field {
+        .field {
           display: grid;
           gap: 6px;
         }
 
-        .liveMaioPage .field label,
-        .liveMaioPage .choiceLabel {
+        .field label,
+        .selectField label {
           color: #3a1b1a;
-          font-size: 0.8rem;
+          font-size: 0.79rem;
           font-weight: 850;
         }
 
-        .liveMaioPage .field input {
+        .field input,
+        .selectField select {
           width: 100%;
           min-height: 48px;
           border: 1px solid rgba(166, 76, 80, 0.16);
@@ -695,212 +441,216 @@ export default function ImersaoGestacaoSemFiltro() {
           transition: box-shadow 0.18s ease, border-color 0.18s ease;
         }
 
-        .liveMaioPage .field input:focus {
+        .field input:focus,
+        .selectField select:focus {
           border-color: rgba(166, 76, 80, 0.58);
           box-shadow: 0 0 0 4px rgba(166, 76, 80, 0.12);
         }
 
-        .liveMaioPage .choiceGroup {
+        .currentChoice {
           display: grid;
-          gap: 8px;
-        }
-
-        .liveMaioPage .choiceGrid {
-          display: grid;
-          grid-template-columns: 1fr 1fr;
-          gap: 9px;
-        }
-
-        .liveMaioPage .choiceCard {
-          border: 1px solid rgba(166, 76, 80, 0.14);
-          border-radius: 18px;
-          padding: 12px;
-          background: #fffaf7;
-          cursor: pointer;
-          text-align: left;
-          font-family: inherit;
-          transition:
-            transform 0.18s ease,
-            border-color 0.18s ease,
-            background 0.18s ease,
-            box-shadow 0.18s ease;
-        }
-
-        .liveMaioPage .choiceCard:hover {
-          transform: translateY(-1px);
-          border-color: rgba(166, 76, 80, 0.36);
-        }
-
-        .liveMaioPage .choiceCard.isSelected {
-          background:
-            radial-gradient(circle at 16% 12%, rgba(255, 255, 255, 0.72), transparent 38%),
-            linear-gradient(135deg, #fff0e7, #f7d6c8);
-          border-color: rgba(166, 76, 80, 0.46);
-          box-shadow: 0 14px 32px rgba(143, 48, 72, 0.12);
-        }
-
-        .liveMaioPage .choiceTop {
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          gap: 8px;
-        }
-
-        .liveMaioPage .choiceTop strong {
-          color: #351817;
-          font-size: 0.92rem;
-          font-weight: 950;
-        }
-
-        .liveMaioPage .choiceTop span {
-          color: #8f3048;
-          font-weight: 950;
-          font-size: 0.9rem;
-        }
-
-        .liveMaioPage .choiceCard p {
-          margin: 7px 0 0;
-          color: #704740;
-          font-size: 0.76rem;
-          line-height: 1.34;
-          font-weight: 750;
-        }
-
-        .liveMaioPage .choiceTag {
-          display: inline-flex;
-          margin-top: 10px;
-          padding: 5px 8px;
-          border-radius: 999px;
-          background: #f8e4dc;
-          color: #8f3048;
-          font-size: 0.66rem;
-          font-weight: 950;
-        }
-
-        .liveMaioPage .summaryBox {
-          display: grid;
-          gap: 8px;
+          gap: 12px;
           padding: 14px;
-          border-radius: 18px;
+          border-radius: 22px;
           background:
-            radial-gradient(circle at 12% 18%, rgba(255, 255, 255, 0.75), transparent 35%),
+            radial-gradient(circle at 12% 18%, rgba(255, 255, 255, 0.78), transparent 35%),
             linear-gradient(135deg, #fff0e7, #f7d6c8);
           border: 1px solid rgba(166, 76, 80, 0.16);
-          box-shadow: 0 14px 34px rgba(143, 48, 72, 0.12);
+          box-shadow: 0 14px 34px rgba(143, 48, 72, 0.1);
         }
 
-        .liveMaioPage .summaryBox small {
-          color: #a64c50;
-          font-size: 0.66rem;
-          font-weight: 950;
-          letter-spacing: 0.08em;
-          text-transform: uppercase;
-        }
-
-        .liveMaioPage .summaryMain {
+        .currentChoiceTop {
           display: flex;
           align-items: flex-start;
           justify-content: space-between;
           gap: 12px;
         }
 
-        .liveMaioPage .summaryMain strong {
-          color: #351817;
-          font-size: 0.95rem;
-          line-height: 1.25;
-          font-weight: 950;
-        }
-
-        .liveMaioPage .summaryMain b {
-          color: #351817;
-          font-family: "Libre Bodoni", Georgia, serif;
-          font-size: 1.65rem;
-          line-height: 0.95;
-          letter-spacing: -0.04em;
-          text-align: right;
-        }
-
-        .liveMaioPage .summaryBox p {
-          margin: 0;
-          color: #704740;
-          font-size: 0.78rem;
-          line-height: 1.42;
-        }
-
-        .liveMaioPage .pixPaymentBox {
-          display: grid;
-          gap: 14px;
-          padding: 14px;
-          border-radius: 22px;
-          background:
-            radial-gradient(circle at 12% 18%, rgba(255, 255, 255, 0.78), transparent 35%),
-            linear-gradient(135deg, #fff0e7, #f7d6c8);
-          border: 1px solid rgba(166, 76, 80, 0.18);
-          box-shadow: 0 16px 36px rgba(143, 48, 72, 0.12);
-        }
-
-        .liveMaioPage .pixHeader {
-          display: grid;
-          gap: 6px;
-        }
-
-        .liveMaioPage .pixHeader span {
+        .choiceMiniLabel {
+          display: block;
+          margin-bottom: 5px;
           color: #a64c50;
-          font-size: 0.66rem;
+          font-size: 0.64rem;
           font-weight: 950;
           letter-spacing: 0.08em;
           text-transform: uppercase;
         }
 
-        .liveMaioPage .pixHeader strong {
+        .currentChoice strong {
+          display: block;
           color: #351817;
-          font-size: 1rem;
+          font-size: 0.98rem;
           line-height: 1.25;
           font-weight: 950;
         }
 
-        .liveMaioPage .pixHeader p {
-          margin: 0;
+        .currentChoice small {
+          display: block;
+          margin-top: 4px;
           color: #704740;
-          font-size: 0.78rem;
-          line-height: 1.42;
+          font-size: 0.74rem;
+          line-height: 1.35;
           font-weight: 750;
         }
 
-        .liveMaioPage .pixQrWrap {
+        .choiceValue {
+          text-align: right;
+          color: #351817;
+          font-family: "Libre Bodoni", Georgia, serif;
+          font-size: 1.75rem;
+          line-height: 0.95;
+          letter-spacing: -0.04em;
+          font-weight: 600;
+          white-space: nowrap;
+        }
+
+        .changeChoiceButton,
+        .applyChoiceButton,
+        .copyPixButton {
+          width: 100%;
+          min-height: 44px;
+          border: 0;
+          border-radius: 15px;
+          padding: 12px 14px;
+          font-family: "Montserrat", Arial, sans-serif;
+          font-size: 0.84rem;
+          font-weight: 950;
+          cursor: pointer;
+          transition: transform 0.18s ease, filter 0.18s ease;
+        }
+
+        .changeChoiceButton {
+          background: rgba(255, 250, 247, 0.82);
+          color: #8f3048;
+          border: 1px solid rgba(143, 48, 72, 0.13);
+        }
+
+        .applyChoiceButton,
+        .copyPixButton {
+          background: linear-gradient(135deg, #8f3048, #d86f4f);
+          color: #ffffff;
+          box-shadow: 0 14px 28px rgba(143, 48, 72, 0.24);
+        }
+
+        .changeChoiceButton:hover,
+        .applyChoiceButton:hover,
+        .copyPixButton:hover {
+          transform: translateY(-1px);
+          filter: brightness(1.04);
+        }
+
+        .choiceEditor {
+          display: grid;
+          gap: 10px;
+          padding-top: 2px;
+        }
+
+        .selectGrid {
+          display: grid;
+          grid-template-columns: 1fr;
+          gap: 10px;
+        }
+
+        .selectField {
+          display: grid;
+          gap: 6px;
+        }
+
+        .noticeBox {
+          display: grid;
+          gap: 6px;
+          padding: 12px;
+          border-radius: 17px;
+          background: rgba(255, 250, 247, 0.72);
+          border: 1px solid rgba(166, 76, 80, 0.1);
+        }
+
+        .noticeBox strong {
+          color: #7f293f;
+          font-size: 0.84rem;
+          line-height: 1.3;
+          font-weight: 950;
+        }
+
+        .noticeBox p {
+          margin: 0;
+          color: #704740;
+          font-size: 0.76rem;
+          line-height: 1.4;
+          font-weight: 750;
+        }
+
+        .pixBox {
+          display: grid;
+          gap: 13px;
+          padding: 13px;
+          border-radius: 22px;
+          background: #fffaf7;
+          border: 1px solid rgba(166, 76, 80, 0.14);
+        }
+
+        .pixBoxHeader {
+          display: grid;
+          gap: 5px;
+        }
+
+        .pixBoxHeader span {
+          color: #a64c50;
+          font-size: 0.64rem;
+          font-weight: 950;
+          letter-spacing: 0.08em;
+          text-transform: uppercase;
+        }
+
+        .pixBoxHeader strong {
+          color: #351817;
+          font-size: 0.94rem;
+          line-height: 1.25;
+          font-weight: 950;
+        }
+
+        .pixBoxHeader p {
+          margin: 0;
+          color: #704740;
+          font-size: 0.76rem;
+          line-height: 1.4;
+          font-weight: 750;
+        }
+
+        .qrFrame {
           display: grid;
           place-items: center;
-          padding: 12px;
-          border-radius: 20px;
-          background: rgba(255, 250, 247, 0.9);
-          border: 1px solid rgba(166, 76, 80, 0.12);
+          padding: 10px;
+          border-radius: 18px;
+          background: #ffffff;
+          border: 1px solid rgba(166, 76, 80, 0.1);
         }
 
-        .liveMaioPage .pixQrImage {
-          width: min(260px, 100%);
+        .qrFrame img {
+          width: min(230px, 100%);
           height: auto;
           display: block;
-          border-radius: 14px;
+          border-radius: 12px;
         }
 
-        .liveMaioPage .copyPasteBox {
+        .pixCodeArea {
           display: grid;
           gap: 8px;
         }
 
-        .liveMaioPage .copyPasteBox label {
+        .pixCodeArea label {
           color: #3a1b1a;
           font-size: 0.78rem;
           font-weight: 900;
         }
 
-        .liveMaioPage .copyPasteBox textarea {
+        .pixCodeArea textarea {
           width: 100%;
-          min-height: 96px;
+          min-height: 86px;
           resize: vertical;
           border: 1px solid rgba(166, 76, 80, 0.16);
           border-radius: 16px;
-          background: #fffaf7;
+          background: #fff;
           padding: 12px;
           color: #2d1717;
           font: inherit;
@@ -909,37 +659,11 @@ export default function ImersaoGestacaoSemFiltro() {
           outline: none;
         }
 
-        .liveMaioPage .copyPasteBox textarea:focus {
-          border-color: rgba(166, 76, 80, 0.58);
-          box-shadow: 0 0 0 4px rgba(166, 76, 80, 0.12);
-        }
-
-        .liveMaioPage .copyPixButton {
-          width: 100%;
-          min-height: 46px;
-          border: 0;
-          border-radius: 15px;
-          padding: 12px 14px;
-          background: linear-gradient(135deg, #8f3048, #d86f4f);
-          color: #ffffff;
-          font-family: "Montserrat", Arial, sans-serif;
-          font-size: 0.86rem;
-          font-weight: 950;
-          cursor: pointer;
-          box-shadow: 0 14px 28px rgba(143, 48, 72, 0.24);
-          transition: transform 0.18s ease, filter 0.18s ease;
-        }
-
-        .liveMaioPage .copyPixButton:hover {
-          transform: translateY(-1px);
-          filter: brightness(1.04);
-        }
-
-        .liveMaioPage .pixProofNote {
+        .proofNote {
           margin: 0;
           padding: 10px 12px;
           border-radius: 15px;
-          background: rgba(255, 250, 247, 0.84);
+          background: rgba(143, 48, 72, 0.08);
           color: #7f293f;
           font-size: 0.76rem;
           line-height: 1.38;
@@ -947,30 +671,7 @@ export default function ImersaoGestacaoSemFiltro() {
           text-align: center;
         }
 
-        .liveMaioPage .cardFeeNotice {
-          display: grid;
-          gap: 6px;
-          padding: 13px;
-          border-radius: 18px;
-          background: rgba(143, 48, 72, 0.08);
-          border: 1px solid rgba(143, 48, 72, 0.14);
-        }
-
-        .liveMaioPage .cardFeeNotice strong {
-          color: #7f293f;
-          font-size: 0.86rem;
-          font-weight: 950;
-        }
-
-        .liveMaioPage .cardFeeNotice p {
-          margin: 0;
-          color: #704740;
-          font-size: 0.76rem;
-          line-height: 1.4;
-          font-weight: 780;
-        }
-
-        .liveMaioPage .consent {
+        .consent {
           display: flex;
           align-items: flex-start;
           gap: 10px;
@@ -984,7 +685,7 @@ export default function ImersaoGestacaoSemFiltro() {
           border: 1px solid rgba(166, 76, 80, 0.12);
         }
 
-        .liveMaioPage .consent input {
+        .consent input {
           width: 18px;
           height: 18px;
           margin-top: 1px;
@@ -992,11 +693,11 @@ export default function ImersaoGestacaoSemFiltro() {
           accent-color: #a64c50;
         }
 
-        .liveMaioPage .consent strong {
+        .consent strong {
           color: #8f3048;
         }
 
-        .liveMaioPage .errorMessage {
+        .errorMessage {
           margin: 0;
           padding: 10px 12px;
           border-radius: 14px;
@@ -1007,7 +708,7 @@ export default function ImersaoGestacaoSemFiltro() {
           font-weight: 850;
         }
 
-        .liveMaioPage .submit {
+        .submit {
           width: 100%;
           min-height: 56px;
           border: 0;
@@ -1027,115 +728,36 @@ export default function ImersaoGestacaoSemFiltro() {
           transition: transform 0.18s ease, filter 0.18s ease, box-shadow 0.18s ease;
         }
 
-        .liveMaioPage .submit:hover {
+        .submit span {
+          display: grid;
+          place-items: center;
+          width: 32px;
+          height: 32px;
+          border-radius: 999px;
+          background: rgba(255, 255, 255, 0.16);
+          flex: 0 0 auto;
+        }
+
+        .submit:hover {
           transform: translateY(-2px);
           filter: brightness(1.04);
           box-shadow: 0 24px 48px rgba(143, 48, 72, 0.4);
         }
 
-        .liveMaioPage .submit:disabled {
+        .submit:disabled {
           opacity: 0.72;
           cursor: wait;
         }
 
-        .liveMaioPage .safeNote {
+        .safeNote {
           margin: 0;
           text-align: center;
           color: #86534b;
-          font-size: 0.74rem;
+          font-size: 0.73rem;
           line-height: 1.35;
         }
 
-        .liveMaioPage .topicsSection {
-          padding: 12px 0 38px;
-        }
-
-        .liveMaioPage .topicsHeader {
-          max-width: 760px;
-          margin: 0 auto 18px;
-          text-align: center;
-          color: #fff5ee;
-        }
-
-        .liveMaioPage .topicsHeader span {
-          display: inline-block;
-          margin-bottom: 10px;
-          color: #ffd1bd;
-          font-size: 0.74rem;
-          font-weight: 950;
-          letter-spacing: 0.08em;
-          text-transform: uppercase;
-        }
-
-        .liveMaioPage .topicsHeader h2 {
-          margin: 0;
-          font-family: "Libre Bodoni", Georgia, serif;
-          font-size: clamp(2rem, 7.5vw, 3.5rem);
-          line-height: 0.95;
-          letter-spacing: -0.055em;
-          font-weight: 500;
-        }
-
-        .liveMaioPage .topicsGrid {
-          display: grid;
-          grid-template-columns: 1fr 1fr;
-          gap: 10px;
-        }
-
-        .liveMaioPage .topicsGrid article {
-          display: flex;
-          align-items: center;
-          gap: 10px;
-          padding: 14px;
-          border-radius: 20px;
-          background: rgba(255, 248, 243, 0.94);
-          border: 1px solid rgba(255, 255, 255, 0.35);
-          box-shadow: 0 18px 40px rgba(29, 7, 9, 0.14);
-        }
-
-        .liveMaioPage .topicsGrid article span {
-          display: grid;
-          place-items: center;
-          width: 28px;
-          height: 28px;
-          border-radius: 999px;
-          background: #f4d9ce;
-          color: #a64c50;
-          font-weight: 950;
-          font-size: 0.75rem;
-          flex: 0 0 auto;
-        }
-
-        .liveMaioPage .topicsGrid p {
-          margin: 0;
-          color: #60413b;
-          font-size: 0.86rem;
-          line-height: 1.3;
-          font-weight: 800;
-        }
-
-        .liveMaioPage .bottomCta {
-          width: min(420px, 100%);
-          min-height: 56px;
-          margin: 18px auto 0;
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          gap: 14px;
-          border-radius: 18px;
-          padding: 15px 16px;
-          background: linear-gradient(135deg, #fff2e9, #ffd2bc);
-          color: #7f293f;
-          font-weight: 950;
-          box-shadow: 0 22px 50px rgba(29, 7, 9, 0.22);
-          animation: softPulse 1.8s ease-in-out infinite;
-        }
-
-        .liveMaioPage .bottomCta span {
-          background: rgba(127, 41, 63, 0.12);
-        }
-
-        @keyframes livePulse {
+        @keyframes pulseDot {
           0%,
           100% {
             transform: scale(1);
@@ -1159,171 +781,107 @@ export default function ImersaoGestacaoSemFiltro() {
           }
         }
 
-        @keyframes softPulse {
-          0%,
-          100% {
-            transform: translateY(0);
+        @media (min-width: 620px) {
+          .checkoutPage {
+            padding: 22px;
           }
 
-          50% {
-            transform: translateY(-2px);
-          }
-        }
-
-        @media (max-width: 420px) {
-          .liveMaioPage {
-            padding: 10px;
+          .heroArea,
+          .paymentCard,
+          .modelsArea {
+            border-radius: 36px;
           }
 
-          .liveMaioPage .heroCard {
-            padding: 14px;
-            border-radius: 26px;
-          }
-
-          .liveMaioPage .heroTitle {
-            font-size: 2.24rem;
-          }
-
-          .liveMaioPage .proofColumns {
-            gap: 8px;
-          }
-
-          .liveMaioPage .quickProof span {
-            min-height: 40px;
-            padding: 8px;
-            font-size: 0.69rem;
-            gap: 6px;
-          }
-
-          .liveMaioPage .speakers {
-            gap: 8px;
-          }
-
-          .liveMaioPage .speakerCard {
-            min-height: 270px;
-            border-radius: 20px;
-          }
-
-          .liveMaioPage .choiceGrid {
-            grid-template-columns: 1fr;
-          }
-
-          .liveMaioPage .formCard {
-            padding: 15px;
-            border-radius: 24px;
-          }
-
-          .liveMaioPage .topicsGrid {
-            grid-template-columns: 1fr;
-          }
-        }
-
-        @media (min-width: 700px) {
-          .liveMaioPage {
-            padding: 26px;
-          }
-
-          .liveMaioPage .heroSection {
-            padding-top: 22px;
-          }
-
-          .liveMaioPage .heroCard {
+          .heroArea {
             padding: 28px;
-            border-radius: 40px;
           }
 
-          .liveMaioPage .speakerCard {
-            min-height: 390px;
+          .includedList {
+            grid-template-columns: 1fr 1fr;
           }
 
-          .liveMaioPage .topicsGrid {
-            grid-template-columns: repeat(3, 1fr);
+          .paymentCard {
+            padding: 24px;
+          }
+
+          .selectGrid {
+            grid-template-columns: 1fr 1fr;
+          }
+
+          .currentChoiceTop {
+            align-items: center;
           }
         }
 
-        @media (min-width: 1020px) {
-          .liveMaioPage {
+        @media (min-width: 980px) {
+          .checkoutPage {
             padding: 32px;
           }
 
-          .liveMaioPage .heroSection {
-            padding-top: 32px;
-          }
-
-          .liveMaioPage .heroCard {
-            grid-template-columns: minmax(0, 1fr) 410px;
+          .checkoutShell {
+            min-height: calc(100vh - 64px);
+            grid-template-columns: minmax(0, 1fr) 420px;
             grid-template-areas:
-              "copy form"
-              "speakers form"
-              "proof form";
-            gap: 24px 38px;
-            align-items: start;
-            padding: 48px;
-            border-radius: 46px;
+              "hero payment"
+              "models payment";
+            align-items: stretch;
+            gap: 24px;
           }
 
-          .liveMaioPage .heroCopy {
-            grid-area: copy;
-            padding-top: 4px;
+          .heroArea {
+            grid-area: hero;
+            padding: 42px;
           }
 
-          .liveMaioPage .speakersBlock {
-            grid-area: speakers;
+          .modelsArea {
+            grid-area: models;
+            min-height: 360px;
           }
 
-          .liveMaioPage .proofColumns {
-            grid-area: proof;
-            width: min(640px, 100%);
+          .modelsImage {
+            width: min(560px, 100%);
+            max-height: 430px;
           }
 
-          .liveMaioPage .formCard {
-            grid-area: form;
+          .paymentCard {
+            grid-area: payment;
+            align-self: start;
             position: sticky;
             top: 24px;
             padding: 24px;
           }
 
-          .liveMaioPage .heroTitle {
-            font-size: clamp(3.65rem, 5vw, 5.25rem);
-            max-width: 720px;
+          .heroArea h1 {
+            font-size: clamp(4rem, 5vw, 5.3rem);
           }
 
-          .liveMaioPage .heroCta {
-            width: min(390px, 100%);
+          .heroText {
+            font-size: 1.02rem;
           }
 
-          .liveMaioPage .speakerCard {
-            min-height: 350px;
+          .includedList {
+            max-width: 690px;
+          }
+        }
+
+        @media (min-width: 1180px) {
+          .checkoutShell {
+            grid-template-columns: minmax(0, 1fr) 430px;
           }
 
-          .liveMaioPage .speakerCard img {
-            object-position: center 16%;
+          .modelsArea {
+            min-height: 385px;
           }
 
-          .liveMaioPage .topicsSection {
-            padding-top: 30px;
-          }
-
-          .liveMaioPage .topicsGrid {
-            grid-template-columns: repeat(6, 1fr);
-          }
-
-          .liveMaioPage .topicsGrid article {
-            min-height: 116px;
-            align-items: flex-start;
-            flex-direction: column;
-            justify-content: space-between;
-          }
-
-          .liveMaioPage .topicsGrid p {
-            font-size: 0.82rem;
+          .modelsImage {
+            width: min(620px, 100%);
           }
         }
 
         @media (prefers-reduced-motion: reduce) {
-          .liveMaioPage *,
-          .liveMaioPage *::before,
-          .liveMaioPage *::after {
+          .checkoutPage *,
+          .checkoutPage *::before,
+          .checkoutPage *::after {
             animation: none !important;
             transition: none !important;
           }
@@ -1333,81 +891,20 @@ export default function ImersaoGestacaoSemFiltro() {
   );
 }
 
-function SpeakerPhotos() {
-  const [openSpeaker, setOpenSpeaker] = useState(null);
-
-  const speakers = [
-    {
-      id: "erica",
-      role: "Psicóloga Clínica",
-      name: "Erica Vilar",
-      image: "/erica-live.png",
-      alt: "Psicóloga Erica Vilar",
-      bio:
-        "Psicóloga clínica, fala sobre saúde emocional feminina, maternidade, vínculos e autocuidado com sensibilidade e profundidade.",
-    },
-    {
-      id: "lizia",
-      role: "Fisioterapeuta e doula",
-      name: "Lizia Nascimento",
-      image: "/lizia-live.png",
-      alt: "Fisioterapeuta e doula Lizia Nascimento",
-      bio:
-        "Atua no cuidado integral da mulher da gestação ao pós-parto, unindo técnica, acolhimento e escuta.",
-    },
-  ];
-
-  return (
-    <div className="speakers">
-      {speakers.map((speaker) => {
-        const isOpen = openSpeaker === speaker.id;
-
-        return (
-          <button
-            type="button"
-            className={`speakerCard ${isOpen ? "isOpen" : ""}`}
-            key={speaker.id}
-            onClick={() => setOpenSpeaker(isOpen ? null : speaker.id)}
-            aria-expanded={isOpen}
-            aria-label={`${
-              isOpen ? "Fechar informações de" : "Abrir informações de"
-            } ${speaker.name}`}
-          >
-            <img src={speaker.image} alt={speaker.alt} />
-
-            <div className="speakerName">
-              <span>{speaker.role}</span>
-              <strong>{speaker.name}</strong>
-              <small className="tapHint">Clique/toque para saber mais</small>
-            </div>
-
-            <div className="speakerBio">
-              <p>{speaker.bio}</p>
-              <small>Clique/toque para fechar</small>
-            </div>
-          </button>
-        );
-      })}
-    </div>
-  );
-}
-
-function CheckoutRedirectCard() {
+function CheckoutCard() {
   const [whatsapp, setWhatsapp] = useState("");
   const [plano, setPlano] = useState("individual");
   const [metodoPagamento, setMetodoPagamento] = useState("pix");
+  const [editandoEscolha, setEditandoEscolha] = useState(false);
+  const [pixCopiado, setPixCopiado] = useState(false);
   const [erro, setErro] = useState("");
   const [enviando, setEnviando] = useState(false);
-  const [pixCopiado, setPixCopiado] = useState(false);
 
   const planoSelecionado = planos[plano];
   const metodoSelecionado = metodosPagamento[metodoPagamento];
-
+  const dadosPix = PIX_PAYMENTS[plano];
   const isPix = metodoPagamento === "pix";
   const isCartao = metodoPagamento === "cartao";
-
-  const dadosPix = PIX_PAYMENTS[plano];
-  const linkCartao = CARD_LINKS[plano];
 
   async function copiarPix() {
     setErro("");
@@ -1459,6 +956,8 @@ function CheckoutRedirectCard() {
     }
 
     if (isCartao) {
+      const linkCartao = CARD_LINKS[plano];
+
       if (!linkCartao) {
         setErro("O link do cartão ainda não foi configurado.");
         setEnviando(false);
@@ -1479,13 +978,13 @@ function CheckoutRedirectCard() {
   }
 
   return (
-    <aside className="formCard" id="inscricao">
-      <div className="formHeader">
+    <aside className="paymentCard" id="inscricao">
+      <div className="paymentHeader">
         <span>Reserva de vaga</span>
-        <h2>Escolha sua vaga e forma de pagamento</h2>
+        <h2>Finalize sua inscrição</h2>
         <p>
-          Preencha seus dados, selecione a opção desejada e finalize sua reserva
-          por Pix ou cartão.
+          Comece com a opção individual no Pix. Caso queira, altere para casal ou
+          cartão antes de confirmar.
         </p>
       </div>
 
@@ -1524,101 +1023,93 @@ function CheckoutRedirectCard() {
           />
         </div>
 
-        <div className="choiceGroup">
-          <span className="choiceLabel">Escolha sua opção</span>
+        <div className="currentChoice">
+          <div className="currentChoiceTop">
+            <div>
+              <span className="choiceMiniLabel">Sua escolha</span>
+              <strong>
+                {planoSelecionado.nome} no {metodoSelecionado.nome}
+              </strong>
+              <small>
+                {planoSelecionado.participantes} · {metodoSelecionado.detalhe}
+              </small>
+            </div>
 
-          <div className="choiceGrid">
-            {Object.values(planos).map((item) => (
-              <button
-                type="button"
-                key={item.id}
-                className={`choiceCard ${plano === item.id ? "isSelected" : ""}`}
-                onClick={() => setPlano(item.id)}
-              >
-                <div className="choiceTop">
-                  <strong>{item.nome}</strong>
-                  <span>{item.valor}</span>
+            <div className="choiceValue">
+              {isCartao ? `${planoSelecionado.valor}+` : planoSelecionado.valor}
+            </div>
+          </div>
+
+          {!editandoEscolha && (
+            <button
+              type="button"
+              className="changeChoiceButton"
+              onClick={() => setEditandoEscolha(true)}
+            >
+              Alterar opção
+            </button>
+          )}
+
+          {editandoEscolha && (
+            <div className="choiceEditor">
+              <div className="selectGrid">
+                <div className="selectField">
+                  <label htmlFor="plano">Vaga</label>
+                  <select
+                    id="plano"
+                    value={plano}
+                    onChange={(event) => setPlano(event.target.value)}
+                  >
+                    <option value="individual">Individual — R$ 197</option>
+                    <option value="casal">Casal — R$ 297</option>
+                  </select>
                 </div>
 
-                <p>{item.descricao}</p>
+                <div className="selectField">
+                  <label htmlFor="metodoPagamento">Pagamento</label>
+                  <select
+                    id="metodoPagamento"
+                    value={metodoPagamento}
+                    onChange={(event) => setMetodoPagamento(event.target.value)}
+                  >
+                    <option value="pix">Pix sem acréscimo</option>
+                    <option value="cartao">Cartão com acréscimo</option>
+                  </select>
+                </div>
+              </div>
 
-                <em className="choiceTag">{item.destaque}</em>
-              </button>
-            ))}
-          </div>
-        </div>
-
-        <div className="choiceGroup">
-          <span className="choiceLabel">Forma de pagamento</span>
-
-          <div className="choiceGrid">
-            {Object.values(metodosPagamento).map((item) => (
               <button
                 type="button"
-                key={item.id}
-                className={`choiceCard ${
-                  metodoPagamento === item.id ? "isSelected" : ""
-                }`}
-                onClick={() => setMetodoPagamento(item.id)}
+                className="applyChoiceButton"
+                onClick={() => setEditandoEscolha(false)}
               >
-                <div className="choiceTop">
-                  <strong>{item.nome}</strong>
-                  <span>{item.id === "pix" ? "Sem acréscimo" : "Com acréscimo"}</span>
-                </div>
-
-                <p>{item.descricao}</p>
+                Aplicar escolha
               </button>
-            ))}
-          </div>
-        </div>
-
-        <div className="summaryBox">
-          <small>Resumo da reserva</small>
-
-          <div className="summaryMain">
-            <strong>
-              {planoSelecionado.nome} via {metodoSelecionado.nome}
-            </strong>
-
-            <b>{isCartao ? `${planoSelecionado.valor} + taxas` : planoSelecionado.valor}</b>
-          </div>
-
-          {isPix ? (
-            <p>
-              No Pix, o valor é integral, sem acréscimo. Após o pagamento, envie
-              o comprovante no grupo para confirmação da sua vaga.
-            </p>
-          ) : (
-            <p>
-              No cartão, o pagamento será finalizado pela InfinitePay e terá
-              acréscimo referente às taxas da operadora. As condições aparecerão
-              antes da confirmação.
-            </p>
+            </div>
           )}
         </div>
 
         {isPix && (
-          <div className="pixPaymentBox" id="pix-pagamento">
-            <div className="pixHeader">
+          <div className="pixBox" id="pix-pagamento">
+            <div className="pixBoxHeader">
               <span>Pagamento via Pix</span>
               <strong>
                 {planoSelecionado.nome} — {planoSelecionado.valor}
               </strong>
               <p>
-                Escaneie o QR Code abaixo ou copie o código Pix. Depois, envie o
-                comprovante no grupo para confirmação da sua vaga.
+                Escaneie o QR Code ou use o Pix copia e cola. Depois envie o
+                comprovante no grupo para confirmação da vaga.
               </p>
             </div>
 
-            <div className="pixQrWrap">
+            <div className="qrFrame">
               <img
                 src={dadosPix.imagem}
-                alt={`QR Code Pix ${planoSelecionado.nome} ${planoSelecionado.valor}`}
-                className="pixQrImage"
+                alt={`QR Code Pix ${planoSelecionado.nome}`}
               />
             </div>
 
-            <div className="copyPasteBox">
+            <div className="pixCodeArea">
               <label htmlFor="pixCopiaCola">Pix copia e cola</label>
 
               <textarea
@@ -1633,19 +1124,19 @@ function CheckoutRedirectCard() {
               </button>
             </div>
 
-            <p className="pixProofNote">
-              Importante: sua vaga será confirmada após o envio do comprovante no
-              grupo.
+            <p className="proofNote">
+              Importante: a vaga será confirmada após o envio do comprovante no grupo.
             </p>
           </div>
         )}
 
         {isCartao && (
-          <div className="cardFeeNotice">
-            <strong>Pagamento no cartão com acréscimo</strong>
+          <div className="noticeBox">
+            <strong>Cartão com acréscimo de taxas</strong>
             <p>
-              Ao escolher cartão, você será redirecionada para a InfinitePay. O
-              valor final pode ter acréscimo referente às taxas da operadora.
+              Você será direcionada para a InfinitePay. O valor final pode ter
+              acréscimo referente às taxas da operadora e será exibido antes da
+              confirmação.
             </p>
           </div>
         )}
@@ -1661,18 +1152,18 @@ function CheckoutRedirectCard() {
         {erro && <p className="errorMessage">{erro}</p>}
 
         <button className="submit" type="submit" disabled={enviando}>
-          {isPix
+          {isCartao
             ? enviando
-              ? "Confirmando dados..."
-              : "Confirmar dados e pagar via Pix"
-            : enviando
               ? "Redirecionando..."
-              : "Ir para pagamento no cartão"}
+              : "Ir para pagamento no cartão"
+            : enviando
+              ? "Confirmando..."
+              : "Confirmar meus dados"}
           <span>↗</span>
         </button>
 
         <p className="safeNote">
-          Sua vaga será considerada reservada após a confirmação do pagamento.
+          Sua vaga será reservada após a confirmação do pagamento.
         </p>
       </form>
     </aside>
