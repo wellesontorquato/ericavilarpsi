@@ -22,7 +22,7 @@ const planos = {
     nome: "Casal",
     valor: "R$ 297",
     participantes: "2 participantes",
-    texto: "Para viver essa experiência junto com o companheiro.",
+    texto: "Para viver essa experiência junto com o(a) companheiro(a).",
   },
 };
 
