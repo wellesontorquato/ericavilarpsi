@@ -10,12 +10,12 @@ const CARD_LINKS = {
 
 const PIX_PAYMENTS = {
   individual: {
-    imagem: "/pix197.png",
+    imagem: "/pix197.jpeg",
     codigo:
       "00020101021226760014BR.GOV.BCB.PIX0122liz.rafaela@icloud.com0228Imersao- Gestacao sem filtro5204000053039865406197.005802BR5925LIZIA RAFAELA CORDEIRO DO6006MACEIO62290525QRCCTZ0NCVL4utMwEIwa1KznP6304523E",
   },
   casal: {
-    imagem: "/pix297.png",
+    imagem: "/pix297.jpeg",
     codigo:
       "00020101021226700014BR.GOV.BCB.PIX0122liz.rafaela@icloud.com0222Pagamento lizianascime5204000053039865406297.005802BR5925LIZIA RAFAELA CORDEIRO DO6006MACEIO62290525QRCCZUgc8SO3XQC3OvOamoRRm6304AA8C",
   },
@@ -51,6 +51,28 @@ const metodosPagamento = {
   },
 };
 
+const destaques = [
+  "Muito acolhimento",
+  "Coffee break especial",
+  "Exercícios para o trabalho de parto",
+  "Preparação para o pós-parto",
+];
+
+const beneficios = [
+  {
+    titulo: "Ambiente íntimo e seguro",
+    texto: "Uma imersão pensada para acolher dúvidas, medos e expectativas reais da gestação.",
+  },
+  {
+    titulo: "Corpo, emoção e parto",
+    texto: "Conteúdo prático para viver essa fase com mais consciência, preparo e segurança.",
+  },
+  {
+    titulo: "Para mulheres e casais",
+    texto: "A opção casal ajuda o companheiro a se tornar um apoio mais presente e preparado.",
+  },
+];
+
 function formatBrazilianWhatsapp(value) {
   const digits = String(value || "").replace(/\D/g, "").slice(0, 11);
 
@@ -80,45 +102,65 @@ export default function PagamentoImersao() {
         <div className="orb orbTwo" />
 
         <section className="checkoutShell">
-          <div className="heroArea">
-            <div className="badge">
-              <span />
-              Imersão presencial
-            </div>
+          <div className="contentColumn">
+            <section className="heroCard">
+              <div className="heroCopy">
+                <div className="badge">
+                  <span />
+                  Imersão presencial
+                </div>
 
-            <div className="dateRow">
-              <span>Apenas 10 vagas</span>
-              <span>Gestação</span>
-              <span>Parto e pós-parto</span>
-            </div>
+                <div className="dateRow">
+                  <span>Apenas 10 vagas</span>
+                  <span>Gestação</span>
+                  <span>Parto e pós-parto</span>
+                </div>
 
-            <p className="eyebrow">Para mulheres e casais</p>
+                <p className="eyebrow">Para mulheres e casais</p>
 
-            <h1>
-              Gestação sem filtro
-              <em> uma vivência real, acolhedora e transformadora.</em>
-            </h1>
+                <h1>
+                  Gestação sem filtro
+                  <em> uma vivência real, acolhedora e transformadora.</em>
+                </h1>
 
-            <p className="heroText">
-              Uma experiência profunda para viver a gestação com mais
-              consciência, preparo, segurança e acolhimento.
-            </p>
+                <p className="heroText">
+                  Uma experiência profunda para viver a gestação com mais
+                  consciência, preparo, segurança e acolhimento.
+                </p>
 
-            <div className="includedList">
-              <span>Muito acolhimento</span>
-              <span>Coffee break especial</span>
-              <span>Exercícios para o trabalho de parto</span>
-              <span>Preparação para o pós-parto</span>
-            </div>
-          </div>
+                <div className="includedList">
+                  {destaques.map((item) => (
+                    <span key={item}>{item}</span>
+                  ))}
+                </div>
+              </div>
 
-          <div className="modelsArea" aria-hidden="true">
-            <div className="modelsGlow" />
-            <img
-              src="/modelos%20transparente.png"
-              alt=""
-              className="modelsImage"
-            />
+              <div className="modelCard">
+                <div className="modelText">
+                  <span>Com</span>
+                  <strong>Erica Vilar & Lizia Nascimento</strong>
+                  <small>Psicologia, fisioterapia, doula e acolhimento</small>
+                </div>
+
+                <div className="modelImageWrap">
+                  <img
+                    src="/modelos%20transparente.png"
+                    alt="Erica Vilar e Lizia Nascimento"
+                    className="modelImage"
+                  />
+                </div>
+              </div>
+            </section>
+
+            <section className="benefitGrid" aria-label="O que está incluso">
+              {beneficios.map((beneficio) => (
+                <article key={beneficio.titulo}>
+                  <span>✓</span>
+                  <strong>{beneficio.titulo}</strong>
+                  <p>{beneficio.texto}</p>
+                </article>
+              ))}
+            </section>
           </div>
 
           <CheckoutCard />
@@ -135,13 +177,13 @@ export default function PagamentoImersao() {
           min-height: 100vh;
           position: relative;
           overflow: hidden;
-          padding: 14px;
+          padding: 12px;
           color: #2d1717;
           font-family: "Montserrat", Arial, sans-serif;
           background:
-            radial-gradient(circle at 14% 12%, rgba(255, 210, 184, 0.23), transparent 30%),
-            radial-gradient(circle at 84% 20%, rgba(187, 76, 91, 0.32), transparent 34%),
-            radial-gradient(circle at 50% 100%, rgba(240, 143, 101, 0.22), transparent 34%),
+            radial-gradient(circle at 12% 10%, rgba(255, 210, 184, 0.22), transparent 30%),
+            radial-gradient(circle at 88% 16%, rgba(187, 76, 91, 0.34), transparent 34%),
+            radial-gradient(circle at 50% 100%, rgba(240, 143, 101, 0.2), transparent 34%),
             linear-gradient(135deg, #321217 0%, #5a2328 46%, #9a5545 100%);
         }
 
@@ -152,7 +194,7 @@ export default function PagamentoImersao() {
           transform: translateX(-50%);
           z-index: 0;
           color: rgba(255, 235, 224, 0.075);
-          font-size: clamp(4rem, 18vw, 15rem);
+          font-size: clamp(4rem, 17vw, 15rem);
           font-weight: 950;
           letter-spacing: -0.09em;
           line-height: 0.8;
@@ -172,7 +214,7 @@ export default function PagamentoImersao() {
           width: 300px;
           height: 300px;
           left: -120px;
-          bottom: 20%;
+          bottom: 18%;
           background: rgba(255, 181, 137, 0.42);
         }
 
@@ -180,35 +222,50 @@ export default function PagamentoImersao() {
           width: 360px;
           height: 360px;
           right: -150px;
-          top: 16%;
+          top: 14%;
           background: rgba(129, 42, 63, 0.52);
         }
 
         .checkoutShell {
-          width: min(1140px, 100%);
+          width: min(1320px, 100%);
           margin: 0 auto;
           position: relative;
           z-index: 1;
           display: grid;
-          gap: 16px;
-          padding: 10px 0 22px;
+          gap: 14px;
+          padding: 8px 0 20px;
         }
 
-        .heroArea,
-        .paymentCard,
-        .modelsArea {
+        .contentColumn {
+          display: grid;
+          gap: 14px;
           min-width: 0;
         }
 
-        .heroArea {
-          border-radius: 30px;
-          padding: 20px;
+        .heroCard,
+        .paymentCard,
+        .benefitGrid article {
+          border: 1px solid rgba(255, 255, 255, 0.72);
           background:
-            linear-gradient(180deg, rgba(255, 255, 255, 0.94), rgba(255, 247, 242, 0.98)),
+            linear-gradient(180deg, rgba(255, 255, 255, 0.95), rgba(255, 247, 242, 0.98)),
             #fff8f4;
           box-shadow:
-            0 30px 80px rgba(24, 6, 8, 0.28),
-            inset 0 0 0 1px rgba(255, 255, 255, 0.76);
+            0 30px 80px rgba(24, 6, 8, 0.26),
+            inset 0 0 0 1px rgba(255, 255, 255, 0.7);
+        }
+
+        .heroCard {
+          display: grid;
+          gap: 16px;
+          overflow: hidden;
+          border-radius: 28px;
+          padding: 18px;
+        }
+
+        .heroCopy,
+        .modelCard,
+        .paymentCard {
+          min-width: 0;
         }
 
         .badge {
@@ -220,7 +277,7 @@ export default function PagamentoImersao() {
           border-radius: 999px;
           background: #ffffff;
           color: #a64c50;
-          font-size: 0.68rem;
+          font-size: 0.67rem;
           font-weight: 950;
           letter-spacing: 0.055em;
           text-transform: uppercase;
@@ -248,30 +305,30 @@ export default function PagamentoImersao() {
           border-radius: 999px;
           background: #f7e5dc;
           color: #7f3d3a;
-          font-size: 0.75rem;
+          font-size: 0.74rem;
           font-weight: 850;
         }
 
         .eyebrow {
           margin: 0 0 10px;
           color: #a64c50;
-          font-size: 0.72rem;
+          font-size: 0.71rem;
           font-weight: 950;
           letter-spacing: 0.08em;
           text-transform: uppercase;
         }
 
-        .heroArea h1 {
+        .heroCard h1 {
           margin: 0;
           color: #291211;
           font-family: "Libre Bodoni", Georgia, serif;
-          font-size: clamp(2.35rem, 11vw, 5rem);
-          line-height: 0.9;
-          letter-spacing: -0.065em;
+          font-size: clamp(2.42rem, 11vw, 5.6rem);
+          line-height: 0.88;
+          letter-spacing: -0.068em;
           font-weight: 600;
         }
 
-        .heroArea h1 em {
+        .heroCard h1 em {
           display: block;
           color: #a64c50;
           font-style: italic;
@@ -279,11 +336,11 @@ export default function PagamentoImersao() {
         }
 
         .heroText {
-          margin: 16px 0 0;
-          max-width: 560px;
+          margin: 15px 0 0;
+          max-width: 660px;
           color: #563936;
           font-size: 0.96rem;
-          line-height: 1.5;
+          line-height: 1.52;
           font-weight: 560;
         }
 
@@ -301,70 +358,147 @@ export default function PagamentoImersao() {
           min-height: 42px;
           padding: 10px 11px;
           border-radius: 15px;
-          background: rgba(255, 250, 247, 0.82);
+          background: rgba(255, 250, 247, 0.86);
           color: #72443d;
-          font-size: 0.78rem;
+          font-size: 0.77rem;
           line-height: 1.25;
           font-weight: 850;
           border: 1px solid rgba(166, 76, 80, 0.09);
         }
 
-        .includedList span::before {
+        .includedList span::before,
+        .benefitGrid article > span {
           content: "✓";
           display: grid;
           place-items: center;
-          width: 19px;
-          height: 19px;
+          width: 21px;
+          height: 21px;
           border-radius: 999px;
           background: #a64c50;
           color: #fff;
-          font-size: 0.68rem;
+          font-size: 0.72rem;
           font-weight: 950;
           flex: 0 0 auto;
         }
 
-        .modelsArea {
+        .modelCard {
           position: relative;
-          display: grid;
-          place-items: center;
-          min-height: 310px;
-          border-radius: 30px;
           overflow: hidden;
+          display: grid;
+          grid-template-columns: 1fr 138px;
+          align-items: end;
+          gap: 8px;
+          min-height: 210px;
+          border-radius: 24px;
+          padding: 15px 12px 0 15px;
           background:
-            radial-gradient(circle at 50% 10%, rgba(255, 236, 224, 0.6), transparent 40%),
-            linear-gradient(180deg, rgba(255, 248, 243, 0.18), rgba(255, 248, 243, 0.04));
+            radial-gradient(circle at 75% 20%, rgba(255, 255, 255, 0.72), transparent 36%),
+            radial-gradient(circle at 52% 100%, rgba(216, 111, 79, 0.24), transparent 42%),
+            linear-gradient(135deg, #fff0e7, #f5cdbc);
+          border: 1px solid rgba(166, 76, 80, 0.13);
+          box-shadow: 0 18px 42px rgba(143, 48, 72, 0.13);
         }
 
-        .modelsGlow {
+        .modelText {
+          position: relative;
+          z-index: 2;
+          align-self: start;
+          padding-top: 4px;
+        }
+
+        .modelText span {
+          display: inline-flex;
+          margin-bottom: 6px;
+          color: #a64c50;
+          font-size: 0.64rem;
+          font-weight: 950;
+          letter-spacing: 0.08em;
+          text-transform: uppercase;
+        }
+
+        .modelText strong {
+          display: block;
+          max-width: 220px;
+          color: #291211;
+          font-family: "Libre Bodoni", Georgia, serif;
+          font-size: 1.64rem;
+          line-height: 0.92;
+          letter-spacing: -0.05em;
+          font-weight: 500;
+        }
+
+        .modelText small {
+          display: block;
+          max-width: 210px;
+          margin-top: 8px;
+          color: #704740;
+          font-size: 0.74rem;
+          line-height: 1.35;
+          font-weight: 800;
+        }
+
+        .modelImageWrap {
+          position: relative;
+          align-self: end;
+          display: grid;
+          place-items: end center;
+          min-height: 190px;
+        }
+
+        .modelImageWrap::before {
+          content: "";
           position: absolute;
-          width: 280px;
-          height: 280px;
+          right: -14px;
+          bottom: 8px;
+          width: 170px;
+          height: 170px;
           border-radius: 999px;
-          background: rgba(255, 207, 184, 0.35);
-          filter: blur(36px);
+          background: rgba(255, 255, 255, 0.45);
+          filter: blur(18px);
         }
 
-        .modelsImage {
+        .modelImage {
           position: relative;
           z-index: 1;
-          width: min(360px, 100%);
-          max-height: 390px;
+          width: 155px;
+          max-height: 210px;
           object-fit: contain;
           object-position: center bottom;
           display: block;
-          filter: drop-shadow(0 30px 34px rgba(35, 8, 10, 0.28));
+          filter: drop-shadow(0 24px 28px rgba(35, 8, 10, 0.2));
+        }
+
+        .benefitGrid {
+          display: grid;
+          grid-template-columns: 1fr;
+          gap: 10px;
+        }
+
+        .benefitGrid article {
+          display: grid;
+          gap: 8px;
+          border-radius: 22px;
+          padding: 15px;
+        }
+
+        .benefitGrid article strong {
+          color: #351817;
+          font-size: 0.92rem;
+          line-height: 1.25;
+          font-weight: 950;
+        }
+
+        .benefitGrid article p {
+          margin: 0;
+          color: #704740;
+          font-size: 0.78rem;
+          line-height: 1.4;
+          font-weight: 740;
         }
 
         .paymentCard {
-          border-radius: 30px;
+          border-radius: 28px;
           padding: 18px;
-          background:
-            linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(255, 244, 238, 0.99)),
-            #fff8f4;
-          border: 1px solid rgba(166, 76, 80, 0.14);
-          box-shadow:
-            0 26px 70px rgba(49, 15, 15, 0.2),
-            inset 0 0 0 1px rgba(255, 255, 255, 0.65);
         }
 
         .paymentHeader {
@@ -377,7 +511,7 @@ export default function PagamentoImersao() {
           gap: 7px;
           margin-bottom: 8px;
           color: #a64c50;
-          font-size: 0.7rem;
+          font-size: 0.68rem;
           font-weight: 950;
           letter-spacing: 0.07em;
           text-transform: uppercase;
@@ -406,7 +540,7 @@ export default function PagamentoImersao() {
         .paymentHeader p {
           margin: 9px 0 0;
           color: #67443e;
-          font-size: 0.88rem;
+          font-size: 0.86rem;
           line-height: 1.45;
         }
 
@@ -415,7 +549,8 @@ export default function PagamentoImersao() {
           gap: 11px;
         }
 
-        .field {
+        .field,
+        .selectField {
           display: grid;
           gap: 6px;
         }
@@ -551,12 +686,8 @@ export default function PagamentoImersao() {
           gap: 10px;
         }
 
-        .selectField {
-          display: grid;
-          gap: 6px;
-        }
-
-        .noticeBox {
+        .noticeBox,
+        .beforePixNotice {
           display: grid;
           gap: 6px;
           padding: 12px;
@@ -565,14 +696,16 @@ export default function PagamentoImersao() {
           border: 1px solid rgba(166, 76, 80, 0.1);
         }
 
-        .noticeBox strong {
+        .noticeBox strong,
+        .beforePixNotice strong {
           color: #7f293f;
           font-size: 0.84rem;
           line-height: 1.3;
           font-weight: 950;
         }
 
-        .noticeBox p {
+        .noticeBox p,
+        .beforePixNotice p {
           margin: 0;
           color: #704740;
           font-size: 0.76rem;
@@ -627,7 +760,7 @@ export default function PagamentoImersao() {
         }
 
         .qrFrame img {
-          width: min(230px, 100%);
+          width: min(220px, 100%);
           height: auto;
           display: block;
           border-radius: 12px;
@@ -646,7 +779,7 @@ export default function PagamentoImersao() {
 
         .pixCodeArea textarea {
           width: 100%;
-          min-height: 86px;
+          min-height: 82px;
           resize: vertical;
           border: 1px solid rgba(166, 76, 80, 0.16);
           border-radius: 16px;
@@ -786,18 +919,26 @@ export default function PagamentoImersao() {
             padding: 22px;
           }
 
-          .heroArea,
-          .paymentCard,
-          .modelsArea {
+          .checkoutShell,
+          .contentColumn {
+            gap: 18px;
+          }
+
+          .heroCard,
+          .paymentCard {
             border-radius: 36px;
           }
 
-          .heroArea {
+          .heroCard {
             padding: 28px;
           }
 
           .includedList {
             grid-template-columns: 1fr 1fr;
+          }
+
+          .benefitGrid {
+            grid-template-columns: repeat(3, 1fr);
           }
 
           .paymentCard {
@@ -813,68 +954,94 @@ export default function PagamentoImersao() {
           }
         }
 
-        @media (min-width: 980px) {
+        @media (min-width: 920px) {
+          .heroCard {
+            grid-template-columns: minmax(0, 1fr) 300px;
+            align-items: stretch;
+          }
+
+          .modelCard {
+            grid-template-columns: 1fr;
+            align-content: space-between;
+            min-height: 100%;
+            padding: 18px 18px 0;
+          }
+
+          .modelImageWrap {
+            min-height: 250px;
+          }
+
+          .modelImage {
+            width: 230px;
+            max-height: 295px;
+          }
+
+          .modelText strong {
+            font-size: 1.95rem;
+          }
+        }
+
+        @media (min-width: 1040px) {
           .checkoutPage {
             padding: 32px;
           }
 
           .checkoutShell {
             min-height: calc(100vh - 64px);
-            grid-template-columns: minmax(0, 1fr) 420px;
-            grid-template-areas:
-              "hero payment"
-              "models payment";
-            align-items: stretch;
+            grid-template-columns: minmax(0, 1fr) 430px;
+            align-items: start;
             gap: 24px;
           }
 
-          .heroArea {
-            grid-area: hero;
+          .heroCard {
             padding: 42px;
-          }
-
-          .modelsArea {
-            grid-area: models;
-            min-height: 360px;
-          }
-
-          .modelsImage {
-            width: min(560px, 100%);
-            max-height: 430px;
+            grid-template-columns: minmax(0, 1fr) 320px;
           }
 
           .paymentCard {
-            grid-area: payment;
-            align-self: start;
             position: sticky;
             top: 24px;
             padding: 24px;
           }
 
-          .heroArea h1 {
-            font-size: clamp(4rem, 5vw, 5.3rem);
+          .heroCard h1 {
+            font-size: clamp(4.6rem, 6.2vw, 6.35rem);
+            max-width: 790px;
           }
 
           .heroText {
-            font-size: 1.02rem;
+            max-width: 680px;
+            font-size: 1.05rem;
           }
 
           .includedList {
-            max-width: 690px;
+            max-width: 760px;
+          }
+
+          .benefitGrid article {
+            min-height: 160px;
+            align-content: start;
+            padding: 18px;
           }
         }
 
-        @media (min-width: 1180px) {
+        @media (min-width: 1240px) {
           .checkoutShell {
-            grid-template-columns: minmax(0, 1fr) 430px;
+            grid-template-columns: minmax(0, 1fr) 445px;
           }
 
-          .modelsArea {
-            min-height: 385px;
+          .heroCard {
+            grid-template-columns: minmax(0, 1fr) 360px;
+            min-height: 580px;
           }
 
-          .modelsImage {
-            width: min(620px, 100%);
+          .modelImage {
+            width: 270px;
+            max-height: 335px;
+          }
+
+          .modelText strong {
+            font-size: 2.15rem;
           }
         }
 
@@ -896,6 +1063,7 @@ function CheckoutCard() {
   const [plano, setPlano] = useState("individual");
   const [metodoPagamento, setMetodoPagamento] = useState("pix");
   const [editandoEscolha, setEditandoEscolha] = useState(false);
+  const [pixLiberado, setPixLiberado] = useState(false);
   const [pixCopiado, setPixCopiado] = useState(false);
   const [erro, setErro] = useState("");
   const [enviando, setEnviando] = useState(false);
@@ -905,6 +1073,18 @@ function CheckoutCard() {
   const dadosPix = PIX_PAYMENTS[plano];
   const isPix = metodoPagamento === "pix";
   const isCartao = metodoPagamento === "cartao";
+
+  function alterarPlano(value) {
+    setPlano(value);
+    setPixLiberado(false);
+    setPixCopiado(false);
+  }
+
+  function alterarMetodo(value) {
+    setMetodoPagamento(value);
+    setPixLiberado(false);
+    setPixCopiado(false);
+  }
 
   async function copiarPix() {
     setErro("");
@@ -968,13 +1148,17 @@ function CheckoutCard() {
       return;
     }
 
+    setPixLiberado(true);
+    setEditandoEscolha(false);
     setEnviando(false);
 
-    const pixBox = document.getElementById("pix-pagamento");
+    setTimeout(() => {
+      const pixBox = document.getElementById("pix-pagamento");
 
-    if (pixBox) {
-      pixBox.scrollIntoView({ behavior: "smooth", block: "center" });
-    }
+      if (pixBox) {
+        pixBox.scrollIntoView({ behavior: "smooth", block: "center" });
+      }
+    }, 80);
   }
 
   return (
@@ -983,7 +1167,7 @@ function CheckoutCard() {
         <span>Reserva de vaga</span>
         <h2>Finalize sua inscrição</h2>
         <p>
-          Comece com a opção individual no Pix. Caso queira, altere para casal ou
+          A opção inicial é Individual no Pix. Você pode alterar para casal ou
           cartão antes de confirmar.
         </p>
       </div>
@@ -1058,7 +1242,7 @@ function CheckoutCard() {
                   <select
                     id="plano"
                     value={plano}
-                    onChange={(event) => setPlano(event.target.value)}
+                    onChange={(event) => alterarPlano(event.target.value)}
                   >
                     <option value="individual">Individual — R$ 197</option>
                     <option value="casal">Casal — R$ 297</option>
@@ -1070,7 +1254,7 @@ function CheckoutCard() {
                   <select
                     id="metodoPagamento"
                     value={metodoPagamento}
-                    onChange={(event) => setMetodoPagamento(event.target.value)}
+                    onChange={(event) => alterarMetodo(event.target.value)}
                   >
                     <option value="pix">Pix sem acréscimo</option>
                     <option value="cartao">Cartão com acréscimo</option>
@@ -1089,7 +1273,17 @@ function CheckoutCard() {
           )}
         </div>
 
-        {isPix && (
+        {isPix && !pixLiberado && (
+          <div className="beforePixNotice">
+            <strong>Pix selecionado</strong>
+            <p>
+              Depois de confirmar seus dados, o QR Code e o Pix copia e cola
+              aparecem aqui na tela.
+            </p>
+          </div>
+        )}
+
+        {isPix && pixLiberado && (
           <div className="pixBox" id="pix-pagamento">
             <div className="pixBoxHeader">
               <span>Pagamento via Pix</span>
@@ -1125,7 +1319,8 @@ function CheckoutCard() {
             </div>
 
             <p className="proofNote">
-              Importante: a vaga será confirmada após o envio do comprovante no grupo.
+              Importante: a vaga será confirmada após o envio do comprovante no
+              grupo.
             </p>
           </div>
         )}
@@ -1158,7 +1353,9 @@ function CheckoutCard() {
               : "Ir para pagamento no cartão"
             : enviando
               ? "Confirmando..."
-              : "Confirmar meus dados"}
+              : pixLiberado
+                ? "Atualizar dados do Pix"
+                : "Confirmar meus dados"}
           <span>↗</span>
         </button>
 
