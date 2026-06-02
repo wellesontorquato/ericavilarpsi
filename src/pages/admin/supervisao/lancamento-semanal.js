@@ -6,7 +6,7 @@ import LayoutSupervisao from "@/components/supervisao/LayoutSupervisao";
 import CardIndicador from "@/components/supervisao/CardIndicador";
 import Modal from "@/components/supervisao/Modal";
 import StatusMessage from "@/components/supervisao/StatusMessage";
-import { createResource, deleteResource, listResource } from "@/lib/supervisao/api";
+import { archiveResource, createResource, listResource, restoreResource, updateResource } from "@/lib/supervisao/api";
 import { average, formatDecimal, mesNome, meses, semanas } from "@/lib/supervisao/format";
 
 const currentDate = new Date();
@@ -61,6 +61,17 @@ function competenciaMedia(item) {
   return average(scoreFields.map(([field]) => item[field]));
 }
 
+function isArchived(item) {
+  return item?.arquivado === true || String(item?.statusRegistro || "").toLowerCase() === "arquivado";
+}
+
+function normalizeLaunchForm(item = {}) {
+  return Object.keys(initialForm).reduce((acc, key) => {
+    acc[key] = item[key] === undefined || item[key] === null ? initialForm[key] : String(item[key]);
+    return acc;
+  }, {});
+}
+
 export default function LancamentoSemanalPage() {
   return (
     <AuthGuard>
@@ -71,12 +82,15 @@ export default function LancamentoSemanalPage() {
 
 function LancamentoContent({ user, onLogout }) {
   const [form, setForm] = useState(initialForm);
+  const [editingId, setEditingId] = useState("");
   const [clinicas, setClinicas] = useState([]);
   const [terapeutas, setTerapeutas] = useState([]);
   const [pacientes, setPacientes] = useState([]);
   const [lancamentos, setLancamentos] = useState([]);
   const [saving, setSaving] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
+  const [search, setSearch] = useState("");
+  const [statusFilter, setStatusFilter] = useState("ativos");
   const [message, setMessage] = useState({ type: "", text: "" });
 
   async function loadData() {
@@ -101,27 +115,63 @@ function LancamentoContent({ user, onLogout }) {
     loadData();
   }, [user]);
 
+  const clinicasAtivas = useMemo(() => clinicas.filter((item) => !isArchived(item)), [clinicas]);
+  const terapeutasAtivos = useMemo(() => terapeutas.filter((item) => !isArchived(item)), [terapeutas]);
+  const pacientesAtivos = useMemo(() => pacientes.filter((item) => !isArchived(item)), [pacientes]);
+
   const terapeutasFiltrados = useMemo(() => {
-    if (!form.clinicaId) return terapeutas;
-    return terapeutas.filter((item) => item.clinicaId === form.clinicaId);
-  }, [terapeutas, form.clinicaId]);
+    if (!form.clinicaId) return terapeutasAtivos;
+    return terapeutasAtivos.filter((item) => item.clinicaId === form.clinicaId);
+  }, [terapeutasAtivos, form.clinicaId]);
 
   const pacientesFiltrados = useMemo(() => {
-    return pacientes.filter((item) => {
+    return pacientesAtivos.filter((item) => {
       if (form.clinicaId && item.clinicaId !== form.clinicaId) return false;
       if (form.terapeutaId && item.terapeutaId !== form.terapeutaId) return false;
       return true;
     });
-  }, [pacientes, form.clinicaId, form.terapeutaId]);
+  }, [pacientesAtivos, form.clinicaId, form.terapeutaId]);
+
+  const statusCounts = useMemo(() => {
+    const arquivados = lancamentos.filter(isArchived).length;
+    return {
+      todos: lancamentos.length,
+      ativos: lancamentos.length - arquivados,
+      arquivados,
+    };
+  }, [lancamentos]);
+
+  const lancamentosFiltrados = useMemo(() => {
+    const query = search.trim().toLowerCase();
+
+    return lancamentos.filter((item) => {
+      if (statusFilter === "ativos" && isArchived(item)) return false;
+      if (statusFilter === "arquivados" && !isArchived(item)) return false;
+
+      if (!query) return true;
+
+      return [
+        item.pacienteNome,
+        item.terapeutaNome,
+        item.clinicaNome,
+        item.recomendacao,
+        item.observacao,
+        item.statusPlano,
+      ]
+        .some((value) => String(value || "").toLowerCase().includes(query));
+    });
+  }, [lancamentos, search, statusFilter]);
+
+  const lancamentosAtivos = useMemo(() => lancamentos.filter((item) => !isArchived(item)), [lancamentos]);
 
   const resumo = useMemo(() => {
     return {
-      total: lancamentos.length,
-      terapeutas: new Set(lancamentos.map((item) => item.terapeutaId).filter(Boolean)).size,
-      pacientes: new Set(lancamentos.map((item) => item.pacienteId).filter(Boolean)).size,
-      competencia: average(lancamentos.map(competenciaMedia)),
+      total: lancamentosAtivos.length,
+      terapeutas: new Set(lancamentosAtivos.map((item) => item.terapeutaId).filter(Boolean)).size,
+      pacientes: new Set(lancamentosAtivos.map((item) => item.pacienteId).filter(Boolean)).size,
+      competencia: average(lancamentosAtivos.map(competenciaMedia)),
     };
-  }, [lancamentos]);
+  }, [lancamentosAtivos]);
 
   function setField(name, value) {
     setForm((current) => {
@@ -137,14 +187,23 @@ function LancamentoContent({ user, onLogout }) {
     });
   }
 
-  function openModal() {
+  function openCreateModal() {
+    setEditingId("");
     setForm(initialForm);
+    setMessage({ type: "", text: "" });
+    setModalOpen(true);
+  }
+
+  function openEditModal(item) {
+    setEditingId(item.id);
+    setForm(normalizeLaunchForm(item));
     setMessage({ type: "", text: "" });
     setModalOpen(true);
   }
 
   function closeModal() {
     setModalOpen(false);
+    setEditingId("");
     setForm(initialForm);
   }
 
@@ -179,9 +238,19 @@ function LancamentoContent({ user, onLogout }) {
         payload[name] = form[name] === "" ? "" : Number(form[name]);
       });
 
-      await createResource(user, "lancamentos", payload);
+      if (editingId) {
+        await updateResource(user, "lancamentos", editingId, payload);
+        setMessage({ type: "success", text: "Lançamento semanal atualizado com sucesso." });
+      } else {
+        await createResource(user, "lancamentos", {
+          ...payload,
+          arquivado: false,
+          statusRegistro: "Ativo",
+        });
+        setMessage({ type: "success", text: "Lançamento semanal salvo com sucesso." });
+      }
+
       closeModal();
-      setMessage({ type: "success", text: "Lançamento semanal salvo com sucesso." });
       await loadData();
     } catch (error) {
       console.error(error);
@@ -191,13 +260,24 @@ function LancamentoContent({ user, onLogout }) {
     }
   }
 
-  async function handleDelete(item) {
-    const confirmed = window.confirm("Deseja excluir este lançamento semanal?");
+  async function handleArchive(item) {
+    const confirmed = window.confirm("Deseja arquivar este lançamento semanal? Ele sairá dos dashboards ativos, mas continuará salvo no histórico.");
     if (!confirmed) return;
 
     try {
-      await deleteResource(user, "lancamentos", item.id);
-      setMessage({ type: "success", text: "Lançamento excluído com sucesso." });
+      await archiveResource(user, "lancamentos", item.id);
+      setMessage({ type: "success", text: "Lançamento arquivado com sucesso." });
+      await loadData();
+    } catch (error) {
+      console.error(error);
+      setMessage({ type: "error", text: error.message });
+    }
+  }
+
+  async function handleRestore(item) {
+    try {
+      await restoreResource(user, "lancamentos", item.id);
+      setMessage({ type: "success", text: "Lançamento restaurado com sucesso." });
       await loadData();
     } catch (error) {
       console.error(error);
@@ -210,60 +290,99 @@ function LancamentoContent({ user, onLogout }) {
       <Head><title>Lançamento semanal | Supervisão TCC</title></Head>
       <LayoutSupervisao
         title="Lançamentos semanais"
-        description="Registre supervisões em um modal único, mantendo a tela principal limpa e prática."
+        description="Registre, edite e arquive supervisões semanais sem perder o histórico clínico."
         user={user}
         onLogout={onLogout}
-        actions={<button className="supervisao-primary-button" type="button" onClick={openModal}>+ Novo lançamento</button>}
+        actions={<button className="supervisao-primary-button" type="button" onClick={openCreateModal}>+ Novo lançamento</button>}
       >
         <StatusMessage message={message} />
 
         <section className="supervisao-indicator-grid launch-summary">
-          <CardIndicador label="Lançamentos" value={resumo.total} detail="registros salvos" />
-          <CardIndicador label="Terapeutas" value={resumo.terapeutas} detail="com lançamento" />
+          <CardIndicador label="Lançamentos ativos" value={resumo.total} detail="registros em dashboard" />
+          <CardIndicador label="Terapeutas" value={resumo.terapeutas} detail="com lançamento ativo" />
           <CardIndicador label="Pacientes/Casos" value={resumo.pacientes} detail="acompanhados" />
           <CardIndicador label="Média competência" value={formatDecimal(resumo.competencia)} detail="escala de 1 a 5" />
         </section>
 
+        <section className="supervisao-system-toolbar compact">
+          <div>
+            <span className="supervisao-kicker">Histórico</span>
+            <h2>{lancamentosFiltrados.length} lançamento(s)</h2>
+            <p>Use a busca e os filtros para revisar registros antigos ou restaurar itens arquivados.</p>
+          </div>
+          <div className="supervisao-toolbar-actions">
+            <label className="supervisao-search-box">
+              <span>Buscar</span>
+              <input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Paciente, terapeuta, clínica..." />
+            </label>
+          </div>
+        </section>
+
+        <div className="supervisao-status-tabs" aria-label="Filtro dos lançamentos">
+          <button type="button" className={statusFilter === "ativos" ? "active" : ""} onClick={() => setStatusFilter("ativos")}>
+            Ativos <span>{statusCounts.ativos}</span>
+          </button>
+          <button type="button" className={statusFilter === "arquivados" ? "active" : ""} onClick={() => setStatusFilter("arquivados")}>
+            Arquivados <span>{statusCounts.arquivados}</span>
+          </button>
+          <button type="button" className={statusFilter === "todos" ? "active" : ""} onClick={() => setStatusFilter("todos")}>
+            Todos <span>{statusCounts.todos}</span>
+          </button>
+        </div>
+
         <section className="supervisao-panel supervisao-list-panel">
           <div className="supervisao-section-title">
             <h2>Histórico de lançamentos</h2>
-            <span>{lancamentos.length} salvo(s)</span>
+            <span>{lancamentosFiltrados.length} salvo(s)</span>
           </div>
 
           <div className="supervisao-record-grid lancamentos">
-            {lancamentos.slice(0, 16).map((item) => (
-              <article className="supervisao-record-card launch" key={item.id}>
-                <header>
-                  <strong>{item.pacienteNome || "Paciente/caso"}</strong>
-                  <span>{mesNome(item.mes)} · S{item.semana}</span>
-                </header>
-                <dl>
-                  <div>
-                    <dt>Terapeuta</dt>
-                    <dd>{item.terapeutaNome || "-"}</dd>
-                  </div>
-                  <div>
-                    <dt>Clínica</dt>
-                    <dd>{item.clinicaNome || "-"}</dd>
-                  </div>
-                  <div>
-                    <dt>Competência média</dt>
-                    <dd>{formatDecimal(competenciaMedia(item))}</dd>
-                  </div>
-                </dl>
-                <p>{item.recomendacao || item.observacao || "Sem observação."}</p>
-                <footer>
-                  <button type="button" onClick={() => handleDelete(item)}>Excluir</button>
-                </footer>
-              </article>
-            ))}
-            {lancamentos.length === 0 && <p className="supervisao-empty">Nenhum lançamento semanal salvo ainda.</p>}
+            {lancamentosFiltrados.slice(0, 24).map((item) => {
+              const archived = isArchived(item);
+
+              return (
+                <article className={`supervisao-record-card launch ${archived ? "archived" : ""}`} key={item.id}>
+                  <header>
+                    <strong>{item.pacienteNome || "Paciente/caso"}</strong>
+                    <span>{archived ? "Arquivado" : `${mesNome(item.mes)} · S${item.semana}`}</span>
+                  </header>
+                  <dl>
+                    <div>
+                      <dt>Período</dt>
+                      <dd>{item.ano} · {mesNome(item.mes)} · Semana {item.semana}</dd>
+                    </div>
+                    <div>
+                      <dt>Terapeuta</dt>
+                      <dd>{item.terapeutaNome || "-"}</dd>
+                    </div>
+                    <div>
+                      <dt>Clínica</dt>
+                      <dd>{item.clinicaNome || "-"}</dd>
+                    </div>
+                    <div>
+                      <dt>Competência média</dt>
+                      <dd>{formatDecimal(competenciaMedia(item))}</dd>
+                    </div>
+                  </dl>
+                  <p>{item.recomendacao || item.observacao || "Sem observação."}</p>
+                  <footer>
+                    <button type="button" onClick={() => openEditModal(item)}>Editar</button>
+                    {archived ? (
+                      <button type="button" onClick={() => handleRestore(item)}>Restaurar</button>
+                    ) : (
+                      <button type="button" className="danger" onClick={() => handleArchive(item)}>Arquivar</button>
+                    )}
+                  </footer>
+                </article>
+              );
+            })}
+            {lancamentosFiltrados.length === 0 && <p className="supervisao-empty">Nenhum lançamento semanal encontrado para o filtro selecionado.</p>}
           </div>
         </section>
 
         <Modal
           open={modalOpen}
-          title="Novo lançamento semanal"
+          title={editingId ? "Editar lançamento semanal" : "Novo lançamento semanal"}
           description="Preencha a identificação, notas clínicas, evolução do paciente e plano de ação em uma única janela."
           onClose={closeModal}
           size="xl"
@@ -299,7 +418,7 @@ function LancamentoContent({ user, onLogout }) {
               <span>Clínica *</span>
               <select value={form.clinicaId} onChange={(event) => setField("clinicaId", event.target.value)} required>
                 <option value="">Selecione</option>
-                {clinicas.map((clinica) => <option key={clinica.id} value={clinica.id}>{clinica.nome}</option>)}
+                {clinicasAtivas.map((clinica) => <option key={clinica.id} value={clinica.id}>{clinica.nome}</option>)}
               </select>
             </label>
 
@@ -400,7 +519,7 @@ function LancamentoContent({ user, onLogout }) {
 
             <div className="supervisao-form-actions full sticky-actions">
               <button className="supervisao-primary-button" type="submit" disabled={saving}>
-                {saving ? "Salvando..." : "Salvar lançamento semanal"}
+                {saving ? "Salvando..." : editingId ? "Atualizar lançamento" : "Salvar lançamento semanal"}
               </button>
               <button className="supervisao-secondary-button" type="button" onClick={closeModal}>
                 Cancelar

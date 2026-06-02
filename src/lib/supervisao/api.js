@@ -10,6 +10,14 @@ export async function supervisaoRequest(user, resource, options = {}) {
     params.set("id", options.id);
   }
 
+  if (options.params) {
+    Object.entries(options.params).forEach(([key, value]) => {
+      if (value !== undefined && value !== null && value !== "") {
+        params.set(key, String(value));
+      }
+    });
+  }
+
   const response = await fetch(`${BASE_URL}?${params.toString()}`, {
     method: options.method || "GET",
     headers: {
@@ -28,8 +36,8 @@ export async function supervisaoRequest(user, resource, options = {}) {
   return payload;
 }
 
-export async function listResource(user, resource) {
-  const payload = await supervisaoRequest(user, resource);
+export async function listResource(user, resource, params) {
+  const payload = await supervisaoRequest(user, resource, { params });
   return payload.items || [];
 }
 
@@ -50,6 +58,22 @@ export async function updateResource(user, resource, id, data) {
   });
 
   return payload.item;
+}
+
+export async function archiveResource(user, resource, id) {
+  return updateResource(user, resource, id, {
+    arquivado: true,
+    statusRegistro: "Arquivado",
+    arquivadoEm: new Date().toISOString(),
+  });
+}
+
+export async function restoreResource(user, resource, id) {
+  return updateResource(user, resource, id, {
+    arquivado: false,
+    statusRegistro: "Ativo",
+    restauradoEm: new Date().toISOString(),
+  });
 }
 
 export async function deleteResource(user, resource, id) {

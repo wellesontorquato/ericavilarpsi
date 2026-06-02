@@ -27,12 +27,16 @@ function PacientesContent({ user, onLogout }) {
   }, [user]);
 
   const clinicaOptions = useMemo(
-    () => clinicas.map((clinica) => ({ value: clinica.id, label: clinica.nome })),
+    () => clinicas
+      .filter((clinica) => clinica.arquivado !== true && clinica.statusRegistro !== "Arquivado")
+      .map((clinica) => ({ value: clinica.id, label: clinica.nome })),
     [clinicas]
   );
 
   const terapeutaOptions = useMemo(
-    () => terapeutas.map((terapeuta) => ({ value: terapeuta.id, label: terapeuta.nome })),
+    () => terapeutas
+      .filter((terapeuta) => terapeuta.arquivado !== true && terapeuta.statusRegistro !== "Arquivado")
+      .map((terapeuta) => ({ value: terapeuta.id, label: terapeuta.nome })),
     [terapeutas]
   );
 

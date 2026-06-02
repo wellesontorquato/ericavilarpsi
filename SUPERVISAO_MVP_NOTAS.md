@@ -47,3 +47,17 @@ Coleções usadas no Firestore:
 ## Validação local feita
 
 Foi executado ESLint nos arquivos novos/alterados do módulo de supervisão. O `next build` iniciou normalmente, mas ficou parado em `Creating an optimized production build` até o limite de tempo do ambiente, comportamento já observado na versão anterior do projeto.
+
+## Fase 2 - Bloco 1: edição e arquivamento
+
+Implementações adicionadas nesta versão:
+
+- Cadastros de clínicas, terapeutas e pacientes agora têm filtro por status: Ativos, Arquivados e Todos.
+- Registros podem ser editados pelo mesmo modal de cadastro.
+- Registros agora são arquivados/restaurados em vez de apagados definitivamente.
+- Lançamentos semanais agora podem ser editados.
+- Lançamentos semanais também podem ser arquivados/restaurados.
+- Itens arquivados ficam fora dos dashboards ativos.
+- A API passou a gravar `statusRegistro`, `arquivado`, `arquivadoEm` e `restauradoEm` quando aplicável.
+
+Observação: o arquivamento é preferível à exclusão definitiva porque preserva o histórico clínico e evita perda acidental de informação.

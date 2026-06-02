@@ -21,7 +21,9 @@ function TerapeutasContent({ user, onLogout }) {
   }, [user]);
 
   const clinicaOptions = useMemo(
-    () => clinicas.map((clinica) => ({ value: clinica.id, label: clinica.nome })),
+    () => clinicas
+      .filter((clinica) => clinica.arquivado !== true && clinica.statusRegistro !== "Arquivado")
+      .map((clinica) => ({ value: clinica.id, label: clinica.nome })),
     [clinicas]
   );
 

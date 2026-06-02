@@ -7743,3 +7743,91 @@
     border-left: 0;
   }
 }
+/* =========================================================
+   SUPERVISÃO - FASE 2 / CRUD COM ARQUIVAMENTO
+   ========================================================= */
+
+.supervisao-system-toolbar.compact {
+  margin-top: 18px;
+}
+
+.supervisao-status-tabs {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 16px 0 18px;
+  padding: 7px;
+  border: 1px solid rgba(95, 56, 37, 0.1);
+  border-radius: 999px;
+  background: rgba(255, 250, 244, 0.72);
+  box-shadow: 0 12px 34px rgba(58, 37, 25, 0.06);
+}
+
+.supervisao-status-tabs button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: 0;
+  border-radius: 999px;
+  padding: 10px 14px;
+  background: transparent;
+  color: var(--sup-muted);
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.88rem;
+  font-weight: 900;
+}
+
+.supervisao-status-tabs button span {
+  display: inline-flex;
+  min-width: 24px;
+  height: 24px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  background: rgba(159, 105, 71, 0.12);
+  color: var(--sup-primary-dark);
+  font-size: 0.76rem;
+}
+
+.supervisao-status-tabs button.active {
+  background: var(--sup-primary);
+  color: #fffaf4;
+  box-shadow: 0 10px 24px rgba(159, 105, 71, 0.18);
+}
+
+.supervisao-status-tabs button.active span {
+  background: rgba(255, 250, 244, 0.22);
+  color: #fffaf4;
+}
+
+.supervisao-record-card.archived {
+  opacity: 0.72;
+  background: repeating-linear-gradient(
+    -45deg,
+    rgba(255, 255, 255, 0.62),
+    rgba(255, 255, 255, 0.62) 10px,
+    rgba(239, 229, 219, 0.62) 10px,
+    rgba(239, 229, 219, 0.62) 20px
+  );
+}
+
+.supervisao-record-card.archived header span {
+  background: rgba(99, 91, 85, 0.14);
+  color: #6f6761;
+}
+
+.supervisao-record-card footer button.danger {
+  background: rgba(161, 80, 66, 0.12);
+  color: #9a453a;
+}
+
+.supervisao-record-card footer button.danger:hover {
+  background: rgba(161, 80, 66, 0.18);
+}
+
+@media (max-width: 680px) {
+  .supervisao-status-tabs {
+    border-radius: 24px;
+  }
+}

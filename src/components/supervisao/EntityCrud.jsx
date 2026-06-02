@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/set-state-in-effect, react-hooks/exhaustive-deps */
 import { useEffect, useMemo, useState } from "react";
-import { createResource, deleteResource, listResource, updateResource } from "@/lib/supervisao/api";
+import { archiveResource, createResource, listResource, restoreResource, updateResource } from "@/lib/supervisao/api";
 import Modal from "./Modal";
 import StatusMessage from "./StatusMessage";
 
@@ -17,6 +17,15 @@ function getPrimaryText(item, columns) {
   return firstColumn.render ? firstColumn.render(item) : item[firstColumn.name] || "Registro";
 }
 
+function isArchived(item) {
+  return item?.arquivado === true || String(item?.statusRegistro || "").toLowerCase() === "arquivado";
+}
+
+function statusLabel(item) {
+  if (isArchived(item)) return "Arquivado";
+  return item.status || item.statusCaso || item.nivelAtencao || "Ativo";
+}
+
 export default function EntityCrud({ user, resource, fields, columns, emptyText, afterLoad, entityLabel = "registro" }) {
   const initialState = useMemo(() => buildInitialState(fields), [fields]);
   const [items, setItems] = useState([]);
@@ -26,6 +35,7 @@ export default function EntityCrud({ user, resource, fields, columns, emptyText,
   const [saving, setSaving] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const [search, setSearch] = useState("");
+  const [statusFilter, setStatusFilter] = useState("ativos");
   const [message, setMessage] = useState({ type: "", text: "" });
 
   async function loadItems() {
@@ -46,17 +56,30 @@ export default function EntityCrud({ user, resource, fields, columns, emptyText,
     loadItems();
   }, [user, resource]);
 
+  const statusCounts = useMemo(() => {
+    const arquivados = items.filter(isArchived).length;
+    return {
+      todos: items.length,
+      ativos: items.length - arquivados,
+      arquivados,
+    };
+  }, [items]);
+
   const filteredItems = useMemo(() => {
     const query = search.trim().toLowerCase();
-    if (!query) return items;
 
     return items.filter((item) => {
+      if (statusFilter === "ativos" && isArchived(item)) return false;
+      if (statusFilter === "arquivados" && !isArchived(item)) return false;
+
+      if (!query) return true;
+
       return columns.some((column) => {
         const value = column.render ? column.render(item) : item[column.name];
         return String(value || "").toLowerCase().includes(query);
       });
     });
-  }, [items, columns, search]);
+  }, [items, columns, search, statusFilter]);
 
   function setField(name, value) {
     setForm((current) => ({ ...current, [name]: value }));
@@ -104,7 +127,11 @@ export default function EntityCrud({ user, resource, fields, columns, emptyText,
         await updateResource(user, resource, editingId, form);
         setMessage({ type: "success", text: "Registro atualizado com sucesso." });
       } else {
-        await createResource(user, resource, form);
+        await createResource(user, resource, {
+          ...form,
+          arquivado: false,
+          statusRegistro: "Ativo",
+        });
         setMessage({ type: "success", text: "Registro salvo com sucesso." });
       }
 
@@ -118,13 +145,24 @@ export default function EntityCrud({ user, resource, fields, columns, emptyText,
     }
   }
 
-  async function handleDelete(item) {
-    const confirmed = window.confirm("Deseja realmente excluir este registro?");
+  async function handleArchive(item) {
+    const confirmed = window.confirm(`Deseja arquivar este ${entityLabel}? Ele sairá dos dashboards, mas continuará salvo para consulta.`);
     if (!confirmed) return;
 
     try {
-      await deleteResource(user, resource, item.id);
-      setMessage({ type: "success", text: "Registro excluído com sucesso." });
+      await archiveResource(user, resource, item.id);
+      setMessage({ type: "success", text: "Registro arquivado com sucesso." });
+      await loadItems();
+    } catch (error) {
+      console.error(error);
+      setMessage({ type: "error", text: error.message });
+    }
+  }
+
+  async function handleRestore(item) {
+    try {
+      await restoreResource(user, resource, item.id);
+      setMessage({ type: "success", text: "Registro restaurado com sucesso." });
       await loadItems();
     } catch (error) {
       console.error(error);
@@ -139,8 +177,8 @@ export default function EntityCrud({ user, resource, fields, columns, emptyText,
       <section className="supervisao-system-toolbar">
         <div>
           <span className="supervisao-kicker">Gestão</span>
-          <h2>{items.length} {items.length === 1 ? entityLabel : `${entityLabel}s`}</h2>
-          <p>Cadastre, edite e acompanhe os registros em uma tela de sistema.</p>
+          <h2>{statusCounts.ativos} {statusCounts.ativos === 1 ? entityLabel : `${entityLabel}s`} ativo(s)</h2>
+          <p>Cadastre, edite e arquive registros sem apagar o histórico da supervisão.</p>
         </div>
         <div className="supervisao-toolbar-actions">
           <label className="supervisao-search-box">
@@ -152,6 +190,18 @@ export default function EntityCrud({ user, resource, fields, columns, emptyText,
           </button>
         </div>
       </section>
+
+      <div className="supervisao-status-tabs" aria-label="Filtro de status dos registros">
+        <button type="button" className={statusFilter === "ativos" ? "active" : ""} onClick={() => setStatusFilter("ativos")}>
+          Ativos <span>{statusCounts.ativos}</span>
+        </button>
+        <button type="button" className={statusFilter === "arquivados" ? "active" : ""} onClick={() => setStatusFilter("arquivados")}>
+          Arquivados <span>{statusCounts.arquivados}</span>
+        </button>
+        <button type="button" className={statusFilter === "todos" ? "active" : ""} onClick={() => setStatusFilter("todos")}>
+          Todos <span>{statusCounts.todos}</span>
+        </button>
+      </div>
 
       <section className="supervisao-panel supervisao-list-panel">
         <div className="supervisao-section-title">
@@ -165,28 +215,35 @@ export default function EntityCrud({ user, resource, fields, columns, emptyText,
           <p className="supervisao-empty">{search ? "Nenhum registro encontrado com esse filtro." : emptyText || "Nenhum registro encontrado."}</p>
         ) : (
           <div className="supervisao-record-grid">
-            {filteredItems.map((item) => (
-              <article className="supervisao-record-card" key={item.id}>
-                <header>
-                  <strong>{getPrimaryText(item, columns)}</strong>
-                  {(item.status || item.statusCaso || item.nivelAtencao) && (
-                    <span>{item.status || item.statusCaso || item.nivelAtencao}</span>
-                  )}
-                </header>
-                <dl>
-                  {columns.slice(1, 4).map((column) => (
-                    <div key={column.name}>
-                      <dt>{column.label}</dt>
-                      <dd>{column.render ? column.render(item) : item[column.name] || "-"}</dd>
-                    </div>
-                  ))}
-                </dl>
-                <footer>
-                  <button type="button" onClick={() => handleEdit(item)}>Editar</button>
-                  <button type="button" onClick={() => handleDelete(item)}>Excluir</button>
-                </footer>
-              </article>
-            ))}
+            {filteredItems.map((item) => {
+              const archived = isArchived(item);
+
+              return (
+                <article className={`supervisao-record-card ${archived ? "archived" : ""}`} key={item.id}>
+                  <header>
+                    <strong>{getPrimaryText(item, columns)}</strong>
+                    <span>{statusLabel(item)}</span>
+                  </header>
+                  <dl>
+                    {columns.slice(1, 4).map((column) => (
+                      <div key={column.name}>
+                        <dt>{column.label}</dt>
+                        <dd>{column.render ? column.render(item) : item[column.name] || "-"}</dd>
+                      </div>
+                    ))}
+                  </dl>
+                  {archived && <p>Registro arquivado. Ele não entra nos dashboards ativos, mas pode ser restaurado.</p>}
+                  <footer>
+                    <button type="button" onClick={() => handleEdit(item)}>Editar</button>
+                    {archived ? (
+                      <button type="button" onClick={() => handleRestore(item)}>Restaurar</button>
+                    ) : (
+                      <button type="button" className="danger" onClick={() => handleArchive(item)}>Arquivar</button>
+                    )}
+                  </footer>
+                </article>
+              );
+            })}
           </div>
         )}
       </section>

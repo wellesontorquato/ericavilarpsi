@@ -107,6 +107,10 @@ function serializeDoc(doc) {
   };
 }
 
+function isArchived(item) {
+  return item?.arquivado === true || String(item?.statusRegistro || "").toLowerCase() === "arquivado";
+}
+
 async function listCollection(db, collectionName) {
   const snapshot = await db.collection(collectionName).get();
   return snapshot.docs
@@ -142,12 +146,17 @@ function calcEvolucao(lancamento) {
 }
 
 async function dashboard(db) {
-  const [clinicas, terapeutas, pacientes, lancamentos] = await Promise.all([
+  const [todasClinicas, todosTerapeutas, todosPacientes, todosLancamentos] = await Promise.all([
     listCollection(db, RESOURCE_COLLECTIONS.clinicas),
     listCollection(db, RESOURCE_COLLECTIONS.terapeutas),
     listCollection(db, RESOURCE_COLLECTIONS.pacientes),
     listCollection(db, RESOURCE_COLLECTIONS.lancamentos),
   ]);
+
+  const clinicas = todasClinicas.filter((item) => !isArchived(item));
+  const terapeutas = todosTerapeutas.filter((item) => !isArchived(item));
+  const pacientes = todosPacientes.filter((item) => !isArchived(item));
+  const lancamentos = todosLancamentos.filter((item) => !isArchived(item));
 
   const mediaCompetencias = average(lancamentos.map(calcCompetencias));
   const mediaEvolucao = average(lancamentos.map(calcEvolucao));
@@ -213,6 +222,8 @@ exports.handler = async function handler(event, context) {
       const now = admin.firestore.FieldValue.serverTimestamp();
       const data = {
         ...body,
+        arquivado: body.arquivado === true,
+        statusRegistro: body.statusRegistro || "Ativo",
         criadoEm: now,
         atualizadoEm: now,
         criadoPor: user.email || user.sub || "usuario-netlify",
