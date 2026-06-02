@@ -99,7 +99,8 @@ function PacientesContent({ user, onLogout }) {
           resource="pacientes"
           fields={fields}
           columns={columns}
-          emptyText="Cadastre o primeiro paciente/caso para lançar supervisões."
+          entityLabel="paciente"
+              emptyText="Cadastre o primeiro paciente/caso para lançar supervisões."
         />
       </LayoutSupervisao>
     </>

@@ -43,6 +43,7 @@ export default function ClinicasPage() {
               resource="clinicas"
               fields={fields}
               columns={columns}
+              entityLabel="clínica"
               emptyText="Cadastre a primeira clínica para começar."
             />
           </LayoutSupervisao>

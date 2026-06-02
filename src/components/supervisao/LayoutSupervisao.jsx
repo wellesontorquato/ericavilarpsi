@@ -2,11 +2,11 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 
 const navItems = [
-  { href: "/admin/supervisao", label: "Dashboard" },
-  { href: "/admin/supervisao/clinicas", label: "Clínicas" },
-  { href: "/admin/supervisao/terapeutas", label: "Terapeutas" },
-  { href: "/admin/supervisao/pacientes", label: "Pacientes" },
-  { href: "/admin/supervisao/lancamento-semanal", label: "Lançamento semanal" },
+  { href: "/admin/supervisao", label: "Dashboard", icon: "▦" },
+  { href: "/admin/supervisao/clinicas", label: "Clínicas", icon: "⌂" },
+  { href: "/admin/supervisao/terapeutas", label: "Terapeutas", icon: "◌" },
+  { href: "/admin/supervisao/pacientes", label: "Pacientes", icon: "✦" },
+  { href: "/admin/supervisao/lancamento-semanal", label: "Lançamentos", icon: "+" },
 ];
 
 export default function LayoutSupervisao({ title, description, user, onLogout, children, actions }) {
@@ -15,9 +15,12 @@ export default function LayoutSupervisao({ title, description, user, onLogout, c
   return (
     <main className="supervisao-shell">
       <aside className="supervisao-sidebar">
-        <div>
-          <span className="supervisao-kicker">Erica Vilar</span>
-          <h2>Supervisão TCC</h2>
+        <div className="supervisao-brand-card">
+          <span className="supervisao-brand-mark">EV</span>
+          <div>
+            <span className="supervisao-kicker">Área interna</span>
+            <h2>Supervisão Clínica</h2>
+          </div>
         </div>
 
         <nav>
@@ -27,6 +30,7 @@ export default function LayoutSupervisao({ title, description, user, onLogout, c
               href={item.href}
               className={router.pathname === item.href ? "active" : ""}
             >
+              <span>{item.icon}</span>
               {item.label}
             </Link>
           ))}
@@ -41,7 +45,7 @@ export default function LayoutSupervisao({ title, description, user, onLogout, c
       <section className="supervisao-content">
         <header className="supervisao-page-header">
           <div>
-            <span className="supervisao-kicker">Área interna</span>
+            <span className="supervisao-kicker">Sistema de acompanhamento</span>
             <h1>{title}</h1>
             {description && <p>{description}</p>}
           </div>

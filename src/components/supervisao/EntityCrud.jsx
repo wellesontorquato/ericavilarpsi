@@ -1,6 +1,7 @@
 /* eslint-disable react-hooks/set-state-in-effect, react-hooks/exhaustive-deps */
 import { useEffect, useMemo, useState } from "react";
 import { createResource, deleteResource, listResource, updateResource } from "@/lib/supervisao/api";
+import Modal from "./Modal";
 import StatusMessage from "./StatusMessage";
 
 function buildInitialState(fields) {
@@ -10,13 +11,21 @@ function buildInitialState(fields) {
   }, {});
 }
 
-export default function EntityCrud({ user, resource, fields, columns, emptyText, afterLoad }) {
+function getPrimaryText(item, columns) {
+  const firstColumn = columns?.[0];
+  if (!firstColumn) return item.nome || "Registro";
+  return firstColumn.render ? firstColumn.render(item) : item[firstColumn.name] || "Registro";
+}
+
+export default function EntityCrud({ user, resource, fields, columns, emptyText, afterLoad, entityLabel = "registro" }) {
   const initialState = useMemo(() => buildInitialState(fields), [fields]);
   const [items, setItems] = useState([]);
   const [form, setForm] = useState(initialState);
   const [editingId, setEditingId] = useState("");
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [search, setSearch] = useState("");
   const [message, setMessage] = useState({ type: "", text: "" });
 
   async function loadItems() {
@@ -37,6 +46,18 @@ export default function EntityCrud({ user, resource, fields, columns, emptyText,
     loadItems();
   }, [user, resource]);
 
+  const filteredItems = useMemo(() => {
+    const query = search.trim().toLowerCase();
+    if (!query) return items;
+
+    return items.filter((item) => {
+      return columns.some((column) => {
+        const value = column.render ? column.render(item) : item[column.name];
+        return String(value || "").toLowerCase().includes(query);
+      });
+    });
+  }, [items, columns, search]);
+
   function setField(name, value) {
     setForm((current) => ({ ...current, [name]: value }));
   }
@@ -46,6 +67,17 @@ export default function EntityCrud({ user, resource, fields, columns, emptyText,
     setEditingId("");
   }
 
+  function openCreateModal() {
+    resetForm();
+    setMessage({ type: "", text: "" });
+    setModalOpen(true);
+  }
+
+  function closeModal() {
+    setModalOpen(false);
+    resetForm();
+  }
+
   function handleEdit(item) {
     const nextForm = { ...initialState };
     fields.forEach((field) => {
@@ -53,8 +85,8 @@ export default function EntityCrud({ user, resource, fields, columns, emptyText,
     });
     setForm(nextForm);
     setEditingId(item.id);
-    setMessage({ type: "info", text: "Editando registro selecionado." });
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    setMessage({ type: "", text: "" });
+    setModalOpen(true);
   }
 
   async function handleSubmit(event) {
@@ -76,7 +108,7 @@ export default function EntityCrud({ user, resource, fields, columns, emptyText,
         setMessage({ type: "success", text: "Registro salvo com sucesso." });
       }
 
-      resetForm();
+      closeModal();
       await loadItems();
     } catch (error) {
       console.error(error);
@@ -101,12 +133,73 @@ export default function EntityCrud({ user, resource, fields, columns, emptyText,
   }
 
   return (
-    <div className="supervisao-grid-two">
-      <section className="supervisao-panel">
-        <h2>{editingId ? "Editar registro" : "Novo registro"}</h2>
-        <StatusMessage message={message} />
+    <>
+      <StatusMessage message={message} />
 
-        <form className="supervisao-form" onSubmit={handleSubmit}>
+      <section className="supervisao-system-toolbar">
+        <div>
+          <span className="supervisao-kicker">Gestão</span>
+          <h2>{items.length} {items.length === 1 ? entityLabel : `${entityLabel}s`}</h2>
+          <p>Cadastre, edite e acompanhe os registros em uma tela de sistema.</p>
+        </div>
+        <div className="supervisao-toolbar-actions">
+          <label className="supervisao-search-box">
+            <span>Buscar</span>
+            <input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Digite para filtrar..." />
+          </label>
+          <button className="supervisao-primary-button" type="button" onClick={openCreateModal}>
+            + Novo {entityLabel}
+          </button>
+        </div>
+      </section>
+
+      <section className="supervisao-panel supervisao-list-panel">
+        <div className="supervisao-section-title">
+          <h2>Registros</h2>
+          <span>{filteredItems.length} encontrado(s)</span>
+        </div>
+
+        {loading ? (
+          <p>Carregando...</p>
+        ) : filteredItems.length === 0 ? (
+          <p className="supervisao-empty">{search ? "Nenhum registro encontrado com esse filtro." : emptyText || "Nenhum registro encontrado."}</p>
+        ) : (
+          <div className="supervisao-record-grid">
+            {filteredItems.map((item) => (
+              <article className="supervisao-record-card" key={item.id}>
+                <header>
+                  <strong>{getPrimaryText(item, columns)}</strong>
+                  {(item.status || item.statusCaso || item.nivelAtencao) && (
+                    <span>{item.status || item.statusCaso || item.nivelAtencao}</span>
+                  )}
+                </header>
+                <dl>
+                  {columns.slice(1, 4).map((column) => (
+                    <div key={column.name}>
+                      <dt>{column.label}</dt>
+                      <dd>{column.render ? column.render(item) : item[column.name] || "-"}</dd>
+                    </div>
+                  ))}
+                </dl>
+                <footer>
+                  <button type="button" onClick={() => handleEdit(item)}>Editar</button>
+                  <button type="button" onClick={() => handleDelete(item)}>Excluir</button>
+                </footer>
+              </article>
+            ))}
+          </div>
+        )}
+      </section>
+
+      <Modal
+        open={modalOpen}
+        title={editingId ? `Editar ${entityLabel}` : `Novo ${entityLabel}`}
+        description="Preencha os campos abaixo e salve. O registro será enviado para a base do sistema."
+        onClose={closeModal}
+        size="large"
+      >
+        <StatusMessage message={message} />
+        <form className="supervisao-form supervisao-modal-form" onSubmit={handleSubmit}>
           {fields.map((field) => (
             <label key={field.name} className={field.type === "textarea" ? "full" : ""}>
               <span>{field.label}{field.required ? " *" : ""}</span>
@@ -144,55 +237,14 @@ export default function EntityCrud({ user, resource, fields, columns, emptyText,
 
           <div className="supervisao-form-actions full">
             <button className="supervisao-primary-button" type="submit" disabled={saving}>
-              {saving ? "Salvando..." : editingId ? "Atualizar" : "Salvar"}
+              {saving ? "Salvando..." : editingId ? "Atualizar registro" : "Salvar registro"}
             </button>
-            {editingId && (
-              <button className="supervisao-secondary-button" type="button" onClick={resetForm}>
-                Cancelar edição
-              </button>
-            )}
+            <button className="supervisao-secondary-button" type="button" onClick={closeModal}>
+              Cancelar
+            </button>
           </div>
         </form>
-      </section>
-
-      <section className="supervisao-panel">
-        <div className="supervisao-section-title">
-          <h2>Registros</h2>
-          <span>{items.length} encontrado(s)</span>
-        </div>
-
-        {loading ? (
-          <p>Carregando...</p>
-        ) : items.length === 0 ? (
-          <p className="supervisao-empty">{emptyText || "Nenhum registro encontrado."}</p>
-        ) : (
-          <div className="supervisao-table-wrap">
-            <table className="supervisao-table">
-              <thead>
-                <tr>
-                  {columns.map((column) => <th key={column.name}>{column.label}</th>)}
-                  <th>Ações</th>
-                </tr>
-              </thead>
-              <tbody>
-                {items.map((item) => (
-                  <tr key={item.id}>
-                    {columns.map((column) => (
-                      <td key={column.name}>{column.render ? column.render(item) : item[column.name] || "-"}</td>
-                    ))}
-                    <td>
-                      <div className="supervisao-row-actions">
-                        <button type="button" onClick={() => handleEdit(item)}>Editar</button>
-                        <button type="button" onClick={() => handleDelete(item)}>Excluir</button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </section>
-    </div>
+      </Modal>
+    </>
   );
 }

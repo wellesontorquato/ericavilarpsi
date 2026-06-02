@@ -1,69 +1,49 @@
-# MVP - Supervisão clínica em TCC
+# Supervisão Clínica TCC - Fase 1.1 visual
 
-Este pacote adiciona a Fase 1 do módulo interno de supervisão clínica ao site Next.js.
+Esta versão mantém a Fase 1 criada anteriormente e melhora a experiência para ficar mais com cara de sistema interno.
 
-## Rotas criadas
+## Principais mudanças
 
-- `/admin/supervisao` — Dashboard inicial
-- `/admin/supervisao/clinicas` — Cadastro de clínicas
-- `/admin/supervisao/terapeutas` — Cadastro de terapeutas
-- `/admin/supervisao/pacientes` — Cadastro de pacientes/casos
-- `/admin/supervisao/lancamento-semanal` — Lançamento semanal de supervisão
+- Dashboard com visual de apresentação, cards executivos e gráficos sem dependência externa.
+- Gráficos adicionados:
+  - evolução média dos pacientes em anel;
+  - radar de competências clínicas;
+  - tendência por mês ou por semana;
+  - lançamentos por clínica;
+  - desempenho por terapeuta;
+  - distribuição dos status dos planos.
+- Cadastros de clínicas, terapeutas e pacientes agora abrem em modal.
+- Lançamento semanal agora abre em modal grande, com a tela principal mostrando apenas resumo e histórico.
+- Layout interno remodelado para parecer mais um sistema, com menu lateral escuro, cards, busca e telas mais limpas.
 
-## Backend criado
+## Rotas
+
+- `/admin/supervisao`
+- `/admin/supervisao/clinicas`
+- `/admin/supervisao/terapeutas`
+- `/admin/supervisao/pacientes`
+- `/admin/supervisao/lancamento-semanal`
+
+## Backend
+
+Permanece usando a Netlify Function:
 
 - `netlify/functions/supervisao-api.js`
 
-A função recebe chamadas do frontend em:
-
-```txt
-/.netlify/functions/supervisao-api?resource=clinicas
-/.netlify/functions/supervisao-api?resource=terapeutas
-/.netlify/functions/supervisao-api?resource=pacientes
-/.netlify/functions/supervisao-api?resource=lancamentos
-/.netlify/functions/supervisao-api?resource=dashboard
-```
-
-## Banco de dados
-
-As coleções criadas/usadas no Firestore são:
+Coleções usadas no Firestore:
 
 - `supervisao_clinicas`
 - `supervisao_terapeutas`
 - `supervisao_pacientes`
 - `supervisao_lancamentos_semanais`
 
-## Variáveis de ambiente necessárias na Netlify
+## Variáveis na Netlify
 
-O projeto já usava Firebase Admin, então o módulo reaproveita o mesmo padrão:
+- `FIREBASE_PROJECT_ID`
+- `FIREBASE_CLIENT_EMAIL`
+- `FIREBASE_PRIVATE_KEY`
+- `SUPERVISAO_ALLOWED_ROLES=admin,supervisora`
 
-```txt
-FIREBASE_PROJECT_ID
-FIREBASE_CLIENT_EMAIL
-FIREBASE_PRIVATE_KEY
-```
+## Validação local feita
 
-Também é possível usar:
-
-```txt
-NEXT_PUBLIC_FIREBASE_PROJECT_ID
-```
-
-como fallback para o Project ID.
-
-## Segurança com Netlify Identity
-
-O frontend usa o login do Netlify Identity. A função exige usuário autenticado via Netlify Identity.
-
-Para restringir por papéis, configure na Netlify:
-
-```txt
-SUPERVISAO_ALLOWED_ROLES=admin,supervisora
-```
-
-Se essa variável não for configurada, qualquer usuário autenticado no Netlify Identity do site conseguirá acessar a API da supervisão. Para dados clínicos, o recomendado é configurar os papéis.
-
-## Testes realizados
-
-- `npx eslint src/components/supervisao src/pages/admin/supervisao netlify/functions/supervisao-api.js` executado sem erros.
-- O build completo do projeto não foi concluído no ambiente de geração porque o processo do Next.js ficou tempo demais em `Creating an optimized production build`. O projeto original também já apresenta erros de lint fora dos arquivos novos, então revise antes de publicar.
+Foi executado ESLint nos arquivos novos/alterados do módulo de supervisão. O `next build` iniciou normalmente, mas ficou parado em `Creating an optimized production build` até o limite de tempo do ambiente, comportamento já observado na versão anterior do projeto.

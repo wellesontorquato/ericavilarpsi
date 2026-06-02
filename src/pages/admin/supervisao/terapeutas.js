@@ -67,7 +67,8 @@ function TerapeutasContent({ user, onLogout }) {
           resource="terapeutas"
           fields={fields}
           columns={columns}
-          emptyText="Cadastre o primeiro terapeuta supervisionado."
+          entityLabel="terapeuta"
+              emptyText="Cadastre o primeiro terapeuta supervisionado."
         />
       </LayoutSupervisao>
     </>
