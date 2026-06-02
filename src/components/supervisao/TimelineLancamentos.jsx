@@ -12,6 +12,21 @@ function safeNumber(value) {
   return Number.isFinite(parsed) ? parsed : 0;
 }
 
+function safeText(value, fallback = "-") {
+  if (value === undefined || value === null || value === "") return fallback;
+  if (typeof value === "object") return fallback;
+  return String(value);
+}
+
+export function truncateText(value, maxLength = 120, fallback = "-") {
+  const text = safeText(value, fallback).replace(/\s+/g, " ").trim();
+
+  if (!text || text === fallback) return fallback;
+  if (text.length <= maxLength) return text;
+
+  return `${text.slice(0, maxLength).trim()}…`;
+}
+
 function periodLabel(item = {}) {
   return `${mesNome(item.mes)} de ${item.ano || "-"} · Semana ${item.semana || "-"}`;
 }
@@ -77,26 +92,26 @@ export function TimelineLancamentos({
               <span>Objetivos {formatPercent(item.evolucaoObjetivos)}</span>
             </div>
 
-            <p>{getResumoTexto(item)}</p>
+            <p title={safeText(getResumoTexto(item), "")}>{truncateText(getResumoTexto(item), 170, "Sem observação registrada para esta semana.")}</p>
 
             {(item.pontoForte || item.pontoDesenvolver || item.planoAcao) && (
               <dl>
                 {item.pontoForte && (
                   <div>
                     <dt>Ponto forte</dt>
-                    <dd>{item.pontoForte}</dd>
+                    <dd title={safeText(item.pontoForte, "")}>{truncateText(item.pontoForte, 95)}</dd>
                   </div>
                 )}
                 {item.pontoDesenvolver && (
                   <div>
                     <dt>Ponto a desenvolver</dt>
-                    <dd>{item.pontoDesenvolver}</dd>
+                    <dd title={safeText(item.pontoDesenvolver, "")}>{truncateText(item.pontoDesenvolver, 95)}</dd>
                   </div>
                 )}
                 {item.planoAcao && (
                   <div>
                     <dt>Plano de ação</dt>
-                    <dd>{item.planoAcao}</dd>
+                    <dd title={safeText(item.planoAcao, "")}>{truncateText(item.planoAcao, 95)}</dd>
                   </div>
                 )}
               </dl>

@@ -8132,6 +8132,21 @@
   margin: 14px 0 0;
 }
 
+/* Limita textos longos no histórico clínico sem quebrar o layout */
+.supervisao-history-card p,
+.supervisao-last-note p,
+.supervisao-history-card dd,
+.supervisao-last-note dd {
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.supervisao-history-card dd,
+.supervisao-last-note dd {
+  max-height: 4.4em;
+  overflow: hidden;
+}
+
 @media (max-width: 1120px) {
   .supervisao-history-snapshot,
   .supervisao-comparison-grid,

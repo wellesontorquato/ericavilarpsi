@@ -9,6 +9,7 @@ import {
   HistoricoComparativo,
   HistoricoSnapshot,
   TimelineLancamentos,
+  truncateText,
 } from "@/components/supervisao/TimelineLancamentos";
 import { supervisaoRequest } from "@/lib/supervisao/api";
 import { average, formatDecimal, formatPercent, mesNome } from "@/lib/supervisao/format";
@@ -24,6 +25,12 @@ import {
 
 function safeId(value) {
   return value === undefined || value === null ? "" : String(value);
+}
+
+function safeText(value, fallback = "") {
+  if (value === undefined || value === null || value === "") return fallback;
+  if (typeof value === "object") return fallback;
+  return String(value);
 }
 
 function getLatest(items = []) {
@@ -219,7 +226,9 @@ function HistoricoContent({ user, onLogout }) {
                   <article className="supervisao-last-note">
                     <strong>{ultimoLancamento.pacienteNome || "Paciente/caso"}</strong>
                     <span>{ultimoLancamento.terapeutaNome || "Terapeuta"} · {ultimoLancamento.clinicaNome || "Clínica"}</span>
-                    <p>{ultimoLancamento.recomendacao || ultimoLancamento.planoAcao || ultimoLancamento.observacao || "Sem observação registrada."}</p>
+                    <p title={safeText(ultimoLancamento.recomendacao || ultimoLancamento.planoAcao || ultimoLancamento.observacao)}>
+                      {truncateText(ultimoLancamento.recomendacao || ultimoLancamento.planoAcao || ultimoLancamento.observacao, 190, "Sem observação registrada.")}
+                    </p>
                     <dl>
                       <div>
                         <dt>Status do plano</dt>
@@ -231,7 +240,7 @@ function HistoricoContent({ user, onLogout }) {
                       </div>
                       <div>
                         <dt>Ponto a desenvolver</dt>
-                        <dd>{ultimoLancamento.pontoDesenvolver || "-"}</dd>
+                        <dd title={safeText(ultimoLancamento.pontoDesenvolver)}>{truncateText(ultimoLancamento.pontoDesenvolver, 95)}</dd>
                       </div>
                     </dl>
                   </article>
