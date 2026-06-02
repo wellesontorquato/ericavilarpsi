@@ -7620,3 +7620,126 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* =========================================================
+   SUPERVISÃO - MENU LATERAL COM SUBMENUS
+   ========================================================= */
+
+.supervisao-sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 22px;
+}
+
+.supervisao-nav-section {
+  display: grid;
+  gap: 8px;
+}
+
+.supervisao-submenu-trigger {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  border: 1px solid transparent;
+  border-radius: 18px;
+  padding: 12px 13px;
+  background: transparent;
+  color: rgba(255, 247, 239, 0.78);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+.supervisao-submenu-trigger:hover,
+.supervisao-nav-section.active .supervisao-submenu-trigger,
+.supervisao-nav-section.open .supervisao-submenu-trigger {
+  background: rgba(255, 247, 239, 0.12);
+  border-color: rgba(255, 247, 239, 0.12);
+  color: #fff7ef;
+}
+
+.supervisao-submenu-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.supervisao-nav-icon {
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.08);
+  color: #f5d5bd;
+  font-weight: 900;
+}
+
+.supervisao-submenu-chevron {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255, 247, 239, 0.58);
+  font-size: 1.1rem;
+  transition: transform 0.2s ease;
+}
+
+.supervisao-nav-section.open .supervisao-submenu-chevron {
+  transform: rotate(180deg);
+}
+
+.supervisao-submenu-items {
+  display: grid;
+  gap: 7px;
+  margin-left: 17px;
+  padding-left: 15px;
+  border-left: 1px solid rgba(255, 247, 239, 0.12);
+}
+
+.supervisao-submenu-items a {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border: 1px solid transparent;
+  border-radius: 16px;
+  padding: 10px 11px;
+  color: rgba(255, 247, 239, 0.68);
+  font-size: 0.94rem;
+  text-decoration: none;
+  transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+.supervisao-submenu-items a span {
+  width: 28px;
+  height: 28px;
+  display: grid;
+  place-items: center;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.07);
+  color: #f5d5bd;
+  font-weight: 900;
+}
+
+.supervisao-submenu-items a:hover,
+.supervisao-submenu-items a.active {
+  background: rgba(255, 247, 239, 0.12);
+  border-color: rgba(255, 247, 239, 0.12);
+  color: #fff7ef;
+}
+
+@media (max-width: 1120px) {
+  .supervisao-sidebar-nav {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  }
+
+  .supervisao-submenu-items {
+    margin-left: 0;
+    padding-left: 0;
+    border-left: 0;
+  }
+}
