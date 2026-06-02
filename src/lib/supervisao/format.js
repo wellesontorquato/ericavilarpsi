@@ -13,36 +13,85 @@ export const meses = [
   { value: 12, label: "Dezembro" },
 ];
 
-export const semanas = [1, 2, 3, 4, 5].map((value) => ({
-  value,
-  label: `Semana ${value}`,
-}));
+export const semanas = [
+  { value: 1, label: "Semana 1" },
+  { value: 2, label: "Semana 2" },
+  { value: 3, label: "Semana 3" },
+  { value: 4, label: "Semana 4" },
+  { value: 5, label: "Semana 5" },
+];
 
 export function mesNome(mes) {
-  return meses.find((item) => Number(item.value) === Number(mes))?.label || "-";
+  const encontrado = meses.find((item) => Number(item.value) === Number(mes));
+  return encontrado?.label || "-";
 }
 
-export function numberOrZero(value) {
+function safeNumber(value, fallback = 0) {
   const parsed = Number(value);
-  return Number.isFinite(parsed) ? parsed : 0;
+  return Number.isFinite(parsed) ? parsed : fallback;
 }
 
-export function average(values) {
-  const validValues = values.map(numberOrZero).filter((value) => value > 0);
-  if (!validValues.length) return 0;
-  return validValues.reduce((sum, value) => sum + value, 0) / validValues.length;
+function safeFractionDigits(value, fallback = 1) {
+  const parsed = Number(value);
+
+  if (!Number.isFinite(parsed)) return fallback;
+
+  const inteiro = Math.trunc(parsed);
+
+  if (inteiro < 0) return fallback;
+  if (inteiro > 20) return fallback;
+
+  return inteiro;
 }
 
-export function formatDecimal(value, digits = 1) {
-  return numberOrZero(value).toLocaleString("pt-BR", {
+export function formatDecimal(value, fractionDigits = 1) {
+  const safeValue = safeNumber(value);
+  const digits = safeFractionDigits(fractionDigits, 1);
+
+  return safeValue.toLocaleString("pt-BR", {
     minimumFractionDigits: digits,
     maximumFractionDigits: digits,
   });
 }
 
-export function formatPercent(value, digits = 0) {
-  return `${numberOrZero(value).toLocaleString("pt-BR", {
+export function formatNumber(value) {
+  const safeValue = safeNumber(value);
+
+  return safeValue.toLocaleString("pt-BR", {
+    maximumFractionDigits: 0,
+  });
+}
+
+export function formatPercent(value, fractionDigits = 0) {
+  const safeValue = safeNumber(value);
+  const digits = safeFractionDigits(fractionDigits, 0);
+
+  return `${safeValue.toLocaleString("pt-BR", {
     minimumFractionDigits: digits,
     maximumFractionDigits: digits,
   })}%`;
+}
+
+export function formatScore(value) {
+  return `${formatDecimal(value, 1)}/5`;
+}
+
+export function average(values = []) {
+  if (!Array.isArray(values)) return 0;
+
+  const validValues = values
+    .map((value) => Number(value))
+    .filter((value) => Number.isFinite(value));
+
+  if (!validValues.length) return 0;
+
+  const total = validValues.reduce((sum, value) => sum + value, 0);
+
+  return total / validValues.length;
+}
+
+export function clamp(value, min = 0, max = 100) {
+  const safeValue = safeNumber(value);
+
+  return Math.min(max, Math.max(min, safeValue));
 }
