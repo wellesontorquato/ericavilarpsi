@@ -1,9 +1,11 @@
 import Head from "next/head";
+import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import AuthGuard from "@/components/supervisao/AuthGuard";
 import LayoutSupervisao from "@/components/supervisao/LayoutSupervisao";
 import CardIndicador from "@/components/supervisao/CardIndicador";
 import StatusMessage from "@/components/supervisao/StatusMessage";
+import { TimelineLancamentos } from "@/components/supervisao/TimelineLancamentos";
 import DashboardFilters from "@/components/supervisao/DashboardFilters";
 import {
   ChartPanel,
@@ -130,6 +132,7 @@ function PacientesDashboardContent({ user, onLogout }) {
         description="Leitura clínica individual do caso: evolução, adesão, sintomas, objetivos terapêuticos e histórico das recomendações."
         user={user}
         onLogout={onLogout}
+        actions={<Link className="supervisao-secondary-button" href="/admin/supervisao/historico">Ver histórico clínico</Link>}
       >
         <StatusMessage message={message} />
 
@@ -229,16 +232,11 @@ function PacientesDashboardContent({ user, onLogout }) {
                   <h2>Histórico semanal</h2>
                   <span>{historico.length}</span>
                 </div>
-                <div className="supervisao-timeline compact-list">
-                  {historico.map((item) => (
-                    <article key={item.id}>
-                      <strong>{item.ano}/{item.mes} · Semana {item.semana}</strong>
-                      <span>{item.terapeutaNome || "Terapeuta"} · evolução {formatPercent(evolucaoMedia(item))}</span>
-                      <p>{item.recomendacao || item.planoAcao || item.observacao || "Sem observação registrada."}</p>
-                    </article>
-                  ))}
-                  {historico.length === 0 && <p className="supervisao-empty">Nenhum lançamento encontrado para o filtro selecionado.</p>}
-                </div>
+                <TimelineLancamentos
+                  items={historico}
+                  emptyText="Nenhum lançamento encontrado para o filtro selecionado."
+                  limit={8}
+                />
               </section>
             </div>
           </>

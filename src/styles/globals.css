@@ -7831,3 +7831,341 @@
     border-radius: 24px;
   }
 }
+
+/* =========================================================
+   SUPERVISÃO - FASE 2 BLOCO 2 / HISTÓRICO CLÍNICO
+   ========================================================= */
+
+.supervisao-dashboard-hero.history-hero {
+  align-items: start;
+}
+
+.supervisao-history-snapshot {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+  margin: 18px 0 0;
+}
+
+.supervisao-history-snapshot article,
+.supervisao-comparison-grid article {
+  border: 1px solid rgba(81, 53, 35, 0.1);
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.74);
+  box-shadow: 0 18px 42px rgba(72, 45, 27, 0.06);
+  padding: 18px;
+}
+
+.supervisao-history-snapshot span,
+.supervisao-comparison-grid span {
+  display: block;
+  color: #8b7869;
+  font-size: 0.8rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.supervisao-history-snapshot strong,
+.supervisao-comparison-grid strong {
+  display: block;
+  color: #392619;
+  font-size: 1.55rem;
+  line-height: 1.05;
+  margin-top: 8px;
+}
+
+.supervisao-history-snapshot small,
+.supervisao-comparison-grid small {
+  display: block;
+  color: #7a6758;
+  font-weight: 800;
+  margin-top: 9px;
+}
+
+.supervisao-history-snapshot small.positive,
+.supervisao-comparison-grid small.positive {
+  color: #2d7443;
+}
+
+.supervisao-history-snapshot small.negative,
+.supervisao-comparison-grid small.negative {
+  color: #a43c32;
+}
+
+.supervisao-history-snapshot small.neutral,
+.supervisao-comparison-grid small.neutral {
+  color: #8b7869;
+}
+
+.supervisao-comparison-card header {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.supervisao-comparison-card header div {
+  border: 1px solid rgba(81, 53, 35, 0.09);
+  border-radius: 18px;
+  background: #fffaf5;
+  padding: 14px;
+}
+
+.supervisao-comparison-card header span {
+  display: block;
+  color: #8b7869;
+  font-size: 0.78rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.supervisao-comparison-card header strong {
+  display: block;
+  color: #392619;
+  margin-top: 5px;
+}
+
+.supervisao-comparison-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.supervisao-comparison-grid strong {
+  font-size: 1.06rem;
+}
+
+.supervisao-history-timeline {
+  position: relative;
+  display: grid;
+  gap: 16px;
+  padding-left: 22px;
+}
+
+.supervisao-history-timeline::before {
+  content: "";
+  position: absolute;
+  left: 8px;
+  top: 12px;
+  bottom: 12px;
+  width: 2px;
+  border-radius: 999px;
+  background: linear-gradient(180deg, rgba(183, 123, 76, 0.72), rgba(183, 123, 76, 0.08));
+}
+
+.supervisao-history-timeline article {
+  position: relative;
+  display: grid;
+  grid-template-columns: 18px minmax(0, 1fr);
+  gap: 10px;
+}
+
+.supervisao-history-marker {
+  width: 18px;
+  height: 18px;
+  border: 4px solid #fff7ef;
+  border-radius: 999px;
+  background: #b77b4c;
+  box-shadow: 0 0 0 1px rgba(183, 123, 76, 0.3), 0 10px 22px rgba(183, 123, 76, 0.24);
+  transform: translateX(-22px);
+  margin-top: 21px;
+  z-index: 2;
+}
+
+.supervisao-history-card {
+  border: 1px solid rgba(81, 53, 35, 0.1);
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.78);
+  box-shadow: 0 20px 50px rgba(72, 45, 27, 0.07);
+  padding: 18px;
+}
+
+.supervisao-history-card header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.supervisao-history-card header span,
+.supervisao-history-card header small {
+  display: block;
+  color: #8b7869;
+  font-size: 0.82rem;
+  font-weight: 800;
+}
+
+.supervisao-history-card header strong {
+  display: block;
+  color: #392619;
+  font-size: 1.16rem;
+  margin-top: 4px;
+}
+
+.supervisao-status-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-style: normal;
+  font-weight: 900;
+  padding: 7px 11px;
+}
+
+.supervisao-status-pill.done {
+  background: #e8f7ed;
+  color: #2d7443;
+}
+
+.supervisao-status-pill.progress {
+  background: #fff0df;
+  color: #955f2a;
+}
+
+.supervisao-status-pill.danger {
+  background: #fff0ef;
+  color: #a43c32;
+}
+
+.supervisao-status-pill.neutral {
+  background: #f3ece4;
+  color: #7c6656;
+}
+
+.supervisao-history-metrics {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.supervisao-history-metrics span {
+  border-radius: 999px;
+  background: #fff7ef;
+  color: #6b4a34;
+  font-size: 0.78rem;
+  font-weight: 900;
+  padding: 7px 10px;
+}
+
+.supervisao-history-card p {
+  color: #55463b;
+  line-height: 1.6;
+  margin: 14px 0 0;
+}
+
+.supervisao-history-card dl,
+.supervisao-last-note dl {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  margin: 16px 0 0;
+}
+
+.supervisao-history-card dl div,
+.supervisao-last-note dl div {
+  border: 1px solid rgba(81, 53, 35, 0.09);
+  border-radius: 16px;
+  background: #fffaf5;
+  padding: 12px;
+}
+
+.supervisao-history-card dt,
+.supervisao-last-note dt {
+  color: #8b7869;
+  font-size: 0.75rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.supervisao-history-card dd,
+.supervisao-last-note dd {
+  color: #392619;
+  font-weight: 800;
+  line-height: 1.45;
+  margin: 5px 0 0;
+}
+
+.supervisao-history-card a {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  background: #efe4d7;
+  color: #6a4129;
+  font-weight: 900;
+  margin-top: 14px;
+  padding: 10px 14px;
+  text-decoration: none;
+}
+
+.supervisao-last-note {
+  border-radius: 24px;
+  background: #fffaf5;
+  border: 1px solid rgba(81, 53, 35, 0.1);
+  padding: 20px;
+}
+
+.supervisao-last-note strong,
+.supervisao-last-note span,
+.supervisao-last-note p {
+  display: block;
+}
+
+.supervisao-last-note strong {
+  color: #392619;
+  font-size: 1.25rem;
+}
+
+.supervisao-last-note span {
+  color: #8b7869;
+  font-size: 0.86rem;
+  font-weight: 800;
+  margin-top: 5px;
+}
+
+.supervisao-last-note p {
+  color: #55463b;
+  line-height: 1.6;
+  margin: 14px 0 0;
+}
+
+@media (max-width: 1120px) {
+  .supervisao-history-snapshot,
+  .supervisao-comparison-grid,
+  .supervisao-history-card dl,
+  .supervisao-last-note dl {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 760px) {
+  .supervisao-history-snapshot,
+  .supervisao-comparison-card header,
+  .supervisao-comparison-grid,
+  .supervisao-history-card dl,
+  .supervisao-last-note dl {
+    grid-template-columns: 1fr;
+  }
+
+  .supervisao-history-card header {
+    display: grid;
+  }
+
+  .supervisao-history-timeline {
+    padding-left: 10px;
+  }
+
+  .supervisao-history-marker {
+    transform: translateX(-18px);
+  }
+}
+
+.supervisao-header-actions a.supervisao-secondary-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+}

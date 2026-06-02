@@ -1,4 +1,5 @@
 import Head from "next/head";
+import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import AuthGuard from "@/components/supervisao/AuthGuard";
 import LayoutSupervisao from "@/components/supervisao/LayoutSupervisao";
@@ -134,6 +135,7 @@ function ClinicasDashboardContent({ user, onLogout }) {
         description="Visão executiva para acompanhar a saúde geral da clínica, volume de supervisões, casos em atenção e desempenho da equipe."
         user={user}
         onLogout={onLogout}
+        actions={<Link className="supervisao-secondary-button" href="/admin/supervisao/historico">Ver histórico clínico</Link>}
       >
         <StatusMessage message={message} />
 

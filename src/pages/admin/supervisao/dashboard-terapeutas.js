@@ -1,9 +1,11 @@
 import Head from "next/head";
+import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import AuthGuard from "@/components/supervisao/AuthGuard";
 import LayoutSupervisao from "@/components/supervisao/LayoutSupervisao";
 import CardIndicador from "@/components/supervisao/CardIndicador";
 import StatusMessage from "@/components/supervisao/StatusMessage";
+import { TimelineLancamentos } from "@/components/supervisao/TimelineLancamentos";
 import DashboardFilters from "@/components/supervisao/DashboardFilters";
 import {
   ChartPanel,
@@ -114,6 +116,7 @@ function TerapeutasDashboardContent({ user, onLogout }) {
   }, [pacientesDoTerapeuta, lancamentosFiltrados]);
 
   const ultimasDevolutivas = useMemo(() => sortByPeriodDesc(lancamentosFiltrados).filter((item) => item.pontoDesenvolver || item.recomendacao || item.planoAcao).slice(0, 6), [lancamentosFiltrados]);
+  const historicoRecente = useMemo(() => sortByPeriodDesc(lancamentosFiltrados).slice(0, 6), [lancamentosFiltrados]);
   const tendencia = useMemo(() => buildTendencia(lancamentosFiltrados, filters), [lancamentosFiltrados, filters]);
   const competenciaRadar = useMemo(() => buildRadar(lancamentosFiltrados), [lancamentosFiltrados]);
   const statusPlano = useMemo(() => buildStatusPlano(lancamentosFiltrados), [lancamentosFiltrados]);
@@ -126,6 +129,7 @@ function TerapeutasDashboardContent({ user, onLogout }) {
         description="Acompanhamento do desenvolvimento técnico, carga de casos, evolução dos pacientes e planos de ação por terapeuta."
         user={user}
         onLogout={onLogout}
+        actions={<Link className="supervisao-secondary-button" href="/admin/supervisao/historico">Ver histórico clínico</Link>}
       >
         <StatusMessage message={message} />
 
@@ -250,6 +254,18 @@ function TerapeutasDashboardContent({ user, onLogout }) {
                 </div>
               </section>
             </div>
+
+            <section className="supervisao-panel dashboard-lower">
+              <div className="supervisao-section-title">
+                <h2>Histórico recente do terapeuta</h2>
+                <span>{historicoRecente.length}</span>
+              </div>
+              <TimelineLancamentos
+                items={historicoRecente}
+                emptyText="Nenhum lançamento encontrado para este terapeuta ou período."
+                limit={6}
+              />
+            </section>
           </>
         )}
       </LayoutSupervisao>

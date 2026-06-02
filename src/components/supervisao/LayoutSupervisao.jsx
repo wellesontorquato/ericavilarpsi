@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { useMemo, useState } from "react";
 
 const navGroups = [
   {
@@ -57,6 +57,11 @@ const navGroups = [
         label: "Lançamento semanal",
         icon: "+",
       },
+      {
+        href: "/admin/supervisao/historico",
+        label: "Histórico clínico",
+        icon: "↗",
+      },
     ],
   },
 ];
@@ -81,18 +86,8 @@ export default function LayoutSupervisao({
   actions,
 }) {
   const router = useRouter();
+  const activeGroups = useMemo(() => getOpenGroups(router.pathname), [router.pathname]);
   const [openGroups, setOpenGroups] = useState(() => getOpenGroups(router.pathname));
-
-  useEffect(() => {
-    const activeGroups = getOpenGroups(router.pathname);
-
-    setOpenGroups((current) => ({
-      ...current,
-      ...Object.fromEntries(
-        Object.entries(activeGroups).filter(([, isOpen]) => isOpen)
-      ),
-    }));
-  }, [router.pathname]);
 
   function toggleGroup(groupId) {
     setOpenGroups((current) => ({
@@ -115,7 +110,7 @@ export default function LayoutSupervisao({
 
         <nav className="supervisao-sidebar-nav" aria-label="Menu da supervisão">
           {navGroups.map((group) => {
-            const isGroupOpen = Boolean(openGroups[group.id]);
+            const isGroupOpen = Boolean(openGroups[group.id] || activeGroups[group.id]);
             const isGroupActive = group.items.some((item) =>
               isActiveRoute(router.pathname, item.href)
             );
