@@ -2,10 +2,12 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 
 const navItems = [
-  { href: "/admin/supervisao", label: "Dashboard", icon: "▦" },
+  { href: "/admin/supervisao", label: "Clínica", icon: "▦" },
+  { href: "/admin/supervisao/dashboard-terapeutas", label: "Terapeuta", icon: "◌" },
+  { href: "/admin/supervisao/dashboard-pacientes", label: "Paciente", icon: "✦" },
   { href: "/admin/supervisao/clinicas", label: "Clínicas", icon: "⌂" },
-  { href: "/admin/supervisao/terapeutas", label: "Terapeutas", icon: "◌" },
-  { href: "/admin/supervisao/pacientes", label: "Pacientes", icon: "✦" },
+  { href: "/admin/supervisao/terapeutas", label: "Terapeutas", icon: "◎" },
+  { href: "/admin/supervisao/pacientes", label: "Pacientes", icon: "◇" },
   { href: "/admin/supervisao/lancamento-semanal", label: "Lançamentos", icon: "+" },
 ];
 

@@ -7552,3 +7552,71 @@
     padding-right: 18px;
   }
 }
+
+/* Dashboards segmentados por clínica, terapeuta e paciente */
+.dashboard-filters {
+  grid-template-columns: repeat(4, minmax(150px, 1fr));
+}
+
+.supervisao-insight-list {
+  display: grid;
+  gap: 12px;
+}
+
+.supervisao-insight-list article,
+.supervisao-focus-card {
+  border: 1px solid rgba(95, 56, 37, 0.1);
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.72);
+  padding: 16px;
+}
+
+.supervisao-insight-list strong,
+.supervisao-insight-list span,
+.supervisao-insight-list p,
+.supervisao-focus-card strong,
+.supervisao-focus-card span,
+.supervisao-focus-card p {
+  display: block;
+}
+
+.supervisao-insight-list strong,
+.supervisao-focus-card strong {
+  color: var(--sup-text, #261c17);
+  line-height: 1.25;
+}
+
+.supervisao-insight-list span,
+.supervisao-focus-card span {
+  color: var(--sup-muted, #7b6c61);
+  font-size: 0.82rem;
+  font-weight: 800;
+  margin-top: 5px;
+}
+
+.supervisao-insight-list p,
+.supervisao-focus-card p {
+  color: var(--sup-muted, #7b6c61);
+  line-height: 1.55;
+  margin-top: 10px;
+}
+
+.supervisao-focus-card {
+  min-height: 250px;
+}
+
+.supervisao-focus-card strong {
+  font-size: 1.35rem;
+}
+
+@media (max-width: 1040px) {
+  .dashboard-filters {
+    grid-template-columns: repeat(2, minmax(150px, 1fr));
+  }
+}
+
+@media (max-width: 680px) {
+  .dashboard-filters {
+    grid-template-columns: 1fr;
+  }
+}

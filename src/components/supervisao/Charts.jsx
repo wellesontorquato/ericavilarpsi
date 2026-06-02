@@ -55,14 +55,15 @@ export function HorizontalBars({ items, valueKey = "value", labelKey = "label", 
     <div className="supervisao-bars">
       {items.map((item) => {
         const value = safeNumber(item[valueKey]);
+        const rowMax = item.max || highest;
         return (
           <div className="supervisao-bar-row" key={item.id || item[labelKey]}>
             <div className="supervisao-bar-label">
               <strong>{item[labelKey]}</strong>
-              <span>{valueFormatter(value)}</span>
+              <span>{valueFormatter(value, item)}</span>
             </div>
             <div className="supervisao-bar-track" aria-hidden="true">
-              <span style={{ width: `${percent(value, highest)}%` }} />
+              <span style={{ width: `${percent(value, rowMax)}%` }} />
             </div>
           </div>
         );
