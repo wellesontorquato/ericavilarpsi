@@ -103,7 +103,7 @@ export function HorizontalBars({
           >
             <div className="supervisao-bar-label">
               <strong>{label}</strong>
-              <span>{valueFormatter(value)}</span>
+              <span>{valueFormatter(value, item)}</span>
             </div>
 
             <div className="supervisao-bar-track" aria-hidden="true">
@@ -143,7 +143,7 @@ export function ColumnChart({
             key={item?.id || `${label}-${index}`}
           >
             <span className="supervisao-column-value">
-              {valueFormatter(value)}
+              {valueFormatter(value, item)}
             </span>
 
             <div className="supervisao-column-track">

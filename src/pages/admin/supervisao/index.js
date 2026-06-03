@@ -135,7 +135,12 @@ function ClinicasDashboardContent({ user, onLogout }) {
         description="Visão executiva para acompanhar a saúde geral da clínica, volume de supervisões, casos em atenção e desempenho da equipe."
         user={user}
         onLogout={onLogout}
-        actions={<Link className="supervisao-secondary-button" href="/admin/supervisao/historico">Ver histórico clínico</Link>}
+        actions={(
+          <div className="supervisao-header-action-group">
+            <Link className="supervisao-secondary-button" href="/admin/supervisao/historico">Ver histórico clínico</Link>
+            <Link className="supervisao-secondary-button" href="/admin/supervisao/alertas">Ver alertas</Link>
+          </div>
+        )}
       >
         <StatusMessage message={message} />
 

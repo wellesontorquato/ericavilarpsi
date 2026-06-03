@@ -62,6 +62,11 @@ const navGroups = [
         label: "Histórico clínico",
         icon: "↗",
       },
+      {
+        href: "/admin/supervisao/alertas",
+        label: "Alertas automáticos",
+        icon: "!",
+      },
     ],
   },
 ];

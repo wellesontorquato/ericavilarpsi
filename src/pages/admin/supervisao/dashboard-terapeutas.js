@@ -1,5 +1,6 @@
 import Head from "next/head";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import { useEffect, useMemo, useState } from "react";
 import AuthGuard from "@/components/supervisao/AuthGuard";
 import LayoutSupervisao from "@/components/supervisao/LayoutSupervisao";
@@ -40,10 +41,17 @@ export default function SupervisaoTerapeutasDashboardPage() {
 }
 
 function TerapeutasDashboardContent({ user, onLogout }) {
+  const router = useRouter();
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState({ type: "", text: "" });
   const [filters, setFilters] = useState({ ano: String(currentYear), mes: "", semana: "", terapeutaId: "" });
+
+  useEffect(() => {
+    if (!router.isReady || !router.query.terapeutaId) return;
+    const terapeutaId = Array.isArray(router.query.terapeutaId) ? router.query.terapeutaId[0] : router.query.terapeutaId;
+    setFilters((current) => ({ ...current, terapeutaId: terapeutaId || current.terapeutaId }));
+  }, [router.isReady, router.query.terapeutaId]);
 
   useEffect(() => {
     async function loadDashboard() {
@@ -129,7 +137,12 @@ function TerapeutasDashboardContent({ user, onLogout }) {
         description="Acompanhamento do desenvolvimento técnico, carga de casos, evolução dos pacientes e planos de ação por terapeuta."
         user={user}
         onLogout={onLogout}
-        actions={<Link className="supervisao-secondary-button" href="/admin/supervisao/historico">Ver histórico clínico</Link>}
+        actions={(
+          <div className="supervisao-header-action-group">
+            <Link className="supervisao-secondary-button" href="/admin/supervisao/historico">Ver histórico clínico</Link>
+            <Link className="supervisao-secondary-button" href="/admin/supervisao/alertas">Ver alertas</Link>
+          </div>
+        )}
       >
         <StatusMessage message={message} />
 

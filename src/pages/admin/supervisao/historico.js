@@ -1,4 +1,5 @@
 import Head from "next/head";
+import { useRouter } from "next/router";
 import { useEffect, useMemo, useState } from "react";
 import AuthGuard from "@/components/supervisao/AuthGuard";
 import LayoutSupervisao from "@/components/supervisao/LayoutSupervisao";
@@ -239,6 +240,7 @@ export default function HistoricoSupervisaoPage() {
 }
 
 function HistoricoContent({ user, onLogout }) {
+  const router = useRouter();
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState({ type: "", text: "" });
@@ -252,6 +254,28 @@ function HistoricoContent({ user, onLogout }) {
     terapeutaId: "",
     pacienteId: "",
   });
+
+  useEffect(() => {
+    if (!router.isReady) return;
+
+    const queryValue = (name) => {
+      const value = router.query[name];
+      return Array.isArray(value) ? value[0] : value;
+    };
+
+    const clinicaId = queryValue("clinicaId");
+    const terapeutaId = queryValue("terapeutaId");
+    const pacienteId = queryValue("pacienteId");
+
+    if (!clinicaId && !terapeutaId && !pacienteId) return;
+
+    setFilters((current) => ({
+      ...current,
+      clinicaId: clinicaId || current.clinicaId,
+      terapeutaId: terapeutaId || current.terapeutaId,
+      pacienteId: pacienteId || current.pacienteId,
+    }));
+  }, [router.isReady, router.query.clinicaId, router.query.terapeutaId, router.query.pacienteId]);
 
   useEffect(() => {
     async function loadDashboard() {
