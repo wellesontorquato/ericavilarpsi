@@ -8184,3 +8184,107 @@
   justify-content: center;
   text-decoration: none;
 }
+
+/* =========================================================
+   SUPERVISÃO - HISTÓRICO CLÍNICO / TEXTOS LONGOS
+   ========================================================= */
+
+.supervisao-historico-cards-pareados {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: stretch;
+  gap: 18px;
+}
+
+.supervisao-historico-card-pareado {
+  height: 100%;
+  min-height: 430px;
+  display: flex;
+  flex-direction: column;
+}
+
+.supervisao-historico-card-pareado > *:last-child {
+  flex: 1;
+}
+
+.supervisao-historico-textos,
+.supervisao-timeline-textos {
+  display: grid;
+  gap: 12px;
+}
+
+.supervisao-texto-limitado {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+}
+
+.supervisao-texto-limitado span {
+  color: rgba(72, 47, 35, 0.62);
+  font-size: 0.74rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.supervisao-texto-limitado p {
+  margin: 0;
+  max-height: 4.8em;
+  overflow: hidden;
+  color: #38261f;
+  font-size: 0.92rem;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.supervisao-texto-limitado-btn {
+  width: fit-content;
+  border: 0;
+  border-radius: 999px;
+  padding: 6px 11px;
+  background: rgba(123, 75, 55, 0.1);
+  color: #7b4b37;
+  font-size: 0.78rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.supervisao-texto-limitado-btn:hover {
+  background: rgba(123, 75, 55, 0.18);
+  transform: translateY(-1px);
+}
+
+.supervisao-modal-texto {
+  max-width: 760px;
+}
+
+.supervisao-modal-texto-body {
+  max-height: 60vh;
+  overflow: auto;
+  border-radius: 22px;
+  padding: 20px;
+  background: rgba(255, 247, 239, 0.68);
+  border: 1px solid rgba(123, 75, 55, 0.12);
+}
+
+.supervisao-modal-texto-body p {
+  margin: 0;
+  color: #38261f;
+  font-size: 1rem;
+  line-height: 1.75;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+@media (max-width: 1020px) {
+  .supervisao-historico-cards-pareados {
+    grid-template-columns: 1fr;
+  }
+
+  .supervisao-historico-card-pareado {
+    min-height: auto;
+  }
+}
