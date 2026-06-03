@@ -9,6 +9,7 @@ import StatusMessage from "@/components/supervisao/StatusMessage";
 import { archiveResource, createResource, listResource, restoreResource, updateResource } from "@/lib/supervisao/api";
 import { average, formatDecimal, mesNome, meses, semanas } from "@/lib/supervisao/format";
 
+const PAGE_SIZE = 15;
 const currentDate = new Date();
 
 const initialForm = {
@@ -91,6 +92,7 @@ function LancamentoContent({ user, onLogout }) {
   const [modalOpen, setModalOpen] = useState(false);
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("ativos");
+  const [page, setPage] = useState(1);
   const [message, setMessage] = useState({ type: "", text: "" });
 
   async function loadData() {
@@ -114,6 +116,10 @@ function LancamentoContent({ user, onLogout }) {
   useEffect(() => {
     loadData();
   }, [user]);
+
+  useEffect(() => {
+    setPage(1);
+  }, [search, statusFilter, lancamentos.length]);
 
   const clinicasAtivas = useMemo(() => clinicas.filter((item) => !isArchived(item)), [clinicas]);
   const terapeutasAtivos = useMemo(() => terapeutas.filter((item) => !isArchived(item)), [terapeutas]);
@@ -161,6 +167,12 @@ function LancamentoContent({ user, onLogout }) {
         .some((value) => String(value || "").toLowerCase().includes(query));
     });
   }, [lancamentos, search, statusFilter]);
+
+  const totalPages = Math.max(1, Math.ceil(lancamentosFiltrados.length / PAGE_SIZE));
+  const currentPage = Math.min(page, totalPages);
+  const startIndex = (currentPage - 1) * PAGE_SIZE;
+  const endIndex = startIndex + PAGE_SIZE;
+  const lancamentosPaginados = lancamentosFiltrados.slice(startIndex, endIndex);
 
   const lancamentosAtivos = useMemo(() => lancamentos.filter((item) => !isArchived(item)), [lancamentos]);
 
@@ -330,54 +342,100 @@ function LancamentoContent({ user, onLogout }) {
           </button>
         </div>
 
-        <section className="supervisao-panel supervisao-list-panel">
-          <div className="supervisao-section-title">
-            <h2>Histórico de lançamentos</h2>
-            <span>{lancamentosFiltrados.length} salvo(s)</span>
+        <section className="supervisao-panel supervisao-list-panel supervisao-list-panel-table">
+          <div className="supervisao-section-title supervisao-list-section-title">
+            <div>
+              <h2>Histórico de lançamentos</h2>
+              <p>
+                {lancamentosFiltrados.length} salvo(s). Exibindo {lancamentosPaginados.length} nesta página.
+              </p>
+            </div>
+            {lancamentosFiltrados.length > PAGE_SIZE && (
+              <span>Página {currentPage} de {totalPages}</span>
+            )}
           </div>
 
-          <div className="supervisao-record-grid lancamentos">
-            {lancamentosFiltrados.slice(0, 24).map((item) => {
-              const archived = isArchived(item);
+          {lancamentosFiltrados.length === 0 ? (
+            <p className="supervisao-empty">Nenhum lançamento semanal encontrado para o filtro selecionado.</p>
+          ) : (
+            <>
+              <div className="supervisao-entity-list-wrap">
+                <div
+                  className="supervisao-entity-list supervisao-launch-list"
+                  style={{
+                    "--entity-grid": "minmax(220px, 1.3fr) minmax(160px, 0.9fr) minmax(170px, 0.9fr) minmax(140px, 0.7fr) minmax(190px, auto)",
+                  }}
+                >
+                  <div className="supervisao-entity-row supervisao-entity-row-head">
+                    <div>Paciente/Caso</div>
+                    <div>Período</div>
+                    <div>Terapeuta</div>
+                    <div>Competência</div>
+                    <div>Ações</div>
+                  </div>
 
-              return (
-                <article className={`supervisao-record-card launch ${archived ? "archived" : ""}`} key={item.id}>
-                  <header>
-                    <strong>{item.pacienteNome || "Paciente/caso"}</strong>
-                    <span>{archived ? "Arquivado" : `${mesNome(item.mes)} · S${item.semana}`}</span>
-                  </header>
-                  <dl>
-                    <div>
-                      <dt>Período</dt>
-                      <dd>{item.ano} · {mesNome(item.mes)} · Semana {item.semana}</dd>
-                    </div>
-                    <div>
-                      <dt>Terapeuta</dt>
-                      <dd>{item.terapeutaNome || "-"}</dd>
-                    </div>
-                    <div>
-                      <dt>Clínica</dt>
-                      <dd>{item.clinicaNome || "-"}</dd>
-                    </div>
-                    <div>
-                      <dt>Competência média</dt>
-                      <dd>{formatDecimal(competenciaMedia(item))}</dd>
-                    </div>
-                  </dl>
-                  <p>{item.recomendacao || item.observacao || "Sem observação."}</p>
-                  <footer>
-                    <button type="button" onClick={() => openEditModal(item)}>Editar</button>
-                    {archived ? (
-                      <button type="button" onClick={() => handleRestore(item)}>Restaurar</button>
-                    ) : (
-                      <button type="button" className="danger" onClick={() => handleArchive(item)}>Arquivar</button>
-                    )}
-                  </footer>
-                </article>
-              );
-            })}
-            {lancamentosFiltrados.length === 0 && <p className="supervisao-empty">Nenhum lançamento semanal encontrado para o filtro selecionado.</p>}
-          </div>
+                  {lancamentosPaginados.map((item) => {
+                    const archived = isArchived(item);
+
+                    return (
+                      <article className={`supervisao-entity-row ${archived ? "archived" : ""}`} key={item.id}>
+                        <div className="primary" data-label="Paciente/Caso">
+                          <strong>{item.pacienteNome || "Paciente/caso"}</strong>
+                          <span className={`supervisao-inline-status ${archived ? "archived" : ""}`}>
+                            {archived ? "Arquivado" : item.statusPlano || "Ativo"}
+                          </span>
+                        </div>
+
+                        <div data-label="Período">
+                          <span>{item.ano} · {mesNome(item.mes)} · Semana {item.semana}</span>
+                        </div>
+
+                        <div data-label="Terapeuta">
+                          <span>{item.terapeutaNome || "-"}</span>
+                          {item.clinicaNome && <small className="supervisao-row-muted">{item.clinicaNome}</small>}
+                        </div>
+
+                        <div data-label="Competência">
+                          <span>{formatDecimal(competenciaMedia(item))}/5</span>
+                        </div>
+
+                        <div className="actions" data-label="Ações">
+                          <button type="button" onClick={() => openEditModal(item)}>Editar</button>
+                          {archived ? (
+                            <button type="button" onClick={() => handleRestore(item)}>Restaurar</button>
+                          ) : (
+                            <button type="button" className="danger" onClick={() => handleArchive(item)}>Arquivar</button>
+                          )}
+                        </div>
+                      </article>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {lancamentosFiltrados.length > PAGE_SIZE && (
+                <div className="supervisao-pagination">
+                  <button
+                    type="button"
+                    onClick={() => setPage((current) => Math.max(1, current - 1))}
+                    disabled={currentPage === 1}
+                  >
+                    Anterior
+                  </button>
+                  <span>
+                    {startIndex + 1}-{Math.min(endIndex, lancamentosFiltrados.length)} de {lancamentosFiltrados.length}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => setPage((current) => Math.min(totalPages, current + 1))}
+                    disabled={currentPage === totalPages}
+                  >
+                    Próxima
+                  </button>
+                </div>
+              )}
+            </>
+          )}
         </section>
 
         <Modal
