@@ -9,9 +9,6 @@ import {
   HistoricoComparativo,
   HistoricoSnapshot,
 } from "@/components/supervisao/TimelineLancamentos";
-import TextoLimitado, {
-  ModalTextoCompleto,
-} from "@/components/supervisao/TextoLimitado";
 import { supervisaoRequest } from "@/lib/supervisao/api";
 import {
   average,
@@ -43,10 +40,130 @@ function getLatest(items = []) {
   return sortByPeriodDesc(items)[0];
 }
 
-function TimelineLancamentosComModal({ items = [], onAbrirTexto }) {
-  const timeline = useMemo(() => sortByPeriodDesc(items), [items]);
+function truncateText(value, maxLength = 150, fallback = "-") {
+  const text = safeText(value, fallback).replace(/\s+/g, " ").trim();
 
-  if (!timeline.length) {
+  if (!text || text === fallback) return fallback;
+  if (text.length <= maxLength) return text;
+
+  return `${text.slice(0, maxLength).trim()}…`;
+}
+
+function getResumoLancamento(item = {}) {
+  return (
+    item.recomendacao ||
+    item.planoAcao ||
+    item.observacao ||
+    item.pontoDesenvolver ||
+    item.pontoForte ||
+    "Sem observação registrada para este acompanhamento."
+  );
+}
+
+function getStatusClass(status) {
+  const normalized = String(status || "").toLowerCase();
+
+  if (normalized.includes("concl")) return "done";
+  if (normalized.includes("atras") || normalized.includes("venc")) return "danger";
+  if (normalized.includes("andamento")) return "progress";
+
+  return "neutral";
+}
+
+function periodLabel(item = {}) {
+  return `${mesNome(item.mes)} · ${item.ano || "-"} · Semana ${
+    item.semana || "-"
+  }`;
+}
+
+function ModalDetalheLancamento({ item, onFechar }) {
+  if (!item) return null;
+
+  const textos = [
+    ["Ponto forte", item.pontoForte],
+    ["Ponto a desenvolver", item.pontoDesenvolver],
+    ["Recomendação", item.recomendacao],
+    ["Plano de ação", item.planoAcao],
+    ["Observação", item.observacao],
+  ];
+
+  return (
+    <div className="supervisao-modal-backdrop" onClick={onFechar}>
+      <div
+        className="supervisao-modal supervisao-modal-large supervisao-detalhe-modal"
+        onClick={(event) => event.stopPropagation()}
+      >
+        <div className="supervisao-modal-header">
+          <div>
+            <span className="supervisao-kicker">{periodLabel(item)}</span>
+            <h2>{safeText(item.pacienteNome, "Paciente/caso")}</h2>
+            <p>
+              {safeText(item.terapeutaNome, "Terapeuta")} ·{" "}
+              {safeText(item.clinicaNome, "Clínica")}
+            </p>
+          </div>
+
+          <button
+            type="button"
+            className="supervisao-modal-close"
+            onClick={onFechar}
+            aria-label="Fechar detalhes"
+          >
+            ×
+          </button>
+        </div>
+
+        <div className="supervisao-modal-body">
+          <div className="supervisao-detalhe-grid">
+            <div>
+              <span>Status do plano</span>
+              <strong>{safeText(item.statusPlano)}</strong>
+            </div>
+
+            <div>
+              <span>Prazo</span>
+              <strong>{safeText(item.prazo)}</strong>
+            </div>
+
+            <div>
+              <span>Evolução</span>
+              <strong>{formatPercent(evolucaoMedia(item))}</strong>
+            </div>
+
+            <div>
+              <span>Competência</span>
+              <strong>{formatDecimal(competenciaMedia(item))}/5</strong>
+            </div>
+
+            <div>
+              <span>Adesão</span>
+              <strong>{formatPercent(item.adesaoTarefas || 0)}</strong>
+            </div>
+
+            <div>
+              <span>Objetivos</span>
+              <strong>{formatPercent(item.evolucaoObjetivos || 0)}</strong>
+            </div>
+          </div>
+
+          <div className="supervisao-detalhe-textos">
+            {textos.map(([label, value]) => (
+              <section key={label}>
+                <h3>{label}</h3>
+                <p>{safeText(value)}</p>
+              </section>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function TimelineLancamentosResumida({ items = [], onVerDetalhes }) {
+  const rows = useMemo(() => sortByPeriodDesc(items), [items]);
+
+  if (!rows.length) {
     return (
       <p className="supervisao-empty">
         Nenhum lançamento semanal encontrado para o filtro selecionado.
@@ -55,94 +172,54 @@ function TimelineLancamentosComModal({ items = [], onAbrirTexto }) {
   }
 
   return (
-    <div className="supervisao-timeline">
-      {timeline.map((item, index) => (
-        <article
-          key={item.id || `${item.ano}-${item.mes}-${item.semana}-${index}`}
-          className="supervisao-timeline-item"
-        >
-          <div className="supervisao-timeline-marker">
-            <span>{index + 1}</span>
-          </div>
+    <div className="supervisao-history-timeline">
+      {rows.map((item, index) => (
+        <article key={item.id || `${item.ano}-${item.mes}-${item.semana}-${index}`}>
+          <div className="supervisao-history-marker" aria-hidden="true" />
 
-          <div className="supervisao-timeline-card">
-            <div className="supervisao-timeline-head">
+          <div className="supervisao-history-card supervisao-history-card-compact">
+            <header>
               <div>
-                <span className="supervisao-kicker">
-                  {mesNome(item.mes)} · {item.ano} · Semana {item.semana}
-                </span>
-
-                <h3>{safeText(item.pacienteNome, "Paciente/caso")}</h3>
-
-                <p>
-                  {safeText(item.terapeutaNome, "Terapeuta")} ·{" "}
-                  {safeText(item.clinicaNome, "Clínica")}
-                </p>
+                <span>{periodLabel(item)}</span>
+                <strong>{safeText(item.pacienteNome, "Paciente/caso")}</strong>
+                <small>
+                  {safeText(item.terapeutaNome, "Terapeuta")}
+                  {item.clinicaNome ? ` · ${item.clinicaNome}` : ""}
+                </small>
               </div>
 
-              <div className="supervisao-timeline-scores">
-                <strong>{formatDecimal(competenciaMedia(item))}</strong>
-                <span>competência</span>
-              </div>
+              <i
+                className={`supervisao-status-pill ${getStatusClass(
+                  item.statusPlano
+                )}`}
+              >
+                {item.statusPlano || "Sem plano"}
+              </i>
+            </header>
+
+            <div className="supervisao-history-metrics">
+              <span>Evolução {formatPercent(evolucaoMedia(item))}</span>
+              <span>Competência {formatDecimal(competenciaMedia(item))}/5</span>
+              <span>Adesão {formatPercent(item.adesaoTarefas || 0)}</span>
+              <span>Objetivos {formatPercent(item.evolucaoObjetivos || 0)}</span>
             </div>
 
-            <div className="supervisao-timeline-metrics">
-              <div>
-                <span>Evolução</span>
-                <strong>{formatPercent(evolucaoMedia(item))}</strong>
-              </div>
+            <p className="supervisao-history-summary">
+              {truncateText(
+                getResumoLancamento(item),
+                170,
+                "Sem observação registrada para esta semana."
+              )}
+            </p>
 
-              <div>
-                <span>Adesão</span>
-                <strong>{formatPercent(item.adesaoTarefas || 0)}</strong>
-              </div>
-
-              <div>
-                <span>Sintomas</span>
-                <strong>{safeText(item.intensidadeSintomas)}</strong>
-              </div>
-
-              <div>
-                <span>Status do plano</span>
-                <strong>{safeText(item.statusPlano)}</strong>
-              </div>
-            </div>
-
-            <div className="supervisao-timeline-textos">
-              <TextoLimitado
-                label="Ponto forte"
-                value={item.pontoForte}
-                limite={110}
-                onAbrir={onAbrirTexto}
-              />
-
-              <TextoLimitado
-                label="Ponto a desenvolver"
-                value={item.pontoDesenvolver}
-                limite={110}
-                onAbrir={onAbrirTexto}
-              />
-
-              <TextoLimitado
-                label="Plano de ação"
-                value={item.planoAcao}
-                limite={110}
-                onAbrir={onAbrirTexto}
-              />
-
-              <TextoLimitado
-                label="Recomendação"
-                value={item.recomendacao}
-                limite={120}
-                onAbrir={onAbrirTexto}
-              />
-
-              <TextoLimitado
-                label="Observação"
-                value={item.observacao}
-                limite={120}
-                onAbrir={onAbrirTexto}
-              />
+            <div className="supervisao-history-actions">
+              <button
+                type="button"
+                className="supervisao-mini-action"
+                onClick={() => onVerDetalhes(item)}
+              >
+                Ver detalhes
+              </button>
             </div>
           </div>
         </article>
@@ -165,7 +242,7 @@ function HistoricoContent({ user, onLogout }) {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState({ type: "", text: "" });
-  const [textoAberto, setTextoAberto] = useState(null);
+  const [detalheAberto, setDetalheAberto] = useState(null);
 
   const [filters, setFilters] = useState({
     ano: String(currentYear),
@@ -470,51 +547,24 @@ function HistoricoContent({ user, onLogout }) {
                 </div>
 
                 {ultimoLancamento ? (
-                  <article className="supervisao-last-note">
-                    <strong>
-                      {ultimoLancamento.pacienteNome || "Paciente/caso"}
-                    </strong>
+                  <article className="supervisao-last-note supervisao-last-note-compact">
+                    <div>
+                      <strong>
+                        {ultimoLancamento.pacienteNome || "Paciente/caso"}
+                      </strong>
 
-                    <span>
-                      {ultimoLancamento.terapeutaNome || "Terapeuta"} ·{" "}
-                      {ultimoLancamento.clinicaNome || "Clínica"}
-                    </span>
+                      <span>
+                        {ultimoLancamento.terapeutaNome || "Terapeuta"} ·{" "}
+                        {ultimoLancamento.clinicaNome || "Clínica"}
+                      </span>
 
-                    <div className="supervisao-historico-textos">
-                      <TextoLimitado
-                        label="Recomendação"
-                        value={ultimoLancamento.recomendacao}
-                        limite={140}
-                        onAbrir={setTextoAberto}
-                      />
-
-                      <TextoLimitado
-                        label="Ponto forte"
-                        value={ultimoLancamento.pontoForte}
-                        limite={120}
-                        onAbrir={setTextoAberto}
-                      />
-
-                      <TextoLimitado
-                        label="Ponto a desenvolver"
-                        value={ultimoLancamento.pontoDesenvolver}
-                        limite={120}
-                        onAbrir={setTextoAberto}
-                      />
-
-                      <TextoLimitado
-                        label="Plano de ação"
-                        value={ultimoLancamento.planoAcao}
-                        limite={140}
-                        onAbrir={setTextoAberto}
-                      />
-
-                      <TextoLimitado
-                        label="Observação"
-                        value={ultimoLancamento.observacao}
-                        limite={140}
-                        onAbrir={setTextoAberto}
-                      />
+                      <p>
+                        {truncateText(
+                          getResumoLancamento(ultimoLancamento),
+                          180,
+                          "Sem observação registrada."
+                        )}
+                      </p>
                     </div>
 
                     <dl>
@@ -530,13 +580,19 @@ function HistoricoContent({ user, onLogout }) {
 
                       <div>
                         <dt>Semana</dt>
-                        <dd>
-                          S{ultimoLancamento.semana} ·{" "}
-                          {mesNome(ultimoLancamento.mes)} ·{" "}
-                          {ultimoLancamento.ano}
-                        </dd>
+                        <dd>{periodLabel(ultimoLancamento)}</dd>
                       </div>
                     </dl>
+
+                    <div className="supervisao-last-note-actions">
+                      <button
+                        type="button"
+                        className="supervisao-mini-action"
+                        onClick={() => setDetalheAberto(ultimoLancamento)}
+                      >
+                        Ver detalhes
+                      </button>
+                    </div>
                   </article>
                 ) : (
                   <p className="supervisao-empty">
@@ -552,18 +608,18 @@ function HistoricoContent({ user, onLogout }) {
                 <span>{lancamentosFiltrados.length} lançamento(s)</span>
               </div>
 
-              <TimelineLancamentosComModal
+              <TimelineLancamentosResumida
                 items={lancamentosFiltrados}
-                onAbrirTexto={setTextoAberto}
+                onVerDetalhes={setDetalheAberto}
               />
             </section>
           </>
         )}
       </LayoutSupervisao>
 
-      <ModalTextoCompleto
-        conteudo={textoAberto}
-        onFechar={() => setTextoAberto(null)}
+      <ModalDetalheLancamento
+        item={detalheAberto}
+        onFechar={() => setDetalheAberto(null)}
       />
     </>
   );

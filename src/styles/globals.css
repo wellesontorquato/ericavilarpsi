@@ -8186,7 +8186,7 @@
 }
 
 /* =========================================================
-   SUPERVISÃO - HISTÓRICO CLÍNICO / TEXTOS LONGOS
+   SUPERVISÃO - HISTÓRICO COMPACTO + MODAL DE DETALHES
    ========================================================= */
 
 .supervisao-historico-cards-pareados {
@@ -8198,7 +8198,7 @@
 
 .supervisao-historico-card-pareado {
   height: 100%;
-  min-height: 430px;
+  min-height: 420px;
   display: flex;
   flex-direction: column;
 }
@@ -8207,73 +8207,120 @@
   flex: 1;
 }
 
-.supervisao-historico-textos,
-.supervisao-timeline-textos {
+.supervisao-last-note-compact {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.supervisao-last-note-compact > div:first-child {
+  flex: 1;
+}
+
+.supervisao-last-note-actions,
+.supervisao-history-actions {
+  display: flex;
+  justify-content: flex-start;
+  margin-top: 14px;
+}
+
+.supervisao-mini-action {
+  width: fit-content;
+  border: 0;
+  border-radius: 999px;
+  padding: 8px 14px;
+  background: rgba(123, 75, 55, 0.1);
+  color: #7b4b37;
+  font-size: 0.8rem;
+  font-weight: 900;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.supervisao-mini-action:hover {
+  background: rgba(123, 75, 55, 0.18);
+  transform: translateY(-1px);
+}
+
+.supervisao-history-card-compact {
   display: grid;
-  gap: 12px;
+  gap: 14px;
 }
 
-.supervisao-texto-limitado {
-  display: grid;
-  gap: 6px;
-  min-width: 0;
-}
-
-.supervisao-texto-limitado span {
-  color: rgba(72, 47, 35, 0.62);
-  font-size: 0.74rem;
-  font-weight: 800;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-}
-
-.supervisao-texto-limitado p {
+.supervisao-history-summary {
   margin: 0;
-  max-height: 4.8em;
-  overflow: hidden;
-  color: #38261f;
-  font-size: 0.92rem;
+  color: #55463b;
   line-height: 1.6;
   overflow-wrap: anywhere;
   word-break: break-word;
 }
 
-.supervisao-texto-limitado-btn {
-  width: fit-content;
-  border: 0;
-  border-radius: 999px;
-  padding: 6px 11px;
-  background: rgba(123, 75, 55, 0.1);
-  color: #7b4b37;
-  font-size: 0.78rem;
-  font-weight: 800;
-  cursor: pointer;
-  transition: background 0.2s ease, transform 0.2s ease;
+.supervisao-detalhe-modal {
+  width: min(100%, 920px);
 }
 
-.supervisao-texto-limitado-btn:hover {
-  background: rgba(123, 75, 55, 0.18);
-  transform: translateY(-1px);
+.supervisao-detalhe-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin-bottom: 18px;
 }
 
-.supervisao-modal-texto {
-  max-width: 760px;
+.supervisao-detalhe-grid div {
+  border-radius: 18px;
+  padding: 14px;
+  background: #fff7ef;
+  border: 1px solid rgba(81, 53, 35, 0.1);
 }
 
-.supervisao-modal-texto-body {
-  max-height: 60vh;
+.supervisao-detalhe-grid span {
+  display: block;
+  margin-bottom: 5px;
+  color: #8b7869;
+  font-size: 0.72rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.supervisao-detalhe-grid strong {
+  display: block;
+  color: #392619;
+  font-size: 0.96rem;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+
+.supervisao-detalhe-textos {
+  display: grid;
+  gap: 14px;
+  max-height: 52vh;
   overflow: auto;
-  border-radius: 22px;
-  padding: 20px;
-  background: rgba(255, 247, 239, 0.68);
-  border: 1px solid rgba(123, 75, 55, 0.12);
+  padding-right: 4px;
 }
 
-.supervisao-modal-texto-body p {
+.supervisao-detalhe-textos section {
+  border-radius: 20px;
+  padding: 16px;
+  background: #fffaf5;
+  border: 1px solid rgba(81, 53, 35, 0.1);
+}
+
+.supervisao-detalhe-textos h3 {
+  margin: 0 0 8px;
+  color: #7b4b37;
+  font-size: 0.82rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.supervisao-detalhe-textos p {
   margin: 0;
-  color: #38261f;
-  font-size: 1rem;
-  line-height: 1.75;
+  color: #392619;
+  font-size: 0.95rem;
+  line-height: 1.7;
   white-space: pre-wrap;
   overflow-wrap: anywhere;
   word-break: break-word;
@@ -8286,5 +8333,15 @@
 
   .supervisao-historico-card-pareado {
     min-height: auto;
+  }
+
+  .supervisao-detalhe-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 720px) {
+  .supervisao-detalhe-grid {
+    grid-template-columns: 1fr;
   }
 }
