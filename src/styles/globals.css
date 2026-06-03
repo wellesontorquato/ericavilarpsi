@@ -8345,3 +8345,139 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* =========================================================
+   SUPERVISÃO - RADAR INTERATIVO
+   ========================================================= */
+
+.supervisao-radar-wrap-interactive {
+  align-items: center;
+}
+
+.supervisao-radar-visual {
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-width: 0;
+}
+
+.supervisao-radar-interactive {
+  width: min(100%, 330px);
+  max-width: 330px;
+}
+
+.supervisao-radar-axis-label {
+  fill: rgba(76, 54, 42, 0.68);
+  font-size: 0.68rem;
+  font-weight: 800;
+  pointer-events: none;
+}
+
+.supervisao-radar-point-hit {
+  fill: transparent;
+  cursor: pointer;
+}
+
+.supervisao-radar-point {
+  fill: #a56842;
+  stroke: #fffaf5;
+  stroke-width: 2;
+  cursor: pointer;
+  transition: r 0.2s ease, fill 0.2s ease, filter 0.2s ease;
+}
+
+.supervisao-radar-interactive g:hover .supervisao-radar-point,
+.supervisao-radar-interactive g.active .supervisao-radar-point {
+  fill: #7b4b37;
+  filter: drop-shadow(0 4px 8px rgba(80, 45, 28, 0.22));
+}
+
+.supervisao-radar-tooltip {
+  position: absolute;
+  left: 50%;
+  bottom: 8px;
+  transform: translateX(-50%);
+  min-width: 190px;
+  max-width: 230px;
+  padding: 10px 14px;
+  border-radius: 16px;
+  background: rgba(255, 250, 245, 0.96);
+  border: 1px solid rgba(123, 75, 55, 0.12);
+  box-shadow: 0 14px 30px rgba(80, 45, 28, 0.12);
+  text-align: center;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.supervisao-radar-tooltip span {
+  display: block;
+  margin-bottom: 3px;
+  color: #7b6b60;
+  font-size: 0.72rem;
+  font-weight: 800;
+}
+
+.supervisao-radar-tooltip strong {
+  display: block;
+  color: #392619;
+  font-size: 1rem;
+  font-weight: 900;
+}
+
+.supervisao-radar-list-clickable {
+  display: grid;
+  gap: 10px;
+}
+
+.supervisao-radar-list-clickable button {
+  width: 100%;
+  border: 1px solid transparent;
+  border-radius: 16px;
+  padding: 10px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  background: rgba(255, 250, 245, 0.72);
+  color: inherit;
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+}
+
+.supervisao-radar-list-clickable button:hover,
+.supervisao-radar-list-clickable button.active {
+  background: #fffaf5;
+  border-color: rgba(123, 75, 55, 0.16);
+  transform: translateY(-1px);
+}
+
+.supervisao-radar-list-clickable button span {
+  color: #7b6b60;
+  font-size: 0.84rem;
+  font-weight: 800;
+}
+
+.supervisao-radar-list-clickable button strong {
+  color: #392619;
+  font-size: 0.96rem;
+  font-weight: 900;
+}
+
+@media (max-width: 720px) {
+  .supervisao-radar-interactive {
+    width: min(100%, 300px);
+    max-width: 300px;
+  }
+
+  .supervisao-radar-axis-label {
+    font-size: 0.6rem;
+  }
+
+  .supervisao-radar-tooltip {
+    position: static;
+    transform: none;
+    margin-top: -6px;
+    width: min(100%, 250px);
+  }
+}
+
