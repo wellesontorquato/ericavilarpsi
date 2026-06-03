@@ -67,6 +67,11 @@ const navGroups = [
         label: "Alertas automáticos",
         icon: "!",
       },
+      {
+        href: "/admin/supervisao/relatorios",
+        label: "Relatórios",
+        icon: "▣",
+      },
     ],
   },
 ];

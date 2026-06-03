@@ -9160,3 +9160,303 @@
   line-height: 1.25;
   overflow-wrap: anywhere;
 }
+
+/* =========================================================
+   SUPERVISÃO - FASE 2 BLOCO 4 / RELATÓRIOS E EXPORTAÇÕES
+   ========================================================= */
+
+.relatorios-hero {
+  align-items: stretch;
+}
+
+.supervisao-report-command-panel {
+  display: grid;
+  grid-template-columns: minmax(260px, 1fr) minmax(220px, 320px);
+  gap: 18px;
+  align-items: end;
+  margin-bottom: 20px;
+  padding: 22px;
+  border-radius: 30px;
+  background:
+    radial-gradient(circle at top right, rgba(255, 255, 255, 0.84), transparent 36%),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.92), rgba(255, 247, 239, 0.72));
+  border: 1px solid rgba(86, 60, 45, 0.08);
+  box-shadow: 0 18px 42px rgba(77, 55, 43, 0.07);
+}
+
+.supervisao-report-command-panel h2 {
+  margin: 4px 0 8px;
+  color: #1d1512;
+  font-size: clamp(1.35rem, 2vw, 2rem);
+  line-height: 1.05;
+}
+
+.supervisao-report-command-panel p {
+  max-width: 720px;
+  margin: 0;
+  color: #7c6c61;
+  font-size: 0.92rem;
+  line-height: 1.6;
+}
+
+.supervisao-report-command-panel label {
+  display: grid;
+  gap: 8px;
+}
+
+.supervisao-report-command-panel label span {
+  color: #5d4d43;
+  font-size: 0.78rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.supervisao-report-command-panel select {
+  min-height: 46px;
+  width: 100%;
+  border: 1px solid rgba(86, 60, 45, 0.12);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.9);
+  padding: 0 14px;
+  color: #2e2628;
+  font-weight: 800;
+  outline: none;
+}
+
+.supervisao-report-actions {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.supervisao-report-actions button {
+  white-space: nowrap;
+}
+
+.relatorios-charts-grid {
+  align-items: stretch;
+}
+
+.supervisao-report-preview-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.supervisao-report-preview-card {
+  min-width: 0;
+  padding: 20px;
+  border-radius: 28px;
+  background: rgba(255, 255, 255, 0.84);
+  border: 1px solid rgba(86, 60, 45, 0.08);
+  box-shadow: 0 16px 34px rgba(77, 55, 43, 0.055);
+}
+
+.supervisao-report-preview-table-wrap {
+  width: 100%;
+  overflow-x: auto;
+  border-radius: 20px;
+  border: 1px solid rgba(86, 60, 45, 0.08);
+}
+
+.supervisao-report-preview-table {
+  width: 100%;
+  min-width: 620px;
+  border-collapse: collapse;
+  background: rgba(255, 255, 255, 0.72);
+}
+
+.supervisao-report-preview-table th,
+.supervisao-report-preview-table td {
+  padding: 12px 14px;
+  border-bottom: 1px solid rgba(86, 60, 45, 0.08);
+  text-align: left;
+  vertical-align: top;
+  font-size: 0.82rem;
+}
+
+.supervisao-report-preview-table th {
+  background: rgba(248, 241, 236, 0.9);
+  color: #5d4d43;
+  font-size: 0.72rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.supervisao-report-preview-table td {
+  max-width: 240px;
+  color: #46382f;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+
+.supervisao-print-report {
+  display: none;
+}
+
+@media (max-width: 1120px) {
+  .supervisao-report-preview-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 720px) {
+  .supervisao-report-command-panel {
+    grid-template-columns: 1fr;
+    padding: 18px;
+    border-radius: 24px;
+  }
+
+  .supervisao-report-actions {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .supervisao-report-actions button {
+    width: 100%;
+  }
+
+  .supervisao-report-preview-card {
+    padding: 16px;
+    border-radius: 24px;
+  }
+
+  .supervisao-report-preview-table {
+    min-width: 560px;
+  }
+}
+
+@media print {
+  body {
+    background: #ffffff !important;
+  }
+
+  body > *:not(#__next) {
+    display: none !important;
+  }
+
+  #__next > *:not(.supervisao-print-report) {
+    display: none !important;
+  }
+
+  .supervisao-shell {
+    display: none !important;
+  }
+
+  .supervisao-print-report {
+    display: block !important;
+    padding: 0;
+    color: #171717;
+    background: #ffffff;
+    font-family: Arial, sans-serif;
+  }
+
+  .supervisao-print-report header {
+    margin-bottom: 18px;
+    padding-bottom: 16px;
+    border-bottom: 2px solid #d8c8bf;
+  }
+
+  .supervisao-print-report header span {
+    display: block;
+    margin-bottom: 6px;
+    color: #7b4b37;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .supervisao-print-report h1 {
+    margin: 0 0 6px;
+    font-size: 28px;
+    line-height: 1.1;
+  }
+
+  .supervisao-print-report header p {
+    margin: 0;
+    color: #555;
+    font-size: 13px;
+  }
+
+  .supervisao-print-summary {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    margin-bottom: 18px;
+  }
+
+  .supervisao-print-summary div {
+    min-height: 72px;
+    padding: 10px;
+    border: 1px solid #e2d4cc;
+    border-radius: 10px;
+  }
+
+  .supervisao-print-summary span {
+    display: block;
+    color: #6b5a50;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+  }
+
+  .supervisao-print-summary strong {
+    display: block;
+    margin: 4px 0;
+    font-size: 18px;
+  }
+
+  .supervisao-print-summary small {
+    display: block;
+    color: #666;
+    font-size: 10px;
+    line-height: 1.35;
+  }
+
+  .supervisao-print-section {
+    margin-top: 18px;
+    page-break-inside: avoid;
+  }
+
+  .supervisao-print-section h2 {
+    margin: 0 0 8px;
+    color: #2a201c;
+    font-size: 16px;
+  }
+
+  .supervisao-print-section p {
+    margin: 0;
+    color: #333;
+    font-size: 12px;
+    line-height: 1.6;
+  }
+
+  .supervisao-print-report table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 8px;
+    font-size: 10px;
+  }
+
+  .supervisao-print-report th,
+  .supervisao-print-report td {
+    padding: 6px 7px;
+    border: 1px solid #dedede;
+    text-align: left;
+    vertical-align: top;
+  }
+
+  .supervisao-print-report th {
+    background: #f2e9e3;
+    color: #332820;
+    font-weight: 700;
+  }
+
+  @page {
+    margin: 14mm;
+  }
+}
