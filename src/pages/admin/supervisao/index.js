@@ -6,22 +6,10 @@ import LayoutSupervisao from "@/components/supervisao/LayoutSupervisao";
 import CardIndicador from "@/components/supervisao/CardIndicador";
 import StatusMessage from "@/components/supervisao/StatusMessage";
 import DashboardFilters from "@/components/supervisao/DashboardFilters";
-import {
-  ChartPanel,
-  ProgressRing,
-  TrendLine,
-  HorizontalBars,
-} from "@/components/supervisao/Charts";
+import { ChartPanel, ProgressRing, TrendLine, HorizontalBars } from "@/components/supervisao/Charts";
 import { supervisaoRequest } from "@/lib/supervisao/api";
 import { average, formatPercent, mesNome } from "@/lib/supervisao/format";
-import {
-  buildTendencia,
-  currentYear,
-  evolucaoMedia,
-  filterLancamentos,
-  isCasoAtencao,
-  selectedName,
-} from "@/lib/supervisao/dashboardUtils";
+import { buildTendencia, currentYear, evolucaoMedia, filterLancamentos, isCasoAtencao, selectedName } from "@/lib/supervisao/dashboardUtils";
 
 export default function SupervisaoClinicasDashboardPage() {
   return (
@@ -127,7 +115,6 @@ function ClinicasDashboardContent({ user, onLogout }) {
           <section className="supervisao-panel"><p>Carregando dashboard...</p></section>
         ) : (
           <>
-            {/* Reduzido para os 4 KPIs mais importantes */}
             <section className="supervisao-indicator-grid executive">
               <CardIndicador label="Saúde da Clínica" value={formatPercent(metricas.mediaEvolucao)} detail="score clínico geral" />
               <CardIndicador label="Casos de Risco" value={metricas.casosAtencao} detail="necessitam intervenção" />
@@ -135,43 +122,42 @@ function ClinicasDashboardContent({ user, onLogout }) {
               <CardIndicador label="Supervisões" value={lancamentosFiltrados.length} detail="registros lançados" />
             </section>
 
-            {/* Apenas a Tendência e a Saúde Geral no topo */}
-            <section className="supervisao-presentation-grid">
-              <ChartPanel title="Tendência de Evolução" subtitle="Curva de melhora clínica no período" action="evolução">
-                <TrendLine items={tendencia} valueKey="evolucao" labelKey="label" />
-              </ChartPanel>
+            <div className="bento-grid">
+              <div className="bento-col bento-8">
+                <ChartPanel title="Tendência de Evolução" subtitle="Curva de melhora clínica no período" action="evolução">
+                  <TrendLine items={tendencia} valueKey="evolucao" labelKey="label" />
+                </ChartPanel>
+              </div>
 
-              <ChartPanel title="Saúde Geral" subtitle="Média de evolução atual" action={formatPercent(metricas.mediaEvolucao)}>
-                <ProgressRing value={metricas.mediaEvolucao} label="evolução" detail="Consolida os 5 indicadores." />
-              </ChartPanel>
-            </section>
+              <div className="bento-col bento-4">
+                <ChartPanel title="Saúde Geral" subtitle="Média de evolução atual" action={formatPercent(metricas.mediaEvolucao)}>
+                  <ProgressRing value={metricas.mediaEvolucao} label="evolução" detail="Consolida os 5 indicadores." />
+                </ChartPanel>
+              </div>
 
-            <div className="supervisao-grid-two dashboard-lower">
-              <ChartPanel title="Evolução por Unidade" subtitle="Ranking de saúde por clínica" action={`${resumoClinicas.length} ativas`}>
-                <HorizontalBars
-                  items={resumoClinicas.slice(0, 5)}
-                  valueKey="evolucao"
-                  labelKey="label"
-                  max={100}
-                  valueFormatter={formatPercent}
-                />
-              </ChartPanel>
+              <div className="bento-col bento-8">
+                <ChartPanel title="Evolução por Unidade" subtitle="Ranking de saúde por clínica" action={`${resumoClinicas.length} ativas`}>
+                  <HorizontalBars items={resumoClinicas.slice(0, 5)} valueKey="evolucao" labelKey="label" max={100} valueFormatter={formatPercent} />
+                </ChartPanel>
+              </div>
 
-              <section className="supervisao-panel">
-                <div className="supervisao-section-title">
-                  <h2>Atenção Imediata</h2>
-                  <span>{casosAtencaoLista.length}</span>
-                </div>
-                <div className="supervisao-insight-list">
-                  {casosAtencaoLista.map((paciente) => (
-                    <article key={paciente.id}>
-                      <strong>{paciente.nome}</strong>
-                      <span>{paciente.terapeutaNome || "Sem terapeuta"} · Nível: {paciente.nivelAtencao}</span>
-                    </article>
-                  ))}
-                  {casosAtencaoLista.length === 0 && <p className="supervisao-empty">Nenhum caso crítico detectado.</p>}
-                </div>
-              </section>
+              <div className="bento-col bento-4">
+                <section className="supervisao-panel h-full">
+                  <div className="supervisao-section-title">
+                    <h2>Atenção Imediata</h2>
+                    <span>{casosAtencaoLista.length}</span>
+                  </div>
+                  <div className="supervisao-insight-list">
+                    {casosAtencaoLista.map((paciente) => (
+                      <article key={paciente.id}>
+                        <strong>{paciente.nome}</strong>
+                        <span>{paciente.terapeutaNome || "Sem terapeuta"} · Nível: {paciente.nivelAtencao}</span>
+                      </article>
+                    ))}
+                    {casosAtencaoLista.length === 0 && <p className="supervisao-empty">Nenhum caso crítico detectado.</p>}
+                  </div>
+                </section>
+              </div>
             </div>
           </>
         )}

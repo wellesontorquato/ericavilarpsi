@@ -9368,3 +9368,39 @@ button{font:inherit;}
     margin: 14mm;
   }
 }
+
+/* =========================================================
+   BENTO BOX EXPLÍCITO E CORREÇÃO DE TEXTOS LONGOS
+   ========================================================= */
+.bento-grid {
+  display: grid !important;
+  grid-template-columns: 1fr !important;
+  gap: 24px !important;
+  align-items: stretch !important;
+}
+
+.bento-col {
+  display: flex;
+  flex-direction: column;
+}
+
+.bento-col > * {
+  flex: 1;
+  width: 100%;
+}
+
+.supervisao-insight-list article p {
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+@media (min-width: 1024px) {
+  .bento-grid { grid-template-columns: repeat(12, 1fr) !important; }
+  .bento-4 { grid-column: span 4 !important; }
+  .bento-6 { grid-column: span 6 !important; }
+  .bento-8 { grid-column: span 8 !important; }
+  .bento-12 { grid-column: span 12 !important; }
+}

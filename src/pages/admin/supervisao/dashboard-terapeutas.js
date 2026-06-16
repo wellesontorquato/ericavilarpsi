@@ -8,12 +8,7 @@ import CardIndicador from "@/components/supervisao/CardIndicador";
 import StatusMessage from "@/components/supervisao/StatusMessage";
 import { TimelineLancamentos } from "@/components/supervisao/TimelineLancamentos";
 import DashboardFilters from "@/components/supervisao/DashboardFilters";
-import {
-  ChartPanel,
-  RadarChart,
-  TrendLine,
-  HorizontalBars
-} from "@/components/supervisao/Charts";
+import { ChartPanel, RadarChart, TrendLine, HorizontalBars } from "@/components/supervisao/Charts";
 import { supervisaoRequest } from "@/lib/supervisao/api";
 import { average, formatDecimal, mesNome } from "@/lib/supervisao/format";
 import {
@@ -84,7 +79,7 @@ function TerapeutasDashboardContent({ user, onLogout }) {
   }, [terapeutas, lancamentos, filters]);
 
   const ultimasDevolutivas = useMemo(() => sortByPeriodDesc(lancamentosFiltrados).filter((item) => item.pontoDesenvolver || item.planoAcao).slice(0, 6), [lancamentosFiltrados]);
-  const historicoRecente = useMemo(() => sortByPeriodDesc(lancamentosFiltrados).slice(0, 5), [lancamentosFiltrados]);
+  const historicoRecente = useMemo(() => sortByPeriodDesc(lancamentosFiltrados).slice(0, 4), [lancamentosFiltrados]);
   const tendencia = useMemo(() => buildTendencia(lancamentosFiltrados, filters), [lancamentosFiltrados, filters]);
   const competenciaRadar = useMemo(() => buildRadar(lancamentosFiltrados), [lancamentosFiltrados]);
 
@@ -128,7 +123,6 @@ function TerapeutasDashboardContent({ user, onLogout }) {
           <section className="supervisao-panel"><p>Carregando dados técnicos...</p></section>
         ) : (
           <>
-            {/* Apenas 4 KPIs essenciais */}
             <section className="supervisao-indicator-grid executive">
               <CardIndicador label="Nível Técnico" value={formatDecimal(metricas.mediaCompetencias)} detail="média geral (1 a 5)" />
               <CardIndicador label="Casos Avaliados" value={metricas.pacientesAvaliados} detail="com registro no período" />
@@ -136,46 +130,52 @@ function TerapeutasDashboardContent({ user, onLogout }) {
               <CardIndicador label="Supervisões" value={lancamentosFiltrados.length} detail="sessões documentadas" />
             </section>
 
-            <section className="supervisao-presentation-grid">
-              <ChartPanel title="Evolução Técnica" subtitle="Progressão da competência do terapeuta" action="escala de 5">
-                <TrendLine items={tendencia} valueKey="competencia" labelKey="label" />
-              </ChartPanel>
-
-              <ChartPanel title="Matriz de Habilidades" subtitle="Onde focar o desenvolvimento" action="Radar TCC">
-                <RadarChart items={competenciaRadar} />
-              </ChartPanel>
-            </section>
-
-            <div className="supervisao-grid-two dashboard-lower">
-              <section className="supervisao-panel">
-                <div className="supervisao-section-title">
-                  <h2>Planos e Devolutivas</h2>
-                  <span>{ultimasDevolutivas.length}</span>
-                </div>
-                <div className="supervisao-insight-list">
-                  {ultimasDevolutivas.map((item) => (
-                    <article key={item.id}>
-                      <strong>{item.pontoDesenvolver || "Ação de desenvolvimento"}</strong>
-                      <span>Caso: {item.pacienteNome || "Não informado"}</span>
-                      <p>{item.planoAcao || "Nenhum plano detalhado."}</p>
-                    </article>
-                  ))}
-                  {ultimasDevolutivas.length === 0 && <p className="supervisao-empty">Nenhum plano de ação pendente.</p>}
-                </div>
-              </section>
-
-              {!filters.terapeutaId ? (
-                <ChartPanel title="Ranking da Equipe" subtitle="Comparativo de competência técnica" action="Top 5">
-                  <HorizontalBars items={terapeutasRanking} valueKey="competencia" labelKey="label" max={5} valueFormatter={(v) => formatDecimal(v)} />
+            <div className="bento-grid">
+              <div className="bento-col bento-8">
+                <ChartPanel title="Evolução Técnica" subtitle="Progressão da competência do terapeuta" action="escala de 5">
+                  <TrendLine items={tendencia} valueKey="competencia" labelKey="label" />
                 </ChartPanel>
-              ) : (
-                <section className="supervisao-panel">
+              </div>
+
+              <div className="bento-col bento-4">
+                <ChartPanel title="Matriz de Habilidades" subtitle="Onde focar o desenvolvimento" action="Radar TCC">
+                  <RadarChart items={competenciaRadar} />
+                </ChartPanel>
+              </div>
+
+              <div className="bento-col bento-6">
+                <section className="supervisao-panel h-full">
                   <div className="supervisao-section-title">
-                    <h2>Últimas anotações</h2>
+                    <h2>Planos e Devolutivas</h2>
+                    <span>{ultimasDevolutivas.length}</span>
                   </div>
-                  <TimelineLancamentos items={historicoRecente} limit={4} emptyText="Sem histórico." />
+                  <div className="supervisao-insight-list">
+                    {ultimasDevolutivas.map((item) => (
+                      <article key={item.id}>
+                        <strong>{item.pontoDesenvolver || "Ação de desenvolvimento"}</strong>
+                        <span>Caso: {item.pacienteNome || "Não informado"}</span>
+                        <p>{item.planoAcao || "Nenhum plano detalhado."}</p>
+                      </article>
+                    ))}
+                    {ultimasDevolutivas.length === 0 && <p className="supervisao-empty">Nenhum plano de ação pendente.</p>}
+                  </div>
                 </section>
-              )}
+              </div>
+
+              <div className="bento-col bento-6">
+                {!filters.terapeutaId ? (
+                  <ChartPanel title="Ranking da Equipe" subtitle="Comparativo de competência técnica" action="Top 5">
+                    <HorizontalBars items={terapeutasRanking} valueKey="competencia" labelKey="label" max={5} valueFormatter={(v) => formatDecimal(v)} />
+                  </ChartPanel>
+                ) : (
+                  <section className="supervisao-panel h-full">
+                    <div className="supervisao-section-title">
+                      <h2>Últimas anotações</h2>
+                    </div>
+                    <TimelineLancamentos items={historicoRecente} limit={4} emptyText="Sem histórico." />
+                  </section>
+                )}
+              </div>
             </div>
           </>
         )}

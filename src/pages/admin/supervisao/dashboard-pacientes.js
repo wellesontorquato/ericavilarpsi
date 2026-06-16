@@ -8,11 +8,7 @@ import CardIndicador from "@/components/supervisao/CardIndicador";
 import StatusMessage from "@/components/supervisao/StatusMessage";
 import { TimelineLancamentos } from "@/components/supervisao/TimelineLancamentos";
 import DashboardFilters from "@/components/supervisao/DashboardFilters";
-import {
-  ChartPanel,
-  HorizontalBars,
-  TrendLine,
-} from "@/components/supervisao/Charts";
+import { ChartPanel, HorizontalBars, TrendLine } from "@/components/supervisao/Charts";
 import { supervisaoRequest } from "@/lib/supervisao/api";
 import { average, formatDecimal, formatPercent, mesNome } from "@/lib/supervisao/format";
 import {
@@ -81,7 +77,12 @@ function PacientesDashboardContent({ user, onLogout }) {
   const pacientes = useMemo(() => data?.pacientes || [], [data]);
   const lancamentos = useMemo(() => data?.lancamentos || [], [data]);
   const pacienteSelecionado = pacientes.find((item) => item.id === filters.pacienteId);
-  const lancamentosFiltrados = useMemo(() => filterLancamentos(lancamentos, filters), [lancamentos, filters]);
+  
+  // Força o filtro do paciente selecionado, ignorando os outros casos
+  const lancamentosFiltrados = useMemo(() => {
+    if (!filters.pacienteId) return [];
+    return filterLancamentos(lancamentos, filters);
+  }, [lancamentos, filters]);
 
   const metricas = useMemo(() => {
     return {
@@ -112,17 +113,17 @@ function PacientesDashboardContent({ user, onLogout }) {
         description="Acompanhamento rápido dos sinais vitais clínicos e evolução dos objetivos."
         user={user}
         onLogout={onLogout}
-        actions={(
+        actions={pacienteSelecionado ? (
           <Link className="supervisao-secondary-button" href="/admin/supervisao/historico">Linha do Tempo</Link>
-        )}
+        ) : null}
       >
         <StatusMessage message={message} />
 
         <section className="supervisao-dashboard-hero">
           <div>
             <span className="supervisao-kicker">Prontuário</span>
-            <h2>{selectedName(pacientes, filters.pacienteId, "Geral dos Pacientes")}</h2>
-            <p>{pacienteSelecionado ? `${pacienteSelecionado.terapeutaNome || "Sem terapeuta"} · Nível: ${pacienteSelecionado.nivelAtencao || "Padrão"}` : "Visão acumulada. Para detalhes, selecione um paciente."}</p>
+            <h2>{selectedName(pacientes, filters.pacienteId, "Selecione um Paciente")}</h2>
+            <p>{pacienteSelecionado ? `${pacienteSelecionado.terapeutaNome || "Sem terapeuta"} · Nível: ${pacienteSelecionado.nivelAtencao || "Padrão"}` : "Escolha um paciente no filtro ao lado para visualizar os dados clínicos reais."}</p>
           </div>
           <DashboardFilters
             filters={filters}
@@ -132,7 +133,7 @@ function PacientesDashboardContent({ user, onLogout }) {
               <label>
                 <span>Paciente</span>
                 <select value={filters.pacienteId} onChange={(e) => setFilters((c) => ({ ...c, pacienteId: e.target.value }))}>
-                  <option value="">Todos</option>
+                  <option value="">Selecione...</option>
                   {pacientes.map((p) => <option key={p.id} value={p.id}>{p.nome}</option>)}
                 </select>
               </label>
@@ -142,9 +143,14 @@ function PacientesDashboardContent({ user, onLogout }) {
 
         {loading ? (
           <section className="supervisao-panel"><p>Carregando prontuário...</p></section>
+        ) : !pacienteSelecionado ? (
+          <section className="supervisao-panel" style={{ textAlign: "center", padding: "60px 20px" }}>
+            <span style={{ fontSize: "3rem", display: "block", marginBottom: "16px" }}>👥</span>
+            <h2>Nenhum paciente selecionado</h2>
+            <p className="supervisao-empty">Selecione um paciente no filtro acima para visualizar o prontuário clínico detalhado, histórico de melhoria e diário de intervenções. Não exibimos dados acumulados aqui para não gerar distorções analíticas.</p>
+          </section>
         ) : (
           <>
-            {/* Apenas 4 KPIs clínicos e diretos */}
             <section className="supervisao-indicator-grid executive">
               <CardIndicador label="Evolução Atual" value={formatPercent(metricas.evolucao)} detail="score global do caso" />
               <CardIndicador label="Sintomas Atuais" value={formatDecimal(metricas.sintomasAtual)} detail="escala de 0 a 10" />
@@ -152,38 +158,43 @@ function PacientesDashboardContent({ user, onLogout }) {
               <CardIndicador label="Supervisões" value={lancamentosFiltrados.length} detail="sessões avaliadas" />
             </section>
 
-            <section className="supervisao-presentation-grid">
-              <ChartPanel title="Histórico de Melhoria" subtitle="Acompanhamento de Evolução e Objetivos" action="tendência">
-                <TrendLine items={tendenciaPaciente} valueKey="evolucao" secondaryKey="objetivos" labelKey="label" />
-              </ChartPanel>
+            <div className="bento-grid dashboard-lower">
+              <div className="bento-col bento-8">
+                <ChartPanel title="Histórico de Melhoria" subtitle="Acompanhamento de Evolução e Objetivos" action="tendência">
+                  <TrendLine items={tendenciaPaciente} valueKey="evolucao" secondaryKey="objetivos" labelKey="label" />
+                </ChartPanel>
+              </div>
 
-              <ChartPanel title="Sinais Vitais Clínicos" subtitle="Leitura do último encontro" action="panorama">
-                <HorizontalBars items={indicadoresAtuais} valueKey="value" labelKey="label" max={100} valueFormatter={(v, item) => item?.formatter ? item.formatter(v) : v} />
-              </ChartPanel>
-            </section>
+              <div className="bento-col bento-4">
+                <section className="supervisao-panel h-full">
+                  <div className="supervisao-section-title">
+                    <h2>Resumo Estrutural</h2>
+                  </div>
+                  <div className="supervisao-focus-card">
+                    <strong>Queixa Principal</strong>
+                    <p>{pacienteSelecionado?.queixaPrincipal || "Nenhuma queixa cadastrada."}</p>
+                    
+                    <strong style={{ marginTop: '20px' }}>Objetivos Terapêuticos</strong>
+                    <p>{pacienteSelecionado?.objetivosTerapeuticos || "Sem objetivos cadastrados."}</p>
+                  </div>
+                </section>
+              </div>
 
-            <div className="supervisao-grid-two dashboard-lower">
-              <section className="supervisao-panel">
-                <div className="supervisao-section-title">
-                  <h2>Resumo Estrutural</h2>
-                  <span>{pacienteSelecionado ? "selecionado" : "ausente"}</span>
-                </div>
-                <div className="supervisao-focus-card">
-                  <strong>Queixa Principal</strong>
-                  <p>{pacienteSelecionado?.queixaPrincipal || "Selecione um paciente para ver a queixa cadastrada."}</p>
-                  
-                  <strong style={{ marginTop: '20px' }}>Objetivos Terapêuticos</strong>
-                  <p>{pacienteSelecionado?.objetivosTerapeuticos || "Os objetivos cadastrados serão exibidos aqui."}</p>
-                </div>
-              </section>
+              <div className="bento-col bento-6">
+                <ChartPanel title="Sinais Vitais Clínicos" subtitle="Leitura do último encontro" action="panorama">
+                  <HorizontalBars items={indicadoresAtuais} valueKey="value" labelKey="label" max={100} valueFormatter={(v, item) => item?.formatter ? item.formatter(v) : v} />
+                </ChartPanel>
+              </div>
 
-              <section className="supervisao-panel">
-                <div className="supervisao-section-title">
-                  <h2>Diário de Intervenções</h2>
-                  <span>Últimos registros</span>
-                </div>
-                <TimelineLancamentos items={historico} emptyText="Sem histórico clínico para exibir." limit={5} />
-              </section>
+              <div className="bento-col bento-6">
+                <section className="supervisao-panel h-full">
+                  <div className="supervisao-section-title">
+                    <h2>Diário de Intervenções</h2>
+                    <span>Últimos registros</span>
+                  </div>
+                  <TimelineLancamentos items={historico} emptyText="Sem histórico clínico para exibir." limit={4} />
+                </section>
+              </div>
             </div>
           </>
         )}
