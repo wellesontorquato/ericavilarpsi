@@ -9,11 +9,10 @@ import {
 } from "./dashboardUtils";
 
 export const REPORT_TYPES = [
-  { value: "completo", label: "Relatório completo" },
-  { value: "lancamentos", label: "Lançamentos semanais" },
-  { value: "alertas", label: "Alertas automáticos" },
-  { value: "cadastros", label: "Cadastros" },
-  { value: "executivo", label: "Resumo executivo" },
+  { value: "executivo", label: "Dashboard Executivo (Recomendado)" },
+  { value: "completo", label: "Relatório com dados brutos" },
+  { value: "lancamentos", label: "Apenas lançamentos semanais" },
+  { value: "alertas", label: "Apenas alertas automáticos" },
 ];
 
 function safeNumber(value) {
@@ -78,42 +77,72 @@ export function exportCsv(filename, columns = [], rows = []) {
   downloadFile(`${slugify(filename)}.csv`, `\uFEFF${header}\n${body}`, "text/csv;charset=utf-8");
 }
 
-export function exportExcelWorkbook(filename, sheets = []) {
-  // Constrói um HTML que o Microsoft Excel interpreta nativamente como planilha
+// NOVA GERAÇÃO DE EXCEL COM DASHBOARD EMBUTIDO
+export function exportExcelWorkbook(filename, sheets = [], dashboardMetrics = null) {
   let htmlContent = `
     <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">
     <head>
       <meta charset="utf-8" />
       <style>
         body { font-family: 'Segoe UI', Arial, sans-serif; background-color: #fbf7f2; }
-        .report-title { font-size: 24px; font-weight: bold; color: #ffffff; background-color: #5f3825; text-align: center; height: 60px; vertical-align: middle; }
-        .sheet-title { font-size: 18px; font-weight: bold; color: #9f6947; margin-top: 30px; margin-bottom: 10px; text-transform: uppercase; }
+        .dashboard-header { font-size: 26px; font-weight: bold; color: #ffffff; background-color: #5f3825; text-align: center; height: 70px; vertical-align: middle; }
+        .kpi-card { background-color: #ffffff; border: 2px solid #d8c8bf; text-align: center; padding: 25px; height: 120px; }
+        .kpi-label { font-size: 12px; color: #7b6c61; font-weight: bold; text-transform: uppercase; }
+        .kpi-value { font-size: 32px; color: #9f6947; font-weight: bold; }
+        .sheet-title { font-size: 18px; font-weight: bold; color: #ffffff; background-color: #9f6947; height: 40px; vertical-align: middle; padding-left: 10px; }
         table { border-collapse: collapse; width: 100%; margin-bottom: 40px; }
-        th { background-color: #9f6947; color: #ffffff; font-weight: bold; text-transform: uppercase; padding: 14px; border: 1px solid #d8c8bf; text-align: left; }
-        td { padding: 12px; border: 1px solid #d8c8bf; color: #392619; vertical-align: top; }
-        tr:nth-child(even) td { background-color: #fcfaf8; }
-        tr:nth-child(odd) td { background-color: #ffffff; }
+        th { background-color: #efe2d5; color: #5f3825; font-weight: bold; text-transform: uppercase; padding: 12px; border: 1px solid #d8c8bf; text-align: left; }
+        td { padding: 10px; border: 1px solid #d8c8bf; color: #392619; vertical-align: top; }
       </style>
     </head>
     <body>
-      <table>
-        <tr><td class="report-title" colspan="5">${filename}</td></tr>
-      </table>
   `;
 
-  sheets.forEach(sheet => {
+  // Se foram passadas métricas, cria a "Planilha 1" como um Dashboard Visual maravilhoso no Excel
+  if (dashboardMetrics) {
     htmlContent += `
       <table>
-        <tr><td colspan="${sheet.columns.length}" class="sheet-title">${sheet.name}</td></tr>
+        <tr><td class="dashboard-header" colspan="4">${escapeHtml(filename)}</td></tr>
+        <tr><td colspan="4" style="height: 20px;"></td></tr>
+        <tr>
+           <td class="kpi-card">
+              <span class="kpi-label">Evolução Clínica</span><br/>
+              <span class="kpi-value">${formatPercent(dashboardMetrics.evolucao)}</span>
+           </td>
+           <td class="kpi-card">
+              <span class="kpi-label">Média Técnica (Equipe)</span><br/>
+              <span class="kpi-value">${formatDecimal(dashboardMetrics.competencia)} / 5</span>
+           </td>
+           <td class="kpi-card">
+              <span class="kpi-label">Casos Atendidos</span><br/>
+              <span class="kpi-value">${dashboardMetrics.pacientes}</span>
+           </td>
+           <td class="kpi-card">
+              <span class="kpi-label">Alertas de Risco</span><br/>
+              <span class="kpi-value">${dashboardMetrics.alertas}</span>
+           </td>
+        </tr>
+        <tr><td colspan="4" style="height: 40px;"></td></tr>
+      </table>
+    `;
+  }
+
+  // Gera as planilhas de dados brutos logo abaixo (O Excel separa automaticamente por tabelas se o usuário quiser copiar)
+  sheets.forEach(sheet => {
+    if (sheet.rows.length === 0) return; // Não exporta tabela vazia
+
+    htmlContent += `
+      <table>
+        <tr><td colspan="${sheet.columns.length}" class="sheet-title">${escapeHtml(sheet.name)}</td></tr>
         <thead>
           <tr>
-            ${sheet.columns.map(col => `<th>${col.label}</th>`).join('')}
+            ${sheet.columns.map(col => `<th>${escapeHtml(col.label)}</th>`).join('')}
           </tr>
         </thead>
         <tbody>
           ${sheet.rows.map(row => `
             <tr>
-              ${sheet.columns.map(col => `<td>${row[col.key] || "-"}</td>`).join('')}
+              ${sheet.columns.map(col => `<td>${escapeHtml(getColumnValue(row, col))}</td>`).join('')}
             </tr>
           `).join('')}
         </tbody>
@@ -123,12 +152,11 @@ export function exportExcelWorkbook(filename, sheets = []) {
 
   htmlContent += `</body></html>`;
 
-  // Cria o arquivo Excel (.xls) e força o download
   const blob = new Blob([htmlContent], { type: 'application/vnd.ms-excel;charset=utf-8' });
   const url = URL.createObjectURL(blob);
   const link = document.createElement("a");
   link.href = url;
-  link.download = `${filename}.xls`;
+  link.download = `${slugify(filename)}.xls`;
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
@@ -200,53 +228,29 @@ export const lancamentosColumns = [
   { key: "paciente", label: "Paciente/Caso" },
   { key: "competenciaMedia", label: "Média competências" },
   { key: "evolucaoMedia", label: "Evolução clínica" },
-  { key: "qualidadeConceitualizacao", label: "Conceitualização" },
-  { key: "planejamentoTerapeutico", label: "Planejamento terapêutico" },
-  { key: "aplicacaoTecnicasTcc", label: "Técnicas TCC" },
-  { key: "manejoSessao", label: "Manejo da sessão" },
-  { key: "posturaTerapeutica", label: "Postura terapêutica" },
-  { key: "formulacaoHipoteses", label: "Formulação de hipóteses" },
-  { key: "crisesAnsiedade", label: "Crises de ansiedade" },
-  { key: "qualidadeSono", label: "Qualidade do sono" },
-  { key: "evitacaoSocial", label: "Evitação social" },
-  { key: "adesaoTarefas", label: "Adesão às tarefas" },
-  { key: "intensidadeSintomas", label: "Intensidade dos sintomas" },
-  { key: "evolucaoObjetivos", label: "Evolução dos objetivos" },
   { key: "statusPlano", label: "Status do plano" },
-  { key: "prazo", label: "Prazo" },
   { key: "pontoForte", label: "Ponto forte" },
   { key: "pontoDesenvolver", label: "Ponto a desenvolver" },
   { key: "recomendacao", label: "Recomendação" },
   { key: "planoAcao", label: "Plano de ação" },
-  { key: "observacao", label: "Observação" },
 ];
 
 export const alertasColumns = [
   { key: "levelLabel", label: "Nível" },
   { key: "typeLabel", label: "Tipo" },
-  { key: "title", label: "Título" },
-  { key: "summary", label: "Resumo" },
-  { key: "detail", label: "Detalhe" },
-  { key: "criteria", label: "Critério" },
   { key: "pacienteNome", label: "Paciente/Caso" },
   { key: "terapeutaNome", label: "Terapeuta" },
   { key: "clinicaNome", label: "Clínica" },
-  { key: "periodo", label: "Período" },
+  { key: "summary", label: "Resumo" },
 ];
 
 export function buildResumoRows({ metrics, filters, contexto }) {
   return [
     { indicador: "Contexto", valor: contexto || "Geral", detalhe: "Filtro principal do relatório" },
-    { indicador: "Ano", valor: filters?.ano || "Todos", detalhe: "Ano selecionado" },
-    { indicador: "Mês", valor: filters?.mes ? mesNome(filters.mes) : "Todos", detalhe: "Mês selecionado" },
-    { indicador: "Semana", valor: filters?.semana ? `Semana ${filters.semana}` : "Todas", detalhe: "Semana selecionada" },
     { indicador: "Lançamentos", valor: formatNumber(metrics.registros), detalhe: "Registros semanais filtrados" },
-    { indicador: "Clínicas", valor: formatNumber(metrics.clinicas), detalhe: "Clínicas no recorte" },
-    { indicador: "Terapeutas", valor: formatNumber(metrics.terapeutas), detalhe: "Terapeutas no recorte" },
     { indicador: "Pacientes", valor: formatNumber(metrics.pacientes), detalhe: "Pacientes/casos no recorte" },
     { indicador: "Média de competências", valor: `${formatDecimal(metrics.competencia)}/5`, detalhe: "Média técnica dos lançamentos" },
     { indicador: "Evolução clínica", valor: formatPercent(metrics.evolucao), detalhe: "Score consolidado dos pacientes" },
-    { indicador: "Planos abertos", valor: formatNumber(metrics.planosAbertos), detalhe: "Ações pendentes ou em andamento" },
     { indicador: "Alertas", valor: formatNumber(metrics.alertas), detalhe: "Alertas automáticos no recorte" },
   ];
 }
@@ -263,7 +267,6 @@ export function buildClinicasRows(clinicas = []) {
 
 export function buildTerapeutasRows(terapeutas = [], context = {}) {
   const maps = buildMaps(context);
-
   return asArray(terapeutas).map((item) => ({
     nome: normalizeText(item.nome),
     clinica: resolveClinicaNome(item.clinicaId, maps),
@@ -276,7 +279,6 @@ export function buildTerapeutasRows(terapeutas = [], context = {}) {
 
 export function buildPacientesRows(pacientes = [], context = {}) {
   const maps = buildMaps(context);
-
   return asArray(pacientes).map((item) => ({
     nome: normalizeText(item.nome),
     clinica: resolveClinicaNome(item.clinicaId, maps),
@@ -293,7 +295,6 @@ export function buildPacientesRows(pacientes = [], context = {}) {
 
 export function buildLancamentosRows(lancamentos = [], context = {}) {
   const maps = buildMaps(context);
-
   return sortByPeriodDesc(lancamentos).map((item) => ({
     ano: normalizeText(item.ano),
     mes: item.mes ? mesNome(item.mes) : "-",
@@ -303,25 +304,11 @@ export function buildLancamentosRows(lancamentos = [], context = {}) {
     paciente: normalizeText(item.pacienteNome, resolvePacienteNome(item.pacienteId, maps)),
     competenciaMedia: formatDecimal(competenciaMedia(item)),
     evolucaoMedia: formatPercent(evolucaoMedia(item)),
-    qualidadeConceitualizacao: formatDecimal(item.qualidadeConceitualizacao),
-    planejamentoTerapeutico: formatDecimal(item.planejamentoTerapeutico),
-    aplicacaoTecnicasTcc: formatDecimal(item.aplicacaoTecnicasTcc),
-    manejoSessao: formatDecimal(item.manejoSessao),
-    posturaTerapeutica: formatDecimal(item.posturaTerapeutica),
-    formulacaoHipoteses: formatDecimal(item.formulacaoHipoteses),
-    crisesAnsiedade: formatDecimal(item.crisesAnsiedade),
-    qualidadeSono: formatDecimal(item.qualidadeSono),
-    evitacaoSocial: formatDecimal(item.evitacaoSocial),
-    adesaoTarefas: formatPercent(item.adesaoTarefas),
-    intensidadeSintomas: formatDecimal(item.intensidadeSintomas),
-    evolucaoObjetivos: formatPercent(item.evolucaoObjetivos),
     statusPlano: normalizeText(item.statusPlano),
-    prazo: normalizeText(item.prazo),
     pontoForte: normalizeText(item.pontoForte),
     pontoDesenvolver: normalizeText(item.pontoDesenvolver),
     recomendacao: normalizeText(item.recomendacao),
     planoAcao: normalizeText(item.planoAcao),
-    observacao: normalizeText(item.observacao),
   }));
 }
 
@@ -329,36 +316,30 @@ export function buildAlertasRows(alertas = []) {
   return asArray(alertas).map((item) => ({
     levelLabel: normalizeText(item.levelLabel),
     typeLabel: normalizeText(item.typeLabel),
-    title: normalizeText(item.title),
-    summary: normalizeText(item.summary),
-    detail: normalizeText(item.detail),
-    criteria: normalizeText(item.criteria),
     pacienteNome: normalizeText(item.pacienteNome),
     terapeutaNome: normalizeText(item.terapeutaNome),
     clinicaNome: normalizeText(item.clinicaNome),
-    periodo: normalizeText(item.periodo),
+    summary: normalizeText(item.summary),
   }));
 }
 
 export function buildReportSheets({ resumoRows = [], clinicasRows = [], terapeutasRows = [], pacientesRows = [], lancamentosRows = [], alertasRows = [], type = "completo" }) {
   const sheets = [];
 
-  if (["completo", "executivo"].includes(type)) {
-    sheets.push({ name: "Resumo executivo", columns: resumoColumns, rows: resumoRows });
+  // Se for "executivo", mostramos apenas Alertas Críticos e o Histórico de Lançamentos
+  if (type === "executivo") {
+    sheets.push({ name: "Atenção Imediata (Alertas)", columns: alertasColumns, rows: alertasRows.slice(0, 15) });
+    sheets.push({ name: "Últimos Lançamentos", columns: lancamentosColumns, rows: lancamentosRows.slice(0, 20) });
+    return sheets;
   }
 
+  // Completo
+  if (["completo", "lancamentos"].includes(type)) sheets.push({ name: "Lançamentos Semanais", columns: lancamentosColumns, rows: lancamentosRows });
+  if (["completo", "alertas"].includes(type)) sheets.push({ name: "Alertas Gerados", columns: alertasColumns, rows: alertasRows });
   if (["completo", "cadastros"].includes(type)) {
-    sheets.push({ name: "Clínicas", columns: clinicasColumns, rows: clinicasRows });
-    sheets.push({ name: "Terapeutas", columns: terapeutasColumns, rows: terapeutasRows });
     sheets.push({ name: "Pacientes", columns: pacientesColumns, rows: pacientesRows });
-  }
-
-  if (["completo", "lancamentos"].includes(type)) {
-    sheets.push({ name: "Lançamentos semanais", columns: lancamentosColumns, rows: lancamentosRows });
-  }
-
-  if (["completo", "alertas"].includes(type)) {
-    sheets.push({ name: "Alertas automáticos", columns: alertasColumns, rows: alertasRows });
+    sheets.push({ name: "Terapeutas", columns: terapeutasColumns, rows: terapeutasRows });
+    sheets.push({ name: "Clínicas", columns: clinicasColumns, rows: clinicasRows });
   }
 
   return sheets;

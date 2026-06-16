@@ -9238,15 +9238,13 @@ button{font:inherit;}
 }
 
 /* =========================================================
-   IMPRESSÃO (PDF) - RELATÓRIOS EXECUTIVOS ESTILIZADOS
+   IMPRESSÃO (PDF) - DASHBOARDS EXECUTIVOS ESTILIZADOS
    ========================================================= */
 @media print {
-  /* Esconde TUDO na tela... */
   body * {
     visibility: hidden !important;
   }
 
-  /* ...Exceto a div do relatório de impressão e seus filhos */
   .supervisao-print-report,
   .supervisao-print-report * {
     visibility: visible !important;
@@ -9260,9 +9258,9 @@ button{font:inherit;}
     margin: 0;
     padding: 0;
     background: #ffffff !important;
+    font-family: Arial, sans-serif;
   }
 
-  /* Força a impressão das cores de fundo (Crucial para o PDF) */
   * {
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
@@ -9296,7 +9294,7 @@ button{font:inherit;}
   }
 
   .print-cover h1 {
-    font-family: var(--font-libre-bodoni), serif;
+    font-family: var(--font-libre-bodoni), Georgia, serif;
     font-size: 3.5rem;
     color: #392619 !important;
     margin: 0 0 10px;
@@ -9326,11 +9324,11 @@ button{font:inherit;}
   /* Miolo do Relatório (Páginas internas) */
   .print-section {
     padding: 40px 50px;
-    page-break-inside: avoid;
+    page-break-after: always;
   }
 
   .print-section h3 {
-    font-family: var(--font-libre-bodoni), serif;
+    font-family: var(--font-libre-bodoni), Georgia, serif;
     font-size: 1.8rem;
     color: #392619 !important;
     border-bottom: 2px solid #e8ddd3 !important;
@@ -9338,16 +9336,16 @@ button{font:inherit;}
     margin-bottom: 24px;
   }
 
-  /* Cards de Resumo */
+  /* Cards de Resumo (KPIs) */
   .print-metrics {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 20px;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
     margin-bottom: 40px;
   }
 
   .print-metric-card {
-    padding: 24px;
+    padding: 20px;
     border-radius: 16px;
     background: #fdfaf6 !important;
     border: 1px solid #e8ddd3 !important;
@@ -9356,7 +9354,7 @@ button{font:inherit;}
   .print-metric-card span {
     display: block;
     color: #7b6c61 !important;
-    font-size: 0.85rem;
+    font-size: 0.75rem;
     font-weight: 800;
     text-transform: uppercase;
     letter-spacing: 0.05em;
@@ -9365,7 +9363,7 @@ button{font:inherit;}
   .print-metric-card strong {
     display: block;
     color: #392619 !important;
-    font-size: 2.4rem;
+    font-size: 2.2rem;
     line-height: 1;
     margin: 10px 0;
   }
@@ -9373,7 +9371,66 @@ button{font:inherit;}
   .print-metric-card small {
     display: block;
     color: #9f6947 !important;
-    font-size: 0.9rem;
+    font-size: 0.8rem;
+  }
+
+  /* Gráficos de Barra Simulados no PDF */
+  .print-grid-two {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 30px;
+    margin-bottom: 40px;
+  }
+
+  .print-card {
+    background: #ffffff !important;
+    border: 1px solid #e8ddd3 !important;
+    border-radius: 16px;
+    padding: 20px;
+  }
+
+  .print-card h4 {
+    margin: 0 0 16px;
+    font-size: 1.2rem;
+    color: #392619 !important;
+  }
+
+  .print-bar-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+
+  .print-bar-label {
+    width: 140px;
+    font-size: 0.85rem;
+    color: #5d4d43 !important;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .print-bar-track {
+    flex: 1;
+    height: 14px;
+    background: #f4efe8 !important;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  .print-bar-fill {
+    height: 100%;
+    background: #9f6947 !important;
+    border-radius: 8px;
+  }
+
+  .print-bar-value {
+    width: 40px;
+    text-align: right;
+    font-size: 0.85rem;
+    font-weight: bold;
+    color: #392619 !important;
   }
 
   /* Tabelas do PDF */
@@ -9385,10 +9442,10 @@ button{font:inherit;}
 
   .print-table th,
   .print-table td {
-    padding: 12px 14px;
+    padding: 10px 12px;
     text-align: left;
     border-bottom: 1px solid #e8ddd3 !important;
-    font-size: 0.9rem;
+    font-size: 0.85rem;
   }
 
   .print-table th {
@@ -9404,10 +9461,7 @@ button{font:inherit;}
     line-height: 1.4;
   }
 
-  /* Remove margens extras inseridas pelo navegador na hora da impressão */
-  @page {
-    margin: 0;
-  }
+  @page { margin: 0; }
 }
 
 /* =========================================================
