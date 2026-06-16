@@ -73,17 +73,17 @@ function PacientesContent({ user, onLogout }) {
     { name: "observacoes", label: "Observações", type: "textarea", rows: 3 },
   ];
 
-  // Colunas redesenhadas para um visual "SaaS Premium" em harmonia com os dashboards
+  // COLUNAS ESTILIZADAS COM RENDERIZAÇÃO RICA
   const columns = [
     { 
       name: "nome", 
       label: "Paciente / Terapeuta",
       render: (item) => (
-        <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: "2px" }}>
           <strong style={{ color: "var(--sup-text)", fontSize: "1rem", lineHeight: "1.2" }}>
             {item.nome}
           </strong>
-          <span style={{ color: "var(--sup-primary-dark)", fontSize: "0.82rem", fontWeight: 700 }}>
+          <span style={{ color: "var(--sup-primary)", fontSize: "0.82rem", fontWeight: 700 }}>
             {terapeutas.find((t) => t.id === item.terapeutaId)?.nome || "Sem terapeuta"}
           </span>
         </div>
@@ -91,7 +91,7 @@ function PacientesContent({ user, onLogout }) {
     },
     {
       name: "clinicaId",
-      label: "Unidade Base",
+      label: "Unidade",
       render: (item) => (
         <span style={{ color: "var(--sup-muted)", fontSize: "0.9rem", fontWeight: 600 }}>
           {clinicas.find((c) => c.id === item.clinicaId)?.nome || "-"}
@@ -105,7 +105,6 @@ function PacientesContent({ user, onLogout }) {
         const nivel = item.nivelAtencao || "Baixa";
         const isAlto = nivel === "Alta";
         const isMedio = nivel === "Média";
-        // Aplica a bolinha de cor baseada no nível de atenção
         const color = isAlto ? "#a43c32" : isMedio ? "#c98239" : "#6f8b6b";
         
         return (
@@ -118,13 +117,12 @@ function PacientesContent({ user, onLogout }) {
     },
     { 
       name: "statusCaso", 
-      label: "Status do Caso",
+      label: "Status",
       render: (item) => {
         const status = item.statusCaso || "Em acompanhamento";
         const isEncerrado = status === "Encerrado" || status === "Alta";
         const isPausado = status === "Pausado";
         
-        // Puxa as classes nativas do seu CSS global para desenhar o Badge
         let className = "supervisao-inline-status";
         if (isEncerrado) className += " archived";
         else if (isPausado) className += " neutral";
@@ -136,10 +134,10 @@ function PacientesContent({ user, onLogout }) {
 
   return (
     <>
-      <Head><title>Gestão de Casos | Supervisão TCC</title></Head>
+      <Head><title>Pacientes | Supervisão TCC</title></Head>
       <LayoutSupervisao
-        title="Gestão de Casos e Pacientes"
-        description="Cadastre os pacientes, defina o nível inicial de atenção e vincule-os aos terapeutas para acompanhamento."
+        title="Pacientes / Casos"
+        description="Cadastre os casos que serão acompanhados semanalmente."
         user={user}
         onLogout={onLogout}
       >
@@ -149,7 +147,7 @@ function PacientesContent({ user, onLogout }) {
           fields={fields}
           columns={columns}
           entityLabel="paciente"
-          emptyText="Cadastre o primeiro paciente/caso para iniciar a gestão clínica."
+          emptyText="Cadastre o primeiro paciente/caso para lançar supervisões."
         />
       </LayoutSupervisao>
     </>
