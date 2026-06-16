@@ -207,12 +207,9 @@ export function getAllPostSlugs() {
     .map((fileName) => {
       const { data } = readMarkdownPost(fileName);
 
-      return {
-        params: {
-          slug: getPostSlug(fileName, data),
-        },
-      };
-    });
+      return String(getPostSlug(fileName, data));
+    })
+    .filter(Boolean);
 }
 
 export async function getPostBySlug(slug) {
