@@ -23,6 +23,8 @@ import {
   summarizeAlertas,
 } from "@/lib/supervisao/alertas";
 
+import "@/styles/alertas.css";
+
 const currentMonth = String(new Date().getMonth() + 1);
 
 function nivelClass(level) {
@@ -188,7 +190,7 @@ function AlertasContent({ user, onLogout }) {
 
   const clinicas = useMemo(() => data?.clinicas || [], [data]);
   const terapeutas = useMemo(() => data?.terapeutas || [], [data]);
-  const pacientes = useMemo(() => data?.pacientes || [], [data]);
+  const pacienes = useMemo(() => data?.pacientes || [], [data]);
   const lancamentos = useMemo(() => data?.lancamentos || [], [data]);
 
   const terapeutasFiltrados = useMemo(() => {
@@ -197,16 +199,16 @@ function AlertasContent({ user, onLogout }) {
   }, [terapeutas, filters.clinicaId]);
 
   const pacientesFiltrados = useMemo(() => {
-    return pacientes.filter((item) => {
+    return pacienes.filter((item) => {
       if (filters.clinicaId && safeId(item.clinicaId) !== safeId(filters.clinicaId)) return false;
       if (filters.terapeutaId && safeId(item.terapeutaId) !== safeId(filters.terapeutaId)) return false;
       return true;
     });
-  }, [pacientes, filters.clinicaId, filters.terapeutaId]);
+  }, [pacienes, filters.clinicaId, filters.terapeutaId]);
 
   const alertasCalculados = useMemo(() => {
-    return buildAlertasSupervisao({ clinicas, terapeutas, pacientes, lancamentos, filters });
-  }, [clinicas, terapeutas, pacientes, lancamentos, filters]);
+    return buildAlertasSupervisao({ clinicas, terapeutas, pacientes: pacienes, lancamentos, filters });
+  }, [clinicas, terapeutas, pacienes, lancamentos, filters]);
 
   const alertasFiltrados = useMemo(() => {
     return filterAlertas(alertasCalculados, filters);

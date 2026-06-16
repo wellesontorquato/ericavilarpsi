@@ -1,0 +1,129 @@
+/* =========================================================
+   DASHBOARD DE CLÍNICAS (VISÃO MACRO)
+   ========================================================= */
+
+/* Scroll Interno Customizado */
+.scroll-interno {
+  flex: 1;
+  overflow-y: auto;
+  padding-right: 8px;
+  max-height: 420px;
+}
+
+.scroll-interno::-webkit-scrollbar {
+  width: 5px;
+}
+.scroll-interno::-webkit-scrollbar-track {
+  background: transparent;
+}
+.scroll-interno::-webkit-scrollbar-thumb {
+  background: rgba(159, 105, 71, 0.25);
+  border-radius: 10px;
+}
+.scroll-interno::-webkit-scrollbar-thumb:hover {
+  background: rgba(159, 105, 71, 0.45);
+}
+
+/* Painéis Flexíveis (Bento Box harmony) */
+.clinica-panel-flex {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.clinica-panel-header {
+  padding-bottom: 16px;
+  margin-bottom: 16px;
+  border-bottom: 1px solid var(--sup-line);
+}
+
+.clinica-panel-title {
+  margin: 0;
+  font-size: 1.35rem;
+  color: var(--sup-text);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.clinica-panel-badge {
+  background-color: var(--sup-primary);
+  color: #fff;
+  padding: 2px 14px;
+  border-radius: 999px;
+  font-size: 1.15rem;
+  line-height: 1.4;
+}
+
+.clinica-panel-desc {
+  margin: 6px 0 0;
+  font-size: 0.85rem;
+  color: var(--sup-muted);
+}
+
+/* Lista de Atenção Imediata */
+.clinica-attention-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.clinica-attention-card {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 16px;
+  background-color: rgba(255, 255, 255, 0.7);
+  border: 1px solid var(--sup-line);
+  border-radius: 18px;
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.clinica-attention-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(159, 105, 71, 0.3);
+}
+
+.clinica-attention-name {
+  display: block;
+  font-size: 1.05rem;
+  color: var(--sup-text);
+  line-height: 1.2;
+}
+
+.clinica-attention-meta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.85rem;
+  color: var(--sup-muted);
+  margin-top: 2px;
+}
+
+.clinica-attention-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex: 0 0 auto;
+}
+
+/* Estado Vazio Refinado */
+.clinica-empty-state {
+  padding: 24px;
+  text-align: center;
+  background-color: rgba(255, 255, 255, 0.4);
+  border-radius: 16px;
+  border: 1px dashed var(--sup-line);
+}
+
+.clinica-empty-state .emoji {
+  font-size: 2rem;
+  display: block;
+  margin-bottom: 8px;
+}
+
+.clinica-empty-state p {
+  margin: 0;
+  color: var(--sup-muted);
+  font-size: 0.9rem;
+}

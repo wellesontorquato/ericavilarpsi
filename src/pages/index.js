@@ -2,6 +2,7 @@ import Head from 'next/head';
 import Link from 'next/link';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { getAllPosts } from '@/lib/posts';
+import "@/styles/home.css";
 
 const WHATSAPP_URL =
   'https://wa.me/5582996657825?text=Ol%C3%A1%2C%20vim%20pelo%20site%20e%20gostaria%20de%20entender%20melhor%20como%20funciona%20o%20seu%20trabalho%20e%20quais%20seriam%20os%20pr%C3%B3ximos%20passos.';

@@ -5,6 +5,9 @@ import LayoutSupervisao from "@/components/supervisao/LayoutSupervisao";
 import EntityCrud from "@/components/supervisao/EntityCrud";
 import { listResource } from "@/lib/supervisao/api";
 
+// Importação do CSS isolado da página
+import "@/styles/pacientes.css";
+
 export default function PacientesPage() {
   return (
     <AuthGuard>
@@ -73,17 +76,15 @@ function PacientesContent({ user, onLogout }) {
     { name: "observacoes", label: "Observações", type: "textarea", rows: 3 },
   ];
 
-  // COLUNAS ESTILIZADAS COM RENDERIZAÇÃO RICA
+  // Colunas redesenhadas usando as classes limpas do CSS
   const columns = [
     { 
       name: "nome", 
       label: "Paciente / Terapeuta",
       render: (item) => (
-        <div style={{ display: "flex", flexDirection: "column", gap: "2px" }}>
-          <strong style={{ color: "var(--sup-text)", fontSize: "1rem", lineHeight: "1.2" }}>
-            {item.nome}
-          </strong>
-          <span style={{ color: "var(--sup-primary)", fontSize: "0.82rem", fontWeight: 700 }}>
+        <div className="paciente-col-nome">
+          <strong>{item.nome}</strong>
+          <span>
             {terapeutas.find((t) => t.id === item.terapeutaId)?.nome || "Sem terapeuta"}
           </span>
         </div>
@@ -91,9 +92,9 @@ function PacientesContent({ user, onLogout }) {
     },
     {
       name: "clinicaId",
-      label: "Unidade",
+      label: "Unidade Base",
       render: (item) => (
-        <span style={{ color: "var(--sup-muted)", fontSize: "0.9rem", fontWeight: 600 }}>
+        <span className="paciente-col-unidade">
           {clinicas.find((c) => c.id === item.clinicaId)?.nome || "-"}
         </span>
       ),
@@ -105,11 +106,14 @@ function PacientesContent({ user, onLogout }) {
         const nivel = item.nivelAtencao || "Baixa";
         const isAlto = nivel === "Alta";
         const isMedio = nivel === "Média";
-        const color = isAlto ? "#a43c32" : isMedio ? "#c98239" : "#6f8b6b";
+        
+        let dotClass = "paciente-risco-dot baixo";
+        if (isAlto) dotClass = "paciente-risco-dot alto";
+        else if (isMedio) dotClass = "paciente-risco-dot medio";
         
         return (
-          <span style={{ display: "flex", alignItems: "center", gap: "6px", fontSize: "0.85rem", color: "var(--sup-text)", fontWeight: 800 }}>
-            <span style={{ width: "8px", height: "8px", borderRadius: "50%", backgroundColor: color }}></span>
+          <span className="paciente-col-risco">
+            <span className={dotClass}></span>
             {nivel}
           </span>
         );
@@ -117,12 +121,13 @@ function PacientesContent({ user, onLogout }) {
     },
     { 
       name: "statusCaso", 
-      label: "Status",
+      label: "Status do Caso",
       render: (item) => {
         const status = item.statusCaso || "Em acompanhamento";
         const isEncerrado = status === "Encerrado" || status === "Alta";
         const isPausado = status === "Pausado";
         
+        // Puxa as classes nativas do seu CSS global para desenhar o Badge
         let className = "supervisao-inline-status";
         if (isEncerrado) className += " archived";
         else if (isPausado) className += " neutral";
@@ -133,11 +138,11 @@ function PacientesContent({ user, onLogout }) {
   ];
 
   return (
-    <>
-      <Head><title>Pacientes | Supervisão TCC</title></Head>
+    <div className="pacientes-page-wrapper">
+      <Head><title>Gestão de Casos | Supervisão TCC</title></Head>
       <LayoutSupervisao
-        title="Pacientes / Casos"
-        description="Cadastre os casos que serão acompanhados semanalmente."
+        title="Gestão de Casos e Pacientes"
+        description="Cadastre os pacientes, defina o nível inicial de atenção e vincule-os aos terapeutas para acompanhamento."
         user={user}
         onLogout={onLogout}
       >
@@ -147,9 +152,9 @@ function PacientesContent({ user, onLogout }) {
           fields={fields}
           columns={columns}
           entityLabel="paciente"
-          emptyText="Cadastre o primeiro paciente/caso para lançar supervisões."
+          emptyText="Cadastre o primeiro paciente/caso para iniciar a gestão clínica."
         />
       </LayoutSupervisao>
-    </>
+    </div>
   );
 }

@@ -1,0 +1,218 @@
+/* =========================================================
+   ADMIN ACESSO (Netlify Identity)
+   ========================================================= */
+
+.admin-access-page {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 32px;
+  background:
+    linear-gradient(90deg, rgba(46,38,40,.78), rgba(46,38,40,.38)),
+    url("/optimized/IMG_3092-1024.webp") center/cover no-repeat;
+}
+
+.admin-access-card {
+  width: min(100%, 620px);
+  padding: clamp(32px, 5vw, 58px);
+  border-radius: 36px;
+  background: rgba(255,255,255,.9);
+  border: 1px solid rgba(255,255,255,.7);
+  box-shadow: 0 30px 80px rgba(46,38,40,.22);
+  backdrop-filter: blur(16px);
+  text-align: center;
+}
+
+.admin-access-kicker {
+  display: inline-flex;
+  margin-bottom: 18px;
+  padding: 9px 15px;
+  border-radius: 999px;
+  background: rgba(170,120,135,.12);
+  color: var(--primary-dark);
+  font-size: .74rem;
+  font-weight: 700;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+}
+
+.admin-access-card h1 {
+  margin-bottom: 18px;
+  font-family: var(--font-libre-bodoni), serif;
+  font-size: clamp(2.5rem, 5vw, 4.5rem);
+  line-height: .95;
+  font-weight: 500;
+  letter-spacing: -.04em;
+  color: var(--text);
+}
+
+.admin-access-card p {
+  max-width: 500px;
+  margin: 0 auto 28px;
+  color: var(--muted);
+  font-size: 1rem;
+  line-height: 1.8;
+}
+
+.admin-access-steps {
+  display: grid;
+  gap: 12px;
+  margin-bottom: 28px;
+  text-align: left;
+}
+
+.admin-access-steps div {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  padding: 14px;
+  border-radius: 20px;
+  background: rgba(170,120,135,.08);
+  border: 1px solid rgba(46,38,40,.06);
+}
+
+.admin-access-steps strong {
+  width: 34px;
+  height: 34px;
+  min-width: 34px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--text);
+  color: #fff;
+  font-size: .9rem;
+}
+
+.admin-access-steps span {
+  color: var(--muted);
+  font-size: .95rem;
+  line-height: 1.5;
+}
+
+.admin-access-button {
+  width: 100%;
+  min-height: 54px;
+  border: none;
+  border-radius: 999px;
+  background: var(--text);
+  color: #fff;
+  font-family: var(--font-montserrat), sans-serif;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 18px 34px rgba(46,38,40,.16);
+  transition: transform .28s ease, box-shadow .28s ease;
+}
+
+.admin-access-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 24px 44px rgba(46,38,40,.22);
+}
+
+.admin-access-button:disabled {
+  opacity: .55;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.admin-access-card small {
+  display: block;
+  margin-top: 16px;
+  color: var(--muted);
+  font-size: .82rem;
+  line-height: 1.5;
+}
+
+.admin-password-form {
+  display: grid;
+  gap: 16px;
+  margin-top: 28px;
+  text-align: left;
+}
+
+.admin-password-form label {
+  display: grid;
+  gap: 8px;
+}
+
+.admin-password-form label span {
+  color: var(--text);
+  font-size: .86rem;
+  font-weight: 700;
+}
+
+.admin-password-form input {
+  width: 100%;
+  min-height: 54px;
+  border: 1px solid rgba(46,38,40,.12);
+  border-radius: 18px;
+  background: rgba(255,255,255,.86);
+  padding: 0 16px;
+  color: var(--text);
+  font-family: var(--font-montserrat), sans-serif;
+  font-size: .95rem;
+  outline: none;
+  transition:
+    border-color var(--transition),
+    box-shadow var(--transition),
+    background var(--transition);
+}
+
+.admin-password-form input:focus {
+  border-color: rgba(170,120,135,.6);
+  box-shadow: 0 0 0 4px rgba(170,120,135,.12);
+  background: #fff;
+}
+
+.admin-password-rules {
+  display: grid;
+  gap: 4px;
+  padding: 14px 16px;
+  border-radius: 18px;
+  background: rgba(170,120,135,.08);
+  border: 1px solid rgba(46,38,40,.06);
+}
+
+.admin-password-rules strong {
+  color: var(--text);
+  font-size: .86rem;
+}
+
+.admin-password-rules span {
+  color: var(--muted);
+  font-size: .88rem;
+  line-height: 1.5;
+}
+
+.admin-access-message {
+  padding: 14px 16px;
+  border-radius: 18px;
+  font-size: .9rem;
+  line-height: 1.55;
+}
+
+.admin-access-message.error {
+  background: rgba(160, 45, 45, .09);
+  color: #8b2b2b;
+  border: 1px solid rgba(160, 45, 45, .16);
+}
+
+.admin-access-message.success {
+  background: rgba(45, 125, 82, .10);
+  color: #276b48;
+  border: 1px solid rgba(45, 125, 82, .18);
+}
+
+@media (max-width: 640px) {
+  .admin-access-page {
+    padding: 18px;
+  }
+
+  .admin-access-card {
+    border-radius: 28px;
+  }
+
+  .admin-access-steps div {
+    align-items: flex-start;
+  }
+}

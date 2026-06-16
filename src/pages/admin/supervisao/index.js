@@ -11,6 +11,9 @@ import { supervisaoRequest } from "@/lib/supervisao/api";
 import { average, formatPercent, mesNome } from "@/lib/supervisao/format";
 import { buildTendencia, currentYear, evolucaoMedia, filterLancamentos, isCasoAtencao, selectedName } from "@/lib/supervisao/dashboardUtils";
 
+// Importa o CSS focado nesta página
+import "@/styles/dashboard-clinicas.css";
+
 export default function SupervisaoClinicasDashboardPage() {
   return (
     <AuthGuard>
@@ -42,7 +45,7 @@ function ClinicasDashboardContent({ user, onLogout }) {
   }, [user]);
 
   const clinicas = useMemo(() => data?.clinicas || [], [data]);
-  const terapeutas = useMemo(() => data?.terapeutas || [], [data]); // Importante para cruzar nomes
+  const terapeutas = useMemo(() => data?.terapeutas || [], [data]); 
   const pacientes = useMemo(() => data?.pacientes || [], [data]);
   const lancamentos = useMemo(() => data?.lancamentos || [], [data]);
 
@@ -60,7 +63,6 @@ function ClinicasDashboardContent({ user, onLogout }) {
     };
   }, [lancamentosFiltrados, pacientesDaClinica]);
 
-  // Ranking de Clínicas (Usado quando NENHUMA clínica específica está selecionada)
   const resumoClinicas = useMemo(() => {
     return clinicas.map((clinica) => {
       const registros = filterLancamentos(lancamentos, { ...filters, clinicaId: clinica.id });
@@ -72,7 +74,6 @@ function ClinicasDashboardContent({ user, onLogout }) {
     }).filter((item) => item.evolucao > 0).sort((a, b) => b.evolucao - a.evolucao);
   }, [clinicas, lancamentos, filters]);
 
-  // Ranking de Casos/Pacientes (Usado quando UMA clínica específica ESTÁ selecionada)
   const resumoPacientesDaClinica = useMemo(() => {
     if (!filters.clinicaId) return [];
     return pacientesDaClinica.map((paciente) => {
@@ -127,7 +128,7 @@ function ClinicasDashboardContent({ user, onLogout }) {
         </section>
 
         {loading ? (
-          <section className="supervisao-panel"><p>Carregando dashboard...</p></section>
+          <section className="supervisao-panel"><p>A carregar dashboard...</p></section>
         ) : (
           <>
             <section className="supervisao-indicator-grid executive">
@@ -151,7 +152,6 @@ function ClinicasDashboardContent({ user, onLogout }) {
               </div>
 
               <div className="bento-col bento-8">
-                {/* RENDERIZAÇÃO CONDICIONAL: Ranking de Clínicas vs Ranking de Pacientes */}
                 {!filters.clinicaId ? (
                   <ChartPanel title="Evolução por Unidade" subtitle="Ranking de saúde por clínica" action={`${resumoClinicas.length} ativas`}>
                     <HorizontalBars items={resumoClinicas.slice(0, 5)} valueKey="evolucao" labelKey="label" max={100} valueFormatter={formatPercent} />
@@ -164,49 +164,42 @@ function ClinicasDashboardContent({ user, onLogout }) {
               </div>
 
               <div className="bento-col bento-4">
-                {/* Painel Reformulado de Atenção Imediata */}
-                <section className="supervisao-panel h-full" style={{ display: 'flex', flexDirection: 'column' }}>
-                  <div style={{ paddingBottom: '16px', marginBottom: '16px', borderBottom: '1px solid var(--sup-line)' }}>
-                    <h2 style={{ margin: 0, fontSize: '1.35rem', color: 'var(--sup-text)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <section className="supervisao-panel clinica-panel-flex">
+                  <div className="clinica-panel-header">
+                    <h2 className="clinica-panel-title">
                       Atenção Imediata:
-                      <strong style={{ 
-                        backgroundColor: 'var(--sup-primary)', 
-                        color: '#fff', 
-                        padding: '2px 14px', 
-                        borderRadius: '999px', 
-                        fontSize: '1.15rem',
-                        lineHeight: '1.4'
-                      }}>
+                      <strong className="clinica-panel-badge">
                         {casosAtencaoLista.length}
                       </strong>
                     </h2>
-                    <p style={{ margin: '6px 0 0', fontSize: '0.85rem', color: 'var(--sup-muted)' }}>Casos que exigem intervenção prioritária.</p>
+                    <p className="clinica-panel-desc">Casos que exigem intervenção prioritária.</p>
                   </div>
                   
-                  <div className="supervisao-insight-list" style={{ flex: 1, overflowY: 'auto' }}>
+                  <div className="scroll-interno clinica-attention-list">
                     {casosAtencaoLista.map((paciente) => {
                       const terapeutaResponsavel = terapeutas.find(t => t.id === paciente.terapeutaId);
                       const isAltoRisco = paciente.nivelAtencao === 'Alta' || paciente.nivelAtencao === 'Alto';
                       
                       return (
-                        <article 
-                          key={paciente.id} 
-                          style={{ display: 'flex', flexDirection: 'column', gap: '6px', padding: '16px', backgroundColor: 'rgba(255,255,255,0.7)', border: '1px solid var(--sup-line)', borderRadius: '18px' }}
-                        >
-                          <strong style={{ display: 'block', fontSize: '1.05rem', color: 'var(--sup-text)', lineHeight: 1.2 }}>
+                        <article key={paciente.id} className="clinica-attention-card">
+                          <strong className="clinica-attention-name">
                             {paciente.nome}
                           </strong>
-                          <span style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.85rem', color: 'var(--sup-muted)', marginTop: '2px' }}>
-                            <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: isAltoRisco ? '#a43c32' : '#c98239' }}></span>
+                          <span className="clinica-attention-meta">
+                            <span 
+                              className="clinica-attention-dot" 
+                              style={{ backgroundColor: isAltoRisco ? '#a43c32' : '#c98239' }}
+                            ></span>
                             {terapeutaResponsavel?.nome || "Sem terapeuta"} · Nível: {paciente.nivelAtencao}
                           </span>
                         </article>
                       );
                     })}
+                    
                     {casosAtencaoLista.length === 0 && (
-                      <div style={{ padding: '24px', textAlign: 'center', backgroundColor: 'rgba(255,255,255,0.4)', borderRadius: '16px', border: '1px dashed var(--sup-line)' }}>
-                        <span style={{ fontSize: '2rem', display: 'block', marginBottom: '8px' }}>🎉</span>
-                        <p style={{ margin: 0, color: 'var(--sup-muted)', fontSize: '0.9rem' }}>Nenhum caso crítico detectado no momento.</p>
+                      <div className="clinica-empty-state">
+                        <span className="emoji">🎉</span>
+                        <p>Nenhum caso crítico detetado no momento.</p>
                       </div>
                     )}
                   </div>

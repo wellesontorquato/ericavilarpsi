@@ -22,6 +22,9 @@ import {
   sortByPeriodDesc,
 } from "@/lib/supervisao/dashboardUtils";
 
+// Importa o CSS exclusivo deste dashboard
+import "@/styles/dashboard-terapeutas.css";
+
 export default function SupervisaoTerapeutasDashboardPage() {
   return (
     <AuthGuard>
@@ -60,7 +63,7 @@ function TerapeutasDashboardContent({ user, onLogout }) {
   }, [user]);
 
   const terapeutas = useMemo(() => data?.terapeutas || [], [data]);
-  const pacientes = useMemo(() => data?.pacientes || [], [data]); // Importante para cruzar nomes
+  const pacientes = useMemo(() => data?.pacientes || [], [data]);
   const lancamentos = useMemo(() => data?.lancamentos || [], [data]);
   const lancamentosFiltrados = useMemo(() => filterLancamentos(lancamentos, filters), [lancamentos, filters]);
 
@@ -80,7 +83,7 @@ function TerapeutasDashboardContent({ user, onLogout }) {
   }, [terapeutas, lancamentos, filters]);
 
   const ultimasDevolutivas = useMemo(() => sortByPeriodDesc(lancamentosFiltrados).filter((item) => item.pontoDesenvolver || item.planoAcao).slice(0, 6), [lancamentosFiltrados]);
-  const historicoRecente = useMemo(() => sortByPeriodDesc(lancamentosFiltrados).slice(0, 4), [lancamentosFiltrados]);
+  const historicoRecente = useMemo(() => sortByPeriodDesc(lancamentosFiltrados).slice(0, 10), [lancamentosFiltrados]);
   const tendencia = useMemo(() => buildTendencia(lancamentosFiltrados, filters), [lancamentosFiltrados, filters]);
   const competenciaRadar = useMemo(() => buildRadar(lancamentosFiltrados), [lancamentosFiltrados]);
 
@@ -145,24 +148,32 @@ function TerapeutasDashboardContent({ user, onLogout }) {
               </div>
 
               <div className="bento-col bento-6">
-                <section className="supervisao-panel h-full">
-                  <div className="supervisao-section-title">
-                    <h2>Planos e Devolutivas</h2>
-                    <span>{ultimasDevolutivas.length}</span>
+                <section className="supervisao-panel terapeuta-panel-flex">
+                  <div className="terapeuta-panel-header">
+                    <div>
+                      <h2>Planos e Devolutivas</h2>
+                      <span>{ultimasDevolutivas.length} pendentes</span>
+                    </div>
                   </div>
-                  <div className="supervisao-insight-list">
+                  
+                  <div className="scroll-interno terapeuta-plan-list">
                     {ultimasDevolutivas.map((item) => {
-                      // Procura o nome do paciente atualizado
                       const paciente = pacientes.find(p => p.id === item.pacienteId);
                       return (
-                        <article key={item.id}>
-                          <strong>{item.pontoDesenvolver || "Ação de desenvolvimento"}</strong>
-                          <span>Caso: {paciente?.nome || item.pacienteNome || "Não informado"}</span>
-                          <p>{item.planoAcao || "Nenhum plano detalhado."}</p>
+                        <article key={item.id} className="terapeuta-plan-card">
+                          <strong className="terapeuta-plan-kicker">{item.pontoDesenvolver || "Ação de desenvolvimento"}</strong>
+                          <span className="terapeuta-plan-case">Caso: {paciente?.nome || item.pacienteNome || "Não informado"}</span>
+                          <p className="terapeuta-plan-text">{item.planoAcao || "Nenhum plano detalhado."}</p>
                         </article>
                       );
                     })}
-                    {ultimasDevolutivas.length === 0 && <p className="supervisao-empty">Nenhum plano de ação pendente.</p>}
+                    
+                    {ultimasDevolutivas.length === 0 && (
+                      <div className="terapeuta-empty-state">
+                        <span className="emoji">🎉</span>
+                        <p>Nenhum plano de ação pendente.</p>
+                      </div>
+                    )}
                   </div>
                 </section>
               </div>
@@ -173,11 +184,16 @@ function TerapeutasDashboardContent({ user, onLogout }) {
                     <HorizontalBars items={terapeutasRanking} valueKey="competencia" labelKey="label" max={5} valueFormatter={(v) => formatDecimal(v)} />
                   </ChartPanel>
                 ) : (
-                  <section className="supervisao-panel h-full">
-                    <div className="supervisao-section-title">
-                      <h2>Últimas anotações</h2>
+                  <section className="supervisao-panel terapeuta-panel-flex">
+                    <div className="terapeuta-panel-header">
+                      <div>
+                        <h2>Últimas Anotações</h2>
+                        <span>Histórico recente</span>
+                      </div>
                     </div>
-                    <TimelineLancamentos items={historicoRecente} limit={4} emptyText="Sem histórico." />
+                    <div className="scroll-interno">
+                      <TimelineLancamentos items={historicoRecente} limit={10} emptyText="Sem histórico de anotações no período." />
+                    </div>
                   </section>
                 )}
               </div>

@@ -27,6 +27,9 @@ import {
   sortByPeriodDesc,
 } from "@/lib/supervisao/dashboardUtils";
 
+// Importa o CSS focado nesta página
+import "@/styles/historico.css";
+
 function safeId(value) {
   return value === undefined || value === null ? "" : String(value);
 }
@@ -178,7 +181,7 @@ function TimelineLancamentosResumida({ items = [], onVerDetalhes }) {
         <article key={item.id || `${item.ano}-${item.mes}-${item.semana}-${index}`}>
           <div className="supervisao-history-marker" aria-hidden="true" />
 
-          <div className="supervisao-history-card supervisao-history-card-compact">
+          <div className="supervisao-history-card">
             <header>
               <div>
                 <span>{periodLabel(item)}</span>
@@ -571,7 +574,7 @@ function HistoricoContent({ user, onLogout }) {
                 </div>
 
                 {ultimoLancamento ? (
-                  <article className="supervisao-last-note supervisao-last-note-compact">
+                  <article className="supervisao-last-note">
                     <div>
                       <strong>
                         {ultimoLancamento.pacienteNome || "Paciente/caso"}

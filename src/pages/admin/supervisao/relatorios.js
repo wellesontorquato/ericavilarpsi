@@ -38,6 +38,9 @@ import {
   terapeutasColumns,
 } from "@/lib/supervisao/relatorios";
 
+// Importa o CSS exclusivo dos Relatórios
+import "@/styles/relatorios.css";
+
 function matchEntity(item = {}, filters = {}, type = "generico") {
   if (type === "clinica") {
     if (filters.clinicaId && safeId(item.id) !== safeId(filters.clinicaId)) return false;
@@ -80,15 +83,15 @@ function PreviewTable({ title, columns, rows, limit = 5 }) {
   const previewRows = rows.slice(0, limit);
 
   return (
-    <section className="supervisao-report-preview-card h-full" style={{ display: 'flex', flexDirection: 'column' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-        <h2 style={{ margin: 0, fontSize: '1.2rem', color: 'var(--sup-text)' }}>{title}</h2>
-        <span style={{ fontSize: '0.85rem', color: 'var(--sup-muted)', fontWeight: 600 }}>{rows.length} registro(s)</span>
+    <section className="supervisao-report-preview-card preview-table-card">
+      <div className="preview-table-header">
+        <h2>{title}</h2>
+        <span>{rows.length} registro(s)</span>
       </div>
 
       {previewRows.length ? (
-        <div className="supervisao-report-preview-table-wrap scroll-interno" style={{ flex: 1, border: 'none', background: 'transparent' }}>
-          <table className="supervisao-report-preview-table" style={{ border: '1px solid var(--sup-line)', borderRadius: '16px', overflow: 'hidden' }}>
+        <div className="supervisao-report-preview-table-wrap scroll-interno preview-table-wrap">
+          <table className="supervisao-report-preview-table preview-table-styled">
             <thead>
               <tr>
                 {columns.slice(0, 4).map((column) => (
@@ -108,8 +111,8 @@ function PreviewTable({ title, columns, rows, limit = 5 }) {
           </table>
         </div>
       ) : (
-        <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(255,255,255,0.4)', borderRadius: '16px', border: '1px dashed var(--sup-line)' }}>
-          <p className="supervisao-empty" style={{ background: 'none', border: 'none' }}>Sem dados para este recorte.</p>
+        <div className="preview-table-empty">
+          <p className="supervisao-empty">Sem dados para este recorte.</p>
         </div>
       )}
     </section>
@@ -177,6 +180,7 @@ function PrintReport({ data }) {
               <div className="print-bar-row" key={i}>
                 <span className="print-bar-label">{item.label}</span>
                 <div className="print-bar-track">
+                  {/* O width dinâmico é a única propriedade inline permitida */}
                   <div className="print-bar-fill" style={{ width: `${item.value}%` }}></div>
                 </div>
                 <span className="print-bar-value">{formatPercent(item.value)}</span>
@@ -186,7 +190,7 @@ function PrintReport({ data }) {
           
           <div className="print-card">
             <h4>Status Operacional</h4>
-            <p style={{ color: '#5f3825', lineHeight: 1.6, fontSize: '1.05rem', margin: 0 }}>
+            <p className="print-text-highlight">
               No recorte selecionado, o sistema documentou <strong>{data.metrics.registros} intervenções clínicas</strong>,
               envolvendo o trabalho direto de <strong>{data.metrics.terapeutas} terapeuta(s)</strong> em <strong>{data.metrics.clinicas} clínica(s)</strong>.
               Foram registrados {data.metrics.planosAbertos} planos de ação em aberto, indicando frentes de desenvolvimento contínuo da equipe.
@@ -202,16 +206,16 @@ function PrintReport({ data }) {
           <table className="print-table">
             <thead>
               <tr>
-                <th style={{ width: '15%' }}>Nível</th>
-                <th style={{ width: '25%' }}>Paciente</th>
-                <th style={{ width: '60%' }}>Resumo do Risco / Motivo</th>
+                <th className="print-table-col-15">Nível</th>
+                <th className="print-table-col-25">Paciente</th>
+                <th className="print-table-col-60">Resumo do Risco / Motivo</th>
               </tr>
             </thead>
             <tbody>
               {previewAlertas.map((alerta, index) => (
                 <tr key={`alerta-${index}`}>
                   <td><strong>{alerta.levelLabel}</strong></td>
-                  <td>{alerta.pacienteNome}<br/><small style={{ color: '#9f6947'}}>{alerta.terapeutaNome}</small></td>
+                  <td>{alerta.pacienteNome}<br/><small className="print-text-sub">{alerta.terapeutaNome}</small></td>
                   <td>{alerta.summary}</td>
                 </tr>
               ))}
@@ -221,22 +225,22 @@ function PrintReport({ data }) {
           <p>Nenhum alerta crítico encontrado para o recorte selecionado. Operação estável.</p>
         )}
 
-        <h3 style={{ marginTop: '50px' }}>Registro de Intervenções Recentes</h3>
+        <h3 className="print-section-gap">Registro de Intervenções Recentes</h3>
         {previewLancamentos.length > 0 ? (
           <table className="print-table">
             <thead>
               <tr>
-                <th style={{ width: '15%' }}>Semana</th>
-                <th style={{ width: '25%' }}>Paciente / Terapeuta</th>
-                <th style={{ width: '15%' }}>Score</th>
-                <th style={{ width: '45%' }}>Ponto a Desenvolver / Foco</th>
+                <th className="print-table-col-15">Semana</th>
+                <th className="print-table-col-25">Paciente / Terapeuta</th>
+                <th className="print-table-col-15">Score</th>
+                <th className="print-table-col-45">Ponto a Desenvolver / Foco</th>
               </tr>
             </thead>
             <tbody>
               {previewLancamentos.map((item, index) => (
                 <tr key={`lancamento-${index}`}>
                   <td>{item.mes} · S{item.semana}</td>
-                  <td>{item.paciente}<br/><small style={{ color: '#9f6947'}}>{item.terapeuta}</small></td>
+                  <td>{item.paciente}<br/><small className="print-text-sub">{item.terapeuta}</small></td>
                   <td>Evol: {item.evolucaoMedia}<br/>Comp: {item.competenciaMedia}</td>
                   <td>{item.pontoDesenvolver || item.planoAcao || "-"}</td>
                 </tr>
@@ -263,7 +267,7 @@ function RelatoriosContent({ user, onLogout }) {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState({ type: "", text: "" });
-  const [reportType, setReportType] = useState("executivo"); // Já vem marcado o recomendado
+  const [reportType, setReportType] = useState("executivo");
   const [printData, setPrintData] = useState(null);
   const [filters, setFilters] = useState({
     ano: String(currentYear),
@@ -404,7 +408,7 @@ function RelatoriosContent({ user, onLogout }) {
     exportExcelWorkbook(
       buildReportFileName(contextTitle, filters, "Excel"),
       reportSheets,
-      metrics // Passando os dados para a capa do Excel
+      metrics 
     );
   }
 
@@ -421,7 +425,7 @@ function RelatoriosContent({ user, onLogout }) {
       periodText,
       clinicasFiltradas,
       terapeutasFiltrados,
-      lancamentosRaw: lancamentos // Usado para calcular as barras no PDF
+      lancamentosRaw: lancamentos 
     });
   }
 

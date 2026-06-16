@@ -9,6 +9,9 @@ import StatusMessage from "@/components/supervisao/StatusMessage";
 import { archiveResource, createResource, listResource, restoreResource, updateResource } from "@/lib/supervisao/api";
 import { average, formatDecimal, mesNome, meses, semanas } from "@/lib/supervisao/format";
 
+// Importa o CSS exclusivo da página
+import "@/styles/lancamento-semanal.css";
+
 const PAGE_SIZE = 15;
 const currentDate = new Date();
 
@@ -360,12 +363,7 @@ function LancamentoContent({ user, onLogout }) {
           ) : (
             <>
               <div className="supervisao-entity-list-wrap">
-                <div
-                  className="supervisao-entity-list supervisao-launch-list"
-                  style={{
-                    "--entity-grid": "minmax(220px, 1.3fr) minmax(160px, 0.9fr) minmax(170px, 0.9fr) minmax(140px, 0.7fr) minmax(190px, auto)",
-                  }}
-                >
+                <div className="supervisao-entity-list supervisao-launch-list">
                   <div className="supervisao-entity-row supervisao-entity-row-head">
                     <div>Paciente/Caso</div>
                     <div>Período</div>
@@ -577,7 +575,7 @@ function LancamentoContent({ user, onLogout }) {
 
             <div className="supervisao-form-actions full sticky-actions">
               <button className="supervisao-primary-button" type="submit" disabled={saving}>
-                {saving ? "Salvando..." : editingId ? "Atualizar lançamento" : "Salvar lançamento semanal"}
+                {saving ? "A salvar..." : editingId ? "Atualizar lançamento" : "Salvar lançamento semanal"}
               </button>
               <button className="supervisao-secondary-button" type="button" onClick={closeModal}>
                 Cancelar

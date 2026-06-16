@@ -20,6 +20,9 @@ import {
   sortByPeriodDesc,
 } from "@/lib/supervisao/dashboardUtils";
 
+// Importa o CSS focado nesta página
+import "@/styles/dashboard-pacientes.css";
+
 function latestNumber(items, field) {
   const latest = sortByPeriodDesc(items).find((item) => item[field] !== "" && item[field] !== undefined && item[field] !== null);
   const value = Number(latest?.[field]);
@@ -158,8 +161,8 @@ function PacientesDashboardContent({ user, onLogout }) {
         {loading ? (
           <section className="supervisao-panel"><p>Carregando prontuário...</p></section>
         ) : !pacienteSelecionado ? (
-          <section className="supervisao-panel" style={{ textAlign: "center", padding: "60px 20px" }}>
-            <span style={{ fontSize: "3rem", display: "block", marginBottom: "16px" }}>👥</span>
+          <section className="supervisao-panel paciente-empty-state">
+            <span className="emoji">👥</span>
             <h2>Nenhum paciente selecionado</h2>
             <p className="supervisao-empty">Selecione um paciente no filtro acima para visualizar o prontuário clínico detalhado, histórico de melhoria e diário de intervenções. Não exibimos dados acumulados aqui para não gerar distorções analíticas.</p>
           </section>
@@ -180,26 +183,22 @@ function PacientesDashboardContent({ user, onLogout }) {
               </div>
 
               <div className="bento-col bento-4">
-                <section className="supervisao-panel h-full" style={{ display: 'flex', flexDirection: 'column' }}>
-                  <div style={{ paddingBottom: '16px', marginBottom: '16px', borderBottom: '1px solid var(--sup-line)' }}>
-                    <h2 style={{ margin: 0, fontSize: '1.25rem', color: 'var(--sup-text)' }}>Resumo Estrutural</h2>
+                <section className="supervisao-panel paciente-panel-flex">
+                  <div className="paciente-panel-header">
+                    <h2>Resumo Estrutural</h2>
                   </div>
                   
-                  <div className="scroll-interno" style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                    <article style={{ padding: '16px', backgroundColor: 'rgba(255,255,255,0.65)', border: '1px solid var(--sup-line)', borderRadius: '18px' }}>
-                      <span style={{ display: 'block', fontSize: '0.72rem', fontWeight: 800, color: 'var(--sup-primary-dark)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '8px' }}>
-                        Queixa Principal
-                      </span>
-                      <p style={{ margin: 0, color: 'var(--sup-text)', fontSize: '0.92rem', lineHeight: 1.6 }}>
+                  <div className="scroll-interno paciente-structural-list">
+                    <article className="paciente-structural-card">
+                      <span className="paciente-structural-kicker">Queixa Principal</span>
+                      <p className="paciente-structural-text">
                         {pacienteSelecionado?.queixaPrincipal || "Nenhuma queixa cadastrada."}
                       </p>
                     </article>
 
-                    <article style={{ padding: '16px', backgroundColor: 'rgba(255,255,255,0.65)', border: '1px solid var(--sup-line)', borderRadius: '18px' }}>
-                      <span style={{ display: 'block', fontSize: '0.72rem', fontWeight: 800, color: 'var(--sup-primary-dark)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '8px' }}>
-                        Objetivos Terapêuticos
-                      </span>
-                      <p style={{ margin: 0, color: 'var(--sup-text)', fontSize: '0.92rem', lineHeight: 1.6 }}>
+                    <article className="paciente-structural-card">
+                      <span className="paciente-structural-kicker">Objetivos Terapêuticos</span>
+                      <p className="paciente-structural-text">
                         {pacienteSelecionado?.objetivosTerapeuticos || "Sem objetivos cadastrados."}
                       </p>
                     </article>
@@ -214,11 +213,11 @@ function PacientesDashboardContent({ user, onLogout }) {
               </div>
 
               <div className="bento-col bento-6">
-                <section className="supervisao-panel h-full" style={{ display: 'flex', flexDirection: 'column' }}>
-                  <div style={{ paddingBottom: '16px', marginBottom: '16px', borderBottom: '1px solid var(--sup-line)', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                <section className="supervisao-panel paciente-panel-flex">
+                  <div className="paciente-panel-header">
                     <div>
-                      <h2 style={{ margin: '0 0 4px', fontSize: '1.25rem', color: 'var(--sup-text)' }}>Diário de Intervenções</h2>
-                      <span style={{ fontSize: '0.85rem', color: 'var(--sup-muted)' }}>Últimos registros</span>
+                      <h2>Diário de Intervenções</h2>
+                      <span>Últimos registros</span>
                     </div>
                   </div>
 
