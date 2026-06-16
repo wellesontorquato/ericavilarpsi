@@ -3,9 +3,6 @@ import Link from 'next/link';
 import { useMemo, useState } from 'react';
 import { getAllPosts } from '@/lib/posts';
 
-// Importa o CSS isolado para a Listagem do Blog
-import '@/styles/blog.css';
-
 function formatPostDate(dateString) {
   if (!dateString) return '';
 
