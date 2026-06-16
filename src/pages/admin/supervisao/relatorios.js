@@ -5,19 +5,9 @@ import LayoutSupervisao from "@/components/supervisao/LayoutSupervisao";
 import CardIndicador from "@/components/supervisao/CardIndicador";
 import DashboardFilters from "@/components/supervisao/DashboardFilters";
 import StatusMessage from "@/components/supervisao/StatusMessage";
-import {
-  ChartPanel,
-  DonutChart,
-  HorizontalBars,
-} from "@/components/supervisao/Charts";
+import { ChartPanel, DonutChart, HorizontalBars } from "@/components/supervisao/Charts";
 import { supervisaoRequest } from "@/lib/supervisao/api";
-import {
-  average,
-  formatDecimal,
-  formatNumber,
-  formatPercent,
-  mesNome,
-} from "@/lib/supervisao/format";
+import { average, formatDecimal, formatPercent, mesNome } from "@/lib/supervisao/format";
 import {
   competenciaMedia,
   currentYear,
@@ -28,10 +18,7 @@ import {
   safeText,
   selectedName,
 } from "@/lib/supervisao/dashboardUtils";
-import {
-  buildAlertasSupervisao,
-  summarizeAlertas,
-} from "@/lib/supervisao/alertas";
+import { buildAlertasSupervisao, summarizeAlertas } from "@/lib/supervisao/alertas";
 import {
   REPORT_TYPES,
   alertasColumns,
@@ -56,20 +43,15 @@ function matchEntity(item = {}, filters = {}, type = "generico") {
     if (filters.clinicaId && safeId(item.id) !== safeId(filters.clinicaId)) return false;
     return true;
   }
-
   if (filters.clinicaId && safeId(item.clinicaId) !== safeId(filters.clinicaId)) return false;
-
   if (type === "terapeuta") {
     if (filters.terapeutaId && safeId(item.id) !== safeId(filters.terapeutaId)) return false;
     return true;
   }
-
   if (filters.terapeutaId && safeId(item.terapeutaId) !== safeId(filters.terapeutaId)) return false;
-
   if (type === "paciente") {
     if (filters.pacienteId && safeId(item.id) !== safeId(filters.pacienteId)) return false;
   }
-
   return true;
 }
 
@@ -87,7 +69,6 @@ function getPeriodText(filters = {}) {
   ]
     .filter(Boolean)
     .join(" · ");
-
   return `${periodo}${filters.semana ? ` · Semana ${filters.semana}` : ""}`;
 }
 
@@ -95,22 +76,23 @@ function buildReportFileName(contextTitle, filters, suffix) {
   return `Relatório Supervisão TCC - ${contextTitle} - ${getPeriodText(filters)} - ${suffix}`;
 }
 
-function PreviewTable({ title, columns, rows, limit = 6 }) {
+// Componente PreviewTable refatorado para encaixar perfeitamente no Bento Box
+function PreviewTable({ title, columns, rows, limit = 5 }) {
   const previewRows = rows.slice(0, limit);
 
   return (
-    <section className="supervisao-report-preview-card">
-      <div className="supervisao-section-title">
-        <h2>{title}</h2>
-        <span>{rows.length} registro(s)</span>
+    <section className="supervisao-report-preview-card h-full" style={{ display: 'flex', flexDirection: 'column' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+        <h2 style={{ margin: 0, fontSize: '1.2rem', color: 'var(--sup-text)' }}>{title}</h2>
+        <span style={{ fontSize: '0.85rem', color: 'var(--sup-muted)', fontWeight: 600 }}>{rows.length} registro(s)</span>
       </div>
 
       {previewRows.length ? (
-        <div className="supervisao-report-preview-table-wrap">
-          <table className="supervisao-report-preview-table">
+        <div className="supervisao-report-preview-table-wrap scroll-interno" style={{ flex: 1, border: 'none', background: 'transparent' }}>
+          <table className="supervisao-report-preview-table" style={{ border: '1px solid var(--sup-line)', borderRadius: '16px', overflow: 'hidden' }}>
             <thead>
               <tr>
-                {columns.slice(0, 5).map((column) => (
+                {columns.slice(0, 4).map((column) => (
                   <th key={column.key}>{column.label}</th>
                 ))}
               </tr>
@@ -118,7 +100,7 @@ function PreviewTable({ title, columns, rows, limit = 6 }) {
             <tbody>
               {previewRows.map((row, rowIndex) => (
                 <tr key={row.id || rowIndex}>
-                  {columns.slice(0, 5).map((column) => (
+                  {columns.slice(0, 4).map((column) => (
                     <td key={column.key}>{safeText(row[column.key])}</td>
                   ))}
                 </tr>
@@ -127,7 +109,9 @@ function PreviewTable({ title, columns, rows, limit = 6 }) {
           </table>
         </div>
       ) : (
-        <p className="supervisao-empty">Sem dados para este recorte.</p>
+        <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(255,255,255,0.4)', borderRadius: '16px', border: '1px dashed var(--sup-line)' }}>
+          <p className="supervisao-empty" style={{ background: 'none', border: 'none' }}>Sem dados para este recorte.</p>
+        </div>
       )}
     </section>
   );
@@ -254,7 +238,6 @@ function RelatoriosContent({ user, onLogout }) {
   useEffect(() => {
     async function loadDashboard() {
       setLoading(true);
-
       try {
         const payload = await supervisaoRequest(user, "dashboard");
         setData(payload);
@@ -265,7 +248,6 @@ function RelatoriosContent({ user, onLogout }) {
         setLoading(false);
       }
     }
-
     loadDashboard();
   }, [user]);
 
@@ -367,16 +349,13 @@ function RelatoriosContent({ user, onLogout }) {
   function updateFilter(name, value) {
     setFilters((current) => {
       const next = { ...current, [name]: value };
-
       if (name === "clinicaId") {
         next.terapeutaId = "";
         next.pacienteId = "";
       }
-
       if (name === "terapeutaId") {
         next.pacienteId = "";
       }
-
       return next;
     });
   }
@@ -389,19 +368,11 @@ function RelatoriosContent({ user, onLogout }) {
   }
 
   function handleExportLancamentosCsv() {
-    exportCsv(
-      buildReportFileName(contextTitle, filters, "Lançamentos"),
-      lancamentosColumns,
-      reportRows.lancamentosRows
-    );
+    exportCsv(buildReportFileName(contextTitle, filters, "Lançamentos"), lancamentosColumns, reportRows.lancamentosRows);
   }
 
   function handleExportAlertasCsv() {
-    exportCsv(
-      buildReportFileName(contextTitle, filters, "Alertas"),
-      alertasColumns,
-      reportRows.alertasRows
-    );
+    exportCsv(buildReportFileName(contextTitle, filters, "Alertas"), alertasColumns, reportRows.alertasRows);
   }
 
   function handlePrintReport() {
@@ -421,8 +392,8 @@ function RelatoriosContent({ user, onLogout }) {
       </Head>
 
       <LayoutSupervisao
-        title="Relatórios"
-        description="Gere resumos executivos, exportações para Excel e versões imprimíveis dos acompanhamentos clínicos."
+        title="Relatórios e Análises"
+        description="Gere resumos executivos, exportações para Excel e versões imprimíveis do trabalho clínico."
         user={user}
         onLogout={onLogout}
       >
@@ -430,9 +401,9 @@ function RelatoriosContent({ user, onLogout }) {
 
         <section className="supervisao-dashboard-hero relatorios-hero">
           <div>
-            <span className="supervisao-kicker">Bloco 4 · Fase 2</span>
+            <span className="supervisao-kicker">Data & Inteligência</span>
             <h2>{contextTitle}</h2>
-            <p>{periodText} · escolha o recorte, revise os indicadores e exporte o relatório no formato necessário.</p>
+            <p>{periodText} · escolha o recorte e exporte os dados consolidados no formato necessário.</p>
           </div>
 
           <DashboardFilters
@@ -475,15 +446,15 @@ function RelatoriosContent({ user, onLogout }) {
           <>
             <section className="supervisao-report-command-panel">
               <div>
-                <span className="supervisao-kicker">Tipo de relatório</span>
+                <span className="supervisao-kicker">Exportar Documentos</span>
                 <h2>{tipoRelatorioLabel}</h2>
                 <p>
-                  O botão de Excel gera um arquivo compatível com Excel. O botão de PDF abre a impressão do navegador para salvar como PDF.
+                  O arquivo gerado reflete exatamente os filtros aplicados. Utilize o botão de PDF para abrir a formatação limpa de impressão.
                 </p>
               </div>
 
               <label>
-                <span>Modelo</span>
+                <span>Selecionar modelo de arquivo</span>
                 <select value={reportType} onChange={(event) => setReportType(event.target.value)}>
                   {REPORT_TYPES.map((item) => (
                     <option key={item.value} value={item.value}>{item.label}</option>
@@ -493,65 +464,81 @@ function RelatoriosContent({ user, onLogout }) {
 
               <div className="supervisao-report-actions">
                 <button type="button" className="supervisao-primary-button" onClick={handleExportExcel}>
-                  Exportar Excel
+                  Baixar Excel (XLSX)
                 </button>
                 <button type="button" className="supervisao-secondary-button" onClick={handlePrintReport}>
-                  Gerar PDF / imprimir
+                  Gerar Relatório em PDF
                 </button>
                 <button type="button" className="supervisao-secondary-button" onClick={handleExportLancamentosCsv}>
-                  CSV lançamentos
+                  CSV Lançamentos
                 </button>
                 <button type="button" className="supervisao-secondary-button" onClick={handleExportAlertasCsv}>
-                  CSV alertas
+                  CSV Alertas
                 </button>
               </div>
             </section>
 
             <section className="supervisao-indicator-grid executive">
-              <CardIndicador label="Lançamentos" value={metrics.registros} detail="registros no recorte" />
-              <CardIndicador label="Pacientes" value={metrics.pacientes} detail="casos no relatório" />
-              <CardIndicador label="Terapeutas" value={metrics.terapeutas} detail="profissionais no recorte" />
-              <CardIndicador label="Competência" value={formatDecimal(metrics.competencia)} detail="média técnica" />
-              <CardIndicador label="Evolução" value={formatPercent(metrics.evolucao)} detail="score clínico" />
+              <CardIndicador label="Lançamentos" value={metrics.registros} detail="registros filtrados" />
+              <CardIndicador label="Pacientes" value={metrics.pacientes} detail="casos acompanhados" />
+              <CardIndicador label="Evolução" value={formatPercent(metrics.evolucao)} detail="score clínico geral" />
               <CardIndicador label="Alertas" value={metrics.alertas} detail="pontos de atenção" />
             </section>
 
-            <section className="supervisao-presentation-grid relatorios-charts-grid">
-              <ChartPanel title="Alertas por nível" subtitle="Prioridade dos pontos de atenção" action={`${resumoAlertas.total} alerta(s)`}>
-                <DonutChart items={resumoAlertas.niveis} />
-              </ChartPanel>
+            <div className="bento-grid">
+              <div className="bento-col bento-4">
+                <ChartPanel title="Alertas por Nível" subtitle="Prioridade dos pontos de atenção" action={`${resumoAlertas.total} alerta(s)`}>
+                  <DonutChart items={resumoAlertas.niveis} />
+                </ChartPanel>
+              </div>
 
-              <ChartPanel title="Tipos de alerta" subtitle="Motivos mais frequentes" action={`${resumoAlertas.tipos.length} tipo(s)`}>
-                <HorizontalBars
-                  items={resumoAlertas.tipos.slice(0, 7)}
-                  valueKey="value"
-                  labelKey="label"
-                  valueFormatter={(value) => String(value)}
-                />
-              </ChartPanel>
+              <div className="bento-col bento-4">
+                <ChartPanel title="Tipos de Alerta" subtitle="Motivos mais frequentes" action="Top 5">
+                  <HorizontalBars
+                    items={resumoAlertas.tipos.slice(0, 5)}
+                    valueKey="value"
+                    labelKey="label"
+                    valueFormatter={(value) => String(value)}
+                  />
+                </ChartPanel>
+              </div>
 
-              <ChartPanel title="Clínicas no relatório" subtitle="Volume de registros por recorte" action={`${metrics.clinicas} clínica(s)`}>
-                <HorizontalBars
-                  items={clinicasFiltradas.map((clinica) => ({
-                    id: clinica.id,
-                    label: clinica.nome,
-                    value: lancamentosFiltrados.filter((item) => safeId(item.clinicaId) === safeId(clinica.id)).length,
-                  })).filter((item) => item.value > 0).slice(0, 7)}
-                  valueKey="value"
-                  labelKey="label"
-                  valueFormatter={(value) => String(value)}
-                />
-              </ChartPanel>
-            </section>
+              <div className="bento-col bento-4">
+                <ChartPanel title="Clínicas no Relatório" subtitle="Volume de registros no recorte" action={`${metrics.clinicas} clínica(s)`}>
+                  <HorizontalBars
+                    items={clinicasFiltradas.map((clinica) => ({
+                      id: clinica.id,
+                      label: clinica.nome,
+                      value: lancamentosFiltrados.filter((item) => safeId(item.clinicaId) === safeId(clinica.id)).length,
+                    })).filter((item) => item.value > 0).slice(0, 5)}
+                    valueKey="value"
+                    labelKey="label"
+                    valueFormatter={(value) => String(value)}
+                  />
+                </ChartPanel>
+              </div>
+            </div>
 
-            <section className="supervisao-report-preview-grid dashboard-lower">
-              <PreviewTable title="Resumo executivo" columns={resumoColumns} rows={reportRows.resumoRows} />
-              <PreviewTable title="Lançamentos semanais" columns={lancamentosColumns} rows={reportRows.lancamentosRows} />
-              <PreviewTable title="Alertas automáticos" columns={alertasColumns} rows={reportRows.alertasRows} />
-              <PreviewTable title="Pacientes / Casos" columns={pacientesColumns} rows={reportRows.pacientesRows} />
-              <PreviewTable title="Terapeutas" columns={terapeutasColumns} rows={reportRows.terapeutasRows} />
-              <PreviewTable title="Clínicas" columns={clinicasColumns} rows={reportRows.clinicasRows} />
-            </section>
+            <div className="bento-grid dashboard-lower">
+              <div className="bento-col bento-12">
+                <PreviewTable title="Resumo Executivo" columns={resumoColumns} rows={reportRows.resumoRows} limit={4} />
+              </div>
+              <div className="bento-col bento-6">
+                <PreviewTable title="Lançamentos Semanais" columns={lancamentosColumns} rows={reportRows.lancamentosRows} limit={4} />
+              </div>
+              <div className="bento-col bento-6">
+                <PreviewTable title="Alertas Automáticos" columns={alertasColumns} rows={reportRows.alertasRows} limit={4} />
+              </div>
+              <div className="bento-col bento-4">
+                <PreviewTable title="Pacientes / Casos" columns={pacientesColumns} rows={reportRows.pacientesRows} limit={5} />
+              </div>
+              <div className="bento-col bento-4">
+                <PreviewTable title="Equipe de Terapeutas" columns={terapeutasColumns} rows={reportRows.terapeutasRows} limit={5} />
+              </div>
+              <div className="bento-col bento-4">
+                <PreviewTable title="Unidades Clínicas" columns={clinicasColumns} rows={reportRows.clinicasRows} limit={5} />
+              </div>
+            </div>
           </>
         )}
       </LayoutSupervisao>
