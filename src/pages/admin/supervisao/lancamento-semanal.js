@@ -9,9 +9,6 @@ import StatusMessage from "@/components/supervisao/StatusMessage";
 import { archiveResource, createResource, listResource, restoreResource, updateResource } from "@/lib/supervisao/api";
 import { average, formatDecimal, mesNome, meses, semanas } from "@/lib/supervisao/format";
 
-// Importa o CSS exclusivo da página
-import "@/styles/lancamento-semanal.css";
-
 const PAGE_SIZE = 15;
 const currentDate = new Date();
 

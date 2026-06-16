@@ -20,9 +20,6 @@ import {
   sortByPeriodDesc,
 } from "@/lib/supervisao/dashboardUtils";
 
-// Importa o CSS focado nesta página
-import "@/styles/dashboard-pacientes.css";
-
 function latestNumber(items, field) {
   const latest = sortByPeriodDesc(items).find((item) => item[field] !== "" && item[field] !== undefined && item[field] !== null);
   const value = Number(latest?.[field]);

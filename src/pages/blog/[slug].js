@@ -5,9 +5,6 @@ import { getAllPostSlugs, getPostBySlug } from "@/lib/posts";
 import PostReactions from "@/components/PostReactions";
 import PostComments from "@/components/PostComments";
 
-// Importa o CSS isolado para o post do Blog
-import "@/styles/post-blog.css";
-
 const SITE_URL = "https://ericavilarpsi.com.br";
 
 export default function BlogPost({ post }) {

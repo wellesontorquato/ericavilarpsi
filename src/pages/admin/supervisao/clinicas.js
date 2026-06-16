@@ -3,9 +3,6 @@ import AuthGuard from "@/components/supervisao/AuthGuard";
 import LayoutSupervisao from "@/components/supervisao/LayoutSupervisao";
 import EntityCrud from "@/components/supervisao/EntityCrud";
 
-// Importação do CSS isolado da página
-import "@/styles/clinicas.css";
-
 const fields = [
   { name: "nome", label: "Nome da clínica", required: true },
   { name: "cidade", label: "Cidade" },

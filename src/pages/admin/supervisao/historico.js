@@ -27,9 +27,6 @@ import {
   sortByPeriodDesc,
 } from "@/lib/supervisao/dashboardUtils";
 
-// Importa o CSS focado nesta página
-import "@/styles/historico.css";
-
 function safeId(value) {
   return value === undefined || value === null ? "" : String(value);
 }

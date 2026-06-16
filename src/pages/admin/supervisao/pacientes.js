@@ -5,9 +5,6 @@ import LayoutSupervisao from "@/components/supervisao/LayoutSupervisao";
 import EntityCrud from "@/components/supervisao/EntityCrud";
 import { listResource } from "@/lib/supervisao/api";
 
-// Importação do CSS isolado da página
-import "@/styles/pacientes.css";
-
 export default function PacientesPage() {
   return (
     <AuthGuard>

@@ -1,7 +1,6 @@
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { useState } from "react";
-import "@/styles/pix-imersao.css";
 
 const PIX_PAYMENTS = {
   individual: {

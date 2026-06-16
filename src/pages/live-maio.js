@@ -1,6 +1,5 @@
 import Head from "next/head";
 import { useRef, useState } from "react";
-import "@/styles/live-maio.css";
 
 const LIMITE_SUBTEMAS = 5;
 

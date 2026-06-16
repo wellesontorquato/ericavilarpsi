@@ -22,9 +22,6 @@ import {
   sortByPeriodDesc,
 } from "@/lib/supervisao/dashboardUtils";
 
-// Importa o CSS exclusivo deste dashboard
-import "@/styles/dashboard-terapeutas.css";
-
 export default function SupervisaoTerapeutasDashboardPage() {
   return (
     <AuthGuard>

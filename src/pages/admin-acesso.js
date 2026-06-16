@@ -1,7 +1,6 @@
 import Head from "next/head";
 import { useEffect, useMemo, useState } from "react";
 import GoTrue from "gotrue-js";
-import "@/styles/admin-acesso.css";
 
 export default function AdminAcesso() {
   const [token, setToken] = useState("");

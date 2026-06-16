@@ -11,9 +11,6 @@ import { supervisaoRequest } from "@/lib/supervisao/api";
 import { average, formatPercent, mesNome } from "@/lib/supervisao/format";
 import { buildTendencia, currentYear, evolucaoMedia, filterLancamentos, isCasoAtencao, selectedName } from "@/lib/supervisao/dashboardUtils";
 
-// Importa o CSS focado nesta página
-import "@/styles/dashboard-clinicas.css";
-
 export default function SupervisaoClinicasDashboardPage() {
   return (
     <AuthGuard>

@@ -1,7 +1,6 @@
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import "@/styles/obrigado-live.css";
 
 const WHATSAPP_GROUP_CODE = "GlhIV0ElLnw2RB4SsMOTJI";
 const WHATSAPP_WEB_LINK = `https://chat.whatsapp.com/${WHATSAPP_GROUP_CODE}`;

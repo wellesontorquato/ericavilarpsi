@@ -23,7 +23,6 @@ import {
   summarizeAlertas,
 } from "@/lib/supervisao/alertas";
 
-import "@/styles/alertas.css";
 
 const currentMonth = String(new Date().getMonth() + 1);
 
