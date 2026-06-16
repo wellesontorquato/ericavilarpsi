@@ -9237,135 +9237,176 @@ button{font:inherit;}
   }
 }
 
+/* =========================================================
+   IMPRESSÃO (PDF) - RELATÓRIOS EXECUTIVOS ESTILIZADOS
+   ========================================================= */
 @media print {
-  body {
-    background: #ffffff !important;
+  /* Esconde TUDO na tela... */
+  body * {
+    visibility: hidden !important;
   }
 
-  body > *:not(#__next) {
-    display: none !important;
-  }
-
-  #__next > *:not(.supervisao-print-report) {
-    display: none !important;
-  }
-
-  .supervisao-shell {
-    display: none !important;
+  /* ...Exceto a div do relatório de impressão e seus filhos */
+  .supervisao-print-report,
+  .supervisao-print-report * {
+    visibility: visible !important;
   }
 
   .supervisao-print-report {
-    display: block !important;
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    margin: 0;
     padding: 0;
-    color: #171717;
-    background: #ffffff;
-    font-family: Arial, sans-serif;
+    background: #ffffff !important;
   }
 
-  .supervisao-print-report header {
-    margin-bottom: 18px;
-    padding-bottom: 16px;
-    border-bottom: 2px solid #d8c8bf;
+  /* Força a impressão das cores de fundo (Crucial para o PDF) */
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
   }
 
-  .supervisao-print-report header span {
-    display: block;
-    margin-bottom: 6px;
-    color: #7b4b37;
-    font-size: 11px;
-    font-weight: 700;
+  /* Capa do Relatório */
+  .print-cover {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    background: linear-gradient(135deg, #fdfbf7, #f4efe8) !important;
+    border-bottom: 16px solid #9f6947 !important;
+    page-break-after: always;
+    padding: 40px;
+  }
+
+  .print-cover .kicker {
+    display: inline-block;
+    color: #ffffff !important;
+    background-color: #5f3825 !important;
+    padding: 8px 16px;
+    border-radius: 999px;
+    font-weight: 800;
+    letter-spacing: 0.15em;
     text-transform: uppercase;
-    letter-spacing: 0.08em;
+    font-size: 0.8rem;
+    margin-bottom: 30px;
   }
 
-  .supervisao-print-report h1 {
-    margin: 0 0 6px;
-    font-size: 28px;
+  .print-cover h1 {
+    font-family: var(--font-libre-bodoni), serif;
+    font-size: 3.5rem;
+    color: #392619 !important;
+    margin: 0 0 10px;
     line-height: 1.1;
   }
 
-  .supervisao-print-report header p {
-    margin: 0;
-    color: #555;
-    font-size: 13px;
+  .print-cover h2 {
+    font-size: 1.8rem;
+    color: #9f6947 !important;
+    margin: 0 0 20px;
+    font-weight: 600;
   }
 
-  .supervisao-print-summary {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 8px;
-    margin-bottom: 18px;
+  .print-cover p {
+    font-size: 1.1rem;
+    color: #7b6c61 !important;
+    max-width: 600px;
   }
 
-  .supervisao-print-summary div {
-    min-height: 72px;
-    padding: 10px;
-    border: 1px solid #e2d4cc;
-    border-radius: 10px;
+  .print-cover-footer {
+    position: absolute;
+    bottom: 40px;
+    color: #a5958a !important;
+    font-size: 0.9rem;
   }
 
-  .supervisao-print-summary span {
-    display: block;
-    color: #6b5a50;
-    font-size: 10px;
-    font-weight: 700;
-    text-transform: uppercase;
-  }
-
-  .supervisao-print-summary strong {
-    display: block;
-    margin: 4px 0;
-    font-size: 18px;
-  }
-
-  .supervisao-print-summary small {
-    display: block;
-    color: #666;
-    font-size: 10px;
-    line-height: 1.35;
-  }
-
-  .supervisao-print-section {
-    margin-top: 18px;
+  /* Miolo do Relatório (Páginas internas) */
+  .print-section {
+    padding: 40px 50px;
     page-break-inside: avoid;
   }
 
-  .supervisao-print-section h2 {
-    margin: 0 0 8px;
-    color: #2a201c;
-    font-size: 16px;
+  .print-section h3 {
+    font-family: var(--font-libre-bodoni), serif;
+    font-size: 1.8rem;
+    color: #392619 !important;
+    border-bottom: 2px solid #e8ddd3 !important;
+    padding-bottom: 12px;
+    margin-bottom: 24px;
   }
 
-  .supervisao-print-section p {
-    margin: 0;
-    color: #333;
-    font-size: 12px;
-    line-height: 1.6;
+  /* Cards de Resumo */
+  .print-metrics {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    margin-bottom: 40px;
   }
 
-  .supervisao-print-report table {
+  .print-metric-card {
+    padding: 24px;
+    border-radius: 16px;
+    background: #fdfaf6 !important;
+    border: 1px solid #e8ddd3 !important;
+  }
+
+  .print-metric-card span {
+    display: block;
+    color: #7b6c61 !important;
+    font-size: 0.85rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .print-metric-card strong {
+    display: block;
+    color: #392619 !important;
+    font-size: 2.4rem;
+    line-height: 1;
+    margin: 10px 0;
+  }
+
+  .print-metric-card small {
+    display: block;
+    color: #9f6947 !important;
+    font-size: 0.9rem;
+  }
+
+  /* Tabelas do PDF */
+  .print-table {
     width: 100%;
     border-collapse: collapse;
-    margin-top: 8px;
-    font-size: 10px;
+    margin-bottom: 40px;
   }
 
-  .supervisao-print-report th,
-  .supervisao-print-report td {
-    padding: 6px 7px;
-    border: 1px solid #dedede;
+  .print-table th,
+  .print-table td {
+    padding: 12px 14px;
     text-align: left;
-    vertical-align: top;
+    border-bottom: 1px solid #e8ddd3 !important;
+    font-size: 0.9rem;
   }
 
-  .supervisao-print-report th {
-    background: #f2e9e3;
-    color: #332820;
-    font-weight: 700;
+  .print-table th {
+    background: #f4efe8 !important;
+    color: #5f3825 !important;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
   }
 
+  .print-table td {
+    color: #392619 !important;
+    line-height: 1.4;
+  }
+
+  /* Remove margens extras inseridas pelo navegador na hora da impressão */
   @page {
-    margin: 14mm;
+    margin: 0;
   }
 }
 

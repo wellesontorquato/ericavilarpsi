@@ -76,7 +76,6 @@ function buildReportFileName(contextTitle, filters, suffix) {
   return `Relatório Supervisão TCC - ${contextTitle} - ${getPeriodText(filters)} - ${suffix}`;
 }
 
-// Componente PreviewTable refatorado para encaixar perfeitamente no Bento Box
 function PreviewTable({ title, columns, rows, limit = 5 }) {
   const previewRows = rows.slice(0, limit);
 
@@ -117,55 +116,65 @@ function PreviewTable({ title, columns, rows, limit = 5 }) {
   );
 }
 
+// Layout redesenhado para PDF
 function PrintReport({ data }) {
   if (!data) return null;
 
-  const previewLancamentos = data.lancamentosRows.slice(0, 30);
-  const previewAlertas = data.alertasRows.slice(0, 24);
+  const previewLancamentos = data.lancamentosRows.slice(0, 40);
+  const previewAlertas = data.alertasRows.slice(0, 40);
+  const dataHoje = new Date().toLocaleDateString('pt-BR');
 
   return (
-    <article className="supervisao-print-report">
-      <header>
-        <span>Relatório de Supervisão Clínica em TCC</span>
-        <h1>{data.contextTitle}</h1>
-        <p>{data.periodText}</p>
-      </header>
+    <div className="supervisao-print-report">
+      {/* Capa */}
+      <div className="print-cover">
+        <span className="kicker">DOCUMENTO GERENCIAL</span>
+        <h1>Relatório de Desempenho<br/>Supervisão Clínica TCC</h1>
+        <h2>{data.contextTitle}</h2>
+        <p>Referência: {data.periodText}</p>
+        
+        <div className="print-cover-footer">
+          Gerado pelo sistema de Supervisão em {dataHoje}
+        </div>
+      </div>
 
-      <section className="supervisao-print-summary">
-        {data.resumoRows.map((row) => (
-          <div key={row.indicador}>
-            <span>{row.indicador}</span>
-            <strong>{row.valor}</strong>
-            <small>{row.detalhe}</small>
-          </div>
-        ))}
-      </section>
-
-      <section className="supervisao-print-section">
-        <h2>Resumo interpretativo</h2>
-        <p>
-          No recorte selecionado, o sistema consolidou {data.metrics.registros} lançamento(s),
-          envolvendo {data.metrics.pacientes} paciente(s), {data.metrics.terapeutas} terapeuta(s)
-          e {data.metrics.clinicas} clínica(s). A média técnica foi de {formatDecimal(data.metrics.competencia)}/5
-          e o score clínico consolidado foi de {formatPercent(data.metrics.evolucao)}.
+      {/* Página de Resumo Executivo */}
+      <div className="print-section">
+        <h3>Resumo Executivo</h3>
+        
+        <div className="print-metrics">
+          {data.resumoRows.map((row) => (
+            <div className="print-metric-card" key={row.indicador}>
+              <span>{row.indicador}</span>
+              <strong>{row.valor}</strong>
+              <small>{row.detalhe}</small>
+            </div>
+          ))}
+        </div>
+        <p style={{ color: '#5f3825', lineHeight: 1.6, fontSize: '1.1rem', backgroundColor: '#fcfaf8', padding: '20px', borderRadius: '12px', border: '1px solid #e8ddd3' }}>
+          No recorte selecionado, o sistema consolidou <strong>{data.metrics.registros} lançamento(s)</strong>,
+          envolvendo <strong>{data.metrics.pacientes} paciente(s)</strong> e <strong>{data.metrics.terapeutas} terapeuta(s)</strong>. 
+          A média técnica da equipe no período avaliado foi de <strong>{formatDecimal(data.metrics.competencia)}/5</strong>, resultando 
+          num score clínico (evolução global) de <strong>{formatPercent(data.metrics.evolucao)}</strong>. Foram detectados <strong>{data.metrics.alertas} alertas automáticos</strong> que exigem atenção.
         </p>
-      </section>
+      </div>
 
-      <section className="supervisao-print-section">
-        <h2>Alertas principais</h2>
-        {previewAlertas.length ? (
-          <table>
+      {/* Página de Alertas Principais */}
+      {previewAlertas.length > 0 && (
+        <div className="print-section">
+          <h3>Alertas Automáticos Detectados</h3>
+          <table className="print-table">
             <thead>
               <tr>
                 <th>Nível</th>
-                <th>Tipo</th>
+                <th>Tipo de Alerta</th>
                 <th>Paciente</th>
-                <th>Resumo</th>
+                <th>Resumo / Motivo</th>
               </tr>
             </thead>
             <tbody>
               {previewAlertas.map((alerta, index) => (
-                <tr key={`${alerta.title}-${index}`}>
+                <tr key={`alerta-${index}`}>
                   <td>{alerta.levelLabel}</td>
                   <td>{alerta.typeLabel}</td>
                   <td>{alerta.pacienteNome}</td>
@@ -174,15 +183,14 @@ function PrintReport({ data }) {
               ))}
             </tbody>
           </table>
-        ) : (
-          <p>Nenhum alerta encontrado para o recorte selecionado.</p>
-        )}
-      </section>
+        </div>
+      )}
 
-      <section className="supervisao-print-section">
-        <h2>Últimos lançamentos</h2>
-        {previewLancamentos.length ? (
-          <table>
+      {/* Página de Lançamentos */}
+      {previewLancamentos.length > 0 && (
+        <div className="print-section">
+          <h3>Lançamentos Semanais (Recentes)</h3>
+          <table className="print-table">
             <thead>
               <tr>
                 <th>Período</th>
@@ -194,8 +202,8 @@ function PrintReport({ data }) {
             </thead>
             <tbody>
               {previewLancamentos.map((item, index) => (
-                <tr key={`${item.paciente}-${index}`}>
-                  <td>{item.mes} · {item.ano} · {item.semana}</td>
+                <tr key={`lancamento-${index}`}>
+                  <td>{item.mes} · {item.ano} · S{item.semana}</td>
                   <td>{item.paciente}</td>
                   <td>{item.terapeuta}</td>
                   <td>{item.competenciaMedia}</td>
@@ -204,11 +212,9 @@ function PrintReport({ data }) {
               ))}
             </tbody>
           </table>
-        ) : (
-          <p>Nenhum lançamento encontrado para o recorte selecionado.</p>
-        )}
-      </section>
-    </article>
+        </div>
+      )}
+    </div>
   );
 }
 
@@ -251,10 +257,11 @@ function RelatoriosContent({ user, onLogout }) {
     loadDashboard();
   }, [user]);
 
+  // Hook para acionar a janela de impressão com tempo de segurança (800ms)
   useEffect(() => {
     if (!printData || typeof window === "undefined") return undefined;
 
-    const timeout = window.setTimeout(() => window.print(), 250);
+    const timeout = window.setTimeout(() => window.print(), 800);
     const clearAfterPrint = () => setPrintData(null);
 
     window.addEventListener("afterprint", clearAfterPrint);
@@ -464,7 +471,7 @@ function RelatoriosContent({ user, onLogout }) {
 
               <div className="supervisao-report-actions">
                 <button type="button" className="supervisao-primary-button" onClick={handleExportExcel}>
-                  Baixar Excel (XLSX)
+                  Baixar Excel Estilizado (XLS)
                 </button>
                 <button type="button" className="supervisao-secondary-button" onClick={handlePrintReport}>
                   Gerar Relatório em PDF

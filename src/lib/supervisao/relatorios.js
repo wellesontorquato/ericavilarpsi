@@ -79,56 +79,60 @@ export function exportCsv(filename, columns = [], rows = []) {
 }
 
 export function exportExcelWorkbook(filename, sheets = []) {
-  const sheetHtml = asArray(sheets)
-    .filter((sheet) => sheet?.columns?.length)
-    .map((sheet) => {
-      const rows = asArray(sheet.rows);
-      const thead = sheet.columns
-        .map((column) => `<th>${escapeHtml(column.label)}</th>`)
-        .join("");
-      const tbody = rows
-        .map((row) => {
-          const cells = sheet.columns
-            .map((column) => `<td>${escapeHtml(getColumnValue(row, column))}</td>`)
-            .join("");
-          return `<tr>${cells}</tr>`;
-        })
-        .join("");
-
-      return `
-        <h2>${escapeHtml(sheet.name)}</h2>
-        <table>
-          <thead><tr>${thead}</tr></thead>
-          <tbody>${tbody || `<tr><td colspan="${sheet.columns.length}">Sem dados</td></tr>`}</tbody>
-        </table>
-        <br />
-      `;
-    })
-    .join("");
-
-  const html = `
-    <!doctype html>
-    <html>
-      <head>
-        <meta charset="utf-8" />
-        <style>
-          body { font-family: Arial, sans-serif; color: #222; }
-          h1 { font-size: 22px; }
-          h2 { margin-top: 24px; font-size: 18px; }
-          table { border-collapse: collapse; width: 100%; margin-bottom: 18px; }
-          th, td { border: 1px solid #cfcfcf; padding: 8px; font-size: 12px; vertical-align: top; }
-          th { background: #f0e6e1; font-weight: 700; }
-        </style>
-      </head>
-      <body>
-        <h1>${escapeHtml(filename)}</h1>
-        <p>Arquivo gerado pelo sistema de supervisão clínica.</p>
-        ${sheetHtml}
-      </body>
-    </html>
+  // Constrói um HTML que o Microsoft Excel interpreta nativamente como planilha
+  let htmlContent = `
+    <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">
+    <head>
+      <meta charset="utf-8" />
+      <style>
+        body { font-family: 'Segoe UI', Arial, sans-serif; background-color: #fbf7f2; }
+        .report-title { font-size: 24px; font-weight: bold; color: #ffffff; background-color: #5f3825; text-align: center; height: 60px; vertical-align: middle; }
+        .sheet-title { font-size: 18px; font-weight: bold; color: #9f6947; margin-top: 30px; margin-bottom: 10px; text-transform: uppercase; }
+        table { border-collapse: collapse; width: 100%; margin-bottom: 40px; }
+        th { background-color: #9f6947; color: #ffffff; font-weight: bold; text-transform: uppercase; padding: 14px; border: 1px solid #d8c8bf; text-align: left; }
+        td { padding: 12px; border: 1px solid #d8c8bf; color: #392619; vertical-align: top; }
+        tr:nth-child(even) td { background-color: #fcfaf8; }
+        tr:nth-child(odd) td { background-color: #ffffff; }
+      </style>
+    </head>
+    <body>
+      <table>
+        <tr><td class="report-title" colspan="5">${filename}</td></tr>
+      </table>
   `;
 
-  downloadFile(`${slugify(filename)}.xls`, `\uFEFF${html}`, "application/vnd.ms-excel;charset=utf-8");
+  sheets.forEach(sheet => {
+    htmlContent += `
+      <table>
+        <tr><td colspan="${sheet.columns.length}" class="sheet-title">${sheet.name}</td></tr>
+        <thead>
+          <tr>
+            ${sheet.columns.map(col => `<th>${col.label}</th>`).join('')}
+          </tr>
+        </thead>
+        <tbody>
+          ${sheet.rows.map(row => `
+            <tr>
+              ${sheet.columns.map(col => `<td>${row[col.key] || "-"}</td>`).join('')}
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
+    `;
+  });
+
+  htmlContent += `</body></html>`;
+
+  // Cria o arquivo Excel (.xls) e força o download
+  const blob = new Blob([htmlContent], { type: 'application/vnd.ms-excel;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = `${filename}.xls`;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(url);
 }
 
 function buildMaps({ clinicas = [], terapeutas = [], pacientes = [] }) {
