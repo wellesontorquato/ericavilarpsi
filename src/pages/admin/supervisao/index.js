@@ -144,6 +144,7 @@ function ClinicasDashboardContent({ user, onLogout }) {
       >
         <StatusMessage message={message} />
 
+        {/* HERO E FILTROS FIXOS */}
         <section className="supervisao-dashboard-hero">
           <div>
             <span className="supervisao-kicker">Visão macro</span>
@@ -170,6 +171,7 @@ function ClinicasDashboardContent({ user, onLogout }) {
           <section className="supervisao-panel"><p>Carregando dashboard...</p></section>
         ) : (
           <>
+            {/* LINHA 1: KPIs Rápidos */}
             <section className="supervisao-indicator-grid executive">
               <CardIndicador label="Pacientes ativos" value={metricas.pacientesAtivos} detail="em acompanhamento" />
               <CardIndicador label="Terapeutas ativos" value={metricas.terapeutasAtivos} detail="vinculados à clínica" />
@@ -181,26 +183,33 @@ function ClinicasDashboardContent({ user, onLogout }) {
               <CardIndicador label="Clínicas comparadas" value={resumoClinicas.length} detail="com dados no período" />
             </section>
 
+            {/* BENTO BOX GRID 1: Gráficos Principais */}
             <section className="supervisao-presentation-grid">
-              <ChartPanel title="Saúde geral da clínica" subtitle="Score de evolução dos casos acompanhados" action={formatPercent(metricas.mediaEvolucao)}>
-                <ProgressRing value={metricas.mediaEvolucao} label="evolução" detail="Consolida sono, adesão, objetivos, sintomas e evitação." />
-              </ChartPanel>
-
-              <ChartPanel title="Radar da equipe" subtitle="Média das competências dos terapeutas" action={`${formatDecimal(metricas.mediaCompetencias)} / 5`}>
-                <RadarChart items={competenciaRadar} />
-              </ChartPanel>
-
+              
+              {/* Tendência (Largo - 8 Colunas) */}
               <ChartPanel title="Tendência da clínica" subtitle={filters.mes ? "Evolução por semana" : "Evolução por mês"} action="evolução x competência">
                 <TrendLine items={tendencia} valueKey="evolucao" secondaryKey="competencia" labelKey="label" />
               </ChartPanel>
 
+              {/* Saúde Geral (Estreito - 4 Colunas) */}
+              <ChartPanel title="Saúde geral da clínica" subtitle="Score de evolução" action={formatPercent(metricas.mediaEvolucao)}>
+                <ProgressRing value={metricas.mediaEvolucao} label="evolução" detail="Consolida os 5 indicadores clínicos." />
+              </ChartPanel>
+
+              {/* Radar (Estreito - 4 Colunas) */}
+              <ChartPanel title="Radar da equipe" subtitle="Média das competências" action={`${formatDecimal(metricas.mediaCompetencias)} / 5`}>
+                <RadarChart items={competenciaRadar} />
+              </ChartPanel>
+
+              {/* Comparativo (Largo - 8 Colunas) */}
               <ChartPanel title="Comparativo entre clínicas" subtitle="Evolução média por unidade" action={`${resumoClinicas.length} clínicas`}>
                 <ColumnChart items={resumoClinicas} valueKey="evolucao" labelKey="label" valueFormatter={formatPercent} />
               </ChartPanel>
             </section>
 
+            {/* BENTO BOX GRID 2: Análises Aprofundadas */}
             <div className="supervisao-grid-two dashboard-lower">
-              <ChartPanel title="Terapeutas da clínica" subtitle="Competência média por profissional" action={`${resumoTerapeutas.length} com registro`}>
+              <ChartPanel title="Terapeutas da clínica" subtitle="Competência média por profissional" action={`${resumoTerapeutas.length} terapeutas`}>
                 <HorizontalBars
                   items={resumoTerapeutas.slice(0, 8)}
                   valueKey="competencia"
@@ -215,6 +224,7 @@ function ClinicasDashboardContent({ user, onLogout }) {
               </ChartPanel>
             </div>
 
+            {/* PAINÉIS DE ROTINA CLÍNICA E LISTAGENS */}
             <div className="supervisao-grid-two dashboard-lower">
               <section className="supervisao-panel">
                 <div className="supervisao-section-title">
