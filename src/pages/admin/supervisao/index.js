@@ -42,6 +42,7 @@ function ClinicasDashboardContent({ user, onLogout }) {
   }, [user]);
 
   const clinicas = useMemo(() => data?.clinicas || [], [data]);
+  const terapeutas = useMemo(() => data?.terapeutas || [], [data]); // Importante para cruzar nomes
   const pacientes = useMemo(() => data?.pacientes || [], [data]);
   const lancamentos = useMemo(() => data?.lancamentos || [], [data]);
 
@@ -148,12 +149,16 @@ function ClinicasDashboardContent({ user, onLogout }) {
                     <span>{casosAtencaoLista.length}</span>
                   </div>
                   <div className="supervisao-insight-list">
-                    {casosAtencaoLista.map((paciente) => (
-                      <article key={paciente.id}>
-                        <strong>{paciente.nome}</strong>
-                        <span>{paciente.terapeutaNome || "Sem terapeuta"} · Nível: {paciente.nivelAtencao}</span>
-                      </article>
-                    ))}
+                    {casosAtencaoLista.map((paciente) => {
+                      // Procura o nome exato do terapeuta usando o ID
+                      const terapeutaResponsavel = terapeutas.find(t => t.id === paciente.terapeutaId);
+                      return (
+                        <article key={paciente.id}>
+                          <strong>{paciente.nome}</strong>
+                          <span>{terapeutaResponsavel?.nome || "Sem terapeuta"} · Nível: {paciente.nivelAtencao}</span>
+                        </article>
+                      );
+                    })}
                     {casosAtencaoLista.length === 0 && <p className="supervisao-empty">Nenhum caso crítico detectado.</p>}
                   </div>
                 </section>

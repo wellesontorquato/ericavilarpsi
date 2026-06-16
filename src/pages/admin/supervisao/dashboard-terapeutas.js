@@ -60,6 +60,7 @@ function TerapeutasDashboardContent({ user, onLogout }) {
   }, [user]);
 
   const terapeutas = useMemo(() => data?.terapeutas || [], [data]);
+  const pacientes = useMemo(() => data?.pacientes || [], [data]); // Importante para cruzar nomes
   const lancamentos = useMemo(() => data?.lancamentos || [], [data]);
   const lancamentosFiltrados = useMemo(() => filterLancamentos(lancamentos, filters), [lancamentos, filters]);
 
@@ -150,13 +151,17 @@ function TerapeutasDashboardContent({ user, onLogout }) {
                     <span>{ultimasDevolutivas.length}</span>
                   </div>
                   <div className="supervisao-insight-list">
-                    {ultimasDevolutivas.map((item) => (
-                      <article key={item.id}>
-                        <strong>{item.pontoDesenvolver || "Ação de desenvolvimento"}</strong>
-                        <span>Caso: {item.pacienteNome || "Não informado"}</span>
-                        <p>{item.planoAcao || "Nenhum plano detalhado."}</p>
-                      </article>
-                    ))}
+                    {ultimasDevolutivas.map((item) => {
+                      // Procura o nome do paciente atualizado
+                      const paciente = pacientes.find(p => p.id === item.pacienteId);
+                      return (
+                        <article key={item.id}>
+                          <strong>{item.pontoDesenvolver || "Ação de desenvolvimento"}</strong>
+                          <span>Caso: {paciente?.nome || item.pacienteNome || "Não informado"}</span>
+                          <p>{item.planoAcao || "Nenhum plano detalhado."}</p>
+                        </article>
+                      );
+                    })}
                     {ultimasDevolutivas.length === 0 && <p className="supervisao-empty">Nenhum plano de ação pendente.</p>}
                   </div>
                 </section>

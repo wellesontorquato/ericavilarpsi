@@ -10,7 +10,7 @@ import { TimelineLancamentos } from "@/components/supervisao/TimelineLancamentos
 import DashboardFilters from "@/components/supervisao/DashboardFilters";
 import { ChartPanel, HorizontalBars, TrendLine } from "@/components/supervisao/Charts";
 import { supervisaoRequest } from "@/lib/supervisao/api";
-import { average, formatDecimal, formatPercent, mesNome } from "@/lib/supervisao/format";
+import { average, formatDecimal, formatPercent } from "@/lib/supervisao/format";
 import {
   currentYear,
   evolucaoMedia,
@@ -75,10 +75,13 @@ function PacientesDashboardContent({ user, onLogout }) {
   }, [user]);
 
   const pacientes = useMemo(() => data?.pacientes || [], [data]);
+  const terapeutas = useMemo(() => data?.terapeutas || [], [data]); // Importante para cruzar nomes
   const lancamentos = useMemo(() => data?.lancamentos || [], [data]);
-  const pacienteSelecionado = pacientes.find((item) => item.id === filters.pacienteId);
   
-  // Força o filtro do paciente selecionado, ignorando os outros casos
+  const pacienteSelecionado = pacientes.find((item) => item.id === filters.pacienteId);
+  const terapeutaResponsavel = terapeutas.find((item) => item.id === pacienteSelecionado?.terapeutaId);
+  
+  // Força o filtro do paciente selecionado, ignorando acúmulos irreais
   const lancamentosFiltrados = useMemo(() => {
     if (!filters.pacienteId) return [];
     return filterLancamentos(lancamentos, filters);
@@ -123,7 +126,12 @@ function PacientesDashboardContent({ user, onLogout }) {
           <div>
             <span className="supervisao-kicker">Prontuário</span>
             <h2>{selectedName(pacientes, filters.pacienteId, "Selecione um Paciente")}</h2>
-            <p>{pacienteSelecionado ? `${pacienteSelecionado.terapeutaNome || "Sem terapeuta"} · Nível: ${pacienteSelecionado.nivelAtencao || "Padrão"}` : "Escolha um paciente no filtro ao lado para visualizar os dados clínicos reais."}</p>
+            <p>
+              {pacienteSelecionado 
+                ? `Terapeuta: ${terapeutaResponsavel?.nome || "Sem terapeuta"} · Nível: ${pacienteSelecionado.nivelAtencao || "Padrão"}` 
+                : "Escolha um paciente no filtro ao lado para visualizar os dados clínicos reais."
+              }
+            </p>
           </div>
           <DashboardFilters
             filters={filters}
@@ -134,7 +142,14 @@ function PacientesDashboardContent({ user, onLogout }) {
                 <span>Paciente</span>
                 <select value={filters.pacienteId} onChange={(e) => setFilters((c) => ({ ...c, pacienteId: e.target.value }))}>
                   <option value="">Selecione...</option>
-                  {pacientes.map((p) => <option key={p.id} value={p.id}>{p.nome}</option>)}
+                  {pacientes.map((p) => {
+                    const terapeuta = terapeutas.find(t => t.id === p.terapeutaId);
+                    return (
+                      <option key={p.id} value={p.id}>
+                        {p.nome} {terapeuta ? `(Terapeuta: ${terapeuta.nome})` : ""}
+                      </option>
+                    );
+                  })}
                 </select>
               </label>
             )}
