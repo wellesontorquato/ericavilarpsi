@@ -149,6 +149,7 @@ function PacientesDashboardContent({ user, onLogout }) {
       >
         <StatusMessage message={message} />
 
+        {/* HERO E FILTROS FIXOS */}
         <section className="supervisao-dashboard-hero">
           <div>
             <span className="supervisao-kicker">Visão do caso</span>
@@ -175,6 +176,7 @@ function PacientesDashboardContent({ user, onLogout }) {
           <section className="supervisao-panel"><p>Carregando dashboard...</p></section>
         ) : (
           <>
+            {/* LINHA 1: KPIs Rápidos */}
             <section className="supervisao-indicator-grid executive">
               <CardIndicador label="Registros" value={metricas.registros} detail="lançamentos no período" />
               <CardIndicador label="Evolução média" value={formatPercent(metricas.evolucao)} detail="score clínico" />
@@ -186,11 +188,25 @@ function PacientesDashboardContent({ user, onLogout }) {
               <CardIndicador label="Competência no caso" value={formatDecimal(metricas.competencia)} detail="média do terapeuta" />
             </section>
 
+            {/* BENTO BOX GRID 1: Gráficos Principais */}
             <section className="supervisao-presentation-grid">
+              
+              {/* Tendência (Largo - 8 Colunas) */}
+              <ChartPanel title="Histórico de evolução" subtitle="Evolução e objetivos ao longo das semanas" action="evolução x objetivos">
+                <TrendLine items={tendenciaPaciente} valueKey="evolucao" secondaryKey="objetivos" labelKey="label" />
+              </ChartPanel>
+
+              {/* Saúde Geral (Estreito - 4 Colunas) */}
               <ChartPanel title="Evolução do caso" subtitle="Score consolidado do paciente no período" action={formatPercent(metricas.evolucao)}>
                 <ProgressRing value={metricas.evolucao} label="evolução" detail="Quanto maior, melhor o estado geral do caso acompanhado." />
               </ChartPanel>
 
+              {/* Radar (Estreito - 4 Colunas) */}
+              <ChartPanel title="Competências no caso" subtitle="Leitura técnica do terapeuta neste acompanhamento" action={`${formatDecimal(metricas.competencia)} / 5`}>
+                <RadarChart items={competenciaRadar} />
+              </ChartPanel>
+
+              {/* Indicadores atuais (Largo - 8 Colunas) */}
               <ChartPanel title="Indicadores atuais" subtitle="Últimos valores registrados para o paciente" action="última semana lançada">
                 <HorizontalBars
                   items={indicadoresAtuais}
@@ -200,16 +216,9 @@ function PacientesDashboardContent({ user, onLogout }) {
                   valueFormatter={(value, item) => item?.formatter ? item.formatter(value) : formatPercent(value)}
                 />
               </ChartPanel>
-
-              <ChartPanel title="Histórico de evolução" subtitle="Evolução e objetivos ao longo das semanas" action="evolução x objetivos">
-                <TrendLine items={tendenciaPaciente} valueKey="evolucao" secondaryKey="objetivos" labelKey="label" />
-              </ChartPanel>
-
-              <ChartPanel title="Competências no caso" subtitle="Leitura técnica do terapeuta neste acompanhamento" action={`${formatDecimal(metricas.competencia)} / 5`}>
-                <RadarChart items={competenciaRadar} />
-              </ChartPanel>
             </section>
 
+            {/* BENTO BOX GRID 2: Análises Aprofundadas */}
             <div className="supervisao-grid-two dashboard-lower">
               <ChartPanel title="Pacientes por evolução" subtitle="Comparativo geral quando nenhum paciente está selecionado" action={`${resumoPacientes.length} pacientes`}>
                 <HorizontalBars
@@ -226,6 +235,7 @@ function PacientesDashboardContent({ user, onLogout }) {
               </ChartPanel>
             </div>
 
+            {/* PAINÉIS DE ROTINA CLÍNICA E LISTAGENS */}
             <div className="supervisao-grid-two dashboard-lower">
               <section className="supervisao-panel">
                 <div className="supervisao-section-title">

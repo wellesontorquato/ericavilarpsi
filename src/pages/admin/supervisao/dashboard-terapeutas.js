@@ -146,6 +146,7 @@ function TerapeutasDashboardContent({ user, onLogout }) {
       >
         <StatusMessage message={message} />
 
+        {/* HERO E FILTROS FIXOS */}
         <section className="supervisao-dashboard-hero">
           <div>
             <span className="supervisao-kicker">Visão técnica</span>
@@ -172,6 +173,7 @@ function TerapeutasDashboardContent({ user, onLogout }) {
           <section className="supervisao-panel"><p>Carregando dashboard...</p></section>
         ) : (
           <>
+            {/* LINHA 1: KPIs Rápidos */}
             <section className="supervisao-indicator-grid executive">
               <CardIndicador label="Terapeutas" value={metricas.terapeutasComRegistro || resumoTerapeutas.length} detail="com registro no período" />
               <CardIndicador label="Pacientes" value={metricas.pacientesAcompanhados} detail="acompanhados" />
@@ -183,24 +185,31 @@ function TerapeutasDashboardContent({ user, onLogout }) {
               <CardIndicador label="Devolutivas" value={ultimasDevolutivas.length} detail="com ação registrada" />
             </section>
 
+            {/* BENTO BOX GRID 1: Gráficos Principais */}
             <section className="supervisao-presentation-grid">
-              <ChartPanel title="Nível técnico do terapeuta" subtitle="Média das competências clínicas" action={`${formatDecimal(metricas.mediaCompetencias)} / 5`}>
-                <ProgressRing value={metricas.mediaCompetencias} max={5} suffix="" label="competência" detail="Pontuação consolidada da matriz técnica da supervisão." />
-              </ChartPanel>
-
-              <ChartPanel title="Radar de competências" subtitle="Pontos fortes e pontos de desenvolvimento" action="escala 1 a 5">
-                <RadarChart items={competenciaRadar} />
-              </ChartPanel>
-
+              
+              {/* Tendência (Largo - 8 Colunas) */}
               <ChartPanel title="Tendência de desempenho" subtitle={filters.mes ? "Comparativo por semana" : "Comparativo por mês"} action="competência x evolução">
                 <TrendLine items={tendencia} valueKey="competencia" secondaryKey="evolucao" labelKey="label" />
               </ChartPanel>
 
+              {/* Nível Técnico (Estreito - 4 Colunas) */}
+              <ChartPanel title="Nível técnico do terapeuta" subtitle="Média das competências clínicas" action={`${formatDecimal(metricas.mediaCompetencias)} / 5`}>
+                <ProgressRing value={metricas.mediaCompetencias} max={5} suffix="" label="competência" detail="Pontuação consolidada da matriz técnica da supervisão." />
+              </ChartPanel>
+
+              {/* Radar (Estreito - 4 Colunas) */}
+              <ChartPanel title="Radar de competências" subtitle="Pontos fortes e de desenvolvimento" action="escala 1 a 5">
+                <RadarChart items={competenciaRadar} />
+              </ChartPanel>
+
+              {/* Comparativo (Largo - 8 Colunas) */}
               <ChartPanel title="Comparativo entre terapeutas" subtitle="Competência média no período" action={`${resumoTerapeutas.length} ativos`}>
                 <ColumnChart items={resumoTerapeutas} valueKey="competencia" labelKey="label" valueFormatter={(value) => `${formatDecimal(value)}`} />
               </ChartPanel>
             </section>
 
+            {/* BENTO BOX GRID 2: Análises Aprofundadas */}
             <div className="supervisao-grid-two dashboard-lower">
               <ChartPanel title="Pacientes por evolução" subtitle="Resultado médio dos casos acompanhados" action={`${resumoPacientes.length} pacientes`}>
                 <HorizontalBars
@@ -217,6 +226,7 @@ function TerapeutasDashboardContent({ user, onLogout }) {
               </ChartPanel>
             </div>
 
+            {/* PAINÉIS DE ROTINA CLÍNICA E LISTAGENS */}
             <div className="supervisao-grid-two dashboard-lower">
               <section className="supervisao-panel">
                 <div className="supervisao-section-title">
