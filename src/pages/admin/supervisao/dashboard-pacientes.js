@@ -181,16 +181,29 @@ function PacientesDashboardContent({ user, onLogout }) {
               </div>
 
               <div className="bento-col bento-4">
-                <section className="supervisao-panel h-full">
-                  <div className="supervisao-section-title">
-                    <h2>Resumo Estrutural</h2>
+                <section className="supervisao-panel h-full" style={{ display: 'flex', flexDirection: 'column' }}>
+                  <div style={{ paddingBottom: '16px', marginBottom: '16px', borderBottom: '1px solid var(--sup-line)' }}>
+                    <h2 style={{ margin: 0, fontSize: '1.25rem', color: 'var(--sup-text)' }}>Resumo Estrutural</h2>
                   </div>
-                  <div className="supervisao-focus-card">
-                    <strong>Queixa Principal</strong>
-                    <p>{pacienteSelecionado?.queixaPrincipal || "Nenhuma queixa cadastrada."}</p>
-                    
-                    <strong style={{ marginTop: '20px' }}>Objetivos Terapêuticos</strong>
-                    <p>{pacienteSelecionado?.objetivosTerapeuticos || "Sem objetivos cadastrados."}</p>
+                  
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', flex: 1 }}>
+                    <article style={{ padding: '16px', backgroundColor: 'rgba(255,255,255,0.65)', border: '1px solid var(--sup-line)', borderRadius: '18px' }}>
+                      <span style={{ display: 'block', fontSize: '0.72rem', fontWeight: 800, color: 'var(--sup-primary-dark)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '8px' }}>
+                        Queixa Principal
+                      </span>
+                      <p style={{ margin: 0, color: 'var(--sup-text)', fontSize: '0.92rem', lineHeight: 1.6 }}>
+                        {pacienteSelecionado?.queixaPrincipal || "Nenhuma queixa cadastrada."}
+                      </p>
+                    </article>
+
+                    <article style={{ padding: '16px', backgroundColor: 'rgba(255,255,255,0.65)', border: '1px solid var(--sup-line)', borderRadius: '18px' }}>
+                      <span style={{ display: 'block', fontSize: '0.72rem', fontWeight: 800, color: 'var(--sup-primary-dark)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '8px' }}>
+                        Objetivos Terapêuticos
+                      </span>
+                      <p style={{ margin: 0, color: 'var(--sup-text)', fontSize: '0.92rem', lineHeight: 1.6 }}>
+                        {pacienteSelecionado?.objetivosTerapeuticos || "Sem objetivos cadastrados."}
+                      </p>
+                    </article>
                   </div>
                 </section>
               </div>
