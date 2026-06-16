@@ -42,7 +42,7 @@ function ClinicasDashboardContent({ user, onLogout }) {
   }, [user]);
 
   const clinicas = useMemo(() => data?.clinicas || [], [data]);
-  const terapeutas = useMemo(() => data?.terapeutas || [], [data]); // Importante para cruzar nomes
+  const terapeutas = useMemo(() => data?.terapeutas || [], [data]);
   const pacientes = useMemo(() => data?.pacientes || [], [data]);
   const lancamentos = useMemo(() => data?.lancamentos || [], [data]);
 
@@ -60,6 +60,7 @@ function ClinicasDashboardContent({ user, onLogout }) {
     };
   }, [lancamentosFiltrados, pacientesDaClinica]);
 
+  // Ranking de Clínicas (Usado quando nenhuma clínica específica está selecionada)
   const resumoClinicas = useMemo(() => {
     return clinicas.map((clinica) => {
       const registros = filterLancamentos(lancamentos, { ...filters, clinicaId: clinica.id });
@@ -70,6 +71,22 @@ function ClinicasDashboardContent({ user, onLogout }) {
       };
     }).filter((item) => item.evolucao > 0).sort((a, b) => b.evolucao - a.evolucao);
   }, [clinicas, lancamentos, filters]);
+
+  // Ranking de Terapeutas (Usado quando UMA clínica específica ESTÁ selecionada)
+  const resumoTerapeutasDaClinica = useMemo(() => {
+    if (!filters.clinicaId) return [];
+    
+    const terapeutasDestaClinica = terapeutas.filter(t => t.clinicaId === filters.clinicaId);
+    
+    return terapeutasDestaClinica.map((terapeuta) => {
+      const registros = filterLancamentos(lancamentos, { ...filters, terapeutaId: terapeuta.id });
+      return {
+        id: terapeuta.id,
+        label: terapeuta.nome,
+        evolucao: average(registros.map(evolucaoMedia)),
+      };
+    }).filter((item) => item.evolucao > 0).sort((a, b) => b.evolucao - a.evolucao);
+  }, [terapeutas, lancamentos, filters]);
 
   const casosAtencaoLista = useMemo(() => pacientesDaClinica.filter(isCasoAtencao).slice(0, 6), [pacientesDaClinica]);
   const tendencia = useMemo(() => buildTendencia(lancamentosFiltrados, filters), [lancamentosFiltrados, filters]);
@@ -137,9 +154,16 @@ function ClinicasDashboardContent({ user, onLogout }) {
               </div>
 
               <div className="bento-col bento-8">
-                <ChartPanel title="Evolução por Unidade" subtitle="Ranking de saúde por clínica" action={`${resumoClinicas.length} ativas`}>
-                  <HorizontalBars items={resumoClinicas.slice(0, 5)} valueKey="evolucao" labelKey="label" max={100} valueFormatter={formatPercent} />
-                </ChartPanel>
+                {/* RENDERIZAÇÃO CONDICIONAL: Ranking de Clínicas vs Ranking de Terapeutas */}
+                {!filters.clinicaId ? (
+                  <ChartPanel title="Evolução por Unidade" subtitle="Ranking de saúde por clínica" action={`${resumoClinicas.length} ativas`}>
+                    <HorizontalBars items={resumoClinicas.slice(0, 5)} valueKey="evolucao" labelKey="label" max={100} valueFormatter={formatPercent} />
+                  </ChartPanel>
+                ) : (
+                  <ChartPanel title="Desempenho da Equipe" subtitle="Evolução dos pacientes por terapeuta nesta unidade" action={`${resumoTerapeutasDaClinica.length} terapeutas`}>
+                    <HorizontalBars items={resumoTerapeutasDaClinica.slice(0, 5)} valueKey="evolucao" labelKey="label" max={100} valueFormatter={formatPercent} />
+                  </ChartPanel>
+                )}
               </div>
 
               <div className="bento-col bento-4">
@@ -150,12 +174,19 @@ function ClinicasDashboardContent({ user, onLogout }) {
                   </div>
                   <div className="supervisao-insight-list">
                     {casosAtencaoLista.map((paciente) => {
-                      // Procura o nome exato do terapeuta usando o ID
                       const terapeutaResponsavel = terapeutas.find(t => t.id === paciente.terapeutaId);
                       return (
-                        <article key={paciente.id}>
-                          <strong>{paciente.nome}</strong>
-                          <span>{terapeutaResponsavel?.nome || "Sem terapeuta"} · Nível: {paciente.nivelAtencao}</span>
+                        <article 
+                          key={paciente.id} 
+                          // Adicionado estilo in-line flex-column para evitar esmagamento dos textos
+                          style={{ display: 'flex', flexDirection: 'column', gap: '6px', padding: '14px' }}
+                        >
+                          <strong style={{ display: 'block', fontSize: '1rem', color: 'var(--sup-text, #261c17)', lineHeight: 1.2 }}>
+                            {paciente.nome}
+                          </strong>
+                          <span style={{ display: 'block', fontSize: '0.85rem', color: 'var(--sup-muted, #7b6c61)' }}>
+                            {terapeutaResponsavel?.nome || "Sem terapeuta"} · Nível: {paciente.nivelAtencao}
+                          </span>
                         </article>
                       );
                     })}
