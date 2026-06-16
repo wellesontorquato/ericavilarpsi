@@ -75,13 +75,12 @@ function PacientesDashboardContent({ user, onLogout }) {
   }, [user]);
 
   const pacientes = useMemo(() => data?.pacientes || [], [data]);
-  const terapeutas = useMemo(() => data?.terapeutas || [], [data]); // Importante para cruzar nomes
+  const terapeutas = useMemo(() => data?.terapeutas || [], [data]);
   const lancamentos = useMemo(() => data?.lancamentos || [], [data]);
   
   const pacienteSelecionado = pacientes.find((item) => item.id === filters.pacienteId);
   const terapeutaResponsavel = terapeutas.find((item) => item.id === pacienteSelecionado?.terapeutaId);
   
-  // Força o filtro do paciente selecionado, ignorando acúmulos irreais
   const lancamentosFiltrados = useMemo(() => {
     if (!filters.pacienteId) return [];
     return filterLancamentos(lancamentos, filters);
@@ -186,7 +185,7 @@ function PacientesDashboardContent({ user, onLogout }) {
                     <h2 style={{ margin: 0, fontSize: '1.25rem', color: 'var(--sup-text)' }}>Resumo Estrutural</h2>
                   </div>
                   
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', flex: 1 }}>
+                  <div className="scroll-interno" style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                     <article style={{ padding: '16px', backgroundColor: 'rgba(255,255,255,0.65)', border: '1px solid var(--sup-line)', borderRadius: '18px' }}>
                       <span style={{ display: 'block', fontSize: '0.72rem', fontWeight: 800, color: 'var(--sup-primary-dark)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '8px' }}>
                         Queixa Principal
@@ -215,12 +214,17 @@ function PacientesDashboardContent({ user, onLogout }) {
               </div>
 
               <div className="bento-col bento-6">
-                <section className="supervisao-panel h-full">
-                  <div className="supervisao-section-title">
-                    <h2>Diário de Intervenções</h2>
-                    <span>Últimos registros</span>
+                <section className="supervisao-panel h-full" style={{ display: 'flex', flexDirection: 'column' }}>
+                  <div style={{ paddingBottom: '16px', marginBottom: '16px', borderBottom: '1px solid var(--sup-line)', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                    <div>
+                      <h2 style={{ margin: '0 0 4px', fontSize: '1.25rem', color: 'var(--sup-text)' }}>Diário de Intervenções</h2>
+                      <span style={{ fontSize: '0.85rem', color: 'var(--sup-muted)' }}>Últimos registros</span>
+                    </div>
                   </div>
-                  <TimelineLancamentos items={historico} emptyText="Sem histórico clínico para exibir." limit={4} />
+
+                  <div className="scroll-interno">
+                    <TimelineLancamentos items={historico} emptyText="Sem histórico clínico para exibir." limit={10} />
+                  </div>
                 </section>
               </div>
             </div>
