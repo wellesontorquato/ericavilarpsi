@@ -38,9 +38,6 @@ import {
   terapeutasColumns,
 } from "@/lib/supervisao/relatorios";
 
-// Importa o CSS exclusivo dos Relatórios
-import "@/styles/relatorios.css";
-
 function matchEntity(item = {}, filters = {}, type = "generico") {
   if (type === "clinica") {
     if (filters.clinicaId && safeId(item.id) !== safeId(filters.clinicaId)) return false;
