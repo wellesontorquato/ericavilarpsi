@@ -80,73 +80,73 @@ export function exportCsv(filename, columns = [], rows = []) {
 // NOVA GERAÇÃO DE EXCEL COM DASHBOARD EMBUTIDO
 export function exportExcelWorkbook(filename, sheets = [], dashboardMetrics = null) {
   let htmlContent = `
-    <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">
+    <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel">
     <head>
       <meta charset="utf-8" />
-      <style>
-        body { font-family: 'Segoe UI', Arial, sans-serif; background-color: #fbf7f2; }
-        .dashboard-header { font-size: 26px; font-weight: bold; color: #ffffff; background-color: #5f3825; text-align: center; height: 70px; vertical-align: middle; }
-        .kpi-card { background-color: #ffffff; border: 2px solid #d8c8bf; text-align: center; padding: 25px; height: 120px; }
-        .kpi-label { font-size: 12px; color: #7b6c61; font-weight: bold; text-transform: uppercase; }
-        .kpi-value { font-size: 32px; color: #9f6947; font-weight: bold; }
-        .sheet-title { font-size: 18px; font-weight: bold; color: #ffffff; background-color: #9f6947; height: 40px; vertical-align: middle; padding-left: 10px; }
-        table { border-collapse: collapse; width: 100%; margin-bottom: 40px; }
-        th { background-color: #efe2d5; color: #5f3825; font-weight: bold; text-transform: uppercase; padding: 12px; border: 1px solid #d8c8bf; text-align: left; }
-        td { padding: 10px; border: 1px solid #d8c8bf; color: #392619; vertical-align: top; }
-      </style>
     </head>
-    <body>
+    <body style="font-family: Arial, sans-serif; background-color: #f4efe8;">
   `;
 
-  // Se foram passadas métricas, cria a "Planilha 1" como um Dashboard Visual maravilhoso no Excel
+  // SEÇÃO DE APRESENTAÇÃO EXECUTIVA NO TOPO DO EXCEL
   if (dashboardMetrics) {
     htmlContent += `
-      <table>
-        <tr><td class="dashboard-header" colspan="4">${escapeHtml(filename)}</td></tr>
+      <table style="width: 100%; border-collapse: collapse;">
         <tr><td colspan="4" style="height: 20px;"></td></tr>
+        
         <tr>
-           <td class="kpi-card">
-              <span class="kpi-label">Evolução Clínica</span><br/>
-              <span class="kpi-value">${formatPercent(dashboardMetrics.evolucao)}</span>
+          <td colspan="4" style="background-color: #392619; color: #ffffff; font-size: 24px; font-weight: bold; text-align: center; height: 60px; vertical-align: middle;">
+            📊 RELATÓRIO EXECUTIVO: ${escapeHtml(filename)}
+          </td>
+        </tr>
+        <tr><td colspan="4" style="height: 20px;"></td></tr>
+
+        <tr>
+           <td style="background-color: #ffffff; border: 2px solid #d8c8bf; text-align: center; padding: 25px; height: 110px; width: 25%;">
+              <span style="font-size: 14px; color: #7b6c61; font-weight: bold;">EVOLUÇÃO CLÍNICA</span><br/>
+              <span style="font-size: 34px; color: #9f6947; font-weight: bold;">${formatPercent(dashboardMetrics.evolucao)}</span><br/>
+              <span style="font-size: 12px; color: #9f6947;">Score global consolidado</span>
            </td>
-           <td class="kpi-card">
-              <span class="kpi-label">Média Técnica (Equipe)</span><br/>
-              <span class="kpi-value">${formatDecimal(dashboardMetrics.competencia)} / 5</span>
+           <td style="background-color: #ffffff; border: 2px solid #d8c8bf; text-align: center; padding: 25px; height: 110px; width: 25%;">
+              <span style="font-size: 14px; color: #7b6c61; font-weight: bold;">MÉDIA TÉCNICA</span><br/>
+              <span style="font-size: 34px; color: #9f6947; font-weight: bold;">${formatDecimal(dashboardMetrics.competencia)} / 5</span><br/>
+              <span style="font-size: 12px; color: #9f6947;">Desempenho da equipe</span>
            </td>
-           <td class="kpi-card">
-              <span class="kpi-label">Casos Atendidos</span><br/>
-              <span class="kpi-value">${dashboardMetrics.pacientes}</span>
+           <td style="background-color: #ffffff; border: 2px solid #d8c8bf; text-align: center; padding: 25px; height: 110px; width: 25%;">
+              <span style="font-size: 14px; color: #7b6c61; font-weight: bold;">CASOS EM RISCO</span><br/>
+              <span style="font-size: 34px; color: #a43c32; font-weight: bold;">${dashboardMetrics.alertas}</span><br/>
+              <span style="font-size: 12px; color: #a43c32;">Atenção imediata</span>
            </td>
-           <td class="kpi-card">
-              <span class="kpi-label">Alertas de Risco</span><br/>
-              <span class="kpi-value">${dashboardMetrics.alertas}</span>
+           <td style="background-color: #ffffff; border: 2px solid #d8c8bf; text-align: center; padding: 25px; height: 110px; width: 25%;">
+              <span style="font-size: 14px; color: #7b6c61; font-weight: bold;">PACIENTES ATIVOS</span><br/>
+              <span style="font-size: 34px; color: #9f6947; font-weight: bold;">${dashboardMetrics.pacientes}</span><br/>
+              <span style="font-size: 12px; color: #9f6947;">No período filtrado</span>
            </td>
         </tr>
-        <tr><td colspan="4" style="height: 40px;"></td></tr>
+        <tr><td colspan="4" style="height: 30px;"></td></tr>
       </table>
     `;
   }
 
-  // Gera as planilhas de dados brutos logo abaixo (O Excel separa automaticamente por tabelas se o usuário quiser copiar)
+  // TABELAS DE DADOS ESTILIZADAS
   sheets.forEach(sheet => {
-    if (sheet.rows.length === 0) return; // Não exporta tabela vazia
-
+    if (sheet.rows.length === 0) return;
     htmlContent += `
-      <table>
-        <tr><td colspan="${sheet.columns.length}" class="sheet-title">${escapeHtml(sheet.name)}</td></tr>
-        <thead>
+      <table style="width: 100%; border-collapse: collapse; margin-bottom: 30px;">
+        <tr>
+          <td colspan="${sheet.columns.length}" style="background-color: #9f6947; color: #ffffff; font-size: 18px; font-weight: bold; height: 40px; vertical-align: middle; padding-left: 10px;">
+            ${escapeHtml(sheet.name)}
+          </td>
+        </tr>
+        <tr>
+          ${sheet.columns.map(col => `<td style="background-color: #efe2d5; color: #5f3825; font-weight: bold; padding: 12px; border: 1px solid #d8c8bf;">${escapeHtml(col.label)}</td>`).join('')}
+        </tr>
+        ${sheet.rows.map((row, idx) => `
           <tr>
-            ${sheet.columns.map(col => `<th>${escapeHtml(col.label)}</th>`).join('')}
+            ${sheet.columns.map(col => `<td style="background-color: ${idx % 2 === 0 ? '#ffffff' : '#fcfaf8'}; border: 1px solid #d8c8bf; padding: 10px; vertical-align: top; color: #392619;">${escapeHtml(getColumnValue(row, col))}</td>`).join('')}
           </tr>
-        </thead>
-        <tbody>
-          ${sheet.rows.map(row => `
-            <tr>
-              ${sheet.columns.map(col => `<td>${escapeHtml(getColumnValue(row, col))}</td>`).join('')}
-            </tr>
-          `).join('')}
-        </tbody>
+        `).join('')}
       </table>
+      <br/>
     `;
   });
 
@@ -323,19 +323,18 @@ export function buildAlertasRows(alertas = []) {
   }));
 }
 
-export function buildReportSheets({ resumoRows = [], clinicasRows = [], terapeutasRows = [], pacientesRows = [], lancamentosRows = [], alertasRows = [], type = "completo" }) {
+export function buildReportSheets({ resumoRows = [], clinicasRows = [], terapeutasRows = [], pacientesRows = [], lancamentosRows = [], alertasRows = [], type = "executivo" }) {
   const sheets = [];
 
-  // Se for "executivo", mostramos apenas Alertas Críticos e o Histórico de Lançamentos
   if (type === "executivo") {
-    sheets.push({ name: "Atenção Imediata (Alertas)", columns: alertasColumns, rows: alertasRows.slice(0, 15) });
-    sheets.push({ name: "Últimos Lançamentos", columns: lancamentosColumns, rows: lancamentosRows.slice(0, 20) });
+    sheets.push({ name: "Atenção Imediata (Top 15 Alertas)", columns: alertasColumns, rows: alertasRows.slice(0, 15) });
+    sheets.push({ name: "Últimos Lançamentos (Resumo)", columns: lancamentosColumns, rows: lancamentosRows.slice(0, 20) });
     return sheets;
   }
 
   // Completo
-  if (["completo", "lancamentos"].includes(type)) sheets.push({ name: "Lançamentos Semanais", columns: lancamentosColumns, rows: lancamentosRows });
-  if (["completo", "alertas"].includes(type)) sheets.push({ name: "Alertas Gerados", columns: alertasColumns, rows: alertasRows });
+  if (["completo", "lancamentos"].includes(type)) sheets.push({ name: "Lançamentos Semanais (Todos)", columns: lancamentosColumns, rows: lancamentosRows });
+  if (["completo", "alertas"].includes(type)) sheets.push({ name: "Alertas Gerados (Todos)", columns: alertasColumns, rows: alertasRows });
   if (["completo", "cadastros"].includes(type)) {
     sheets.push({ name: "Pacientes", columns: pacientesColumns, rows: pacientesRows });
     sheets.push({ name: "Terapeutas", columns: terapeutasColumns, rows: terapeutasRows });
