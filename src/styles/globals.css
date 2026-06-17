@@ -8524,6 +8524,7 @@ button{font:inherit;}
 /* =========================================================
    SUPERVISÃO - CADASTROS EM LISTA (BENTO BOX & DESKTOP FIXED)
    ========================================================= */
+
 .supervisao-list-hero {
   display: flex;
   flex-wrap: wrap;
@@ -8642,12 +8643,23 @@ button{font:inherit;}
 /* Table & List Structure */
 .supervisao-entity-list-wrap {
   width: 100%;
+  overflow-x: auto;
+  padding-bottom: 8px;
+}
+
+.supervisao-entity-list-wrap::-webkit-scrollbar {
+  height: 8px;
+}
+.supervisao-entity-list-wrap::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: rgba(95, 56, 37, 0.16);
 }
 
 .supervisao-entity-list {
   display: flex;
   flex-direction: column;
   gap: 12px;
+  min-width: 860px; /* Garante que a tabela não amasse */
 }
 
 /* =======================================
@@ -8668,7 +8680,8 @@ button{font:inherit;}
     border: 1px solid #e8ddd3;
     border-radius: 16px;
     padding: 16px 24px;
-    margin-bottom: 16px;
+    margin-bottom: 4px;
+    display: grid;
   }
 
   .supervisao-entity-row-head > div {
@@ -8703,12 +8716,24 @@ button{font:inherit;}
   .supervisao-entity-row .actions {
     justify-content: flex-end;
   }
+  
+  .supervisao-entity-row .primary {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    border: none;
+    padding: 0;
+  }
 }
 
 /* =======================================
    MOBILE VIEW (Cards Empilhados)
    ======================================= */
 @media (max-width: 859px) {
+  .supervisao-entity-list {
+    min-width: auto;
+  }
+  
   .supervisao-entity-row-head {
     display: none !important;
   }
@@ -8743,14 +8768,26 @@ button{font:inherit;}
   }
 }
 
-/* Commom Row Styles (Botões e Status) */
+/* Commom Row Styles (Botões, Status e Paginação) */
+.supervisao-entity-row.archived {
+  opacity: 0.72;
+  background: repeating-linear-gradient(
+    -45deg,
+    rgba(255, 255, 255, 0.66),
+    rgba(255, 255, 255, 0.66) 10px,
+    rgba(239, 229, 219, 0.6) 10px,
+    rgba(239, 229, 219, 0.6) 20px
+  );
+}
+
 .supervisao-entity-row .actions {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
 }
 
-.supervisao-entity-row .actions button {
+.supervisao-entity-row .actions button,
+.supervisao-pagination button {
   padding: 8px 16px;
   border-radius: 999px;
   font-size: 0.8rem;
@@ -8759,7 +8796,7 @@ button{font:inherit;}
   cursor: pointer;
   background: #efe4d7;
   color: #5f3825;
-  transition: background 0.2s;
+  transition: background 0.2s, transform 0.2s;
 }
 
 .supervisao-entity-row .actions button.danger {
@@ -8767,8 +8804,32 @@ button{font:inherit;}
   color: #a43c32;
 }
 
-.supervisao-entity-row .actions button:hover {
+.supervisao-entity-row .actions button:hover,
+.supervisao-pagination button:hover:not(:disabled) {
   filter: brightness(0.95);
+  transform: translateY(-1px);
+}
+
+.supervisao-pagination {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(95, 56, 37, 0.08);
+}
+
+.supervisao-pagination span {
+  color: var(--sup-muted);
+  font-size: 0.82rem;
+  font-weight: 800;
+}
+
+.supervisao-pagination button:disabled {
+  opacity: 0.48;
+  cursor: not-allowed;
 }
 
 .supervisao-inline-status {
@@ -8793,430 +8854,14 @@ button{font:inherit;}
   color: #7c6656;
 }
 
-/* =========================================================
-   SUPERVISÃO - FASE 2 BLOCO 4 / RELATÓRIOS E EXPORTAÇÕES
-   ========================================================= */
-
-.relatorios-hero {
-  align-items: stretch;
-}
-
-.supervisao-report-command-panel {
-  display: grid;
-  grid-template-columns: minmax(260px, 1fr) minmax(220px, 320px);
-  gap: 18px;
-  align-items: end;
-  margin-bottom: 20px;
-  padding: 22px;
-  border-radius: 30px;
-  background:
-    radial-gradient(circle at top right, rgba(255, 255, 255, 0.84), transparent 36%),
-    linear-gradient(135deg, rgba(255, 255, 255, 0.92), rgba(255, 247, 239, 0.72));
-  border: 1px solid rgba(86, 60, 45, 0.08);
-  box-shadow: 0 18px 42px rgba(77, 55, 43, 0.07);
-}
-
-.supervisao-report-command-panel h2 {
-  margin: 4px 0 8px;
-  color: #1d1512;
-  font-size: clamp(1.35rem, 2vw, 2rem);
-  line-height: 1.05;
-}
-
-.supervisao-report-command-panel p {
-  max-width: 720px;
-  margin: 0;
-  color: #7c6c61;
-  font-size: 0.92rem;
-  line-height: 1.6;
-}
-
-.supervisao-report-command-panel label {
-  display: grid;
-  gap: 8px;
-}
-
-.supervisao-report-command-panel label span {
-  color: #5d4d43;
-  font-size: 0.78rem;
-  font-weight: 900;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
-
-.supervisao-report-command-panel select {
-  min-height: 46px;
-  width: 100%;
-  border: 1px solid rgba(86, 60, 45, 0.12);
-  border-radius: 16px;
-  background: rgba(255, 255, 255, 0.9);
-  padding: 0 14px;
-  color: #2e2628;
-  font-weight: 800;
-  outline: none;
-}
-
-.supervisao-report-actions {
-  grid-column: 1 / -1;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-}
-
-.supervisao-report-actions button {
-  white-space: nowrap;
-}
-
-.relatorios-charts-grid {
-  align-items: stretch;
-}
-
-.supervisao-report-preview-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 18px;
-}
-
-.supervisao-report-preview-card {
-  min-width: 0;
-  padding: 20px;
-  border-radius: 28px;
-  background: rgba(255, 255, 255, 0.84);
-  border: 1px solid rgba(86, 60, 45, 0.08);
-  box-shadow: 0 16px 34px rgba(77, 55, 43, 0.055);
-}
-
-.supervisao-report-preview-table-wrap {
-  width: 100%;
-  overflow-x: auto;
-  border-radius: 20px;
-  border: 1px solid rgba(86, 60, 45, 0.08);
-}
-
-.supervisao-report-preview-table {
-  width: 100%;
-  min-width: 620px;
-  border-collapse: collapse;
-  background: rgba(255, 255, 255, 0.72);
-}
-
-.supervisao-report-preview-table th,
-.supervisao-report-preview-table td {
-  padding: 12px 14px;
-  border-bottom: 1px solid rgba(86, 60, 45, 0.08);
-  text-align: left;
-  vertical-align: top;
-  font-size: 0.82rem;
-}
-
-.supervisao-report-preview-table th {
-  background: rgba(248, 241, 236, 0.9);
-  color: #5d4d43;
-  font-size: 0.72rem;
-  font-weight: 900;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
-
-.supervisao-report-preview-table td {
-  max-width: 240px;
-  color: #46382f;
-  line-height: 1.45;
+.supervisao-row-muted {
+  display: block;
+  margin-top: 4px;
+  color: var(--sup-muted);
+  font-size: 0.76rem;
+  font-weight: 700;
+  line-height: 1.25;
   overflow-wrap: anywhere;
-}
-
-.supervisao-print-report {
-  display: none;
-}
-
-/* MEDIAS GERAIS SUPERVISÃO */
-@media (max-width: 1240px) {
-  .supervisao-record-grid {
-    grid-template-columns: repeat(2, minmax(230px, 1fr));
-  }
-}
-
-@media (max-width: 1120px) {
-  .supervisao-shell {
-    grid-template-columns: 1fr;
-  }
-  .supervisao-dashboard-hero {
-    grid-template-columns: 1fr;
-  }
-  .supervisao-sidebar {
-    height: auto;
-    position: static;
-  }
-  .supervisao-sidebar nav {
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  }
-  .supervisao-sidebar nav a {
-    justify-content: flex-start;
-  }
-  .alertas-charts-grid {
-    grid-template-columns: 1fr;
-  }
-  .supervisao-alert-list {
-    grid-template-columns: 1fr;
-  }
-  .supervisao-report-preview-grid {
-    grid-template-columns: 1fr;
-  }
-}
-
-@media (max-width: 1040px) {
-  .dashboard-filters {
-    grid-template-columns: repeat(2, minmax(150px, 1fr));
-  }
-}
-
-@media (max-width: 860px) {
-  .supervisao-system-toolbar,
-  .supervisao-toolbar-actions,
-  .supervisao-radar-wrap,
-  .supervisao-donut-wrap {
-    display: grid;
-    grid-template-columns: 1fr;
-  }
-  .supervisao-indicator-grid.executive,
-  .supervisao-indicator-grid.launch-summary,
-  .supervisao-record-grid {
-    grid-template-columns: 1fr;
-  }
-  .supervisao-search-box {
-    min-width: 0;
-  }
-  .supervisao-modal-form,
-  .supervisao-modal-form.lancamento {
-    grid-template-columns: 1fr;
-  }
-  .supervisao-list-controls {
-    grid-template-columns: minmax(320px, 1fr) auto;
-    align-items: end;
-    gap: 16px;
-  }
-  .supervisao-list-controls .supervisao-status-tabs {
-    width: auto;
-    justify-self: end;
-  }
-  .supervisao-list-controls .supervisao-status-tabs button {
-    flex: 0 0 auto;
-  }
-  .supervisao-entity-list-wrap {
-    overflow-x: auto;
-    padding-bottom: 4px;
-  }
-  .supervisao-entity-list-wrap::-webkit-scrollbar {
-    height: 8px;
-  }
-  .supervisao-entity-list-wrap::-webkit-scrollbar-thumb {
-    border-radius: 999px;
-    background: rgba(95, 56, 37, 0.16);
-  }
-  .supervisao-entity-list {
-    min-width: 860px;
-    gap: 0;
-  }
-  .supervisao-entity-row,
-  .supervisao-entity-row-head {
-    display: grid;
-    grid-template-columns: var(--entity-grid);
-    align-items: center;
-    gap: 14px;
-  }
-  .supervisao-entity-row-head {
-    position: sticky;
-    top: 0;
-    z-index: 1;
-    padding: 13px 16px;
-    border-radius: 18px 18px 0 0;
-    background: rgba(244, 238, 232, 0.94);
-    border: 1px solid rgba(95, 56, 37, 0.08);
-    color: var(--sup-muted);
-    font-size: 0.72rem;
-    font-weight: 900;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-  }
-  .supervisao-entity-row {
-    min-height: 70px;
-    padding: 12px 16px;
-    border-radius: 0;
-    border-width: 0 1px 1px;
-    box-shadow: none;
-  }
-  .supervisao-entity-row:nth-child(odd):not(.supervisao-entity-row-head) {
-    background: rgba(255, 255, 255, 0.6);
-  }
-  .supervisao-entity-row:hover:not(.supervisao-entity-row-head) {
-    background: #fffaf4;
-  }
-  .supervisao-entity-row:last-child {
-    border-radius: 0 0 18px 18px;
-  }
-  .supervisao-entity-row > div:not(.actions)::before,
-  .supervisao-entity-row > div.primary::before {
-    display: none;
-  }
-  .supervisao-entity-row .primary {
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-    gap: 10px;
-    padding-bottom: 0;
-    border-bottom: 0;
-  }
-  .supervisao-entity-row .primary strong {
-    font-size: 0.94rem;
-  }
-  .supervisao-inline-status {
-    max-width: 120px;
-  }
-  .supervisao-entity-row .actions {
-    justify-content: flex-end;
-    padding-top: 0;
-    flex-wrap: nowrap;
-  }
-}
-
-@media (max-width: 760px) {
-  .supervisao-history-snapshot,
-  .supervisao-comparison-card header,
-  .supervisao-comparison-grid,
-  .supervisao-history-card dl,
-  .supervisao-last-note dl {
-    grid-template-columns: 1fr;
-  }
-  .supervisao-history-card header {
-    display: grid;
-  }
-  .supervisao-history-timeline {
-    padding-left: 10px;
-  }
-  .supervisao-history-marker {
-    transform: translateX(-18px);
-  }
-  .alertas-extra-filters,
-  .supervisao-alerta-modal-grid {
-    grid-template-columns: 1fr;
-  }
-  .supervisao-alert-card dl {
-    grid-template-columns: 1fr;
-  }
-  .supervisao-header-action-group {
-    justify-content: flex-start;
-  }
-}
-
-@media (max-width: 720px) {
-  .supervisao-sidebar,
-  .supervisao-auth-card {
-    padding: 22px;
-  }
-  .supervisao-form {
-    grid-template-columns: 1fr;
-  }
-  .supervisao-detalhe-grid {
-    grid-template-columns: 1fr;
-  }
-  .supervisao-radar-interactive {
-    width: min(100%, 300px);
-    max-width: 300px;
-  }
-  .supervisao-radar-axis-label {
-    font-size: 0.6rem;
-  }
-  .supervisao-radar-tooltip {
-    position: static;
-    transform: none;
-    margin-top: -6px;
-    width: min(100%, 250px);
-  }
-  .supervisao-report-command-panel {
-    grid-template-columns: 1fr;
-    padding: 18px;
-    border-radius: 24px;
-  }
-  .supervisao-report-actions {
-    display: grid;
-    grid-template-columns: 1fr;
-  }
-  .supervisao-report-actions button {
-    width: 100%;
-  }
-  .supervisao-report-preview-card {
-    padding: 16px;
-    border-radius: 24px;
-  }
-  .supervisao-report-preview-table {
-    min-width: 560px;
-  }
-}
-
-@media (max-width: 680px) {
-  .dashboard-filters {
-    grid-template-columns: 1fr;
-  }
-  .supervisao-status-tabs {
-    border-radius: 24px;
-  }
-}
-
-@media (max-width: 640px) {
-  .supervisao-list-stats {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-  .supervisao-list-hero {
-    grid-template-columns: minmax(0, 1fr) auto;
-    align-items: center;
-    padding: 22px;
-  }
-  .supervisao-list-hero .supervisao-primary-button {
-    width: auto;
-  }
-  .supervisao-modal-backdrop {
-    padding: 10px;
-  }
-  .supervisao-modal {
-    border-radius: 24px;
-    max-height: 96vh;
-  }
-  .supervisao-modal-header,
-  .supervisao-modal-body {
-    padding-left: 18px;
-    padding-right: 18px;
-  }
-  .supervisao-form-actions.sticky-actions {
-    margin-left: -18px;
-    margin-right: -18px;
-    margin-bottom: -28px;
-    padding-left: 18px;
-    padding-right: 18px;
-  }
-}
-
-@media (max-width: 520px) {
-  .supervisao-list-hero,
-  .supervisao-list-controls,
-  .supervisao-list-stats article,
-  .supervisao-entity-row {
-    border-radius: 18px;
-  }
-  .supervisao-list-controls .supervisao-status-tabs {
-    display: grid;
-    grid-template-columns: 1fr;
-  }
-  .supervisao-list-controls .supervisao-status-tabs button {
-    width: 100%;
-  }
-  .supervisao-entity-row .primary {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-  .supervisao-entity-row .actions button,
-  .supervisao-pagination button {
-    flex: 1 1 auto;
-  }
 }
 
 /* =========================================================
@@ -9504,3 +9149,4 @@ button{font:inherit;}
   text-overflow: ellipsis;
   max-height: none !important;
 }
+
