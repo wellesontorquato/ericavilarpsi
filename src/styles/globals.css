@@ -6765,16 +6765,17 @@ button{font:inherit;}
   padding: 24px;
 }
 
-/* Grids Bento Box */
-.supervisao-presentation-grid,
-.supervisao-grid-two,
-.supervisao-grid-three {
-  display: grid !important;
-  grid-template-columns: repeat(12, minmax(0, 1fr)) !important;
-  gap: 24px !important;
-  align-items: start !important;
-  margin-bottom: 18px;
-}
+  /* Grids Bento Box */
+  .supervisao-presentation-grid,
+  .supervisao-grid-two,
+  .supervisao-grid-three {
+    display: grid !important;
+    grid-template-columns: repeat(12, minmax(0, 1fr)) !important;
+    gap: 24px !important; 
+    align-items: start !important;
+    margin-top: 40px;    /* Adicione isso para dar espaçamento em CIMA dos boxes */
+    margin-bottom: 40px; /* Aumente este valor para dar espaçamento ABAIXO dos boxes (estava 18px) */
+  }
 
 .supervisao-presentation-grid > *,
 .supervisao-grid-two > *,
