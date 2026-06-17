@@ -73,20 +73,63 @@ function PacientesContent({ user, onLogout }) {
     { name: "observacoes", label: "Observações", type: "textarea", rows: 3 },
   ];
 
+  // COLUNAS ESTILIZADAS COM RENDERIZAÇÃO RICA
   const columns = [
-    { name: "nome", label: "Paciente/Caso" },
+    { 
+      name: "nome", 
+      label: "Paciente / Terapeuta",
+      render: (item) => (
+        <div style={{ display: "flex", flexDirection: "column", gap: "2px" }}>
+          <strong style={{ color: "var(--sup-text)", fontSize: "1rem", lineHeight: "1.2" }}>
+            {item.nome}
+          </strong>
+          <span style={{ color: "var(--sup-primary)", fontSize: "0.82rem", fontWeight: 700 }}>
+            {terapeutas.find((t) => t.id === item.terapeutaId)?.nome || "Sem terapeuta"}
+          </span>
+        </div>
+      )
+    },
     {
       name: "clinicaId",
-      label: "Clínica",
-      render: (item) => clinicas.find((clinica) => clinica.id === item.clinicaId)?.nome || "-",
+      label: "Unidade",
+      render: (item) => (
+        <span style={{ color: "var(--sup-muted)", fontSize: "0.9rem", fontWeight: 600 }}>
+          {clinicas.find((c) => c.id === item.clinicaId)?.nome || "-"}
+        </span>
+      ),
     },
-    {
-      name: "terapeutaId",
-      label: "Terapeuta",
-      render: (item) => terapeutas.find((terapeuta) => terapeuta.id === item.terapeutaId)?.nome || "-",
+    { 
+      name: "nivelAtencao", 
+      label: "Risco Clínico",
+      render: (item) => {
+        const nivel = item.nivelAtencao || "Baixa";
+        const isAlto = nivel === "Alta";
+        const isMedio = nivel === "Média";
+        const color = isAlto ? "#a43c32" : isMedio ? "#c98239" : "#6f8b6b";
+        
+        return (
+          <span style={{ display: "flex", alignItems: "center", gap: "6px", fontSize: "0.85rem", color: "var(--sup-text)", fontWeight: 800 }}>
+            <span style={{ width: "8px", height: "8px", borderRadius: "50%", backgroundColor: color }}></span>
+            {nivel}
+          </span>
+        );
+      }
     },
-    { name: "statusCaso", label: "Status" },
-    { name: "nivelAtencao", label: "Atenção" },
+    { 
+      name: "statusCaso", 
+      label: "Status",
+      render: (item) => {
+        const status = item.statusCaso || "Em acompanhamento";
+        const isEncerrado = status === "Encerrado" || status === "Alta";
+        const isPausado = status === "Pausado";
+        
+        let className = "supervisao-inline-status";
+        if (isEncerrado) className += " archived";
+        else if (isPausado) className += " neutral";
+
+        return <span className={className}>{status}</span>;
+      }
+    },
   ];
 
   return (
@@ -104,7 +147,7 @@ function PacientesContent({ user, onLogout }) {
           fields={fields}
           columns={columns}
           entityLabel="paciente"
-              emptyText="Cadastre o primeiro paciente/caso para lançar supervisões."
+          emptyText="Cadastre o primeiro paciente/caso para lançar supervisões."
         />
       </LayoutSupervisao>
     </>

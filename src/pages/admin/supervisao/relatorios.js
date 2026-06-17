@@ -59,7 +59,7 @@ function getContextTitle({ filters, clinicas, terapeutas, pacientes }) {
   if (filters.pacienteId) return selectedName(pacientes, filters.pacienteId, "Paciente selecionado");
   if (filters.terapeutaId) return selectedName(terapeutas, filters.terapeutaId, "Terapeuta selecionado");
   if (filters.clinicaId) return selectedName(clinicas, filters.clinicaId, "Clínica selecionada");
-  return "Supervisão clínica";
+  return "Visão Global da Operação";
 }
 
 function getPeriodText(filters = {}) {
@@ -73,10 +73,9 @@ function getPeriodText(filters = {}) {
 }
 
 function buildReportFileName(contextTitle, filters, suffix) {
-  return `Relatório Supervisão TCC - ${contextTitle} - ${getPeriodText(filters)} - ${suffix}`;
+  return `Supervisao_TCC_${contextTitle}_${getPeriodText(filters)}_${suffix}`;
 }
 
-// Componente PreviewTable refatorado para encaixar perfeitamente no Bento Box
 function PreviewTable({ title, columns, rows, limit = 5 }) {
   const previewRows = rows.slice(0, limit);
 
@@ -117,89 +116,129 @@ function PreviewTable({ title, columns, rows, limit = 5 }) {
   );
 }
 
+// O COMPONENTE MÁGICO DE PDF (Agora formatado como Dashboard)
 function PrintReport({ data }) {
   if (!data) return null;
 
-  const previewLancamentos = data.lancamentosRows.slice(0, 30);
-  const previewAlertas = data.alertasRows.slice(0, 24);
+  const previewLancamentos = data.lancamentosRows.slice(0, 15);
+  const previewAlertas = data.alertasRows.slice(0, 10);
+  const dataHoje = new Date().toLocaleDateString('pt-BR');
+
+  // Arrays de Top Evolução para gerar as barras em CSS
+  const rankingEvolucao = data.clinicasFiltradas.length > 1 
+    ? data.clinicasFiltradas.map(c => ({ label: c.nome, value: average(filterLancamentos(data.lancamentosRaw, {clinicaId: c.id}).map(evolucaoMedia)) })).sort((a,b) => b.value - a.value).slice(0,5)
+    : data.terapeutasFiltrados.map(t => ({ label: t.nome, value: average(filterLancamentos(data.lancamentosRaw, {terapeutaId: t.id}).map(evolucaoMedia)) })).sort((a,b) => b.value - a.value).slice(0,5);
 
   return (
-    <article className="supervisao-print-report">
-      <header>
-        <span>Relatório de Supervisão Clínica em TCC</span>
-        <h1>{data.contextTitle}</h1>
-        <p>{data.periodText}</p>
-      </header>
+    <div className="supervisao-print-report">
+      {/* CAPA DA APRESENTAÇÃO */}
+      <div className="print-cover">
+        <span className="kicker">DOCUMENTO EXECUTIVO</span>
+        <h1>Desempenho Clínico <br/> & Acompanhamento</h1>
+        <h2>{data.contextTitle}</h2>
+        <p>Referência: {data.periodText}</p>
+        
+        <div className="print-cover-footer">
+          Relatório oficial gerado em {dataHoje}
+        </div>
+      </div>
 
-      <section className="supervisao-print-summary">
-        {data.resumoRows.map((row) => (
-          <div key={row.indicador}>
-            <span>{row.indicador}</span>
-            <strong>{row.valor}</strong>
-            <small>{row.detalhe}</small>
+      {/* PÁGINA 1: DASHBOARD EXECUTIVO */}
+      <div className="print-section">
+        <h3>Painel de Saúde e Eficiência</h3>
+        
+        <div className="print-metrics">
+          <div className="print-metric-card">
+            <span>Evolução Clínica</span>
+            <strong>{formatPercent(data.metrics.evolucao)}</strong>
+            <small>Score consolidado</small>
           </div>
-        ))}
-      </section>
+          <div className="print-metric-card">
+            <span>Média Técnica</span>
+            <strong>{formatDecimal(data.metrics.competencia)}</strong>
+            <small>Equipe (1 a 5)</small>
+          </div>
+          <div className="print-metric-card">
+            <span>Casos em Risco</span>
+            <strong>{data.metrics.alertas}</strong>
+            <small>Alertas automáticos</small>
+          </div>
+          <div className="print-metric-card">
+            <span>Pacientes</span>
+            <strong>{data.metrics.pacientes}</strong>
+            <small>Atendidos no período</small>
+          </div>
+        </div>
 
-      <section className="supervisao-print-section">
-        <h2>Resumo interpretativo</h2>
-        <p>
-          No recorte selecionado, o sistema consolidou {data.metrics.registros} lançamento(s),
-          envolvendo {data.metrics.pacientes} paciente(s), {data.metrics.terapeutas} terapeuta(s)
-          e {data.metrics.clinicas} clínica(s). A média técnica foi de {formatDecimal(data.metrics.competencia)}/5
-          e o score clínico consolidado foi de {formatPercent(data.metrics.evolucao)}.
-        </p>
-      </section>
+        <div className="print-grid-two">
+          <div className="print-card">
+            <h4>{data.clinicasFiltradas.length > 1 ? "Evolução por Clínica" : "Evolução por Terapeuta"}</h4>
+            {rankingEvolucao.map((item, i) => (
+              <div className="print-bar-row" key={i}>
+                <span className="print-bar-label">{item.label}</span>
+                <div className="print-bar-track">
+                  <div className="print-bar-fill" style={{ width: `${item.value}%` }}></div>
+                </div>
+                <span className="print-bar-value">{formatPercent(item.value)}</span>
+              </div>
+            ))}
+          </div>
+          
+          <div className="print-card">
+            <h4>Status Operacional</h4>
+            <p style={{ color: '#5f3825', lineHeight: 1.6, fontSize: '1.05rem', margin: 0 }}>
+              No recorte selecionado, o sistema documentou <strong>{data.metrics.registros} intervenções clínicas</strong>,
+              envolvendo o trabalho direto de <strong>{data.metrics.terapeutas} terapeuta(s)</strong> em <strong>{data.metrics.clinicas} clínica(s)</strong>.
+              Foram registrados {data.metrics.planosAbertos} planos de ação em aberto, indicando frentes de desenvolvimento contínuo da equipe.
+            </p>
+          </div>
+        </div>
+      </div>
 
-      <section className="supervisao-print-section">
-        <h2>Alertas principais</h2>
-        {previewAlertas.length ? (
-          <table>
+      {/* PÁGINA 2: ATENÇÃO E ROTINA */}
+      <div className="print-section">
+        <h3>Casos que Exigem Intervenção (Top 10)</h3>
+        {previewAlertas.length > 0 ? (
+          <table className="print-table">
             <thead>
               <tr>
-                <th>Nível</th>
-                <th>Tipo</th>
-                <th>Paciente</th>
-                <th>Resumo</th>
+                <th style={{ width: '15%' }}>Nível</th>
+                <th style={{ width: '25%' }}>Paciente</th>
+                <th style={{ width: '60%' }}>Resumo do Risco / Motivo</th>
               </tr>
             </thead>
             <tbody>
               {previewAlertas.map((alerta, index) => (
-                <tr key={`${alerta.title}-${index}`}>
-                  <td>{alerta.levelLabel}</td>
-                  <td>{alerta.typeLabel}</td>
-                  <td>{alerta.pacienteNome}</td>
+                <tr key={`alerta-${index}`}>
+                  <td><strong>{alerta.levelLabel}</strong></td>
+                  <td>{alerta.pacienteNome}<br/><small style={{ color: '#9f6947'}}>{alerta.terapeutaNome}</small></td>
                   <td>{alerta.summary}</td>
                 </tr>
               ))}
             </tbody>
           </table>
         ) : (
-          <p>Nenhum alerta encontrado para o recorte selecionado.</p>
+          <p>Nenhum alerta crítico encontrado para o recorte selecionado. Operação estável.</p>
         )}
-      </section>
 
-      <section className="supervisao-print-section">
-        <h2>Últimos lançamentos</h2>
-        {previewLancamentos.length ? (
-          <table>
+        <h3 style={{ marginTop: '50px' }}>Registro de Intervenções Recentes</h3>
+        {previewLancamentos.length > 0 ? (
+          <table className="print-table">
             <thead>
               <tr>
-                <th>Período</th>
-                <th>Paciente</th>
-                <th>Terapeuta</th>
-                <th>Competência</th>
-                <th>Evolução</th>
+                <th style={{ width: '15%' }}>Semana</th>
+                <th style={{ width: '25%' }}>Paciente / Terapeuta</th>
+                <th style={{ width: '15%' }}>Score</th>
+                <th style={{ width: '45%' }}>Ponto a Desenvolver / Foco</th>
               </tr>
             </thead>
             <tbody>
               {previewLancamentos.map((item, index) => (
-                <tr key={`${item.paciente}-${index}`}>
-                  <td>{item.mes} · {item.ano} · {item.semana}</td>
-                  <td>{item.paciente}</td>
-                  <td>{item.terapeuta}</td>
-                  <td>{item.competenciaMedia}</td>
-                  <td>{item.evolucaoMedia}</td>
+                <tr key={`lancamento-${index}`}>
+                  <td>{item.mes} · S{item.semana}</td>
+                  <td>{item.paciente}<br/><small style={{ color: '#9f6947'}}>{item.terapeuta}</small></td>
+                  <td>Evol: {item.evolucaoMedia}<br/>Comp: {item.competenciaMedia}</td>
+                  <td>{item.pontoDesenvolver || item.planoAcao || "-"}</td>
                 </tr>
               ))}
             </tbody>
@@ -207,8 +246,8 @@ function PrintReport({ data }) {
         ) : (
           <p>Nenhum lançamento encontrado para o recorte selecionado.</p>
         )}
-      </section>
-    </article>
+      </div>
+    </div>
   );
 }
 
@@ -224,7 +263,7 @@ function RelatoriosContent({ user, onLogout }) {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState({ type: "", text: "" });
-  const [reportType, setReportType] = useState("completo");
+  const [reportType, setReportType] = useState("executivo"); // Já vem marcado o recomendado
   const [printData, setPrintData] = useState(null);
   const [filters, setFilters] = useState({
     ano: String(currentYear),
@@ -251,10 +290,11 @@ function RelatoriosContent({ user, onLogout }) {
     loadDashboard();
   }, [user]);
 
+  // TEMPO AUMENTADO PARA 1200ms para garantir renderização perfeita dos gráficos em CSS antes da tela travar
   useEffect(() => {
     if (!printData || typeof window === "undefined") return undefined;
 
-    const timeout = window.setTimeout(() => window.print(), 250);
+    const timeout = window.setTimeout(() => window.print(), 1200);
     const clearAfterPrint = () => setPrintData(null);
 
     window.addEventListener("afterprint", clearAfterPrint);
@@ -362,17 +402,14 @@ function RelatoriosContent({ user, onLogout }) {
 
   function handleExportExcel() {
     exportExcelWorkbook(
-      buildReportFileName(contextTitle, filters, tipoRelatorioLabel),
-      reportSheets
+      buildReportFileName(contextTitle, filters, "Excel"),
+      reportSheets,
+      metrics // Passando os dados para a capa do Excel
     );
   }
 
   function handleExportLancamentosCsv() {
     exportCsv(buildReportFileName(contextTitle, filters, "Lançamentos"), lancamentosColumns, reportRows.lancamentosRows);
-  }
-
-  function handleExportAlertasCsv() {
-    exportCsv(buildReportFileName(contextTitle, filters, "Alertas"), alertasColumns, reportRows.alertasRows);
   }
 
   function handlePrintReport() {
@@ -382,6 +419,9 @@ function RelatoriosContent({ user, onLogout }) {
       filters,
       contextTitle,
       periodText,
+      clinicasFiltradas,
+      terapeutasFiltrados,
+      lancamentosRaw: lancamentos // Usado para calcular as barras no PDF
     });
   }
 
@@ -392,8 +432,8 @@ function RelatoriosContent({ user, onLogout }) {
       </Head>
 
       <LayoutSupervisao
-        title="Relatórios e Análises"
-        description="Gere resumos executivos, exportações para Excel e versões imprimíveis do trabalho clínico."
+        title="Relatórios e Apresentações"
+        description="Gere dashboards executivos e exporte relatórios consolidados em Excel ou PDF."
         user={user}
         onLogout={onLogout}
       >
@@ -401,9 +441,9 @@ function RelatoriosContent({ user, onLogout }) {
 
         <section className="supervisao-dashboard-hero relatorios-hero">
           <div>
-            <span className="supervisao-kicker">Data & Inteligência</span>
+            <span className="supervisao-kicker">Inteligência de Dados</span>
             <h2>{contextTitle}</h2>
-            <p>{periodText} · escolha o recorte e exporte os dados consolidados no formato necessário.</p>
+            <p>{periodText} · escolha o recorte e gere uma apresentação executiva formatada.</p>
           </div>
 
           <DashboardFilters
@@ -446,10 +486,10 @@ function RelatoriosContent({ user, onLogout }) {
           <>
             <section className="supervisao-report-command-panel">
               <div>
-                <span className="supervisao-kicker">Exportar Documentos</span>
+                <span className="supervisao-kicker">Exportar Apresentação</span>
                 <h2>{tipoRelatorioLabel}</h2>
                 <p>
-                  O arquivo gerado reflete exatamente os filtros aplicados. Utilize o botão de PDF para abrir a formatação limpa de impressão.
+                  O "Dashboard Executivo" foca nos resultados finais (KPIs) para envio à diretoria. Para baixar toda a base de dados de uma vez, escolha "Relatório com dados brutos".
                 </p>
               </div>
 
@@ -464,16 +504,13 @@ function RelatoriosContent({ user, onLogout }) {
 
               <div className="supervisao-report-actions">
                 <button type="button" className="supervisao-primary-button" onClick={handleExportExcel}>
-                  Baixar Excel (XLSX)
+                  Gerar Excel Estilizado
                 </button>
                 <button type="button" className="supervisao-secondary-button" onClick={handlePrintReport}>
-                  Gerar Relatório em PDF
+                  Gerar PDF para Apresentação
                 </button>
                 <button type="button" className="supervisao-secondary-button" onClick={handleExportLancamentosCsv}>
-                  CSV Lançamentos
-                </button>
-                <button type="button" className="supervisao-secondary-button" onClick={handleExportAlertasCsv}>
-                  CSV Alertas
+                  Baixar CSV Simples
                 </button>
               </div>
             </section>
@@ -485,58 +522,15 @@ function RelatoriosContent({ user, onLogout }) {
               <CardIndicador label="Alertas" value={metrics.alertas} detail="pontos de atenção" />
             </section>
 
-            <div className="bento-grid">
-              <div className="bento-col bento-4">
-                <ChartPanel title="Alertas por Nível" subtitle="Prioridade dos pontos de atenção" action={`${resumoAlertas.total} alerta(s)`}>
-                  <DonutChart items={resumoAlertas.niveis} />
-                </ChartPanel>
-              </div>
-
-              <div className="bento-col bento-4">
-                <ChartPanel title="Tipos de Alerta" subtitle="Motivos mais frequentes" action="Top 5">
-                  <HorizontalBars
-                    items={resumoAlertas.tipos.slice(0, 5)}
-                    valueKey="value"
-                    labelKey="label"
-                    valueFormatter={(value) => String(value)}
-                  />
-                </ChartPanel>
-              </div>
-
-              <div className="bento-col bento-4">
-                <ChartPanel title="Clínicas no Relatório" subtitle="Volume de registros no recorte" action={`${metrics.clinicas} clínica(s)`}>
-                  <HorizontalBars
-                    items={clinicasFiltradas.map((clinica) => ({
-                      id: clinica.id,
-                      label: clinica.nome,
-                      value: lancamentosFiltrados.filter((item) => safeId(item.clinicaId) === safeId(clinica.id)).length,
-                    })).filter((item) => item.value > 0).slice(0, 5)}
-                    valueKey="value"
-                    labelKey="label"
-                    valueFormatter={(value) => String(value)}
-                  />
-                </ChartPanel>
-              </div>
-            </div>
-
             <div className="bento-grid dashboard-lower">
               <div className="bento-col bento-12">
-                <PreviewTable title="Resumo Executivo" columns={resumoColumns} rows={reportRows.resumoRows} limit={4} />
+                <PreviewTable title="Resumo Executivo (Prévia)" columns={resumoColumns} rows={reportRows.resumoRows} limit={4} />
               </div>
               <div className="bento-col bento-6">
-                <PreviewTable title="Lançamentos Semanais" columns={lancamentosColumns} rows={reportRows.lancamentosRows} limit={4} />
+                <PreviewTable title="Atenção Imediata" columns={alertasColumns} rows={reportRows.alertasRows} limit={4} />
               </div>
               <div className="bento-col bento-6">
-                <PreviewTable title="Alertas Automáticos" columns={alertasColumns} rows={reportRows.alertasRows} limit={4} />
-              </div>
-              <div className="bento-col bento-4">
-                <PreviewTable title="Pacientes / Casos" columns={pacientesColumns} rows={reportRows.pacientesRows} limit={5} />
-              </div>
-              <div className="bento-col bento-4">
-                <PreviewTable title="Equipe de Terapeutas" columns={terapeutasColumns} rows={reportRows.terapeutasRows} limit={5} />
-              </div>
-              <div className="bento-col bento-4">
-                <PreviewTable title="Unidades Clínicas" columns={clinicasColumns} rows={reportRows.clinicasRows} limit={5} />
+                <PreviewTable title="Últimos Lançamentos" columns={lancamentosColumns} rows={reportRows.lancamentosRows} limit={4} />
               </div>
             </div>
           </>
