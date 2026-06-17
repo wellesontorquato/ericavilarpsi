@@ -123,22 +123,15 @@ function AlertCard({ alerta, onOpen }) {
           <dt>Terapeuta</dt>
           <dd>{alerta.terapeutaNome}</dd>
         </div>
-        <div>
-          <dt>Clínica</dt>
-          <dd>{alerta.clinicaNome}</dd>
-        </div>
-        <div>
-          <dt>Período</dt>
-          <dd>{alerta.periodo}</dd>
-        </div>
       </dl>
 
       <footer>
         <button type="button" className="supervisao-mini-action" onClick={() => onOpen(alerta)}>
           Ver detalhes
         </button>
-
-        <Link href={alerta.actionHref}>Abrir histórico</Link>
+        <Link href={alerta.actionHref} className="supervisao-mini-action" style={{ background: "transparent", border: "1px solid var(--sup-line)" }}>
+          Abrir histórico
+        </Link>
       </footer>
     </article>
   );
@@ -212,6 +205,12 @@ function AlertasContent({ user, onLogout }) {
     return filterAlertas(alertasCalculados, filters);
   }, [alertasCalculados, filters]);
 
+  // ORDENAÇÃO: Força os alertas "Alto" a ficarem sempre no topo da lista
+  const alertasOrdenados = useMemo(() => {
+    const pesos = { alto: 3, medio: 2, baixo: 1 };
+    return [...alertasFiltrados].sort((a, b) => (pesos[b.level] || 0) - (pesos[a.level] || 0));
+  }, [alertasFiltrados]);
+
   const resumo = useMemo(() => summarizeAlertas(alertasFiltrados), [alertasFiltrados]);
   const resumoGeral = useMemo(() => summarizeAlertas(alertasCalculados), [alertasCalculados]);
 
@@ -239,8 +238,8 @@ function AlertasContent({ user, onLogout }) {
       </Head>
 
       <LayoutSupervisao
-        title="Alertas automáticos"
-        description="Identificação automática de casos, planos e indicadores que precisam de atenção clínica ou supervisão técnica."
+        title="Monitoramento e Alertas"
+        description="Identificação automática de casos que precisam de atenção clínica imediata."
         user={user}
         onLogout={onLogout}
         actions={<Link className="supervisao-secondary-button" href="/admin/supervisao/historico">Ver histórico clínico</Link>}
@@ -250,9 +249,9 @@ function AlertasContent({ user, onLogout }) {
         <section className="supervisao-dashboard-hero alertas-hero">
           <div>
             <span className="supervisao-kicker">Supervisão ativa</span>
-            <h2>{resumo.total} alerta(s) no filtro</h2>
+            <h2>{resumo.total} alerta(s) pendentes</h2>
             <p>
-              Os alertas respeitam a direção de cada indicador clínico: alguns sinalizam risco quando sobem, outros quando caem.
+              Avalie os desvios de rota clínica. Casos com sinalização vermelha requerem intervenção técnica junto ao terapeuta responsável.
             </p>
           </div>
 
@@ -269,7 +268,6 @@ function AlertasContent({ user, onLogout }) {
                     {clinicas.map((clinica) => <option key={clinica.id} value={clinica.id}>{clinica.nome}</option>)}
                   </select>
                 </label>
-
                 <label>
                   <span>Terapeuta</span>
                   <select value={filters.terapeutaId} onChange={(event) => updateFilter("terapeutaId", event.target.value)}>
@@ -277,7 +275,6 @@ function AlertasContent({ user, onLogout }) {
                     {terapeutasFiltrados.map((terapeuta) => <option key={terapeuta.id} value={terapeuta.id}>{terapeuta.nome}</option>)}
                   </select>
                 </label>
-
                 <label>
                   <span>Paciente</span>
                   <select value={filters.pacienteId} onChange={(event) => updateFilter("pacienteId", event.target.value)}>
@@ -285,80 +282,72 @@ function AlertasContent({ user, onLogout }) {
                     {pacientesFiltrados.map((paciente) => <option key={paciente.id} value={paciente.id}>{paciente.nome}</option>)}
                   </select>
                 </label>
+                {/* Filtros unificados na mesma caixa */}
+                <label>
+                  <span>Nível Crítico</span>
+                  <select value={filters.nivel} onChange={(event) => updateFilter("nivel", event.target.value)}>
+                    <option value="">Todos os níveis</option>
+                    {Object.entries(ALERT_LEVELS).map(([value, item]) => <option key={value} value={value}>{item.label}</option>)}
+                  </select>
+                </label>
+                <label>
+                  <span>Tipo de Alerta</span>
+                  <select value={filters.tipo} onChange={(event) => updateFilter("tipo", event.target.value)}>
+                    <option value="">Todos os motivos</option>
+                    {tipoOptions().map((item) => <option key={item.value} value={item.value}>{item.label}</option>)}
+                  </select>
+                </label>
               </>
             )}
           />
         </section>
 
-        <section className="supervisao-filters alertas-extra-filters">
-          <label>
-            <span>Nível</span>
-            <select value={filters.nivel} onChange={(event) => updateFilter("nivel", event.target.value)}>
-              <option value="">Todos</option>
-              {Object.entries(ALERT_LEVELS).map(([value, item]) => <option key={value} value={value}>{item.label}</option>)}
-            </select>
-          </label>
-
-          <label>
-            <span>Tipo</span>
-            <select value={filters.tipo} onChange={(event) => updateFilter("tipo", event.target.value)}>
-              <option value="">Todos</option>
-              {tipoOptions().map((item) => <option key={item.value} value={item.value}>{item.label}</option>)}
-            </select>
-          </label>
-        </section>
-
         {loading ? (
-          <section className="supervisao-panel"><p>Carregando alertas...</p></section>
+          <section className="supervisao-panel"><p>Carregando monitoramento...</p></section>
         ) : (
           <>
             <section className="supervisao-indicator-grid executive">
-              <CardIndicador label="Alertas no filtro" value={resumo.total} detail={`${resumoGeral.total} alerta(s) no período-base`} />
-              <CardIndicador label="Alto" value={resumo.alto} detail="prioridade imediata" />
-              <CardIndicador label="Médio" value={resumo.medio} detail="acompanhar de perto" />
-              <CardIndicador label="Baixo" value={resumo.baixo} detail="monitoramento" />
-              <CardIndicador label="Pacientes impactados" value={resumo.pacientes} detail="com ao menos um alerta" />
-              <CardIndicador label="Terapeutas envolvidos" value={resumo.terapeutas} detail="com alertas vinculados" />
+              <CardIndicador label="Total no filtro" value={resumo.total} detail={`${resumoGeral.total} alerta(s) no período-base`} />
+              <CardIndicador label="Atenção Imediata" value={resumo.alto} detail="casos com prioridade alta" />
+              <CardIndicador label="Pacientes afetados" value={resumo.pacientes} detail="com ao menos um alerta" />
+              <CardIndicador label="Terapeutas notificados" value={resumo.terapeutas} detail="responsáveis pelos casos" />
             </section>
 
-            <section className="supervisao-presentation-grid alertas-charts-grid">
-              <ChartPanel title="Alertas por nível" subtitle="Distribuição de prioridade" action={`${resumo.total} ativo(s)`}>
-                <DonutChart items={resumo.niveis} />
-              </ChartPanel>
+            <section className="bento-grid" style={{ marginBottom: '24px' }}>
+              <div className="bento-col bento-4">
+                <ChartPanel title="Distribuição de Nível" subtitle="Volume por gravidade">
+                  <DonutChart items={resumo.niveis} />
+                </ChartPanel>
+              </div>
 
-              <ChartPanel title="Tipos de alerta" subtitle="Principais motivos de atenção" action={`${resumo.tipos.length} tipo(s)`}>
-                <HorizontalBars
-                  items={resumo.tipos.slice(0, 8)}
-                  valueKey="value"
-                  labelKey="label"
-                  valueFormatter={(value) => String(value)}
-                />
-              </ChartPanel>
-
-              <ChartPanel title="Alertas por clínica" subtitle="Onde os alertas estão concentrados" action={`${resumo.clinicas.length} clínica(s)`}>
-                <HorizontalBars
-                  items={resumo.clinicas.slice(0, 8)}
-                  valueKey="value"
-                  labelKey="label"
-                  valueFormatter={(value) => String(value)}
-                />
-              </ChartPanel>
+              <div className="bento-col bento-8">
+                <ChartPanel title="Motivos Recorrentes" subtitle="Tipos de alerta mais acionados na operação">
+                  <HorizontalBars
+                    items={resumo.tipos.slice(0, 5)} // Limitado a 5 para não ficar alto demais
+                    valueKey="value"
+                    labelKey="label"
+                    valueFormatter={(value) => String(value)}
+                  />
+                </ChartPanel>
+              </div>
             </section>
 
             <section className="supervisao-panel dashboard-lower">
-              <div className="supervisao-section-title">
-                <h2>Lista de alertas</h2>
-                <span>{alertasFiltrados.length} alerta(s)</span>
+              <div className="supervisao-section-title" style={{ marginBottom: '20px' }}>
+                <h2>Fila de Intervenção</h2>
+                <span style={{ color: 'var(--sup-muted)', fontSize: '0.9rem' }}>Ordenado por gravidade</span>
               </div>
 
-              {alertasFiltrados.length ? (
+              {alertasOrdenados.length ? (
                 <div className="supervisao-alert-list">
-                  {alertasFiltrados.map((alerta) => (
+                  {alertasOrdenados.map((alerta) => (
                     <AlertCard key={alerta.id} alerta={alerta} onOpen={setAlertaAberto} />
                   ))}
                 </div>
               ) : (
-                <p className="supervisao-empty">Nenhum alerta encontrado para os filtros selecionados.</p>
+                <p className="supervisao-empty" style={{ textAlign: 'center', padding: '40px' }}>
+                  Nenhum alerta crítico encontrado para este recorte.
+                </p>
               )}
             </section>
           </>
