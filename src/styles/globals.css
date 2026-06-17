@@ -9449,3 +9449,31 @@ button{font:inherit;}
   background: #fffcf7 !important;
   border-top: 1px solid rgba(159, 105, 71, 0.15) !important;
 }
+
+/* =========================================================
+   REFINAMENTO DO MODAL: DIVISÕES ELEGANTES
+   ========================================================= */
+
+/* 1. Divisão clara separando o cabeçalho de dados (Paciente/Clínica) do resto */
+.supervisao-alerta-modal-grid,
+.supervisao-detalhe-grid {
+  border-bottom: 1px solid rgba(159, 105, 71, 0.2) !important;
+  padding-bottom: 24px !important;
+  margin-bottom: 24px !important;
+}
+
+/* 2. Adiciona linhas divisórias sutis entre os blocos de texto (Resumo, Detalhe, etc) */
+.supervisao-alerta-modal-textos section,
+.supervisao-detalhe-textos section {
+  border-bottom: 1px solid rgba(159, 105, 71, 0.15) !important;
+  padding: 0 0 24px 0 !important;
+  margin-bottom: 24px !important;
+}
+
+/* 3. Remove a linha do último item para não ficar redundante perto do rodapé dos botões */
+.supervisao-alerta-modal-textos section:last-child,
+.supervisao-detalhe-textos section:last-child {
+  border-bottom: none !important;
+  padding-bottom: 0 !important;
+  margin-bottom: 0 !important;
+}
