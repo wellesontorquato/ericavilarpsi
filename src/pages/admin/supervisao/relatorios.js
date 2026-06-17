@@ -7,7 +7,7 @@ import DashboardFilters from "@/components/supervisao/DashboardFilters";
 import StatusMessage from "@/components/supervisao/StatusMessage";
 import { ChartPanel, DonutChart, HorizontalBars } from "@/components/supervisao/Charts";
 import { supervisaoRequest } from "@/lib/supervisao/api";
-import { average, formatDecimal, formatPercent, mesNome } from "@/lib/supervisao/format";
+import { average, formatDecimal, formatPercent, mesNome, formatarDataBR } from "@/lib/supervisao/format";
 import {
   competenciaMedia,
   currentYear,
@@ -60,14 +60,6 @@ function getContextTitle({ filters, clinicas, terapeutas, pacientes }) {
   if (filters.terapeutaId) return selectedName(terapeutas, filters.terapeutaId, "Terapeuta selecionado");
   if (filters.clinicaId) return selectedName(clinicas, filters.clinicaId, "Clínica selecionada");
   return "Visão Global da Operação";
-}
-
-function formatarDataBR(dataIso) {
-  if (!dataIso) return "";
-  const apenasData = dataIso.split("T")[0]; 
-  const partes = apenasData.split("-");
-  if (partes.length !== 3) return dataIso;
-  return `${partes[2]}/${partes[1]}/${partes[0]}`;
 }
 
 function getPeriodText(filters = {}) {
@@ -540,7 +532,7 @@ function RelatoriosContent({ user, onLogout }) {
       periodText,
       clinicasFiltradas,
       terapeutasFiltrados,
-      pacientesFiltrados, // Passado para poder puxar o status da carteira
+      pacientesFiltrados,
       lancamentosRaw: lancamentosFiltrados 
     });
   }
@@ -604,34 +596,52 @@ function RelatoriosContent({ user, onLogout }) {
           <section className="supervisao-panel"><p>Carregando relatórios...</p></section>
         ) : (
           <>
-            <section className="supervisao-report-command-panel">
-              <div>
-                <span className="supervisao-kicker">Exportar Apresentação</span>
-                <h2>{tipoRelatorioLabel}</h2>
-                <p>
-                  O "Dashboard Executivo" foca nos resultados finais (KPIs) para envio à diretoria. Para baixar toda a base de dados de uma vez, escolha "Relatório com dados brutos".
+            {/* PAINEL DE EXPORTAÇÃO REFATORADO (MAIS COMPACTO, LAYOUT HORIZONTAL E BOTÕES RENOMEADOS) */}
+            <section 
+              className="supervisao-report-command-panel" 
+              style={{ 
+                flexDirection: 'row', 
+                alignItems: 'center', 
+                justifyContent: 'space-between', 
+                flexWrap: 'wrap',
+                padding: '24px 32px' 
+              }}
+            >
+              <div style={{ flex: '1 1 300px' }}>
+                <span className="supervisao-kicker">Exportação de Dados</span>
+                <h2 style={{ fontSize: '1.75rem', margin: '4px 0 8px' }}>Baixar Relatórios</h2>
+                <p style={{ margin: 0, fontSize: '0.9rem' }}>
+                  Gere arquivos com os indicadores atuais para envio à diretoria ou análise em planilhas.
                 </p>
               </div>
 
-              <label>
-                <span>Selecionar modelo de arquivo</span>
-                <select value={reportType} onChange={(event) => setReportType(event.target.value)}>
-                  {REPORT_TYPES.map((item) => (
-                    <option key={item.value} value={item.value}>{item.label}</option>
-                  ))}
-                </select>
-              </label>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', flex: '0 0 auto' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px', justifyContent: 'flex-end' }}>
+                  <span style={{ fontSize: '0.75rem', fontWeight: 800, color: 'var(--sup-primary-dark)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                    Formato:
+                  </span>
+                  <select 
+                    value={reportType} 
+                    onChange={(event) => setReportType(event.target.value)}
+                    style={{ height: '40px', borderRadius: '12px', border: '1px solid rgba(159, 105, 71, 0.25)', padding: '0 16px', background: '#fff', fontSize: '0.85rem', color: 'var(--sup-text)', outline: 'none', cursor: 'pointer', fontWeight: 600 }}
+                  >
+                    {REPORT_TYPES.map((item) => (
+                      <option key={item.value} value={item.value}>{item.label}</option>
+                    ))}
+                  </select>
+                </div>
 
-              <div className="supervisao-report-actions">
-                <button type="button" className="supervisao-primary-button" onClick={handleExportExcel}>
-                  Gerar Excel Estilizado
-                </button>
-                <button type="button" className="supervisao-secondary-button" onClick={handlePrintReport}>
-                  Gerar PDF para Apresentação
-                </button>
-                <button type="button" className="supervisao-secondary-button" onClick={handleExportLancamentosCsv}>
-                  Baixar CSV Simples
-                </button>
+                <div className="supervisao-report-actions" style={{ margin: 0, justifyContent: 'flex-end' }}>
+                  <button type="button" className="supervisao-primary-button" onClick={handleExportExcel} style={{ padding: '10px 18px', fontSize: '0.85rem' }}>
+                    Gerar Excel
+                  </button>
+                  <button type="button" className="supervisao-secondary-button" onClick={handlePrintReport} style={{ padding: '10px 18px', fontSize: '0.85rem' }}>
+                    Gerar PDF
+                  </button>
+                  <button type="button" className="supervisao-secondary-button" onClick={handleExportLancamentosCsv} style={{ padding: '10px 18px', fontSize: '0.85rem' }}>
+                    Gerar CSV
+                  </button>
+                </div>
               </div>
             </section>
 
