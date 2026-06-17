@@ -9185,3 +9185,149 @@ button{font:inherit;}
   text-overflow: ellipsis;
   max-height: none !important;
 }
+
+/* =========================================================
+   RELATÓRIOS E EXPORTAÇÃO - DASHBOARD EXECUTIVO
+   ========================================================= */
+
+/* 1. Painel de Comando (Exportar Apresentação) */
+.supervisao-report-command-panel {
+  background: var(--sup-surface);
+  border: 1px solid rgba(255, 255, 255, 0.72);
+  box-shadow: var(--sup-shadow);
+  backdrop-filter: blur(18px);
+  border-radius: 28px;
+  padding: 28px 32px;
+  margin-bottom: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.supervisao-report-command-panel h2 {
+  color: var(--sup-text);
+  font-family: var(--font-libre-bodoni), serif;
+  font-size: clamp(1.6rem, 3vw, 2.2rem);
+  margin: 8px 0 12px;
+  letter-spacing: -0.04em;
+}
+
+.supervisao-report-command-panel p {
+  color: var(--sup-muted);
+  line-height: 1.6;
+  max-width: 760px;
+  font-size: 0.95rem;
+}
+
+.supervisao-report-command-panel label {
+  display: grid;
+  gap: 8px;
+  color: var(--sup-primary-dark);
+  font-size: 0.8rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-top: 8px;
+}
+
+.supervisao-report-command-panel select {
+  height: 48px;
+  border-radius: 14px;
+  border: 1px solid rgba(159, 105, 71, 0.25);
+  padding: 0 16px;
+  background-color: #fff;
+  font-size: 0.95rem;
+  color: var(--sup-text);
+  font-family: inherit;
+  outline: none;
+  max-width: 320px;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.supervisao-report-command-panel select:focus {
+  border-color: var(--sup-primary);
+  box-shadow: 0 0 0 4px rgba(159, 105, 71, 0.12);
+}
+
+.supervisao-report-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+/* 2. Tabelas de Prévia (Bento Box) */
+.supervisao-report-preview-card {
+  background: var(--sup-surface);
+  border: 1px solid rgba(255, 255, 255, 0.72);
+  box-shadow: var(--sup-shadow);
+  backdrop-filter: blur(18px);
+  border-radius: 28px;
+  padding: 24px;
+}
+
+.supervisao-report-preview-table-wrap {
+  border-radius: 16px;
+  border: 1px solid var(--sup-line);
+  background: rgba(255, 255, 255, 0.4);
+}
+
+.supervisao-report-preview-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+
+.supervisao-report-preview-table th,
+.supervisao-report-preview-table td {
+  padding: 14px 16px;
+  text-align: left;
+  border-bottom: 1px solid var(--sup-line);
+  color: var(--sup-text);
+  line-height: 1.4;
+}
+
+.supervisao-report-preview-table th {
+  color: var(--sup-primary-dark);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  background: rgba(159, 105, 71, 0.06);
+  font-size: 0.75rem;
+}
+
+.supervisao-report-preview-table tbody tr {
+  transition: background 0.2s ease;
+}
+
+.supervisao-report-preview-table tbody tr:hover {
+  background: rgba(255, 255, 255, 0.8);
+}
+
+.supervisao-report-preview-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* Tratamento para telas menores (Mobile Responsivo) */
+@media (max-width: 768px) {
+  .supervisao-report-command-panel {
+    padding: 20px;
+  }
+  
+  .supervisao-report-command-panel select {
+    max-width: 100%;
+  }
+  
+  .supervisao-report-actions {
+    flex-direction: column;
+  }
+  
+  .supervisao-report-actions button {
+    width: 100%;
+  }
+
+  .supervisao-report-preview-table-wrap {
+    overflow-x: auto;
+  }
+}
