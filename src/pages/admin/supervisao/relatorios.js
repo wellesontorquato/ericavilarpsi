@@ -72,6 +72,43 @@ function getPeriodText(filters = {}) {
   return `${periodo}${filters.semana ? ` · Semana ${filters.semana}` : ""}`;
 }
 
+function formatarDataBR(dataIso) {
+  if (!dataIso) return "";
+  
+  try {
+    // 1. Se vier do Firebase como Timestamp (tem a função toDate)
+    if (typeof dataIso.toDate === "function") {
+      const dataFormatada = dataIso.toDate();
+      const dia = String(dataFormatada.getDate()).padStart(2, "0");
+      const mes = String(dataFormatada.getMonth() + 1).padStart(2, "0");
+      const ano = dataFormatada.getFullYear();
+      return `${dia}/${mes}/${ano}`;
+    }
+
+    // 2. Se for uma data JS normal
+    if (dataIso instanceof Date) {
+      const dia = String(dataIso.getDate()).padStart(2, "0");
+      const mes = String(dataIso.getMonth() + 1).padStart(2, "0");
+      const ano = dataIso.getFullYear();
+      return `${dia}/${mes}/${ano}`;
+    }
+
+    // 3. Força virar string para evitar crash (Objects are not valid as a React child)
+    const textoData = String(dataIso);
+    const apenasData = textoData.split("T")[0]; 
+    const partes = apenasData.split("-");
+    
+    // Se estiver no formato YYYY-MM-DD
+    if (partes.length === 3) {
+      return `${partes[2]}/${partes[1]}/${partes[0]}`;
+    }
+
+    return textoData;
+  } catch (error) {
+    return "-"; // Em caso de falha absoluta, não quebra a tela
+  }
+}
+
 function buildReportFileName(contextTitle, filters, suffix) {
   return `Supervisao_TCC_${contextTitle}_${getPeriodText(filters)}_${suffix}`;
 }
