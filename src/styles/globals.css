@@ -9426,98 +9426,159 @@ button{font:inherit;}
 }
 
 /* =========================================================
-   CORREÇÃO DO MODAL (FUNDO TRANSPARENTE E CAIXAS)
+   MODAIS DE DETALHE (DESIGN PREMIUM / SAAS)
    ========================================================= */
 
-/* 1. Força a cor de fundo do modal (já que ele perde as variáveis) */
+/* 1. O Modal em si (Fundo suave e Sombra elegante) */
 .supervisao-modal {
-  background: #fffcf7 !important;
-  border: 1px solid rgba(159, 105, 71, 0.2) !important;
+  background: #fdfbf7 !important; /* Um off-white/creme bem suave */
+  border: 1px solid rgba(159, 105, 71, 0.15) !important;
+  box-shadow: 0 40px 100px rgba(38, 28, 23, 0.25) !important;
+  border-radius: 32px !important;
 }
 
-/* 2. Remove as bordas e fundos dos indicadores rápidos (Paciente, Prazo, etc) */
-.supervisao-alerta-modal-grid div,
-.supervisao-detalhe-grid div {
-  background: transparent !important;
-  border: none !important;
-  padding: 0 !important;
-}
-
-/* 3. Remove os "caixotões" brancos dos textos longos e dá respiro */
-.supervisao-alerta-modal-textos section,
-.supervisao-detalhe-textos section {
-  background: transparent !important;
-  border: none !important;
-  box-shadow: none !important;
-  padding: 0 0 24px 0 !important;
-}
-
-/* 4. Garante que as cores de texto tenham contraste perfeito com o fundo sólido */
-.supervisao-alerta-modal-grid span,
-.supervisao-detalhe-grid span,
-.supervisao-alerta-modal-textos h3,
-.supervisao-detalhe-textos h3 {
-  color: #9f6947 !important; /* Cor primária (marrom/terracota) */
-}
-
-.supervisao-alerta-modal-grid strong,
-.supervisao-detalhe-grid strong,
-.supervisao-alerta-modal-textos p,
-.supervisao-detalhe-textos p {
-  color: #261c17 !important; /* Texto principal escuro */
+/* 2. Cabeçalho (Header com mais respiro) */
+.supervisao-modal-header {
+  padding: 36px 40px 28px !important;
+  border-bottom: 1px solid rgba(159, 105, 71, 0.08) !important;
 }
 
 .supervisao-modal-header h2 {
+  font-size: clamp(1.8rem, 3vw, 2.4rem) !important;
   color: #392619 !important;
+  letter-spacing: -0.04em !important;
+  margin: 8px 0 !important;
+  line-height: 1.1 !important;
 }
 
-.supervisao-modal-header p,
-.supervisao-kicker {
+.supervisao-modal-header p {
+  font-size: 1rem !important;
   color: #7b6c61 !important;
+  margin: 0 !important;
 }
 
-/* 5. Estiliza a bolinha ao lado do título das seções de texto */
+/* 3. Grid de Informações Rápidas (Cards Brancos Superiores) */
+.supervisao-alerta-modal-grid,
+.supervisao-detalhe-grid {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)) !important;
+  gap: 16px !important;
+  margin-bottom: 36px !important;
+  border-bottom: none !important; 
+  padding-bottom: 0 !important;
+}
+
+.supervisao-alerta-modal-grid div,
+.supervisao-detalhe-grid div {
+  background: #ffffff !important; /* Cards brancos puros contrastando com o fundo creme */
+  border: 1px solid rgba(159, 105, 71, 0.08) !important;
+  border-radius: 20px !important;
+  padding: 20px 24px !important;
+  box-shadow: 0 6px 16px rgba(58, 37, 25, 0.02) !important;
+  transition: transform 0.2s ease, box-shadow 0.2s ease !important;
+}
+
+.supervisao-alerta-modal-grid div:hover,
+.supervisao-detalhe-grid div:hover {
+  transform: translateY(-3px) !important;
+  box-shadow: 0 12px 24px rgba(58, 37, 25, 0.05) !important;
+}
+
+.supervisao-alerta-modal-grid span,
+.supervisao-detalhe-grid span {
+  color: #8b7869 !important;
+  font-size: 0.72rem !important;
+  font-weight: 800 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.08em !important;
+  margin-bottom: 8px !important;
+  display: block !important;
+}
+
+.supervisao-alerta-modal-grid strong,
+.supervisao-detalhe-grid strong {
+  color: #392619 !important;
+  font-size: 1.15rem !important;
+  font-weight: 800 !important;
+  line-height: 1.2 !important;
+  display: block !important;
+}
+
+/* 4. Corpo do Modal e Textos Longos (Cards de Resumo, Detalhe) */
+.supervisao-modal-body {
+  padding: 32px 40px !important;
+}
+
+.supervisao-alerta-modal-textos,
+.supervisao-detalhe-textos {
+  display: grid !important;
+  gap: 20px !important;
+}
+
+.supervisao-alerta-modal-textos section,
+.supervisao-detalhe-textos section {
+  background: #ffffff !important;
+  border: 1px solid rgba(159, 105, 71, 0.08) !important;
+  border-radius: 24px !important;
+  padding: 32px 36px !important;
+  box-shadow: 0 8px 24px rgba(58, 37, 25, 0.02) !important;
+  margin-bottom: 0 !important;
+}
+
+.supervisao-alerta-modal-textos h3,
+.supervisao-detalhe-textos h3 {
+  color: #9f6947 !important;
+  font-size: 0.8rem !important;
+  font-weight: 800 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.1em !important;
+  margin: 0 0 16px 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+}
+
 .supervisao-alerta-modal-textos h3::before,
 .supervisao-detalhe-textos h3::before {
   content: "";
-  display: inline-block;
-  width: 6px;
-  height: 6px;
+  display: block;
+  width: 8px;
+  height: 8px;
   border-radius: 50%;
-  background: #9f6947 !important;
-  margin-right: 8px;
+  background: #d3a66f !important; /* Destaque sutil dourado/marrom */
 }
 
-/* 6. Fundo do footer do modal acompanhando a cor sólida */
+.supervisao-alerta-modal-textos p,
+.supervisao-detalhe-textos p {
+  color: #55463b !important;
+  font-size: 1.05rem !important;
+  line-height: 1.8 !important;
+  margin: 0 !important;
+}
+
+/* 5. Footer (Botões de Ação) */
 .supervisao-alerta-modal-actions {
-  background: #fffcf7 !important;
-  border-top: 1px solid rgba(159, 105, 71, 0.15) !important;
+  background: #fdfbf7 !important;
+  border-top: 1px solid rgba(159, 105, 71, 0.08) !important;
+  padding: 24px 40px !important;
+  margin: 0 !important;
+  position: static !important; /* Remove o comportamento grudento que sobrepunha os textos */
+  display: flex !important;
+  gap: 12px !important;
+  justify-content: flex-end !important;
 }
 
-/* =========================================================
-   REFINAMENTO DO MODAL: DIVISÕES ELEGANTES
-   ========================================================= */
-
-/* 1. Divisão clara separando o cabeçalho de dados (Paciente/Clínica) do resto */
-.supervisao-alerta-modal-grid,
-.supervisao-detalhe-grid {
-  border-bottom: 1px solid rgba(159, 105, 71, 0.2) !important;
-  padding-bottom: 24px !important;
-  margin-bottom: 24px !important;
+/* 6. Scrollbar Elegante (Se houver muito texto) */
+.supervisao-modal-body::-webkit-scrollbar {
+  width: 6px;
 }
-
-/* 2. Adiciona linhas divisórias sutis entre os blocos de texto (Resumo, Detalhe, etc) */
-.supervisao-alerta-modal-textos section,
-.supervisao-detalhe-textos section {
-  border-bottom: 1px solid rgba(159, 105, 71, 0.15) !important;
-  padding: 0 0 24px 0 !important;
-  margin-bottom: 24px !important;
+.supervisao-modal-body::-webkit-scrollbar-track {
+  background: transparent;
 }
-
-/* 3. Remove a linha do último item para não ficar redundante perto do rodapé dos botões */
-.supervisao-alerta-modal-textos section:last-child,
-.supervisao-detalhe-textos section:last-child {
-  border-bottom: none !important;
-  padding-bottom: 0 !important;
-  margin-bottom: 0 !important;
+.supervisao-modal-body::-webkit-scrollbar-thumb {
+  background: rgba(159, 105, 71, 0.2);
+  border-radius: 10px;
+}
+.supervisao-modal-body::-webkit-scrollbar-thumb:hover {
+  background: rgba(159, 105, 71, 0.4);
 }
