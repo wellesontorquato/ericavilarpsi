@@ -7,7 +7,7 @@ import DashboardFilters from "@/components/supervisao/DashboardFilters";
 import StatusMessage from "@/components/supervisao/StatusMessage";
 import { ChartPanel, DonutChart, HorizontalBars } from "@/components/supervisao/Charts";
 import { supervisaoRequest } from "@/lib/supervisao/api";
-import { average, formatDecimal, formatPercent, mesNome, formatarDataBR } from "@/lib/supervisao/format";
+import { average, formatDecimal, formatPercent, mesNome } from "@/lib/supervisao/format";
 import {
   competenciaMedia,
   currentYear,
