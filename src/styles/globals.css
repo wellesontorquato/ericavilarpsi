@@ -9381,3 +9381,71 @@ button{font:inherit;}
   }
 }
 
+/* =========================================================
+   CORREÇÃO DO MODAL (FUNDO TRANSPARENTE E CAIXAS)
+   ========================================================= */
+
+/* 1. Força a cor de fundo do modal (já que ele perde as variáveis) */
+.supervisao-modal {
+  background: #fffcf7 !important;
+  border: 1px solid rgba(159, 105, 71, 0.2) !important;
+}
+
+/* 2. Remove as bordas e fundos dos indicadores rápidos (Paciente, Prazo, etc) */
+.supervisao-alerta-modal-grid div,
+.supervisao-detalhe-grid div {
+  background: transparent !important;
+  border: none !important;
+  padding: 0 !important;
+}
+
+/* 3. Remove os "caixotões" brancos dos textos longos e dá respiro */
+.supervisao-alerta-modal-textos section,
+.supervisao-detalhe-textos section {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 0 24px 0 !important;
+}
+
+/* 4. Garante que as cores de texto tenham contraste perfeito com o fundo sólido */
+.supervisao-alerta-modal-grid span,
+.supervisao-detalhe-grid span,
+.supervisao-alerta-modal-textos h3,
+.supervisao-detalhe-textos h3 {
+  color: #9f6947 !important; /* Cor primária (marrom/terracota) */
+}
+
+.supervisao-alerta-modal-grid strong,
+.supervisao-detalhe-grid strong,
+.supervisao-alerta-modal-textos p,
+.supervisao-detalhe-textos p {
+  color: #261c17 !important; /* Texto principal escuro */
+}
+
+.supervisao-modal-header h2 {
+  color: #392619 !important;
+}
+
+.supervisao-modal-header p,
+.supervisao-kicker {
+  color: #7b6c61 !important;
+}
+
+/* 5. Estiliza a bolinha ao lado do título das seções de texto */
+.supervisao-alerta-modal-textos h3::before,
+.supervisao-detalhe-textos h3::before {
+  content: "";
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #9f6947 !important;
+  margin-right: 8px;
+}
+
+/* 6. Fundo do footer do modal acompanhando a cor sólida */
+.supervisao-alerta-modal-actions {
+  background: #fffcf7 !important;
+  border-top: 1px solid rgba(159, 105, 71, 0.15) !important;
+}
