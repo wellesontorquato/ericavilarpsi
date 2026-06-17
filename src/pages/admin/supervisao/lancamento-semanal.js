@@ -360,7 +360,12 @@ function LancamentoContent({ user, onLogout }) {
           ) : (
             <>
               <div className="supervisao-entity-list-wrap">
-                <div className="supervisao-entity-list supervisao-launch-list">
+                <div
+                  className="supervisao-entity-list supervisao-launch-list"
+                  style={{
+                    "--entity-grid": "minmax(220px, 1.3fr) minmax(160px, 0.9fr) minmax(170px, 0.9fr) minmax(140px, 0.7fr) minmax(190px, auto)",
+                  }}
+                >
                   <div className="supervisao-entity-row supervisao-entity-row-head">
                     <div>Paciente/Caso</div>
                     <div>Período</div>
@@ -572,7 +577,7 @@ function LancamentoContent({ user, onLogout }) {
 
             <div className="supervisao-form-actions full sticky-actions">
               <button className="supervisao-primary-button" type="submit" disabled={saving}>
-                {saving ? "A salvar..." : editingId ? "Atualizar lançamento" : "Salvar lançamento semanal"}
+                {saving ? "Salvando..." : editingId ? "Atualizar lançamento" : "Salvar lançamento semanal"}
               </button>
               <button className="supervisao-secondary-button" type="button" onClick={closeModal}>
                 Cancelar

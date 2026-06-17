@@ -73,73 +73,28 @@ function PacientesContent({ user, onLogout }) {
     { name: "observacoes", label: "Observações", type: "textarea", rows: 3 },
   ];
 
-  // Colunas redesenhadas usando as classes limpas do CSS
   const columns = [
-    { 
-      name: "nome", 
-      label: "Paciente / Terapeuta",
-      render: (item) => (
-        <div className="paciente-col-nome">
-          <strong>{item.nome}</strong>
-          <span>
-            {terapeutas.find((t) => t.id === item.terapeutaId)?.nome || "Sem terapeuta"}
-          </span>
-        </div>
-      )
-    },
+    { name: "nome", label: "Paciente/Caso" },
     {
       name: "clinicaId",
-      label: "Unidade Base",
-      render: (item) => (
-        <span className="paciente-col-unidade">
-          {clinicas.find((c) => c.id === item.clinicaId)?.nome || "-"}
-        </span>
-      ),
+      label: "Clínica",
+      render: (item) => clinicas.find((clinica) => clinica.id === item.clinicaId)?.nome || "-",
     },
-    { 
-      name: "nivelAtencao", 
-      label: "Risco Clínico",
-      render: (item) => {
-        const nivel = item.nivelAtencao || "Baixa";
-        const isAlto = nivel === "Alta";
-        const isMedio = nivel === "Média";
-        
-        let dotClass = "paciente-risco-dot baixo";
-        if (isAlto) dotClass = "paciente-risco-dot alto";
-        else if (isMedio) dotClass = "paciente-risco-dot medio";
-        
-        return (
-          <span className="paciente-col-risco">
-            <span className={dotClass}></span>
-            {nivel}
-          </span>
-        );
-      }
+    {
+      name: "terapeutaId",
+      label: "Terapeuta",
+      render: (item) => terapeutas.find((terapeuta) => terapeuta.id === item.terapeutaId)?.nome || "-",
     },
-    { 
-      name: "statusCaso", 
-      label: "Status do Caso",
-      render: (item) => {
-        const status = item.statusCaso || "Em acompanhamento";
-        const isEncerrado = status === "Encerrado" || status === "Alta";
-        const isPausado = status === "Pausado";
-        
-        // Puxa as classes nativas do seu CSS global para desenhar o Badge
-        let className = "supervisao-inline-status";
-        if (isEncerrado) className += " archived";
-        else if (isPausado) className += " neutral";
-
-        return <span className={className}>{status}</span>;
-      }
-    },
+    { name: "statusCaso", label: "Status" },
+    { name: "nivelAtencao", label: "Atenção" },
   ];
 
   return (
-    <div className="pacientes-page-wrapper">
-      <Head><title>Gestão de Casos | Supervisão TCC</title></Head>
+    <>
+      <Head><title>Pacientes | Supervisão TCC</title></Head>
       <LayoutSupervisao
-        title="Gestão de Casos e Pacientes"
-        description="Cadastre os pacientes, defina o nível inicial de atenção e vincule-os aos terapeutas para acompanhamento."
+        title="Pacientes / Casos"
+        description="Cadastre os casos que serão acompanhados semanalmente."
         user={user}
         onLogout={onLogout}
       >
@@ -149,9 +104,9 @@ function PacientesContent({ user, onLogout }) {
           fields={fields}
           columns={columns}
           entityLabel="paciente"
-          emptyText="Cadastre o primeiro paciente/caso para iniciar a gestão clínica."
+              emptyText="Cadastre o primeiro paciente/caso para lançar supervisões."
         />
       </LayoutSupervisao>
-    </div>
+    </>
   );
 }

@@ -44,62 +44,23 @@ function TerapeutasContent({ user, onLogout }) {
     { name: "observacao", label: "Observação", type: "textarea", rows: 3 },
   ];
 
-  // Colunas redesenhadas usando as classes limpas do CSS
   const columns = [
-    { 
-      name: "nome", 
-      label: "Terapeuta",
-      render: (item) => (
-        <div className="terapeuta-col-nome">
-          <strong>{item.nome}</strong>
-          <span>Equipa Clínica</span>
-        </div>
-      )
-    },
+    { name: "nome", label: "Terapeuta" },
     {
       name: "clinicaId",
-      label: "Clínica Base",
-      render: (item) => (
-        <span className="terapeuta-col-clinica">
-          {clinicas.find((clinica) => clinica.id === item.clinicaId)?.nome || "Não vinculada"}
-        </span>
-      ),
+      label: "Clínica",
+      render: (item) => clinicas.find((clinica) => clinica.id === item.clinicaId)?.nome || "-",
     },
-    { 
-      name: "dataEntrada", 
-      label: "Data de Entrada",
-      render: (item) => {
-        if (!item.dataEntrada) return <span className="terapeuta-col-data">-</span>;
-        
-        // Formata AAAA-MM-DD para DD/MM/AAAA
-        const parts = item.dataEntrada.split('-');
-        const formattedDate = parts.length === 3 ? `${parts[2]}/${parts[1]}/${parts[0]}` : item.dataEntrada;
-        
-        return <span className="terapeuta-col-data">{formattedDate}</span>;
-      }
-    },
-    { 
-      name: "status", 
-      label: "Status",
-      render: (item) => {
-        const status = item.status || "Ativo";
-        const isInativo = status === "Inativo";
-        
-        // Usa a mesma classe global de pílulas de status que configurámos
-        let className = "supervisao-inline-status";
-        if (isInativo) className += " archived";
-
-        return <span className={className}>{status}</span>;
-      }
-    },
+    { name: "dataEntrada", label: "Entrada" },
+    { name: "status", label: "Status" },
   ];
 
   return (
-    <div className="terapeutas-page-wrapper">
+    <>
       <Head><title>Terapeutas | Supervisão TCC</title></Head>
       <LayoutSupervisao
-        title="Equipa Terapêutica"
-        description="Cadastre os profissionais que terão as suas competências clínicas acompanhadas pela supervisão."
+        title="Terapeutas"
+        description="Cadastre os profissionais que terão competências clínicas acompanhadas."
         user={user}
         onLogout={onLogout}
       >
@@ -109,9 +70,9 @@ function TerapeutasContent({ user, onLogout }) {
           fields={fields}
           columns={columns}
           entityLabel="terapeuta"
-          emptyText="Nenhum terapeuta cadastrado ainda. Adicione o primeiro membro da equipa."
+              emptyText="Cadastre o primeiro terapeuta supervisionado."
         />
       </LayoutSupervisao>
-    </div>
+    </>
   );
 }

@@ -5,14 +5,16 @@ import { getAllPostSlugs, getPostBySlug } from "@/lib/posts";
 import PostReactions from "@/components/PostReactions";
 import PostComments from "@/components/PostComments";
 
-// CSS já está no _app.js, não importar aqui para evitar erro de build
 const SITE_URL = "https://ericavilarpsi.com.br";
-const WHATSAPP_URL = "https://wa.me/5582996657825?text=Ol%C3%A1%2C%20vim%20pelo%20site%20e%20gostaria%20de%20entender%20melhor%20como%20funciona%20o%20seu%20trabalho%20e%20quais%20seriam%20os%20pr%C3%B3ximos%20passos.";
+const WHATSAPP_URL =
+  "https://wa.me/5582996657825?text=Ol%C3%A1%2C%20vim%20pelo%20site%20e%20gostaria%20de%20entender%20melhor%20como%20funciona%20o%20seu%20trabalho%20e%20quais%20seriam%20os%20pr%C3%B3ximos%20passos.";
+
 const DEFAULT_HERO_IMAGE = "/optimized/IMG_3092-1024.webp";
 const DEFAULT_SIGNATURE_IMAGE = "/optimized/IMG_3092-768.webp";
 const DEFAULT_AVATAR_IMAGE = "/optimized/IMG_3092-avatar-96.webp";
 
 export default function BlogPost({ post }) {
+  const [storyBlob, setStoryBlob] = useState(null);
   const [isStoryPreparing, setIsStoryPreparing] = useState(false);
   const [isStorySharing, setIsStorySharing] = useState(false);
 
@@ -852,15 +854,7 @@ function downloadBlob(blob, filename) {
 }
 
 export async function getStaticPaths() {
-  const slugs = getAllPostSlugs();
-
-  const paths = slugs
-    .filter(Boolean)
-    .map((slug) => ({
-      params: {
-        slug: String(slug),
-      },
-    }));
+  const paths = getAllPostSlugs();
 
   return {
     paths,
@@ -869,12 +863,7 @@ export async function getStaticPaths() {
 }
 
 export async function getStaticProps({ params }) {
-  const slug =
-    typeof params?.slug === "string"
-      ? params.slug
-      : String(params?.slug || "");
-
-  const post = await getPostBySlug(slug);
+  const post = await getPostBySlug(params.slug);
 
   if (!post) {
     return {

@@ -178,7 +178,7 @@ function TimelineLancamentosResumida({ items = [], onVerDetalhes }) {
         <article key={item.id || `${item.ano}-${item.mes}-${item.semana}-${index}`}>
           <div className="supervisao-history-marker" aria-hidden="true" />
 
-          <div className="supervisao-history-card">
+          <div className="supervisao-history-card supervisao-history-card-compact">
             <header>
               <div>
                 <span>{periodLabel(item)}</span>
@@ -571,7 +571,7 @@ function HistoricoContent({ user, onLogout }) {
                 </div>
 
                 {ultimoLancamento ? (
-                  <article className="supervisao-last-note">
+                  <article className="supervisao-last-note supervisao-last-note-compact">
                     <div>
                       <strong>
                         {ultimoLancamento.pacienteNome || "Paciente/caso"}

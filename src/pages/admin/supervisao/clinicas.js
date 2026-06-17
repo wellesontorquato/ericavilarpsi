@@ -19,56 +19,22 @@ const fields = [
   },
 ];
 
-// Colunas com Renderização Rica (SaaS Premium)
 const columns = [
-  { 
-    name: "nome", 
-    label: "Clínica / Localização",
-    render: (item) => (
-      <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
-        <strong style={{ color: "var(--sup-text)", fontSize: "1.05rem", lineHeight: "1.2" }}>
-          {item.nome}
-        </strong>
-        <span style={{ color: "var(--sup-primary-dark)", fontSize: "0.82rem", fontWeight: 700 }}>
-          {item.cidade || "Localização não informada"}
-        </span>
-      </div>
-    )
-  },
-  { 
-    name: "responsavel", 
-    label: "Responsável",
-    render: (item) => (
-      <span style={{ color: "var(--sup-muted)", fontSize: "0.9rem", fontWeight: 600 }}>
-        {item.responsavel || "-"}
-      </span>
-    )
-  },
-  { 
-    name: "status", 
-    label: "Status",
-    render: (item) => {
-      const status = item.status || "Ativa";
-      const isInativa = status === "Inativa";
-      
-      // Usa a mesma classe global de pílulas de status que já configuramos
-      let className = "supervisao-inline-status";
-      if (isInativa) className += " archived";
-
-      return <span className={className}>{status}</span>;
-    }
-  },
+  { name: "nome", label: "Clínica" },
+  { name: "cidade", label: "Cidade" },
+  { name: "responsavel", label: "Responsável" },
+  { name: "status", label: "Status" },
 ];
 
 export default function ClinicasPage() {
   return (
     <AuthGuard>
       {({ user, onLogout }) => (
-        <div className="clinicas-page-wrapper">
+        <>
           <Head><title>Clínicas | Supervisão TCC</title></Head>
           <LayoutSupervisao
-            title="Unidades Clínicas"
-            description="Cadastre e gerencie as unidades, polos ou clínicas que serão acompanhadas pela supervisão."
+            title="Clínicas"
+            description="Cadastre as unidades ou clínicas que serão acompanhadas pela supervisora."
             user={user}
             onLogout={onLogout}
           >
@@ -78,10 +44,10 @@ export default function ClinicasPage() {
               fields={fields}
               columns={columns}
               entityLabel="clínica"
-              emptyText="Nenhuma clínica cadastrada ainda. Adicione a primeira unidade para iniciar."
+              emptyText="Cadastre a primeira clínica para começar."
             />
           </LayoutSupervisao>
-        </div>
+        </>
       )}
     </AuthGuard>
   );
