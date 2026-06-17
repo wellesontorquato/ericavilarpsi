@@ -9150,3 +9150,13 @@ button{font:inherit;}
   max-height: none !important;
 }
 
+.bento-grid {
+  display: grid;
+  /* ... outras configurações de colunas que já devem estar aí ... */
+  
+  /* AUMENTE ESTE VALOR para afastar os quadros uns dos outros (espaço interno) */
+  gap: 24px; 
+  
+  /* ADICIONE ESTE VALOR para afastar o Bento Box dos 4 cards de cima (espaço externo) */
+  margin-top: 40px; 
+}
