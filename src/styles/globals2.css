@@ -1,0 +1,160 @@
+/* =========================================================
+   GLOBALS.CSS - CORE & DESIGN TOKENS
+   ========================================================= */
+
+/* --- 1. DESIGN TOKENS (Variáveis Globais) --- */
+:root {
+  /* Tipografia Base */
+  --font-montserrat: 'Montserrat', Arial, sans-serif;
+  --font-libre-bodoni: 'Libre Bodoni', Georgia, serif;
+  --font-geist-sans: 'Geist Sans', sans-serif;
+
+  /* Cores - Institucional / Público */
+  --primary: #aa7887;
+  --primary-dark: #8f3048;
+  --text: #2d1717;
+  --muted: #704740;
+  --line: rgba(170, 120, 135, 0.2);
+
+  /* Cores - SaaS / Dashboard de Supervisão */
+  --sup-primary: #c98239;
+  --sup-primary-dark: #9f6947;
+  --sup-text: #3a2519;
+  --sup-muted: #8b766f;
+  --sup-line: #e8ddd3;
+
+  /* Sombras, Layout e Transições */
+  --shadow-xs: 0 4px 14px rgba(46, 38, 40, 0.06);
+  --shadow-sm: 0 12px 30px rgba(46, 38, 40, 0.08);
+  --transition: 0.25s ease;
+  --sidebar-w: 260px; /* Utilizado no cálculo do Hero Slider */
+}
+
+/* --- 2. CSS RESET MODERN & BASE --- */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: var(--font-montserrat);
+  color: var(--text);
+  background-color: #fafafa;
+  line-height: 1.6;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* Imagens e Multimídia Responsivas */
+img, picture, video, canvas, svg {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+/* Normalização de Formulários e Botões */
+input, button, textarea, select {
+  font-family: inherit;
+  color: inherit;
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  background: transparent;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* --- 3. UTILITÁRIOS GLOBAIS GERAIS --- */
+/* Estes botões são consumidos no Home.css e outros painéis base */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 52px;
+  padding: 0 24px;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 0.95rem;
+  text-align: center;
+  transition: 
+    background var(--transition), 
+    color var(--transition), 
+    transform var(--transition), 
+    box-shadow var(--transition);
+}
+
+.btn-primary {
+  background: var(--primary-dark);
+  color: #fff;
+}
+
+.btn-secondary {
+  background: rgba(170, 120, 135, 0.1);
+  color: var(--primary-dark);
+  border: 1px solid var(--line);
+}
+
+/* --- 4. COMPONENTES BASE DE LAYOUT (SaaS/Supervisão) --- */
+/* Estrutura "EntityCrud" herdada nos arquivos clinicas.css e terapeutas.css */
+.supervisao-entity-row-head {
+  display: grid;
+  align-items: center;
+  gap: 16px;
+  padding: 12px 24px;
+  border-bottom: 1px solid var(--sup-line);
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: var(--sup-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.supervisao-entity-row {
+  display: grid;
+  align-items: center;
+  gap: 16px;
+  padding: 18px 24px;
+  border-bottom: 1px solid var(--sup-line);
+  background: #ffffff;
+  transition: background 0.2s;
+}
+
+.supervisao-entity-row:hover {
+  background: #fdfaf6;
+}
+
+/* --- 5. ANIMAÇÕES GLOBAIS --- */
+/* Consumidas em blog.css, terapeutas.css, home.css */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulseSoft {
+  0%, 100% {
+    transform: scale(0.96);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.02);
+    opacity: 1;
+  }
+}
