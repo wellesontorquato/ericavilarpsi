@@ -6,8 +6,28 @@ import html from "remark-html";
 
 const postsDirectory = path.join(process.cwd(), "content/posts");
 
+/**
+ * Normaliza textos para o formato de URL (slug).
+ * Remove acentos, transforma espaços em hifens e tira caracteres especiais.
+ */
+function slugify(text) {
+  if (!text) return "";
+  return text
+    .toString()
+    .toLowerCase()
+    .normalize("NFD") // Separa os acentos das letras
+    .replace(/[\u0300-\u036f]/g, "") // Remove os acentos
+    .replace(/[\s_]+/g, "-") // Troca espaços e underlines por hífen
+    .replace(/[^\w\-]+/g, "") // Remove tudo que não for palavra, número ou hífen
+    .replace(/\-\-+/g, "-") // Troca múltiplos hifens por um só
+    .replace(/^-+/, "") // Remove hífen no começo
+    .replace(/-+$/, ""); // Remove hífen no final
+}
+
 function getPostSlug(fileName, data = {}) {
-  return data.slug || fileName.replace(/\.md$/, "");
+  // Pega a slug do frontmatter ou o nome do arquivo, e garante que seja "slugificada"
+  const rawSlug = data.slug || fileName.replace(/\.md$/, "");
+  return slugify(rawSlug);
 }
 
 function normalizeDateValue(dateValue) {

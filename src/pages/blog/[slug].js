@@ -854,7 +854,13 @@ function downloadBlob(blob, filename) {
 }
 
 export async function getStaticPaths() {
-  const paths = getAllPostSlugs();
+  const slugs = getAllPostSlugs();
+
+  // Mapeamos o array de strings em um array de objetos `params`,
+  // que é o formato exigido pelo Next.js.
+  const paths = slugs.map((slug) => ({
+    params: { slug },
+  }));
 
   return {
     paths,
