@@ -166,8 +166,8 @@ function TimelineLancamentosResumida({ items = [], onVerDetalhes }) {
 
   if (!rows.length) {
     return (
-      <p className="supervisao-empty">
-        Nenhum lançamento semanal encontrado para o filtro selecionado.
+      <p className="supervisao-empty" style={{ textAlign: 'center', padding: '40px' }}>
+        Nenhum acompanhamento semanal encontrado para o filtro selecionado.
       </p>
     );
   }
@@ -219,7 +219,7 @@ function TimelineLancamentosResumida({ items = [], onVerDetalhes }) {
                 className="supervisao-mini-action"
                 onClick={() => onVerDetalhes(item)}
               >
-                Ver detalhes
+                Ver detalhes completos
               </button>
             </div>
           </div>
@@ -343,10 +343,6 @@ function HistoricoContent({ user, onLogout }) {
       pacientes: new Set(
         lancamentosFiltrados.map((item) => item.pacienteId).filter(Boolean)
       ).size,
-      terapeutas: new Set(
-        lancamentosFiltrados.map((item) => item.terapeutaId).filter(Boolean)
-      ).size,
-      competencia: average(lancamentosFiltrados.map(competenciaMedia)),
       evolucao: average(lancamentosFiltrados.map(evolucaoMedia)),
       planosAbertos: lancamentosFiltrados.filter(isPlanoAberto).length,
     };
@@ -354,38 +350,22 @@ function HistoricoContent({ user, onLogout }) {
 
   const tituloContexto = useMemo(() => {
     if (filters.pacienteId) {
-      return selectedName(pacientes, filters.pacienteId, "Paciente selecionado");
+      return selectedName(pacientes, filters.pacienteId, "Paciente");
     }
-
     if (filters.terapeutaId) {
-      return selectedName(
-        terapeutas,
-        filters.terapeutaId,
-        "Terapeuta selecionado"
-      );
+      return selectedName(terapeutas, filters.terapeutaId, "Terapeuta");
     }
-
     if (filters.clinicaId) {
-      return selectedName(clinicas, filters.clinicaId, "Clínica selecionada");
+      return selectedName(clinicas, filters.clinicaId, "Clínica");
     }
-
-    return "Histórico geral da supervisão";
-  }, [
-    filters.pacienteId,
-    filters.terapeutaId,
-    filters.clinicaId,
-    pacientes,
-    terapeutas,
-    clinicas,
-  ]);
+    return "Histórico Geral";
+  }, [filters.pacienteId, filters.terapeutaId, filters.clinicaId, pacientes, terapeutas, clinicas]);
 
   const subtituloContexto = useMemo(() => {
     const periodo = [
       filters.mes ? mesNome(filters.mes) : "Todos os meses",
       filters.ano || "Todos os anos",
-    ]
-      .filter(Boolean)
-      .join(" · ");
+    ].filter(Boolean).join(" · ");
 
     return `${periodo}${filters.semana ? ` · Semana ${filters.semana}` : ""}`;
   }, [filters.ano, filters.mes, filters.semana]);
@@ -414,8 +394,8 @@ function HistoricoContent({ user, onLogout }) {
       </Head>
 
       <LayoutSupervisao
-        title="Histórico clínico"
-        description="Linha do tempo dos lançamentos semanais, comparativo início x atual e leitura evolutiva por clínica, terapeuta ou paciente."
+        title="Histórico Clínico"
+        description="Acompanhe a linha do tempo evolutiva e os comparativos de desempenho por paciente ou equipe."
         user={user}
         onLogout={onLogout}
       >
@@ -423,11 +403,10 @@ function HistoricoContent({ user, onLogout }) {
 
         <section className="supervisao-dashboard-hero history-hero">
           <div>
-            <span className="supervisao-kicker">Linha do tempo</span>
+            <span className="supervisao-kicker">Evolução e Linha do Tempo</span>
             <h2>{tituloContexto}</h2>
             <p>
-              {subtituloContexto} · use os filtros para transformar o histórico
-              em leitura por clínica, terapeuta ou paciente.
+              {subtituloContexto} · Acompanhe o progresso técnico e os desfechos clínicos através dos registros semanais arquivados.
             </p>
           </div>
 
@@ -441,11 +420,9 @@ function HistoricoContent({ user, onLogout }) {
                   <span>Clínica</span>
                   <select
                     value={filters.clinicaId}
-                    onChange={(event) =>
-                      updateFilter("clinicaId", event.target.value)
-                    }
+                    onChange={(event) => updateFilter("clinicaId", event.target.value)}
                   >
-                    <option value="">Todas</option>
+                    <option value="">Todas as Clínicas</option>
                     {clinicas.map((clinica) => (
                       <option key={clinica.id} value={clinica.id}>
                         {clinica.nome}
@@ -458,11 +435,9 @@ function HistoricoContent({ user, onLogout }) {
                   <span>Terapeuta</span>
                   <select
                     value={filters.terapeutaId}
-                    onChange={(event) =>
-                      updateFilter("terapeutaId", event.target.value)
-                    }
+                    onChange={(event) => updateFilter("terapeutaId", event.target.value)}
                   >
-                    <option value="">Todos</option>
+                    <option value="">Todos os Terapeutas</option>
                     {terapeutasFiltrados.map((terapeuta) => (
                       <option key={terapeuta.id} value={terapeuta.id}>
                         {terapeuta.nome}
@@ -475,11 +450,9 @@ function HistoricoContent({ user, onLogout }) {
                   <span>Paciente</span>
                   <select
                     value={filters.pacienteId}
-                    onChange={(event) =>
-                      updateFilter("pacienteId", event.target.value)
-                    }
+                    onChange={(event) => updateFilter("pacienteId", event.target.value)}
                   >
-                    <option value="">Todos</option>
+                    <option value="">Todos os Pacientes</option>
                     {pacientesFiltrados.map((paciente) => (
                       <option key={paciente.id} value={paciente.id}>
                         {paciente.nome}
@@ -494,142 +467,109 @@ function HistoricoContent({ user, onLogout }) {
 
         {loading ? (
           <section className="supervisao-panel">
-            <p>Carregando histórico...</p>
+            <p>Carregando base histórica...</p>
           </section>
         ) : (
           <>
             <section className="supervisao-indicator-grid executive">
               <CardIndicador
-                label="Registros"
+                label="Acompanhamentos"
                 value={metricas.registros}
-                detail="lançamentos no filtro"
+                detail="registros no filtro"
               />
-
               <CardIndicador
-                label="Pacientes"
+                label="Casos Clínicos"
                 value={metricas.pacientes}
-                detail="casos acompanhados"
+                detail="pacientes avaliados"
               />
-
               <CardIndicador
-                label="Terapeutas"
-                value={metricas.terapeutas}
-                detail="com atuação no filtro"
-              />
-
-              <CardIndicador
-                label="Competência"
-                value={formatDecimal(metricas.competencia)}
-                detail="média técnica"
-              />
-
-              <CardIndicador
-                label="Evolução"
+                label="Evolução Média"
                 value={formatPercent(metricas.evolucao)}
-                detail="score clínico"
+                detail="score clínico geral"
               />
-
               <CardIndicador
-                label="Planos abertos"
+                label="Planos Abertos"
                 value={metricas.planosAbertos}
                 detail="ações pendentes"
-              />
-
-              <CardIndicador
-                label="Última semana"
-                value={ultimoLancamento ? `S${ultimoLancamento.semana}` : "-"}
-                detail={
-                  ultimoLancamento
-                    ? `${mesNome(ultimoLancamento.mes)} · ${ultimoLancamento.ano}`
-                    : "sem registro"
-                }
-              />
-
-              <CardIndicador
-                label="Último paciente"
-                value={ultimoLancamento?.pacienteNome || "-"}
-                detail="registro mais recente"
               />
             </section>
 
             <HistoricoSnapshot items={lancamentosFiltrados} />
 
-            <div className="supervisao-historico-cards-pareados dashboard-lower">
-              <section className="supervisao-panel supervisao-historico-card-pareado">
-                <div className="supervisao-section-title">
-                  <h2>Comparativo início x atual</h2>
-                  <span>{lancamentosFiltrados.length} registro(s)</span>
+            <section className="bento-grid dashboard-lower">
+              <div className="bento-col bento-6">
+                <div className="supervisao-panel supervisao-historico-card-pareado">
+                  <div className="supervisao-section-title">
+                    <h2>Comparativo: Início x Atual</h2>
+                    <span>Progressão do quadro clínico</span>
+                  </div>
+                  <HistoricoComparativo items={lancamentosFiltrados} />
                 </div>
+              </div>
 
-                <HistoricoComparativo items={lancamentosFiltrados} />
-              </section>
+              <div className="bento-col bento-6">
+                <div className="supervisao-panel supervisao-historico-card-pareado">
+                  <div className="supervisao-section-title">
+                    <h2>Último Registro</h2>
+                    <span>Anotação mais recente no filtro</span>
+                  </div>
 
-              <section className="supervisao-panel supervisao-historico-card-pareado">
-                <div className="supervisao-section-title">
-                  <h2>Último acompanhamento</h2>
-                  <span>{ultimoLancamento ? "mais recente" : "sem dados"}</span>
+                  {ultimoLancamento ? (
+                    <article className="supervisao-last-note supervisao-last-note-compact">
+                      <div>
+                        <strong>{ultimoLancamento.pacienteNome || "Paciente/caso"}</strong>
+                        <span>
+                          {ultimoLancamento.terapeutaNome || "Terapeuta"} ·{" "}
+                          {ultimoLancamento.clinicaNome || "Clínica"}
+                        </span>
+
+                        <p>
+                          {truncateText(
+                            getResumoLancamento(ultimoLancamento),
+                            180,
+                            "Sem observação registrada."
+                          )}
+                        </p>
+                      </div>
+
+                      <dl>
+                        <div>
+                          <dt>Status do plano</dt>
+                          <dd>{ultimoLancamento.statusPlano || "-"}</dd>
+                        </div>
+                        <div>
+                          <dt>Prazo</dt>
+                          <dd>{ultimoLancamento.prazo || "-"}</dd>
+                        </div>
+                        <div>
+                          <dt>Semana</dt>
+                          <dd>{periodLabel(ultimoLancamento)}</dd>
+                        </div>
+                      </dl>
+
+                      <div className="supervisao-last-note-actions">
+                        <button
+                          type="button"
+                          className="supervisao-mini-action"
+                          onClick={() => setDetalheAberto(ultimoLancamento)}
+                        >
+                          Detalhar intervenção
+                        </button>
+                      </div>
+                    </article>
+                  ) : (
+                    <p className="supervisao-empty" style={{ margin: 'auto' }}>
+                      Nenhum registro encontrado.
+                    </p>
+                  )}
                 </div>
-
-                {ultimoLancamento ? (
-                  <article className="supervisao-last-note supervisao-last-note-compact">
-                    <div>
-                      <strong>
-                        {ultimoLancamento.pacienteNome || "Paciente/caso"}
-                      </strong>
-
-                      <span>
-                        {ultimoLancamento.terapeutaNome || "Terapeuta"} ·{" "}
-                        {ultimoLancamento.clinicaNome || "Clínica"}
-                      </span>
-
-                      <p>
-                        {truncateText(
-                          getResumoLancamento(ultimoLancamento),
-                          180,
-                          "Sem observação registrada."
-                        )}
-                      </p>
-                    </div>
-
-                    <dl>
-                      <div>
-                        <dt>Status do plano</dt>
-                        <dd>{ultimoLancamento.statusPlano || "-"}</dd>
-                      </div>
-
-                      <div>
-                        <dt>Prazo</dt>
-                        <dd>{ultimoLancamento.prazo || "-"}</dd>
-                      </div>
-
-                      <div>
-                        <dt>Semana</dt>
-                        <dd>{periodLabel(ultimoLancamento)}</dd>
-                      </div>
-                    </dl>
-
-                    <div className="supervisao-last-note-actions">
-                      <button
-                        type="button"
-                        className="supervisao-mini-action"
-                        onClick={() => setDetalheAberto(ultimoLancamento)}
-                      >
-                        Ver detalhes
-                      </button>
-                    </div>
-                  </article>
-                ) : (
-                  <p className="supervisao-empty">
-                    Nenhum registro encontrado para o filtro selecionado.
-                  </p>
-                )}
-              </section>
-            </div>
+              </div>
+            </section>
 
             <section className="supervisao-panel dashboard-lower">
-              <div className="supervisao-section-title">
-                <h2>Linha do tempo semanal</h2>
-                <span>{lancamentosFiltrados.length} lançamento(s)</span>
+              <div className="supervisao-section-title" style={{ marginBottom: '20px' }}>
+                <h2>Linha do Tempo Semanal</h2>
+                <span style={{ color: 'var(--sup-muted)', fontSize: '0.9rem' }}>Ordem cronológica decrescente</span>
               </div>
 
               <TimelineLancamentosResumida
