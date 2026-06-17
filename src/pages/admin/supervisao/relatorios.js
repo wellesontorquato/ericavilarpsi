@@ -7,7 +7,7 @@ import DashboardFilters from "@/components/supervisao/DashboardFilters";
 import StatusMessage from "@/components/supervisao/StatusMessage";
 import { ChartPanel, DonutChart, HorizontalBars } from "@/components/supervisao/Charts";
 import { supervisaoRequest } from "@/lib/supervisao/api";
-import { average, formatDecimal, formatPercent, mesNome, formatarDataBR } from "@/lib/supervisao/format";
+import { average, formatDecimal, formatPercent, mesNome } from "@/lib/supervisao/format";
 import {
   competenciaMedia,
   currentYear,
@@ -60,6 +60,14 @@ function getContextTitle({ filters, clinicas, terapeutas, pacientes }) {
   if (filters.terapeutaId) return selectedName(terapeutas, filters.terapeutaId, "Terapeuta selecionado");
   if (filters.clinicaId) return selectedName(clinicas, filters.clinicaId, "Clínica selecionada");
   return "Visão Global da Operação";
+}
+
+function formatarDataBR(dataIso) {
+  if (!dataIso) return "";
+  const apenasData = dataIso.split("T")[0]; 
+  const partes = apenasData.split("-");
+  if (partes.length !== 3) return dataIso;
+  return `${partes[2]}/${partes[1]}/${partes[0]}`;
 }
 
 function getPeriodText(filters = {}) {

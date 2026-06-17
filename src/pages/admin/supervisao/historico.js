@@ -16,7 +16,6 @@ import {
   formatDecimal,
   formatPercent,
   mesNome,
-  formatarDataBR, // IMPORT ADICIONADO AQUI
 } from "@/lib/supervisao/format";
 import {
   competenciaMedia,
@@ -70,6 +69,14 @@ function getStatusClass(status) {
   if (normalized.includes("andamento")) return "progress";
 
   return "neutral";
+}
+
+function formatarDataBR(dataIso) {
+  if (!dataIso) return "";
+  const apenasData = dataIso.split("T")[0]; 
+  const partes = apenasData.split("-");
+  if (partes.length !== 3) return dataIso;
+  return `${partes[2]}/${partes[1]}/${partes[0]}`;
 }
 
 function periodLabel(item = {}) {
