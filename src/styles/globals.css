@@ -8121,6 +8121,76 @@ button{font:inherit;}
   word-break: break-word;
 }
 
+.supervisao-detalhe-modal {
+  width: min(100%, 920px);
+}
+
+.supervisao-detalhe-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.supervisao-detalhe-grid div {
+  border-radius: 18px;
+  padding: 14px;
+  background: #fff7ef;
+  border: 1px solid rgba(81, 53, 35, 0.1);
+}
+
+.supervisao-detalhe-grid span {
+  display: block;
+  margin-bottom: 5px;
+  color: #8b7869;
+  font-size: 0.72rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.supervisao-detalhe-grid strong {
+  display: block;
+  color: #392619;
+  font-size: 0.96rem;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+
+.supervisao-detalhe-textos {
+  display: grid;
+  gap: 14px;
+  max-height: 52vh;
+  overflow: auto;
+  padding-right: 4px;
+}
+
+.supervisao-detalhe-textos section {
+  border-radius: 20px;
+  padding: 16px;
+  background: #fffaf5;
+  border: 1px solid rgba(81, 53, 35, 0.1);
+}
+
+.supervisao-detalhe-textos h3 {
+  margin: 0 0 8px;
+  color: #7b4b37;
+  font-size: 0.82rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.supervisao-detalhe-textos p {
+  margin: 0;
+  color: #392619;
+  font-size: 0.95rem;
+  line-height: 1.7;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
 /* =========================================================
    SUPERVISÃO - RADAR INTERATIVO
    ========================================================= */
