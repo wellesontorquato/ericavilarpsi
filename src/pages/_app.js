@@ -17,7 +17,7 @@ import "@/styles/pacientes.css";
 import "@/styles/terapeutas.css";
 import "@/styles/post-blog.css";
 import "@/styles/blog.css";
-import "@/styles/relatorios.css"; // Certifique-se que este ficheiro existe
+import "@/styles/relatorios.css";
 
 import { useEffect } from "react";
 import { Libre_Bodoni, Montserrat } from "next/font/google";
