@@ -8121,76 +8121,6 @@ button{font:inherit;}
   word-break: break-word;
 }
 
-.supervisao-detalhe-modal {
-  width: min(100%, 920px);
-}
-
-.supervisao-detalhe-grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 12px;
-  margin-bottom: 18px;
-}
-
-.supervisao-detalhe-grid div {
-  border-radius: 18px;
-  padding: 14px;
-  background: #fff7ef;
-  border: 1px solid rgba(81, 53, 35, 0.1);
-}
-
-.supervisao-detalhe-grid span {
-  display: block;
-  margin-bottom: 5px;
-  color: #8b7869;
-  font-size: 0.72rem;
-  font-weight: 900;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-}
-
-.supervisao-detalhe-grid strong {
-  display: block;
-  color: #392619;
-  font-size: 0.96rem;
-  line-height: 1.35;
-  overflow-wrap: anywhere;
-}
-
-.supervisao-detalhe-textos {
-  display: grid;
-  gap: 14px;
-  max-height: 52vh;
-  overflow: auto;
-  padding-right: 4px;
-}
-
-.supervisao-detalhe-textos section {
-  border-radius: 20px;
-  padding: 16px;
-  background: #fffaf5;
-  border: 1px solid rgba(81, 53, 35, 0.1);
-}
-
-.supervisao-detalhe-textos h3 {
-  margin: 0 0 8px;
-  color: #7b4b37;
-  font-size: 0.82rem;
-  font-weight: 900;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-}
-
-.supervisao-detalhe-textos p {
-  margin: 0;
-  color: #392619;
-  font-size: 0.95rem;
-  line-height: 1.7;
-  white-space: pre-wrap;
-  overflow-wrap: anywhere;
-  word-break: break-word;
-}
-
 /* =========================================================
    SUPERVISÃO - RADAR INTERATIVO
    ========================================================= */
@@ -8446,64 +8376,113 @@ button{font:inherit;}
   font-weight: 900;
 }
 
-.supervisao-alerta-modal-grid {
+/* =========================================================
+   MODAIS DE DETALHE (ALERTAS E HISTÓRICO) - UNIFICADO
+   ========================================================= */
+.supervisao-detalhe-modal {
+  width: min(100%, 920px);
+}
+
+.supervisao-alerta-modal-grid,
+.supervisao-detalhe-grid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 12px;
-  margin-bottom: 18px;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 14px;
+  margin-bottom: 24px;
 }
 
-.supervisao-alerta-modal-grid div {
-  border-radius: 18px;
-  padding: 14px;
-  background: #fff7ef;
-  border: 1px solid rgba(81, 53, 35, 0.1);
+.supervisao-alerta-modal-grid div,
+.supervisao-detalhe-grid div {
+  border-radius: 16px;
+  padding: 16px;
+  background: rgba(159, 105, 71, 0.04);
+  border: 1px solid rgba(159, 105, 71, 0.12);
 }
 
-.supervisao-alerta-modal-grid span {
+.supervisao-alerta-modal-grid span,
+.supervisao-detalhe-grid span {
   display: block;
-  margin-bottom: 5px;
-  color: #8b7869;
+  margin-bottom: 6px;
+  color: var(--sup-muted);
   font-size: 0.72rem;
-  font-weight: 900;
+  font-weight: 800;
   text-transform: uppercase;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.05em;
 }
 
-.supervisao-alerta-modal-grid strong {
+.supervisao-alerta-modal-grid strong,
+.supervisao-detalhe-grid strong {
   display: block;
-  color: #392619;
-  font-size: 0.96rem;
-  line-height: 1.35;
+  color: var(--sup-text);
+  font-size: 1.05rem;
+  line-height: 1.3;
+  font-weight: 700;
   overflow-wrap: anywhere;
 }
 
-.supervisao-alerta-modal-textos {
+.supervisao-alerta-modal-textos,
+.supervisao-detalhe-textos {
   display: grid;
-  gap: 14px;
+  gap: 18px;
+  max-height: 55vh;
+  overflow-y: auto;
+  padding-right: 12px;
 }
 
-.supervisao-alerta-modal-textos section {
+/* Scrollbar invisível elegante estilo Mac/SaaS */
+.supervisao-alerta-modal-textos::-webkit-scrollbar,
+.supervisao-detalhe-textos::-webkit-scrollbar {
+  width: 6px;
+}
+.supervisao-alerta-modal-textos::-webkit-scrollbar-track,
+.supervisao-detalhe-textos::-webkit-scrollbar-track {
+  background: transparent;
+}
+.supervisao-alerta-modal-textos::-webkit-scrollbar-thumb,
+.supervisao-detalhe-textos::-webkit-scrollbar-thumb {
+  background: rgba(159, 105, 71, 0.2);
+  border-radius: 10px;
+}
+
+.supervisao-alerta-modal-textos section,
+.supervisao-detalhe-textos section {
   border-radius: 20px;
-  padding: 16px;
-  background: #fffaf5;
-  border: 1px solid rgba(81, 53, 35, 0.1);
+  padding: 22px 26px;
+  background: #ffffff;
+  border: 1px solid var(--sup-line);
+  box-shadow: 0 4px 14px rgba(58, 37, 25, 0.03);
 }
 
-.supervisao-alerta-modal-textos h3 {
-  margin: 0 0 8px;
-  color: #7b4b37;
-  font-size: 0.82rem;
-  font-weight: 900;
+.supervisao-alerta-modal-textos h3,
+.supervisao-detalhe-textos h3 {
+  margin: 0 0 10px;
+  color: var(--sup-primary-dark);
+  font-size: 0.85rem;
+  font-weight: 800;
   text-transform: uppercase;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.05em;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
-.supervisao-alerta-modal-textos p {
+/* Bolinha de destaque ao lado do título */
+.supervisao-alerta-modal-textos h3::before,
+.supervisao-detalhe-textos h3::before {
+  content: "";
+  display: block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--sup-primary);
+}
+
+.supervisao-alerta-modal-textos p,
+.supervisao-detalhe-textos p {
   margin: 0;
-  color: #392619;
+  color: var(--sup-text);
   font-size: 0.95rem;
-  line-height: 1.7;
+  line-height: 1.75;
   white-space: pre-wrap;
   overflow-wrap: anywhere;
 }
@@ -8515,7 +8494,7 @@ button{font:inherit;}
   gap: 10px;
   margin: 20px -28px -28px;
   padding: 16px 28px;
-  background: rgba(255, 252, 247, 0.92);
+  background: rgba(255, 252, 247, 0.96);
   border-top: 1px solid var(--sup-line);
   position: sticky;
   bottom: -28px;
@@ -9332,101 +9311,3 @@ button{font:inherit;}
   }
 }
 
-/* =========================================================
-   MODAIS DE DETALHE (ALERTAS E HISTÓRICO) - VISÃO CLEAN
-   ========================================================= */
-
-/* 1. Grid de informações rápidas (Paciente, Clínica, Período) */
-.supervisao-alerta-modal-grid,
-.supervisao-detalhe-grid {
-  display: grid !important;
-  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)) !important;
-  gap: 20px !important;
-  margin-bottom: 28px !important;
-  padding-bottom: 24px !important;
-  border-bottom: 1px solid var(--sup-line) !important;
-}
-
-/* Remove os blocos brancos pesados e deixa apenas o texto */
-.supervisao-alerta-modal-grid div,
-.supervisao-detalhe-grid div {
-  background: transparent !important;
-  border: none !important;
-  padding: 0 !important;
-  display: flex !important;
-  flex-direction: column !important;
-  gap: 6px !important;
-}
-
-.supervisao-alerta-modal-grid span,
-.supervisao-detalhe-grid span {
-  color: var(--sup-muted) !important;
-  font-size: 0.75rem !important;
-  font-weight: 800 !important;
-  text-transform: uppercase !important;
-  letter-spacing: 0.06em !important;
-  margin: 0 !important;
-}
-
-.supervisao-alerta-modal-grid strong,
-.supervisao-detalhe-grid strong {
-  color: var(--sup-text) !important;
-  font-size: 1.05rem !important;
-  line-height: 1.3 !important;
-  font-weight: 700 !important;
-}
-
-/* 2. Textos longos (Resumo, Detalhe, Critério) */
-.supervisao-alerta-modal-textos,
-.supervisao-detalhe-textos {
-  display: flex !important;
-  flex-direction: column !important;
-  gap: 32px !important; /* Espaçamento generoso entre as seções */
-}
-
-/* Remove as caixas das seções de texto */
-.supervisao-alerta-modal-textos section,
-.supervisao-detalhe-textos section {
-  background: transparent !important;
-  border: none !important;
-  padding: 0 !important;
-}
-
-.supervisao-alerta-modal-textos h3,
-.supervisao-detalhe-textos h3 {
-  color: var(--sup-primary-dark) !important;
-  font-size: 0.85rem !important;
-  font-weight: 800 !important;
-  text-transform: uppercase !important;
-  letter-spacing: 0.05em !important;
-  margin: 0 0 10px 0 !important;
-  display: flex !important;
-  align-items: center !important;
-  gap: 8px !important;
-}
-
-/* Adiciona um "bullet" elegante (bolinha) ao lado do título da seção */
-.supervisao-alerta-modal-textos h3::before,
-.supervisao-detalhe-textos h3::before {
-  content: "";
-  display: block;
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--sup-primary);
-}
-
-.supervisao-alerta-modal-textos p,
-.supervisao-detalhe-textos p {
-  color: var(--sup-text) !important;
-  font-size: 1rem !important;
-  line-height: 1.7 !important;
-  margin: 0 !important;
-}
-
-/* 3. Ajuste sutil na área dos botões (Footer) */
-.supervisao-alerta-modal-actions {
-  background: rgba(255, 252, 247, 0.98) !important;
-  border-top: 1px solid var(--sup-line) !important;
-  padding: 20px 28px !important;
-}
