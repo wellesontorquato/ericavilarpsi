@@ -8917,37 +8917,50 @@ button{font:inherit;}
    IMPRESSÃO (PDF) - DASHBOARDS EXECUTIVOS ESTILIZADOS
    ========================================================= */
 @media print {
-  /* 1. Removemos a tela principal do fluxo para evitar páginas em branco */
-  .supervisao-shell {
+  /* 1. Prepara a página e remove elementos da interface web */
+  .supervisao-shell,
+  .supervisao-sidebar,
+  .supervisao-modal-backdrop,
+  header, nav, footer {
     display: none !important;
   }
 
+  /* Zera a margem do papel para a cor de fundo ir até a borda (Full Bleed) */
+  @page {
+    margin: 0 !important;
+    size: A4;
+  }
+
+  /* 2. Aplica a cor de fundo do sistema em todo o documento */
   body, html {
     margin: 0 !important;
     padding: 0 !important;
-    background: #ffffff !important;
+    background: #f4efe8 !important; /* Cor creme/bege do sistema */
+    min-height: 100vh;
   }
 
-  /* 2. O Relatório assume 100% da tela de forma natural */
   .supervisao-print-report {
     display: block !important;
     position: relative !important;
     width: 100% !important;
     margin: 0 !important;
     padding: 0 !important;
-    background: #ffffff !important;
-    font-family: Arial, sans-serif !important;
+    background: #f4efe8 !important;
+    font-family: var(--font-montserrat), Arial, sans-serif !important;
   }
 
-  /* Força a impressão das cores de fundo (Crucial para o PDF) */
+  /* Força a impressão das cores exatas no Chrome/Edge/Safari */
   * {
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
   }
 
-  /* Capa do Relatório */
+  /* =======================================================
+     CAPA DO RELATÓRIO
+     ======================================================= */
   .print-cover {
-    height: 100vh;
+    height: 100vh !important;
+    max-height: 100vh !important;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -8955,9 +8968,12 @@ button{font:inherit;}
     text-align: center;
     background: linear-gradient(135deg, #fdfbf7, #f4efe8) !important;
     border-bottom: 16px solid #9f6947 !important;
-    page-break-after: always;
     padding: 40px;
     box-sizing: border-box;
+    /* Força a quebra após a capa, mas impede overflow que gera página em branco */
+    page-break-after: always !important;
+    break-after: page !important;
+    overflow: hidden;
   }
 
   .print-cover .kicker {
@@ -9001,10 +9017,28 @@ button{font:inherit;}
     font-size: 0.9rem !important;
   }
 
-  /* Miolo do Relatório (Páginas internas) */
+  /* =======================================================
+     PÁGINAS INTERNAS E CONTROLE DE QUEBRA
+     ======================================================= */
   .print-section {
-    padding: 40px 50px;
-    page-break-after: always;
+    /* Padding generoso substitui a margem física do @page */
+    padding: 60px 50px !important;
+    background: #f4efe8 !important;
+  }
+
+  /* Quebra de página apenas SE não for a última seção (evita página em branco no final) */
+  .print-section:not(:last-child) {
+    page-break-after: always !important;
+    break-after: page !important;
+  }
+
+  /* EVITA que o título fique isolado na página anterior */
+  .print-section h3,
+  .print-card h4 {
+    page-break-after: avoid !important;
+    break-after: avoid !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
   }
 
   .print-section h3 {
@@ -9016,7 +9050,14 @@ button{font:inherit;}
     margin-bottom: 24px;
   }
 
-  /* Cards de Resumo (KPIs) */
+  /* Cards de Resumo (KPIs) - Não podem quebrar no meio */
+  .print-metrics,
+  .print-grid-two,
+  .print-card {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+
   .print-metrics {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -9054,13 +9095,11 @@ button{font:inherit;}
     font-size: 0.8rem !important;
   }
 
-  /* Gráficos de Barra Simulados no PDF */
   .print-grid-two {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 30px;
     margin-bottom: 40px;
-    page-break-inside: avoid;
   }
 
   .print-card {
@@ -9114,28 +9153,36 @@ button{font:inherit;}
     color: #392619 !important;
   }
 
-  /* Tabelas do PDF */
+  /* =======================================================
+     TABELAS INTELIGENTES
+     ======================================================= */
   .print-table {
     width: 100%;
     border-collapse: collapse;
     margin-bottom: 40px;
-    page-break-inside: auto;
   }
 
+  /* Repete o cabeçalho da tabela se ela pular para a próxima página */
+  .print-table thead {
+    display: table-header-group !important;
+  }
+
+  /* Evita que uma linha seja cortada na metade */
   .print-table tr {
-    page-break-inside: avoid;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
   }
 
   .print-table th,
   .print-table td {
-    padding: 10px 12px;
+    padding: 12px 14px;
     text-align: left;
     border-bottom: 1px solid #e8ddd3 !important;
     font-size: 0.85rem !important;
   }
 
   .print-table th {
-    background: #f4efe8 !important;
+    background: #eedece !important; /* Cor leve para o cabeçalho */
     color: #5f3825 !important;
     font-weight: 800 !important;
     text-transform: uppercase;
@@ -9144,12 +9191,9 @@ button{font:inherit;}
 
   .print-table td {
     color: #392619 !important;
-    line-height: 1.4 !important;
+    line-height: 1.5 !important;
   }
-
-  @page { margin: 10mm; }
 }
-
 /* =========================================================
    BENTO BOX EXPLÍCITO E CORREÇÃO DE TEXTOS LONGOS
    ========================================================= */
