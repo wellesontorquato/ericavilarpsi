@@ -8,20 +8,10 @@ import CardIndicador from "@/components/supervisao/CardIndicador";
 import StatusMessage from "@/components/supervisao/StatusMessage";
 import { TimelineLancamentos } from "@/components/supervisao/TimelineLancamentos";
 import DashboardFilters from "@/components/supervisao/DashboardFilters";
-import {
-  ChartPanel,
-  DonutChart,
-  HorizontalBars,
-  ProgressRing,
-  RadarChart,
-  TrendLine,
-} from "@/components/supervisao/Charts";
+import { ChartPanel, HorizontalBars, TrendLine } from "@/components/supervisao/Charts";
 import { supervisaoRequest } from "@/lib/supervisao/api";
-import { average, formatDecimal, formatPercent, mesNome } from "@/lib/supervisao/format";
+import { average, formatDecimal, formatPercent } from "@/lib/supervisao/format";
 import {
-  buildRadar,
-  buildStatusPlano,
-  competenciaMedia,
   currentYear,
   evolucaoMedia,
   filterLancamentos,
@@ -44,7 +34,6 @@ function buildPacienteTendencia(lancamentos) {
       label: `${item.mes || "-"}/S${item.semana || "-"}`,
       evolucao: evolucaoMedia(item),
       objetivos: normalizedPercent(item.evolucaoObjetivos, 100),
-      adesao: normalizedPercent(item.adesaoTarefas, 100),
     }));
 }
 
@@ -82,78 +71,66 @@ function PacientesDashboardContent({ user, onLogout }) {
         setLoading(false);
       }
     }
-
     loadDashboard();
   }, [user]);
 
   const pacientes = useMemo(() => data?.pacientes || [], [data]);
+  const terapeutas = useMemo(() => data?.terapeutas || [], [data]);
   const lancamentos = useMemo(() => data?.lancamentos || [], [data]);
+  
   const pacienteSelecionado = pacientes.find((item) => item.id === filters.pacienteId);
-  const lancamentosFiltrados = useMemo(() => filterLancamentos(lancamentos, filters), [lancamentos, filters]);
+  const terapeutaResponsavel = terapeutas.find((item) => item.id === pacienteSelecionado?.terapeutaId);
+  
+  const lancamentosFiltrados = useMemo(() => {
+    if (!filters.pacienteId) return [];
+    return filterLancamentos(lancamentos, filters);
+  }, [lancamentos, filters]);
 
   const metricas = useMemo(() => {
     return {
-      registros: lancamentosFiltrados.length,
-      competencia: average(lancamentosFiltrados.map(competenciaMedia)),
       evolucao: average(lancamentosFiltrados.map(evolucaoMedia)),
-      adesao: average(lancamentosFiltrados.map((item) => item.adesaoTarefas)),
-      objetivos: average(lancamentosFiltrados.map((item) => item.evolucaoObjetivos)),
-      sonoAtual: latestNumber(lancamentosFiltrados, "qualidadeSono"),
       sintomasAtual: latestNumber(lancamentosFiltrados, "intensidadeSintomas"),
       crisesAtual: latestNumber(lancamentosFiltrados, "crisesAnsiedade"),
+      sonoAtual: latestNumber(lancamentosFiltrados, "qualidadeSono"),
     };
   }, [lancamentosFiltrados]);
 
-  const resumoPacientes = useMemo(() => {
-    return pacientes.map((paciente) => {
-      const registros = filterLancamentos(lancamentos, { ...filters, pacienteId: paciente.id });
-      return {
-        id: paciente.id,
-        label: paciente.nome,
-        registros: registros.length,
-        evolucao: average(registros.map(evolucaoMedia)),
-        adesao: average(registros.map((item) => item.adesaoTarefas)),
-      };
-    }).filter((item) => item.registros > 0).sort((a, b) => b.evolucao - a.evolucao);
-  }, [pacientes, lancamentos, filters]);
-
   const indicadoresAtuais = useMemo(() => {
     return [
-      { id: "sono", label: "Qualidade do sono", value: latestNumber(lancamentosFiltrados, "qualidadeSono"), max: 10, formatter: (value) => `${formatDecimal(value)} / 10` },
+      { id: "sintomas", label: "Sintomas (escala de dor/intensidade)", value: metricas.sintomasAtual, max: 10, formatter: (v) => `${formatDecimal(v)} / 10` },
+      { id: "sono", label: "Qualidade do sono", value: metricas.sonoAtual, max: 10, formatter: (v) => `${formatDecimal(v)} / 10` },
+      { id: "crises", label: "Crises relatadas na semana", value: metricas.crisesAtual, max: 20, formatter: (v) => formatDecimal(v, 0) },
       { id: "adesao", label: "Adesão às tarefas", value: latestNumber(lancamentosFiltrados, "adesaoTarefas"), max: 100, formatter: formatPercent },
-      { id: "objetivos", label: "Objetivos terapêuticos", value: latestNumber(lancamentosFiltrados, "evolucaoObjetivos"), max: 100, formatter: formatPercent },
-      { id: "sintomas", label: "Sintomas invertido", value: normalizedPercent(latestNumber(lancamentosFiltrados, "intensidadeSintomas"), 10, true), max: 100, formatter: formatPercent },
-      { id: "evitacao", label: "Evitação invertida", value: normalizedPercent(latestNumber(lancamentosFiltrados, "evitacaoSocial"), 10, true), max: 100, formatter: formatPercent },
     ];
-  }, [lancamentosFiltrados]);
+  }, [metricas, lancamentosFiltrados]);
 
   const tendenciaPaciente = useMemo(() => buildPacienteTendencia(lancamentosFiltrados), [lancamentosFiltrados]);
-  const competenciaRadar = useMemo(() => buildRadar(lancamentosFiltrados), [lancamentosFiltrados]);
-  const statusPlano = useMemo(() => buildStatusPlano(lancamentosFiltrados), [lancamentosFiltrados]);
-  const historico = useMemo(() => sortByPeriodDesc(lancamentosFiltrados).slice(0, 8), [lancamentosFiltrados]);
+  const historico = useMemo(() => sortByPeriodDesc(lancamentosFiltrados).slice(0, 10), [lancamentosFiltrados]);
 
   return (
     <>
-      <Head><title>Dashboard por paciente | Supervisão TCC</title></Head>
+      <Head><title>Prontuário | Supervisão TCC</title></Head>
       <LayoutSupervisao
-        title="Dashboard por paciente"
-        description="Leitura clínica individual do caso: evolução, adesão, sintomas, objetivos terapêuticos e histórico das recomendações."
+        title="Progresso do Caso"
+        description="Acompanhamento rápido dos sinais vitais clínicos e evolução dos objetivos."
         user={user}
         onLogout={onLogout}
-        actions={(
-          <div className="supervisao-header-action-group">
-            <Link className="supervisao-secondary-button" href="/admin/supervisao/historico">Ver histórico clínico</Link>
-            <Link className="supervisao-secondary-button" href="/admin/supervisao/alertas">Ver alertas</Link>
-          </div>
-        )}
+        actions={pacienteSelecionado ? (
+          <Link className="supervisao-secondary-button" href="/admin/supervisao/historico">Linha do Tempo</Link>
+        ) : null}
       >
         <StatusMessage message={message} />
 
         <section className="supervisao-dashboard-hero">
           <div>
-            <span className="supervisao-kicker">Visão do caso</span>
-            <h2>{selectedName(pacientes, filters.pacienteId, "Todos os pacientes")}</h2>
-            <p>{pacienteSelecionado ? `${pacienteSelecionado.statusCaso || "Status não informado"} · ${pacienteSelecionado.nivelAtencao || "atenção não informada"}` : "Selecione um paciente para ver o histórico individual do caso."}</p>
+            <span className="supervisao-kicker">Prontuário</span>
+            <h2>{selectedName(pacientes, filters.pacienteId, "Selecione um Paciente")}</h2>
+            <p>
+              {pacienteSelecionado 
+                ? `Terapeuta: ${terapeutaResponsavel?.nome || "Sem terapeuta"} · Nível: ${pacienteSelecionado.nivelAtencao || "Padrão"}` 
+                : "Escolha um paciente no filtro ao lado para visualizar os dados clínicos reais."
+              }
+            </p>
           </div>
           <DashboardFilters
             filters={filters}
@@ -162,9 +139,16 @@ function PacientesDashboardContent({ user, onLogout }) {
             extraFilters={(
               <label>
                 <span>Paciente</span>
-                <select value={filters.pacienteId} onChange={(event) => setFilters((current) => ({ ...current, pacienteId: event.target.value }))}>
-                  <option value="">Todos</option>
-                  {pacientes.map((paciente) => <option key={paciente.id} value={paciente.id}>{paciente.nome}</option>)}
+                <select value={filters.pacienteId} onChange={(e) => setFilters((c) => ({ ...c, pacienteId: e.target.value }))}>
+                  <option value="">Selecione...</option>
+                  {pacientes.map((p) => {
+                    const terapeuta = terapeutas.find(t => t.id === p.terapeutaId);
+                    return (
+                      <option key={p.id} value={p.id}>
+                        {p.nome} {terapeuta ? `(Terapeuta: ${terapeuta.nome})` : ""}
+                      </option>
+                    );
+                  })}
                 </select>
               </label>
             )}
@@ -172,85 +156,77 @@ function PacientesDashboardContent({ user, onLogout }) {
         </section>
 
         {loading ? (
-          <section className="supervisao-panel"><p>Carregando dashboard...</p></section>
+          <section className="supervisao-panel"><p>Carregando prontuário...</p></section>
+        ) : !pacienteSelecionado ? (
+          <section className="supervisao-panel" style={{ textAlign: "center", padding: "60px 20px" }}>
+            <span style={{ fontSize: "3rem", display: "block", marginBottom: "16px" }}>👥</span>
+            <h2>Nenhum paciente selecionado</h2>
+            <p className="supervisao-empty">Selecione um paciente no filtro acima para visualizar o prontuário clínico detalhado, histórico de melhoria e diário de intervenções. Não exibimos dados acumulados aqui para não gerar distorções analíticas.</p>
+          </section>
         ) : (
           <>
             <section className="supervisao-indicator-grid executive">
-              <CardIndicador label="Registros" value={metricas.registros} detail="lançamentos no período" />
-              <CardIndicador label="Evolução média" value={formatPercent(metricas.evolucao)} detail="score clínico" />
-              <CardIndicador label="Adesão média" value={formatPercent(metricas.adesao)} detail="tarefas/intervenções" />
-              <CardIndicador label="Objetivos" value={formatPercent(metricas.objetivos)} detail="avanço terapêutico" />
-              <CardIndicador label="Sono atual" value={formatDecimal(metricas.sonoAtual)} detail="escala 0 a 10" />
-              <CardIndicador label="Sintomas atuais" value={formatDecimal(metricas.sintomasAtual)} detail="0 menor · 10 maior" />
-              <CardIndicador label="Crises atuais" value={formatDecimal(metricas.crisesAtual)} detail="por semana" />
-              <CardIndicador label="Competência no caso" value={formatDecimal(metricas.competencia)} detail="média do terapeuta" />
+              <CardIndicador label="Evolução Atual" value={formatPercent(metricas.evolucao)} detail="score global do caso" />
+              <CardIndicador label="Sintomas Atuais" value={formatDecimal(metricas.sintomasAtual)} detail="escala de 0 a 10" />
+              <CardIndicador label="Crises Semanais" value={formatDecimal(metricas.crisesAtual, 0)} detail="relato do paciente" />
+              <CardIndicador label="Supervisões" value={lancamentosFiltrados.length} detail="sessões avaliadas" />
             </section>
 
-            <section className="supervisao-presentation-grid">
-              <ChartPanel title="Evolução do caso" subtitle="Score consolidado do paciente no período" action={formatPercent(metricas.evolucao)}>
-                <ProgressRing value={metricas.evolucao} label="evolução" detail="Quanto maior, melhor o estado geral do caso acompanhado." />
-              </ChartPanel>
+            <div className="bento-grid dashboard-lower">
+              <div className="bento-col bento-8">
+                <ChartPanel title="Histórico de Melhoria" subtitle="Acompanhamento de Evolução e Objetivos" action="tendência">
+                  <TrendLine items={tendenciaPaciente} valueKey="evolucao" secondaryKey="objetivos" labelKey="label" />
+                </ChartPanel>
+              </div>
 
-              <ChartPanel title="Indicadores atuais" subtitle="Últimos valores registrados para o paciente" action="última semana lançada">
-                <HorizontalBars
-                  items={indicadoresAtuais}
-                  valueKey="value"
-                  labelKey="label"
-                  max={100}
-                  valueFormatter={(value, item) => item?.formatter ? item.formatter(value) : formatPercent(value)}
-                />
-              </ChartPanel>
+              <div className="bento-col bento-4">
+                <section className="supervisao-panel h-full" style={{ display: 'flex', flexDirection: 'column' }}>
+                  <div style={{ paddingBottom: '16px', marginBottom: '16px', borderBottom: '1px solid var(--sup-line)' }}>
+                    <h2 style={{ margin: 0, fontSize: '1.25rem', color: 'var(--sup-text)' }}>Resumo Estrutural</h2>
+                  </div>
+                  
+                  <div className="scroll-interno" style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                    <article style={{ padding: '16px', backgroundColor: 'rgba(255,255,255,0.65)', border: '1px solid var(--sup-line)', borderRadius: '18px' }}>
+                      <span style={{ display: 'block', fontSize: '0.72rem', fontWeight: 800, color: 'var(--sup-primary-dark)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '8px' }}>
+                        Queixa Principal
+                      </span>
+                      <p style={{ margin: 0, color: 'var(--sup-text)', fontSize: '0.92rem', lineHeight: 1.6 }}>
+                        {pacienteSelecionado?.queixaPrincipal || "Nenhuma queixa cadastrada."}
+                      </p>
+                    </article>
 
-              <ChartPanel title="Histórico de evolução" subtitle="Evolução e objetivos ao longo das semanas" action="evolução x objetivos">
-                <TrendLine items={tendenciaPaciente} valueKey="evolucao" secondaryKey="objetivos" labelKey="label" />
-              </ChartPanel>
+                    <article style={{ padding: '16px', backgroundColor: 'rgba(255,255,255,0.65)', border: '1px solid var(--sup-line)', borderRadius: '18px' }}>
+                      <span style={{ display: 'block', fontSize: '0.72rem', fontWeight: 800, color: 'var(--sup-primary-dark)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '8px' }}>
+                        Objetivos Terapêuticos
+                      </span>
+                      <p style={{ margin: 0, color: 'var(--sup-text)', fontSize: '0.92rem', lineHeight: 1.6 }}>
+                        {pacienteSelecionado?.objetivosTerapeuticos || "Sem objetivos cadastrados."}
+                      </p>
+                    </article>
+                  </div>
+                </section>
+              </div>
 
-              <ChartPanel title="Competências no caso" subtitle="Leitura técnica do terapeuta neste acompanhamento" action={`${formatDecimal(metricas.competencia)} / 5`}>
-                <RadarChart items={competenciaRadar} />
-              </ChartPanel>
-            </section>
+              <div className="bento-col bento-6">
+                <ChartPanel title="Sinais Vitais Clínicos" subtitle="Leitura do último encontro" action="panorama">
+                  <HorizontalBars items={indicadoresAtuais} valueKey="value" labelKey="label" max={100} valueFormatter={(v, item) => item?.formatter ? item.formatter(v) : v} />
+                </ChartPanel>
+              </div>
 
-            <div className="supervisao-grid-two dashboard-lower">
-              <ChartPanel title="Pacientes por evolução" subtitle="Comparativo geral quando nenhum paciente está selecionado" action={`${resumoPacientes.length} pacientes`}>
-                <HorizontalBars
-                  items={resumoPacientes.slice(0, 8)}
-                  valueKey="evolucao"
-                  labelKey="label"
-                  max={100}
-                  valueFormatter={formatPercent}
-                />
-              </ChartPanel>
+              <div className="bento-col bento-6">
+                <section className="supervisao-panel h-full" style={{ display: 'flex', flexDirection: 'column' }}>
+                  <div style={{ paddingBottom: '16px', marginBottom: '16px', borderBottom: '1px solid var(--sup-line)', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                    <div>
+                      <h2 style={{ margin: '0 0 4px', fontSize: '1.25rem', color: 'var(--sup-text)' }}>Diário de Intervenções</h2>
+                      <span style={{ fontSize: '0.85rem', color: 'var(--sup-muted)' }}>Últimos registros</span>
+                    </div>
+                  </div>
 
-              <ChartPanel title="Status do plano" subtitle="Ações combinadas para o caso" action={`${historico.length} registros`}>
-                <DonutChart items={statusPlano} />
-              </ChartPanel>
-            </div>
-
-            <div className="supervisao-grid-two dashboard-lower">
-              <section className="supervisao-panel">
-                <div className="supervisao-section-title">
-                  <h2>Resumo do caso</h2>
-                  <span>{pacienteSelecionado ? "selecionado" : "geral"}</span>
-                </div>
-                <div className="supervisao-focus-card">
-                  <strong>{pacienteSelecionado?.nome || "Selecione um paciente"}</strong>
-                  <span>{pacienteSelecionado?.terapeutaNome || "Terapeuta não informado"} · {pacienteSelecionado?.statusCaso || "Status não informado"}</span>
-                  <p>{pacienteSelecionado?.queixaPrincipal || "A queixa principal aparecerá aqui quando o paciente estiver cadastrado e selecionado."}</p>
-                  <p>{pacienteSelecionado?.objetivosTerapeuticos || "Os objetivos terapêuticos cadastrados serão exibidos neste bloco."}</p>
-                </div>
-              </section>
-
-              <section className="supervisao-panel">
-                <div className="supervisao-section-title">
-                  <h2>Histórico semanal</h2>
-                  <span>{historico.length}</span>
-                </div>
-                <TimelineLancamentos
-                  items={historico}
-                  emptyText="Nenhum lançamento encontrado para o filtro selecionado."
-                  limit={8}
-                />
-              </section>
+                  <div className="scroll-interno">
+                    <TimelineLancamentos items={historico} emptyText="Sem histórico clínico para exibir." limit={10} />
+                  </div>
+                </section>
+              </div>
             </div>
           </>
         )}

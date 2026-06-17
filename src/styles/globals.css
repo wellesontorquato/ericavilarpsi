@@ -9455,3 +9455,52 @@ button{font:inherit;}
 
   @page { margin: 10mm; }
 }
+
+/* =========================================================
+   SCROLL INTERNO E PROTEÇÃO CONTRA QUEBRA DE TEXTO
+   ========================================================= */
+.scroll-interno {
+  flex: 1;
+  overflow-y: auto;
+  padding-right: 8px;
+  /* Altura travada para garantir a harmonia do Bento Box */
+  max-height: 420px;
+}
+
+/* Barra de rolagem customizada e invisível (estilo Mac/SaaS) */
+.scroll-interno::-webkit-scrollbar {
+  width: 5px;
+}
+.scroll-interno::-webkit-scrollbar-track {
+  background: transparent;
+}
+.scroll-interno::-webkit-scrollbar-thumb {
+  background: rgba(159, 105, 71, 0.25);
+  border-radius: 10px;
+}
+.scroll-interno::-webkit-scrollbar-thumb:hover {
+  background: rgba(159, 105, 71, 0.45);
+}
+
+/* Protege os cards da Timeline contra textos gigantes */
+.supervisao-history-summary {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.supervisao-history-card dl {
+  /* Força as 3 colunas a se adaptarem sem esmagar o texto */
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)) !important;
+}
+
+.supervisao-history-card dd {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-height: none !important;
+}

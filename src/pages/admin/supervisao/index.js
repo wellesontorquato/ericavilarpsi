@@ -6,30 +6,10 @@ import LayoutSupervisao from "@/components/supervisao/LayoutSupervisao";
 import CardIndicador from "@/components/supervisao/CardIndicador";
 import StatusMessage from "@/components/supervisao/StatusMessage";
 import DashboardFilters from "@/components/supervisao/DashboardFilters";
-import {
-  ChartPanel,
-  ColumnChart,
-  DonutChart,
-  HorizontalBars,
-  ProgressRing,
-  RadarChart,
-  TrendLine,
-} from "@/components/supervisao/Charts";
+import { ChartPanel, ProgressRing, TrendLine, HorizontalBars } from "@/components/supervisao/Charts";
 import { supervisaoRequest } from "@/lib/supervisao/api";
-import { average, formatDecimal, formatPercent, mesNome } from "@/lib/supervisao/format";
-import {
-  buildRadar,
-  buildStatusPlano,
-  buildTendencia,
-  competenciaMedia,
-  currentYear,
-  evolucaoMedia,
-  filterLancamentos,
-  isCasoAtencao,
-  isPlanoAberto,
-  selectedName,
-  sortByPeriodDesc,
-} from "@/lib/supervisao/dashboardUtils";
+import { average, formatPercent, mesNome } from "@/lib/supervisao/format";
+import { buildTendencia, currentYear, evolucaoMedia, filterLancamentos, isCasoAtencao, selectedName } from "@/lib/supervisao/dashboardUtils";
 
 export default function SupervisaoClinicasDashboardPage() {
   return (
@@ -58,12 +38,11 @@ function ClinicasDashboardContent({ user, onLogout }) {
         setLoading(false);
       }
     }
-
     loadDashboard();
   }, [user]);
 
   const clinicas = useMemo(() => data?.clinicas || [], [data]);
-  const terapeutas = useMemo(() => data?.terapeutas || [], [data]);
+  const terapeutas = useMemo(() => data?.terapeutas || [], [data]); // Importante para cruzar nomes
   const pacientes = useMemo(() => data?.pacientes || [], [data]);
   const lancamentos = useMemo(() => data?.lancamentos || [], [data]);
 
@@ -73,72 +52,53 @@ function ClinicasDashboardContent({ user, onLogout }) {
     return pacientes.filter((paciente) => !filters.clinicaId || paciente.clinicaId === filters.clinicaId);
   }, [pacientes, filters.clinicaId]);
 
-  const terapeutasDaClinica = useMemo(() => {
-    return terapeutas.filter((terapeuta) => !filters.clinicaId || terapeuta.clinicaId === filters.clinicaId);
-  }, [terapeutas, filters.clinicaId]);
-
   const metricas = useMemo(() => {
-    const pacientesAtivos = pacientesDaClinica.filter((item) => item.statusCaso !== "Encerrado").length;
-    const casosAtencao = pacientesDaClinica.filter(isCasoAtencao).length;
     return {
-      pacientesAtivos,
-      terapeutasAtivos: terapeutasDaClinica.filter((item) => item.status !== "Inativo").length,
-      mediaCompetencias: average(lancamentosFiltrados.map(competenciaMedia)),
+      pacientesAtivos: pacientesDaClinica.filter((item) => item.statusCaso !== "Encerrado").length,
       mediaEvolucao: average(lancamentosFiltrados.map(evolucaoMedia)),
-      planosAbertos: lancamentosFiltrados.filter(isPlanoAberto).length,
-      casosAtencao,
+      casosAtencao: pacientesDaClinica.filter(isCasoAtencao).length,
     };
-  }, [lancamentosFiltrados, pacientesDaClinica, terapeutasDaClinica]);
+  }, [lancamentosFiltrados, pacientesDaClinica]);
 
+  // Ranking de Clínicas (Usado quando NENHUMA clínica específica está selecionada)
   const resumoClinicas = useMemo(() => {
     return clinicas.map((clinica) => {
       const registros = filterLancamentos(lancamentos, { ...filters, clinicaId: clinica.id });
-      const pacientesClinica = pacientes.filter((item) => item.clinicaId === clinica.id && item.statusCaso !== "Encerrado");
       return {
         id: clinica.id,
         label: clinica.nome,
-        registros: registros.length,
-        pacientes: pacientesClinica.length,
-        competencia: average(registros.map(competenciaMedia)),
         evolucao: average(registros.map(evolucaoMedia)),
       };
-    }).filter((item) => item.registros > 0 || item.pacientes > 0).sort((a, b) => b.registros - a.registros);
-  }, [clinicas, lancamentos, pacientes, filters]);
+    }).filter((item) => item.evolucao > 0).sort((a, b) => b.evolucao - a.evolucao);
+  }, [clinicas, lancamentos, filters]);
 
-  const resumoTerapeutas = useMemo(() => {
-    return terapeutasDaClinica.map((terapeuta) => {
-      const registros = lancamentosFiltrados.filter((item) => item.terapeutaId === terapeuta.id);
+  // Ranking de Casos/Pacientes (Usado quando UMA clínica específica ESTÁ selecionada)
+  const resumoPacientesDaClinica = useMemo(() => {
+    if (!filters.clinicaId) return [];
+    return pacientesDaClinica.map((paciente) => {
+      const registros = filterLancamentos(lancamentos, { ...filters, pacienteId: paciente.id });
       return {
-        id: terapeuta.id,
-        label: terapeuta.nome,
-        registros: registros.length,
-        competencia: average(registros.map(competenciaMedia)),
+        id: paciente.id,
+        label: paciente.nome,
         evolucao: average(registros.map(evolucaoMedia)),
       };
-    }).filter((item) => item.registros > 0).sort((a, b) => b.registros - a.registros);
-  }, [terapeutasDaClinica, lancamentosFiltrados]);
+    }).filter((item) => item.evolucao > 0).sort((a, b) => b.evolucao - a.evolucao);
+  }, [pacientesDaClinica, lancamentos, filters]);
 
-  const casosAtencaoLista = useMemo(() => {
-    return pacientesDaClinica.filter(isCasoAtencao).slice(0, 6);
-  }, [pacientesDaClinica]);
-
-  const ultimosLancamentos = useMemo(() => sortByPeriodDesc(lancamentosFiltrados).slice(0, 6), [lancamentosFiltrados]);
+  const casosAtencaoLista = useMemo(() => pacientesDaClinica.filter(isCasoAtencao).slice(0, 6), [pacientesDaClinica]);
   const tendencia = useMemo(() => buildTendencia(lancamentosFiltrados, filters), [lancamentosFiltrados, filters]);
-  const competenciaRadar = useMemo(() => buildRadar(lancamentosFiltrados), [lancamentosFiltrados]);
-  const statusPlano = useMemo(() => buildStatusPlano(lancamentosFiltrados), [lancamentosFiltrados]);
 
   return (
     <>
       <Head><title>Dashboard por clínica | Supervisão TCC</title></Head>
       <LayoutSupervisao
-        title="Dashboard por clínica"
-        description="Visão executiva para acompanhar a saúde geral da clínica, volume de supervisões, casos em atenção e desempenho da equipe."
+        title="Dashboard da Clínica"
+        description="Visão executiva simples: acompanhe a evolução média e os casos que exigem atenção imediata."
         user={user}
         onLogout={onLogout}
         actions={(
           <div className="supervisao-header-action-group">
-            <Link className="supervisao-secondary-button" href="/admin/supervisao/historico">Ver histórico clínico</Link>
-            <Link className="supervisao-secondary-button" href="/admin/supervisao/alertas">Ver alertas</Link>
+            <Link className="supervisao-secondary-button" href="/admin/supervisao/alertas">Gerenciar Alertas</Link>
           </div>
         )}
       >
@@ -148,7 +108,7 @@ function ClinicasDashboardContent({ user, onLogout }) {
           <div>
             <span className="supervisao-kicker">Visão macro</span>
             <h2>{selectedName(clinicas, filters.clinicaId, "Todas as clínicas")}</h2>
-            <p>{filters.mes ? mesNome(filters.mes) : "Todos os meses"} {filters.ano && `· ${filters.ano}`} · análise por clínica, equipe e casos ativos.</p>
+            <p>{filters.mes ? mesNome(filters.mes) : "Todos os meses"} {filters.ano && `· ${filters.ano}`}</p>
           </div>
           <DashboardFilters
             filters={filters}
@@ -157,9 +117,9 @@ function ClinicasDashboardContent({ user, onLogout }) {
             extraFilters={(
               <label>
                 <span>Clínica</span>
-                <select value={filters.clinicaId} onChange={(event) => setFilters((current) => ({ ...current, clinicaId: event.target.value }))}>
+                <select value={filters.clinicaId} onChange={(e) => setFilters((c) => ({ ...c, clinicaId: e.target.value }))}>
                   <option value="">Todas</option>
-                  {clinicas.map((clinica) => <option key={clinica.id} value={clinica.id}>{clinica.nome}</option>)}
+                  {clinicas.map((c) => <option key={c.id} value={c.id}>{c.nome}</option>)}
                 </select>
               </label>
             )}
@@ -171,84 +131,87 @@ function ClinicasDashboardContent({ user, onLogout }) {
         ) : (
           <>
             <section className="supervisao-indicator-grid executive">
-              <CardIndicador label="Pacientes ativos" value={metricas.pacientesAtivos} detail="em acompanhamento" />
-              <CardIndicador label="Terapeutas ativos" value={metricas.terapeutasAtivos} detail="vinculados à clínica" />
-              <CardIndicador label="Lançamentos" value={lancamentosFiltrados.length} detail="no período filtrado" />
-              <CardIndicador label="Evolução média" value={formatPercent(metricas.mediaEvolucao)} detail="score clínico" />
-              <CardIndicador label="Competências" value={formatDecimal(metricas.mediaCompetencias)} detail="média 1 a 5" />
-              <CardIndicador label="Casos em atenção" value={metricas.casosAtencao} detail="nível alto/urgente" />
-              <CardIndicador label="Planos abertos" value={metricas.planosAbertos} detail="ações pendentes" />
-              <CardIndicador label="Clínicas comparadas" value={resumoClinicas.length} detail="com dados no período" />
+              <CardIndicador label="Saúde da Clínica" value={formatPercent(metricas.mediaEvolucao)} detail="score clínico geral" />
+              <CardIndicador label="Casos de Risco" value={metricas.casosAtencao} detail="necessitam intervenção" />
+              <CardIndicador label="Pacientes Ativos" value={metricas.pacientesAtivos} detail="em acompanhamento" />
+              <CardIndicador label="Supervisões" value={lancamentosFiltrados.length} detail="registros lançados" />
             </section>
 
-            <section className="supervisao-presentation-grid">
-              <ChartPanel title="Saúde geral da clínica" subtitle="Score de evolução dos casos acompanhados" action={formatPercent(metricas.mediaEvolucao)}>
-                <ProgressRing value={metricas.mediaEvolucao} label="evolução" detail="Consolida sono, adesão, objetivos, sintomas e evitação." />
-              </ChartPanel>
+            <div className="bento-grid">
+              <div className="bento-col bento-8">
+                <ChartPanel title="Tendência de Evolução" subtitle="Curva de melhora clínica no período" action="evolução">
+                  <TrendLine items={tendencia} valueKey="evolucao" labelKey="label" />
+                </ChartPanel>
+              </div>
 
-              <ChartPanel title="Radar da equipe" subtitle="Média das competências dos terapeutas" action={`${formatDecimal(metricas.mediaCompetencias)} / 5`}>
-                <RadarChart items={competenciaRadar} />
-              </ChartPanel>
+              <div className="bento-col bento-4">
+                <ChartPanel title="Saúde Geral" subtitle="Média de evolução atual" action={formatPercent(metricas.mediaEvolucao)}>
+                  <ProgressRing value={metricas.mediaEvolucao} label="evolução" detail="Consolida os 5 indicadores." />
+                </ChartPanel>
+              </div>
 
-              <ChartPanel title="Tendência da clínica" subtitle={filters.mes ? "Evolução por semana" : "Evolução por mês"} action="evolução x competência">
-                <TrendLine items={tendencia} valueKey="evolucao" secondaryKey="competencia" labelKey="label" />
-              </ChartPanel>
+              <div className="bento-col bento-8">
+                {/* RENDERIZAÇÃO CONDICIONAL: Ranking de Clínicas vs Ranking de Pacientes */}
+                {!filters.clinicaId ? (
+                  <ChartPanel title="Evolução por Unidade" subtitle="Ranking de saúde por clínica" action={`${resumoClinicas.length} ativas`}>
+                    <HorizontalBars items={resumoClinicas.slice(0, 5)} valueKey="evolucao" labelKey="label" max={100} valueFormatter={formatPercent} />
+                  </ChartPanel>
+                ) : (
+                  <ChartPanel title="Evolução dos Casos" subtitle="Desempenho clínico dos pacientes desta unidade" action={`${resumoPacientesDaClinica.length} pacientes`}>
+                    <HorizontalBars items={resumoPacientesDaClinica.slice(0, 5)} valueKey="evolucao" labelKey="label" max={100} valueFormatter={formatPercent} />
+                  </ChartPanel>
+                )}
+              </div>
 
-              <ChartPanel title="Comparativo entre clínicas" subtitle="Evolução média por unidade" action={`${resumoClinicas.length} clínicas`}>
-                <ColumnChart items={resumoClinicas} valueKey="evolucao" labelKey="label" valueFormatter={formatPercent} />
-              </ChartPanel>
-            </section>
-
-            <div className="supervisao-grid-two dashboard-lower">
-              <ChartPanel title="Terapeutas da clínica" subtitle="Competência média por profissional" action={`${resumoTerapeutas.length} com registro`}>
-                <HorizontalBars
-                  items={resumoTerapeutas.slice(0, 8)}
-                  valueKey="competencia"
-                  labelKey="label"
-                  max={5}
-                  valueFormatter={(value) => `${formatDecimal(value)} / 5`}
-                />
-              </ChartPanel>
-
-              <ChartPanel title="Status dos planos" subtitle="Distribuição das ações de desenvolvimento" action={`${lancamentosFiltrados.length} registros`}>
-                <DonutChart items={statusPlano} />
-              </ChartPanel>
-            </div>
-
-            <div className="supervisao-grid-two dashboard-lower">
-              <section className="supervisao-panel">
-                <div className="supervisao-section-title">
-                  <h2>Casos em atenção</h2>
-                  <span>{casosAtencaoLista.length}</span>
-                </div>
-                <div className="supervisao-insight-list">
-                  {casosAtencaoLista.map((paciente) => (
-                    <article key={paciente.id}>
-                      <strong>{paciente.nome}</strong>
-                      <span>{paciente.terapeutaNome || "Terapeuta não informado"} · {paciente.nivelAtencao}</span>
-                      <p>{paciente.queixaPrincipal || paciente.objetivosTerapeuticos || "Sem observação clínica cadastrada."}</p>
-                    </article>
-                  ))}
-                  {casosAtencaoLista.length === 0 && <p className="supervisao-empty">Nenhum caso de alta atenção para o filtro selecionado.</p>}
-                </div>
-              </section>
-
-              <section className="supervisao-panel">
-                <div className="supervisao-section-title">
-                  <h2>Últimos movimentos</h2>
-                  <span>{ultimosLancamentos.length}</span>
-                </div>
-                <div className="supervisao-timeline compact-list">
-                  {ultimosLancamentos.map((item) => (
-                    <article key={item.id}>
-                      <strong>{item.pacienteNome || "Paciente/caso"}</strong>
-                      <span>{item.clinicaNome || "Clínica"} · {item.terapeutaNome || "Terapeuta"} · {item.ano}/{item.mes} · S{item.semana}</span>
-                      <p>{item.recomendacao || item.planoAcao || item.observacao || "Sem observação registrada."}</p>
-                    </article>
-                  ))}
-                  {ultimosLancamentos.length === 0 && <p className="supervisao-empty">Nenhum lançamento semanal encontrado.</p>}
-                </div>
-              </section>
+              <div className="bento-col bento-4">
+                {/* Painel Reformulado de Atenção Imediata */}
+                <section className="supervisao-panel h-full" style={{ display: 'flex', flexDirection: 'column' }}>
+                  <div style={{ paddingBottom: '16px', marginBottom: '16px', borderBottom: '1px solid var(--sup-line)' }}>
+                    <h2 style={{ margin: 0, fontSize: '1.35rem', color: 'var(--sup-text)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      Atenção Imediata:
+                      <strong style={{ 
+                        backgroundColor: 'var(--sup-primary)', 
+                        color: '#fff', 
+                        padding: '2px 14px', 
+                        borderRadius: '999px', 
+                        fontSize: '1.15rem',
+                        lineHeight: '1.4'
+                      }}>
+                        {casosAtencaoLista.length}
+                      </strong>
+                    </h2>
+                    <p style={{ margin: '6px 0 0', fontSize: '0.85rem', color: 'var(--sup-muted)' }}>Casos que exigem intervenção prioritária.</p>
+                  </div>
+                  
+                  <div className="supervisao-insight-list" style={{ flex: 1, overflowY: 'auto' }}>
+                    {casosAtencaoLista.map((paciente) => {
+                      const terapeutaResponsavel = terapeutas.find(t => t.id === paciente.terapeutaId);
+                      const isAltoRisco = paciente.nivelAtencao === 'Alta' || paciente.nivelAtencao === 'Alto';
+                      
+                      return (
+                        <article 
+                          key={paciente.id} 
+                          style={{ display: 'flex', flexDirection: 'column', gap: '6px', padding: '16px', backgroundColor: 'rgba(255,255,255,0.7)', border: '1px solid var(--sup-line)', borderRadius: '18px' }}
+                        >
+                          <strong style={{ display: 'block', fontSize: '1.05rem', color: 'var(--sup-text)', lineHeight: 1.2 }}>
+                            {paciente.nome}
+                          </strong>
+                          <span style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.85rem', color: 'var(--sup-muted)', marginTop: '2px' }}>
+                            <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: isAltoRisco ? '#a43c32' : '#c98239' }}></span>
+                            {terapeutaResponsavel?.nome || "Sem terapeuta"} · Nível: {paciente.nivelAtencao}
+                          </span>
+                        </article>
+                      );
+                    })}
+                    {casosAtencaoLista.length === 0 && (
+                      <div style={{ padding: '24px', textAlign: 'center', backgroundColor: 'rgba(255,255,255,0.4)', borderRadius: '16px', border: '1px dashed var(--sup-line)' }}>
+                        <span style={{ fontSize: '2rem', display: 'block', marginBottom: '8px' }}>🎉</span>
+                        <p style={{ margin: 0, color: 'var(--sup-muted)', fontSize: '0.9rem' }}>Nenhum caso crítico detectado no momento.</p>
+                      </div>
+                    )}
+                  </div>
+                </section>
+              </div>
             </div>
           </>
         )}
