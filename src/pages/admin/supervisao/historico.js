@@ -16,6 +16,7 @@ import {
   formatDecimal,
   formatPercent,
   mesNome,
+  formatarDataBR, // IMPORT ADICIONADO AQUI
 } from "@/lib/supervisao/format";
 import {
   competenciaMedia,
@@ -123,7 +124,8 @@ function ModalDetalheLancamento({ item, onFechar }) {
 
             <div>
               <span>Prazo</span>
-              <strong>{safeText(item.prazo)}</strong>
+              {/* FORMATAÇÃO APLICADA AQUI NO MODAL */}
+              <strong>{item.prazo ? formatarDataBR(item.prazo) : "-"}</strong>
             </div>
 
             <div>
@@ -539,7 +541,8 @@ function HistoricoContent({ user, onLogout }) {
                         </div>
                         <div>
                           <dt>Prazo</dt>
-                          <dd>{ultimoLancamento.prazo || "-"}</dd>
+                          {/* FORMATAÇÃO APLICADA AQUI TAMBÉM */}
+                          <dd>{ultimoLancamento.prazo ? formatarDataBR(ultimoLancamento.prazo) : "-"}</dd>
                         </div>
                         <div>
                           <dt>Semana</dt>

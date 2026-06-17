@@ -7,7 +7,7 @@ import DashboardFilters from "@/components/supervisao/DashboardFilters";
 import StatusMessage from "@/components/supervisao/StatusMessage";
 import { ChartPanel, DonutChart, HorizontalBars } from "@/components/supervisao/Charts";
 import { supervisaoRequest } from "@/lib/supervisao/api";
-import { average, formatDecimal, formatPercent, mesNome } from "@/lib/supervisao/format";
+import { average, formatDecimal, formatPercent, mesNome, formatarDataBR } from "@/lib/supervisao/format";
 import {
   competenciaMedia,
   currentYear,
@@ -300,7 +300,7 @@ function PrintReport({ data }) {
             <tbody>
               {planosPendentes.map((plano, index) => (
                 <tr key={`plano-${index}`}>
-                  <td><strong>{plano.prazo || "Sem prazo"}</strong></td>
+                  <td><strong>{plano.prazo ? formatarDataBR(plano.prazo) : "Sem prazo"}</strong></td>
                   <td>{plano.terapeutaNome}<br/><small style={{ color: '#9f6947'}}>{plano.pacienteNome}</small></td>
                   <td>{plano.statusPlano}</td>
                   <td>{plano.planoAcao}</td>
