@@ -116,18 +116,61 @@ function PreviewTable({ title, columns, rows, limit = 5 }) {
   );
 }
 
-// O COMPONENTE MÁGICO DE PDF (Agora formatado como Dashboard)
+// =========================================================================
+// O COMPONENTE MÁGICO DE PDF (SUPER ENRIQUECIDO COM DADOS DO FIRESTORE)
+// =========================================================================
 function PrintReport({ data }) {
   if (!data) return null;
 
-  const previewLancamentos = data.lancamentosRows.slice(0, 15);
+  const previewLancamentos = data.lancamentosRows.slice(0, 10);
   const previewAlertas = data.alertasRows.slice(0, 10);
   const dataHoje = new Date().toLocaleDateString('pt-BR');
 
-  // Arrays de Top Evolução para gerar as barras em CSS
-  const rankingEvolucao = data.clinicasFiltradas.length > 1 
-    ? data.clinicasFiltradas.map(c => ({ label: c.nome, value: average(filterLancamentos(data.lancamentosRaw, {clinicaId: c.id}).map(evolucaoMedia)) })).sort((a,b) => b.value - a.value).slice(0,5)
-    : data.terapeutasFiltrados.map(t => ({ label: t.nome, value: average(filterLancamentos(data.lancamentosRaw, {terapeutaId: t.id}).map(evolucaoMedia)) })).sort((a,b) => b.value - a.value).slice(0,5);
+  // Filtra Planos de Ação em Aberto/Atrasados
+  const planosPendentes = data.lancamentosRaw
+    .filter(isPlanoAberto)
+    .sort((a, b) => new Date(a.prazo) - new Date(b.prazo))
+    .slice(0, 8);
+
+  // Filtra as últimas Recomendações registradas (Síntese Qualitativa)
+  const ultimasRecomendacoes = data.lancamentosRaw
+    .filter(l => l.recomendacao && l.recomendacao.trim() !== "" && l.recomendacao.trim() !== "-")
+    .slice(0, 5);
+
+  const isGlobalView = data.clinicasFiltradas.length > 1;
+  const rankingBase = isGlobalView ? data.clinicasFiltradas : data.terapeutasFiltrados;
+  
+  // Ranking de Evolução por Clínica/Terapeuta
+  const rankingEvolucao = rankingBase.map(item => ({ 
+    label: item.nome, 
+    value: average(filterLancamentos(data.lancamentosRaw, isGlobalView ? {clinicaId: item.id} : {terapeutaId: item.id}).map(evolucaoMedia)) 
+  })).sort((a,b) => b.value - a.value).slice(0,5);
+
+  // EXTRAÇÃO AVANÇADA 1: Quebra de Competências Clínicas
+  const totalLancs = data.lancamentosRaw.length || 1;
+  const avgSkill = (key) => average(data.lancamentosRaw.map(l => Number(l[key]) || 0));
+  
+  const competenciasTecnicas = [
+    { label: "Aplicação TCC", value: avgSkill("aplicacaoTecnicasTcc") },
+    { label: "Formulação de Hipóteses", value: avgSkill("formulacaoHipoteses") },
+    { label: "Manejo da Sessão", value: avgSkill("manejoSessao") },
+    { label: "Qualidade da Conceitualização", value: avgSkill("qualidadeConceitualizacao") },
+    { label: "Postura Terapêutica", value: avgSkill("posturaTerapeutica") }
+  ].sort((a,b) => b.value - a.value);
+
+  // EXTRAÇÃO AVANÇADA 2: Termômetro de Sintomatologia
+  const termometroSintomas = [
+    { label: "Intensidade dos Sintomas", value: avgSkill("intensidadeSintomas") },
+    { label: "Crises de Ansiedade (Vol.)", value: avgSkill("crisesAnsiedade") },
+    { label: "Evitação Social", value: avgSkill("evitacaoSocial") },
+  ];
+
+  // EXTRAÇÃO AVANÇADA 3: Raio-X da Carteira (Status dos Casos)
+  const statusCarteira = data.pacientesFiltrados.reduce((acc, p) => {
+    const st = p.statusCaso || "Não informado";
+    acc[st] = (acc[st] || 0) + 1;
+    return acc;
+  }, {});
 
   return (
     <div className="supervisao-print-report">
@@ -147,7 +190,7 @@ function PrintReport({ data }) {
       <div className="print-section">
         <h3>Painel de Saúde e Eficiência</h3>
         
-        <div className="print-metrics">
+        <div className="print-metrics" style={{ gridTemplateColumns: 'repeat(3, 1fr)' }}>
           <div className="print-metric-card">
             <span>Evolução Clínica</span>
             <strong>{formatPercent(data.metrics.evolucao)}</strong>
@@ -156,25 +199,47 @@ function PrintReport({ data }) {
           <div className="print-metric-card">
             <span>Média Técnica</span>
             <strong>{formatDecimal(data.metrics.competencia)}</strong>
-            <small>Equipe (1 a 5)</small>
+            <small>Média Geral (1 a 5)</small>
+          </div>
+          <div className="print-metric-card">
+            <span>Adesão Terapêutica</span>
+            <strong>{formatPercent(data.metrics.adesao)}</strong>
+            <small>Engajamento do paciente</small>
+          </div>
+          <div className="print-metric-card">
+            <span>Evolução de Objetivos</span>
+            <strong>{formatPercent(data.metrics.objetivos)}</strong>
+            <small>Metas alcançadas</small>
           </div>
           <div className="print-metric-card">
             <span>Casos em Risco</span>
             <strong>{data.metrics.alertas}</strong>
-            <small>Alertas automáticos</small>
+            <small>Alertas automáticos gerados</small>
           </div>
           <div className="print-metric-card">
-            <span>Pacientes</span>
-            <strong>{data.metrics.pacientes}</strong>
-            <small>Atendidos no período</small>
+            <span>Acompanhamentos</span>
+            <strong>{data.metrics.registros}</strong>
+            <small>Atendimentos supervisionados</small>
           </div>
         </div>
 
         <div className="print-grid-two">
           <div className="print-card">
-            <h4>{data.clinicasFiltradas.length > 1 ? "Evolução por Clínica" : "Evolução por Terapeuta"}</h4>
+            <h4>Raio-X da Carteira (Status dos Pacientes)</h4>
+            <div style={{ display: 'grid', gap: '10px' }}>
+              {Object.entries(statusCarteira).map(([status, count], i) => (
+                <div key={i} style={{ display: 'flex', justifyContent: 'space-between', padding: '10px', background: '#fdfaf6', borderRadius: '8px', border: '1px solid #e8ddd3' }}>
+                  <span style={{ color: '#5d4d43', fontWeight: 600 }}>{status}</span>
+                  <strong style={{ color: '#392619' }}>{count} caso(s)</strong>
+                </div>
+              ))}
+            </div>
+          </div>
+          
+          <div className="print-card">
+            <h4>{isGlobalView ? "Evolução por Clínica" : "Evolução por Terapeuta"}</h4>
             {rankingEvolucao.map((item, i) => (
-              <div className="print-bar-row" key={i}>
+              <div className="print-bar-row" key={`evol-${i}`}>
                 <span className="print-bar-label">{item.label}</span>
                 <div className="print-bar-track">
                   <div className="print-bar-fill" style={{ width: `${item.value}%` }}></div>
@@ -183,21 +248,92 @@ function PrintReport({ data }) {
               </div>
             ))}
           </div>
-          
-          <div className="print-card">
-            <h4>Status Operacional</h4>
-            <p style={{ color: '#5f3825', lineHeight: 1.6, fontSize: '1.05rem', margin: 0 }}>
-              No recorte selecionado, o sistema documentou <strong>{data.metrics.registros} intervenções clínicas</strong>,
-              envolvendo o trabalho direto de <strong>{data.metrics.terapeutas} terapeuta(s)</strong> em <strong>{data.metrics.clinicas} clínica(s)</strong>.
-              Foram registrados {data.metrics.planosAbertos} planos de ação em aberto, indicando frentes de desenvolvimento contínuo da equipe.
-            </p>
-          </div>
         </div>
       </div>
 
-      {/* PÁGINA 2: ATENÇÃO E ROTINA */}
+      {/* PÁGINA 2: APROFUNDAMENTO TÉCNICO E CLÍNICO */}
       <div className="print-section">
-        <h3>Casos que Exigem Intervenção (Top 10)</h3>
+        <h3>Mapeamento de Competências e Sintomatologia</h3>
+        <p style={{ marginBottom: '24px', color: '#7b6c61' }}>
+          Análise granulada do desempenho técnico da equipe de terapeutas e da intensidade dos sintomas reportados pelos pacientes no recorte selecionado.
+        </p>
+
+        <div className="print-grid-two">
+          <div className="print-card">
+            <h4>Perfil de Competência Técnica (Média / 5)</h4>
+            {competenciasTecnicas.map((item, i) => (
+              <div className="print-bar-row" key={`comp-${i}`}>
+                <span className="print-bar-label">{item.label}</span>
+                <div className="print-bar-track">
+                  <div className="print-bar-fill" style={{ width: `${(item.value / 5) * 100}%`, background: '#b78290' }}></div>
+                </div>
+                <span className="print-bar-value">{formatDecimal(item.value)}</span>
+              </div>
+            ))}
+          </div>
+
+          <div className="print-card">
+            <h4>Termômetro de Sintomas (Média)</h4>
+            {termometroSintomas.map((item, i) => (
+              <div className="print-bar-row" key={`sint-${i}`}>
+                <span className="print-bar-label">{item.label}</span>
+                <div className="print-bar-track">
+                  <div className="print-bar-fill" style={{ width: `${(item.value / 10) * 100}%`, background: '#6c7fa0' }}></div>
+                </div>
+                <span className="print-bar-value">{formatDecimal(item.value)}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <h3 style={{ marginTop: '40px' }}>Gestão de Planos de Ação (Abertos)</h3>
+        {planosPendentes.length > 0 ? (
+          <table className="print-table">
+            <thead>
+              <tr>
+                <th style={{ width: '15%' }}>Prazo</th>
+                <th style={{ width: '25%' }}>Terapeuta / Caso</th>
+                <th style={{ width: '15%' }}>Status</th>
+                <th style={{ width: '45%' }}>Ação Requerida</th>
+              </tr>
+            </thead>
+            <tbody>
+              {planosPendentes.map((plano, index) => (
+                <tr key={`plano-${index}`}>
+                  <td><strong>{plano.prazo || "Sem prazo"}</strong></td>
+                  <td>{plano.terapeutaNome}<br/><small style={{ color: '#9f6947'}}>{plano.pacienteNome}</small></td>
+                  <td>{plano.statusPlano}</td>
+                  <td>{plano.planoAcao}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        ) : (
+          <p>Não há planos de ação pendentes registrados neste recorte.</p>
+        )}
+      </div>
+
+      {/* PÁGINA 3: SÍNTESE E RISCO */}
+      <div className="print-section">
+        <h3>Síntese Qualitativa: Recomendações da Supervisão</h3>
+        {ultimasRecomendacoes.length > 0 ? (
+          <div style={{ display: 'grid', gap: '16px', marginBottom: '40px' }}>
+            {ultimasRecomendacoes.map((rec, i) => (
+              <div key={`rec-${i}`} style={{ background: '#fff', border: '1px solid #e8ddd3', borderRadius: '12px', padding: '16px' }}>
+                <strong style={{ display: 'block', color: '#392619', fontSize: '0.9rem', marginBottom: '6px' }}>
+                  Para: {rec.terapeutaNome} (Caso: {rec.pacienteNome})
+                </strong>
+                <p style={{ margin: 0, color: '#5d4d43', fontSize: '0.95rem', lineHeight: 1.5 }}>
+                  "{rec.recomendacao}"
+                </p>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p style={{ marginBottom: '40px' }}>Nenhuma recomendação registrada nas últimas semanas.</p>
+        )}
+
+        <h3>Casos que Exigem Intervenção (Alertas)</h3>
         {previewAlertas.length > 0 ? (
           <table className="print-table">
             <thead>
@@ -220,32 +356,6 @@ function PrintReport({ data }) {
         ) : (
           <p>Nenhum alerta crítico encontrado para o recorte selecionado. Operação estável.</p>
         )}
-
-        <h3 style={{ marginTop: '50px' }}>Registro de Intervenções Recentes</h3>
-        {previewLancamentos.length > 0 ? (
-          <table className="print-table">
-            <thead>
-              <tr>
-                <th style={{ width: '15%' }}>Semana</th>
-                <th style={{ width: '25%' }}>Paciente / Terapeuta</th>
-                <th style={{ width: '15%' }}>Score</th>
-                <th style={{ width: '45%' }}>Ponto a Desenvolver / Foco</th>
-              </tr>
-            </thead>
-            <tbody>
-              {previewLancamentos.map((item, index) => (
-                <tr key={`lancamento-${index}`}>
-                  <td>{item.mes} · S{item.semana}</td>
-                  <td>{item.paciente}<br/><small style={{ color: '#9f6947'}}>{item.terapeuta}</small></td>
-                  <td>Evol: {item.evolucaoMedia}<br/>Comp: {item.competenciaMedia}</td>
-                  <td>{item.pontoDesenvolver || item.planoAcao || "-"}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        ) : (
-          <p>Nenhum lançamento encontrado para o recorte selecionado.</p>
-        )}
       </div>
     </div>
   );
@@ -263,7 +373,7 @@ function RelatoriosContent({ user, onLogout }) {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState({ type: "", text: "" });
-  const [reportType, setReportType] = useState("executivo"); // Já vem marcado o recomendado
+  const [reportType, setReportType] = useState("executivo"); 
   const [printData, setPrintData] = useState(null);
   const [filters, setFilters] = useState({
     ano: String(currentYear),
@@ -290,7 +400,6 @@ function RelatoriosContent({ user, onLogout }) {
     loadDashboard();
   }, [user]);
 
-  // TEMPO AUMENTADO PARA 1200ms para garantir renderização perfeita dos gráficos em CSS antes da tela travar
   useEffect(() => {
     if (!printData || typeof window === "undefined") return undefined;
 
@@ -355,6 +464,8 @@ function RelatoriosContent({ user, onLogout }) {
       pacientes: new Set(lancamentosFiltrados.map((item) => item.pacienteId).filter(Boolean)).size || pacientesFiltrados.length,
       competencia: average(lancamentosFiltrados.map(competenciaMedia)),
       evolucao: average(lancamentosFiltrados.map(evolucaoMedia)),
+      adesao: average(lancamentosFiltrados.map(item => item.adesaoTarefas || 0)), 
+      objetivos: average(lancamentosFiltrados.map(item => item.evolucaoObjetivos || 0)), 
       planosAbertos: lancamentosFiltrados.filter(isPlanoAberto).length,
       alertas: alertasCalculados.length,
     };
@@ -404,7 +515,7 @@ function RelatoriosContent({ user, onLogout }) {
     exportExcelWorkbook(
       buildReportFileName(contextTitle, filters, "Excel"),
       reportSheets,
-      metrics // Passando os dados para a capa do Excel
+      metrics
     );
   }
 
@@ -421,7 +532,8 @@ function RelatoriosContent({ user, onLogout }) {
       periodText,
       clinicasFiltradas,
       terapeutasFiltrados,
-      lancamentosRaw: lancamentos // Usado para calcular as barras no PDF
+      pacientesFiltrados, // Passado para poder puxar o status da carteira
+      lancamentosRaw: lancamentosFiltrados 
     });
   }
 
@@ -518,8 +630,8 @@ function RelatoriosContent({ user, onLogout }) {
             <section className="supervisao-indicator-grid executive">
               <CardIndicador label="Lançamentos" value={metrics.registros} detail="registros filtrados" />
               <CardIndicador label="Pacientes" value={metrics.pacientes} detail="casos acompanhados" />
-              <CardIndicador label="Evolução" value={formatPercent(metrics.evolucao)} detail="score clínico geral" />
-              <CardIndicador label="Alertas" value={metrics.alertas} detail="pontos de atenção" />
+              <CardIndicador label="Evolução Média" value={formatPercent(metrics.evolucao)} detail="score clínico geral" />
+              <CardIndicador label="Adesão (Tarefas)" value={formatPercent(metrics.adesao)} detail="engajamento do paciente" />
             </section>
 
             <div className="bento-grid dashboard-lower">
