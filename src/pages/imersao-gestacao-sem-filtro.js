@@ -4,8 +4,8 @@ import React, { useState, useEffect } from 'react';
 import Head from 'next/head';
 
 export default function ImersaoGestacaoSemFiltro() {
-  // Lógica do Timer de Escassez (15 minutos)
-  const [timeLeft, setTimeLeft] = useState(15 * 60); // 15 minutos em segundos
+  // Lógica do Timer de Escassez (30 minutos)
+  const [timeLeft, setTimeLeft] = useState(30 * 60); // 30 minutos em segundos
   const [isClient, setIsClient] = useState(false); // Para evitar erro de hidratação no Next.js
 
   useEffect(() => {
@@ -433,7 +433,7 @@ export default function ImersaoGestacaoSemFiltro() {
                 {/* Ingresso Casal */}
                 <div className={`lp-price-tier ${!isExpired ? 'highlight' : ''}`}>
                   {!isExpired && <div className="lp-discount-badge">ECONOMIZE R$ 291!</div>}
-                  <div style={{ fontSize: '3rem', marginBottom: '15px' }}>💑</div>
+                  <div style={{ fontSize: '3rem', marginBottom: '15px' }}>👩‍❤️‍👨</div>
                   <h3 style={{ fontSize: '1.3rem', fontWeight: '900', color: 'var(--lp-primary)', margin: '0' }}>INGRESSO CASAL</h3>
                   
                   {!isExpired && <div className="lp-price-old">De R$ 588,00 por</div>}
