@@ -1,23 +1,57 @@
-"use client"; // Necessário no Next.js para usar useState e useEffect
+"use client"; // Necessário no Next.js para usar useState, useEffect e useRef
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Head from 'next/head';
 
 export default function ImersaoGestacaoSemFiltro() {
   // Lógica do Timer de Escassez (30 minutos)
   const [timeLeft, setTimeLeft] = useState(30 * 60); // 30 minutos em segundos
   const [isClient, setIsClient] = useState(false); // Para evitar erro de hidratação no Next.js
+  const [hasTimerStarted, setHasTimerStarted] = useState(false); // Controla se o timer já começou
+  
+  const pricingSectionRef = useRef(null); // Referência para a seção de preços
 
+  // Garante que o código rode apenas no cliente
   useEffect(() => {
     setIsClient(true);
-    if (timeLeft <= 0) return;
+  }, []);
+
+  // Intersection Observer: Detecta quando a seção de preços aparece na tela
+  useEffect(() => {
+    if (!isClient) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const [entry] = entries;
+        // Se a seção aparecer na tela (pelo menos 10% dela) e o timer não tiver começado
+        if (entry.isIntersecting && !hasTimerStarted) {
+          setHasTimerStarted(true);
+        }
+      },
+      { threshold: 0.1 } // Dispara quando 10% da seção for visível
+    );
+
+    if (pricingSectionRef.current) {
+      observer.observe(pricingSectionRef.current);
+    }
+
+    return () => {
+      if (pricingSectionRef.current) {
+        observer.unobserve(pricingSectionRef.current);
+      }
+    };
+  }, [isClient, hasTimerStarted]);
+
+  // Lógica de contagem regressiva (só roda se hasTimerStarted for true)
+  useEffect(() => {
+    if (!hasTimerStarted || timeLeft <= 0) return;
 
     const intervalId = setInterval(() => {
       setTimeLeft((prev) => prev - 1);
     }, 1000);
 
     return () => clearInterval(intervalId);
-  }, [timeLeft]);
+  }, [hasTimerStarted, timeLeft]);
 
   const minutes = Math.floor(timeLeft / 60);
   const seconds = timeLeft % 60;
@@ -200,6 +234,7 @@ export default function ImersaoGestacaoSemFiltro() {
               <div className="lp-hero-tags">
                 <span>Acolhimento</span> | <span>Informação</span> | <span>Preparação</span> | <span>Confiança</span> | <span>Conexão</span>
               </div>
+              {/* O link aponta para o ID comprar */}
               <a href="#comprar" className="lp-btn">RESERVAR MINHA VAGA AGORA</a>
             </div>
             <div className="lp-collage">
@@ -283,7 +318,7 @@ export default function ImersaoGestacaoSemFiltro() {
           <section className="lp-container" style={{ padding: '80px 24px' }}>
             <h2 style={{ fontSize: '2.2rem', fontWeight: '800', marginBottom: '20px' }}>Existe um segredo para um parto respeitoso:</h2>
             <p style={{ fontSize: '1.1rem', marginBottom: '20px' }}>O melhor caminho para afastar o medo do desconhecido não é ignorá-lo.<br/><strong>É buscar INFORMAÇÃO e PREPARAÇÃO.</strong></p>
-            <p>Quando você entende a fisiologia do seu corpo e treina sua mente, o parto deixa de ser um evento assustador e passa a ser um momento de protagonismo seu e do seu bebê.</p>
+            <p>Quando você entende a fisiologia do corpo e treina sua mente, o parto deixa de ser um evento assustador e passa a ser um momento de protagonismo seu e do seu bebê.</p>
             
             <h4 style={{ marginTop: '32px', fontSize: '1.3rem', fontWeight: '800', marginBottom: '16px' }}>O que você ganha se preparando com a gente:</h4>
             <ul className="lp-list">
@@ -381,8 +416,9 @@ export default function ImersaoGestacaoSemFiltro() {
 
           {/* =========================================
               GATILHO DE CONVERSÃO: PREÇO E TIMER
+              Aqui adicionamos o Ref para disparar o Observer
               ========================================= */}
-          <section id="comprar" className="lp-pricing-wrapper">
+          <section id="comprar" ref={pricingSectionRef} className="lp-pricing-wrapper">
             <div className="lp-pricing-card">
               <h2 style={{ fontSize: '2.5rem', fontWeight: '900', marginBottom: '8px', color: 'var(--lp-primary)' }}>As vagas estão acabando...</h2>
               <p style={{ color: 'var(--lp-text-muted)', marginBottom: '32px', fontSize: '1.1rem' }}>
@@ -455,21 +491,53 @@ export default function ImersaoGestacaoSemFiltro() {
             </div>
           </section>
 
-          {/* FAQ */}
+          {/* FAQ COMPLETO E EXPANDIDO */}
           <section className="lp-container" style={{ padding: '80px 24px', maxWidth: '800px' }}>
             <h2 style={{ textAlign: 'center', fontSize: '2.2rem', fontWeight: '800', marginBottom: '40px' }}>Dúvidas Frequentes</h2>
             
             <details className="lp-accordion">
               <summary>Estou com poucas semanas de gestação, posso participar?</summary>
-              <p>Com certeza! Quanto mais cedo você começar a se informar e se preparar física e emocionalmente, mais tranquila será a sua jornada até o parto.</p>
+              <p>Com certeza! Quanto mais cedo você começar a se informar e se preparar física e emocionalmente, mais tranquila será a sua jornada até o parto. A partir do momento que você descobre a gestação, já é muito bem-vinda.</p>
             </details>
+            
             <details className="lp-accordion">
               <summary>Meu parceiro(a) não quer ou não pode ir. Posso ir sozinha?</summary>
-              <p>Sim! O Ingresso Individual foi pensado exatamente para você. Todo o conteúdo será profundamente transformador, mesmo indo sozinha.</p>
+              <p>Sim! O Ingresso Individual foi pensado exatamente para você. Todo o conteúdo será profundamente transformador para o seu preparo. E caso queira, você pode levar sua mãe, irmã ou amiga como acompanhante adquirindo o ingresso para casais/duplas.</p>
             </details>
+            
             <details className="lp-accordion">
               <summary>Vou ter meu bebê por cesárea agendada, a imersão serve para mim?</summary>
-              <p>Sim. A imersão aborda a conexão com o bebê, o preparo emocional, o manejo do medo e a realidade do puerpério, vivências essenciais independente da via de parto.</p>
+              <p>Sim. A imersão não é apenas sobre parto normal. Abordamos a conexão profunda com o bebê, o preparo emocional, o manejo do medo, os primeiros cuidados, amamentação e a realidade do puerpério. Vivências essenciais independente de como o seu bebê vai nascer.</p>
+            </details>
+
+            <details className="lp-accordion">
+              <summary>A imersão é muito teórica? Tenho medo de ficar cansada.</summary>
+              <p>De forma alguma! Nossa metodologia equilibra a informação que você precisa com muita prática. Vocês vão colocar o corpo em movimento para treinar posições, respirações, uso da bola e massagens de alívio da dor. É um momento dinâmico e interativo.</p>
+            </details>
+
+            <details className="lp-accordion">
+              <summary>Qual a roupa ideal para usar nos dias do evento?</summary>
+              <p>Venha com roupas leves e confortáveis! Como teremos práticas físicas de mobilidade pélvica e alongamentos, o ideal é usar roupas de ginástica ou vestidos/calças bem flexíveis que não prendam seus movimentos.</p>
+            </details>
+
+            <details className="lp-accordion">
+              <summary>Tenho restrições alimentares. O que haverá no Coffee Break?</summary>
+              <p>Nosso Coffee Break foi pensado com carinho para gestantes, contando com opções saudáveis, nutritivas e deliciosas. Caso você tenha alguma intolerância (glúten, lactose) ou restrição severa, basta avisar nossa equipe no WhatsApp após a compra que prepararemos algo especial para você.</p>
+            </details>
+
+            <details className="lp-accordion">
+              <summary>A imersão fala sobre o pós-parto ou só sobre o nascimento?</summary>
+              <p>Nós preparamos você para toda a jornada. Temos um módulo focado na "Maternidade Sem Filtro", abordando os primeiros dias do bebê em casa, os desafios da amamentação, a privação de sono, a nova rotina e as grandes alterações hormonais e emocionais.</p>
+            </details>
+
+            <details className="lp-accordion">
+              <summary>E se meu bebê decidir nascer antes da data da imersão?</summary>
+              <p>Fique totalmente tranquila! Sabemos que quem dita as regras são eles. Caso você entre em trabalho de parto antes do evento, garantimos o reembolso integral do seu ingresso ou o crédito para consultorias individuais conosco no puerpério (você escolhe!).</p>
+            </details>
+
+            <details className="lp-accordion">
+              <summary>Quais são as formas de pagamento?</summary>
+              <p>Você pode garantir sua vaga pagando à vista via PIX (com aprovação imediata) ou parcelar em até 12x no cartão de crédito através da nossa plataforma segura de pagamentos.</p>
             </details>
           </section>
         </main>
