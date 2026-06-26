@@ -25,10 +25,10 @@ export default function ImersaoGestacaoSemFiltro() {
         </div>
         <div className="lp-collage">
           {/* Substitua os src pelas suas imagens reais */}
-          <img src="/foto-gestante-1.jpg" alt="Mulher grávida" />
-          <img src="/foto-casal-gestante.jpg" alt="Casal aguardando o bebê" />
-          <img src="/foto-gestante-2.jpg" alt="Gestante sorrindo" />
-          <img src="/foto-roda-gestantes.jpg" alt="Roda de gestantes" />
+          <img src="/erica-live.png" alt="Mulher grávida" />
+          <img src="/erica-live.png" alt="Casal aguardando o bebê" />
+          <img src="/erica-live.png" alt="Gestante sorrindo" />
+          <img src="/erica-live.png" alt="Roda de gestantes" />
         </div>
       </section>
 
@@ -37,7 +37,7 @@ export default function ImersaoGestacaoSemFiltro() {
         <div className="lp-container">
           <div className="lp-split-section">
             <div>
-              <img src="/foto-acolhimento.jpg" alt="Acolhimento na gestação" className="lp-split-image" />
+              <img src="/erica-live.png" alt="Acolhimento na gestação" className="lp-split-image" />
             </div>
             <div>
               <ul className="lp-list">
@@ -68,10 +68,10 @@ export default function ImersaoGestacaoSemFiltro() {
               <p style={{ marginTop: '20px' }}>Então essa Imersão é o abraço e a preparação que você e seu bebê precisam agora.</p>
             </div>
             <div className="lp-collage">
-              <img src="/foto-dor-1.jpg" alt="Gestante pensativa" />
-              <img src="/foto-dor-2.jpg" alt="Casal conversando" />
-              <img src="/foto-dor-3.jpg" alt="Prática de respiração" />
-              <img src="/foto-dor-4.jpg" alt="Apoio no parto" />
+              <img src="/erica-live.png" alt="Gestante pensativa" />
+              <img src="/erica-live.png" alt="Casal conversando" />
+              <img src="/erica-live.png" alt="Prática de respiração" />
+              <img src="/erica-live.png" alt="Apoio no parto" />
             </div>
           </div>
           
@@ -158,7 +158,7 @@ export default function ImersaoGestacaoSemFiltro() {
           </div>
           <div>
             {/* Sugestão: Uma foto bonita das duas juntas ou uma colagem das duas */}
-            <img src="/erica-e-lizia.jpg" alt="Erica Vilar e Lizia Nascimento" className="lp-split-image" style={{ boxShadow: '0 0 40px rgba(0,0,0,0.2)' }} />
+            <img src="/modelos transparentes.png" alt="Erica Vilar e Lizia Nascimento" className="lp-split-image" style={{ boxShadow: '0 0 40px rgba(0,0,0,0.2)' }} />
           </div>
         </div>
       </section>
