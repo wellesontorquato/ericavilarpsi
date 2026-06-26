@@ -450,7 +450,7 @@ export default function ImersaoGestacaoSemFiltro() {
                 <li style={{ marginBottom: '8px' }}>✅ <strong>Imersão Presencial</strong> com Psicóloga e Fisioterapeuta/Doula</li>
                 <li style={{ marginBottom: '8px' }}>✅ <strong>Coffee Break Especial</strong> Incluso para os dias de imersão</li>
                 <li style={{ marginBottom: '8px' }}>✅ <strong>Material de Apoio</strong> Exclusivo e Prático</li>
-                <li>✅ <strong>Vagas Limitadas:</strong> Máximo de 10 casais/gestantes para maior intimidade</li>
+                <li>✅ <strong>Vagas Limitadas:</strong> Máximo de 5 casais ou 10 gestantes para maior intimidade</li>
               </ul>
             </div>
           </section>
