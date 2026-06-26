@@ -1,32 +1,45 @@
-import React from 'react';
-import Head from 'next/head'; // Importação para o SEO
+"use client"; // Necessário no Next.js para usar useState e useEffect
+
+import React, { useState, useEffect } from 'react';
+import Head from 'next/head';
 
 export default function ImersaoGestacaoSemFiltro() {
+  // Lógica do Timer de Escassez (15 minutos)
+  const [timeLeft, setTimeLeft] = useState(15 * 60); // 15 minutos em segundos
+  const [isClient, setIsClient] = useState(false); // Para evitar erro de hidratação no Next.js
+
+  useEffect(() => {
+    setIsClient(true);
+    if (timeLeft <= 0) return;
+
+    const intervalId = setInterval(() => {
+      setTimeLeft((prev) => prev - 1);
+    }, 1000);
+
+    return () => clearInterval(intervalId);
+  }, [timeLeft]);
+
+  const minutes = Math.floor(timeLeft / 60);
+  const seconds = timeLeft % 60;
+  const isExpired = timeLeft === 0;
+
   return (
     <>
-      {/* =========================================
-          OTIMIZAÇÃO DE SEO (TÍTULO E METADADOS)
-          ========================================= */}
       <Head>
-        <title>Imersão Gestação Sem Filtro </title>
+        <title>Imersão Gestação Sem Filtro</title>
         <meta name="description" content="Imersão presencial exclusiva para gestantes e casais. Preparação física e emocional para o parto e pós-parto com a psicóloga Erica Vilar e a fisioterapeuta/doula Lizia Nascimento." />
         <meta name="keywords" content="imersão para gestantes, curso de gestante, preparação para o parto, parto humanizado, doula, psicologia perinatal, fisioterapia pélvica, gestação sem filtro" />
         <meta name="author" content="Erica Vilar e Lizia Nascimento" />
         <meta name="robots" content="index, follow" />
-        
-        {/* Open Graph / Facebook / WhatsApp */}
         <meta property="og:type" content="website" />
         <meta property="og:title" content="Imersão Gestação Sem Filtro | Apenas 10 Vagas" />
         <meta property="og:description" content="Uma experiência profunda, acolhedora e transformadora para mulheres e casais que desejam viver a maternidade com consciência, preparo e segurança." />
-        <meta property="og:image" content="/foto-casal-gestante.jpg" /> {/* Substitua pela imagem principal de capa */}
+        <meta property="og:image" content="/foto-casal-gestante.jpg" />
       </Head>
 
-      {/* =========================================
-          INJEÇÃO DO CSS MOBILE-FIRST PREMIUM
-          ========================================= */}
       <style dangerouslySetInnerHTML={{ __html: `
         :root {
-          --lp-primary: #8a2522;       /* Terracota/Vinho sofisticado */
+          --lp-primary: #8a2522;
           --lp-primary-hover: #6b1b19;
           --lp-primary-light: #fff5f5;
           --lp-primary-border: #fad1d1;
@@ -43,112 +56,88 @@ export default function ImersaoGestacaoSemFiltro() {
           --lp-transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        .lp-page {
-          font-family: var(--lp-font-sans);
-          color: var(--lp-text-dark);
-          line-height: 1.6;
-          background-color: var(--lp-white);
-          -webkit-font-smoothing: antialiased;
-        }
-
-        .lp-container {
-          width: 100%;
-          max-width: 1200px;
-          margin: 0 auto;
-          padding: 0 24px;
-        }
-
+        .lp-page { font-family: var(--lp-font-sans); color: var(--lp-text-dark); line-height: 1.6; background-color: var(--lp-white); -webkit-font-smoothing: antialiased; }
+        .lp-container { width: 100%; max-width: 1200px; margin: 0 auto; padding: 0 24px; }
         .lp-text-red { color: var(--lp-primary); }
         .lp-bg-grey { background-color: var(--lp-bg-light); padding: 60px 0; }
         .lp-bg-red { background-color: var(--lp-primary); color: var(--lp-white); padding: 60px 0; text-align: center; }
 
-        /* Botão Premium */
         .lp-btn {
-          display: inline-flex;
-          align-items: center;
-          justify-content: center;
-          background-color: var(--lp-primary);
-          color: var(--lp-white);
-          text-decoration: none;
-          font-weight: 700;
-          padding: 18px 36px;
-          border-radius: 50px;
-          text-transform: uppercase;
-          font-size: 0.95rem;
-          letter-spacing: 0.05em;
-          transition: var(--lp-transition);
-          border: none;
-          cursor: pointer;
-          box-shadow: 0 4px 14px rgba(138, 37, 34, 0.3);
-          width: 100%;
+          display: inline-flex; align-items: center; justify-content: center; background-color: var(--lp-primary); color: var(--lp-white);
+          text-decoration: none; font-weight: 800; padding: 20px 36px; border-radius: 50px; text-transform: uppercase;
+          font-size: 1rem; letter-spacing: 0.05em; transition: var(--lp-transition); border: none; cursor: pointer;
+          box-shadow: 0 4px 14px rgba(138, 37, 34, 0.3); width: 100%; animation: pulse-btn 2s infinite;
         }
-
-        .lp-btn:hover {
-          background-color: var(--lp-primary-hover);
-          transform: translateY(-2px);
-          box-shadow: 0 6px 20px rgba(138, 37, 34, 0.4);
+        @keyframes pulse-btn {
+          0% { box-shadow: 0 0 0 0 rgba(138, 37, 34, 0.4); }
+          70% { box-shadow: 0 0 0 15px rgba(138, 37, 34, 0); }
+          100% { box-shadow: 0 0 0 0 rgba(138, 37, 34, 0); }
         }
+        .lp-btn:hover { background-color: var(--lp-primary-hover); transform: translateY(-2px); animation: none; box-shadow: 0 6px 20px rgba(138, 37, 34, 0.5); }
 
-        /* Base das Listas */
         .lp-list { list-style: none; padding: 0; margin: 0; }
         .lp-list li { margin-bottom: 16px; font-size: 1.05rem; position: relative; padding-left: 24px; color: var(--lp-text-dark); }
         .lp-list li::before { content: "•"; position: absolute; left: 4px; color: var(--lp-primary); font-size: 1.2rem; top: -2px; }
 
-        /* Hero */
         .lp-hero { display: flex; flex-direction: column; padding: 40px 24px; gap: 40px; }
         .lp-hero-content { text-align: center; }
-        .lp-hero-title { font-size: 2.4rem; font-weight: 800; line-height: 1.2; margin-bottom: 12px; letter-spacing: -0.02em; }
+        .lp-hero-title { font-size: 2.4rem; font-weight: 900; line-height: 1.2; margin-bottom: 12px; letter-spacing: -0.02em; }
         .lp-hero-subtitle { font-size: 1.1rem; font-weight: 600; color: var(--lp-text-muted); margin-bottom: 24px; }
         .lp-hero-text { font-size: 1.1rem; color: var(--lp-text-muted); margin-bottom: 24px; }
-        .lp-hero-highlight { font-size: 1.6rem; font-weight: 700; margin: 24px 0; line-height: 1.3; }
+        .lp-hero-highlight { font-size: 1.6rem; font-weight: 800; margin: 24px 0; line-height: 1.3; }
         .lp-hero-tags { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; font-size: 0.85rem; font-weight: 700; margin: 24px 0; border-top: 1px solid #e5e5e5; border-bottom: 1px solid #e5e5e5; padding: 14px 0; color: var(--lp-primary); }
 
-        /* Colagem de Imagens */
         .lp-collage { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
         .lp-collage img { width: 100%; height: 200px; border-radius: 16px; object-fit: cover; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
         .lp-collage img:nth-child(even) { transform: translateY(16px); }
 
-        /* Seções Divididas */
         .lp-split-section { display: flex; flex-direction: column; gap: 32px; margin: 48px 0; }
         .lp-split-image { width: 100%; max-height: 400px; object-fit: cover; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); }
 
-        /* Banner Central */
         .lp-red-banner-text { font-size: 1.4rem; font-weight: 600; max-width: 850px; margin: 0 auto; line-height: 1.5; padding: 0 20px; }
 
-        /* Cronograma */
         .lp-schedule { display: flex; flex-direction: column; gap: 32px; margin-top: 40px; }
         .lp-schedule-item { text-align: center; padding: 0 16px; }
         .lp-schedule-icon { font-size: 2.5rem; margin-bottom: 12px; }
 
-        /* Módulos (Accordions) */
         .lp-modules-grid { display: flex; flex-direction: column; gap: 40px; margin-top: 32px; }
-        .lp-module-title { font-size: 1.25rem; font-weight: 700; margin-bottom: 20px; letter-spacing: 0.02em; border-bottom: 2px solid var(--lp-primary-border); padding-bottom: 8px; }
+        .lp-module-title { font-size: 1.25rem; font-weight: 800; margin-bottom: 20px; letter-spacing: 0.02em; border-bottom: 2px solid var(--lp-primary-border); padding-bottom: 8px; }
         .lp-accordion { background: var(--lp-white); margin-bottom: 12px; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.04); border: 1px solid #f0f0f0; transition: var(--lp-transition); }
         .lp-accordion[open] { box-shadow: 0 4px 16px rgba(0,0,0,0.08); border-color: var(--lp-primary-border); }
-        .lp-accordion summary { padding: 18px 24px; font-weight: 600; cursor: pointer; list-style: none; display: flex; justify-content: space-between; align-items: center; font-size: 1rem; }
+        .lp-accordion summary { padding: 18px 24px; font-weight: 700; cursor: pointer; list-style: none; display: flex; justify-content: space-between; align-items: center; font-size: 1rem; }
         .lp-accordion summary::-webkit-details-marker { display: none; }
         .lp-accordion summary::after { content: "+"; font-size: 1.4rem; color: var(--lp-text-muted); font-weight: 300; transition: var(--lp-transition); }
         .lp-accordion[open] summary::after { transform: rotate(45deg); color: var(--lp-primary); }
         .lp-accordion p { padding: 0 24px 20px; margin: 0; font-size: 0.95rem; color: var(--lp-text-muted); }
 
-        /* Boxes Alvo */
         .lp-target-boxes { display: flex; flex-direction: column; gap: 24px; margin: 48px 0; }
         .lp-box { padding: 32px; border-radius: 20px; }
         .lp-box-green { background-color: var(--lp-green-bg); border: 1px solid var(--lp-green-border); }
         .lp-box-red { background-color: var(--lp-red-bg); border: 1px solid var(--lp-primary-border); }
-        .lp-box h3 { font-size: 1.4rem; margin-bottom: 24px; font-weight: 700; }
+        .lp-box h3 { font-size: 1.4rem; margin-bottom: 24px; font-weight: 800; }
         .lp-box ul { list-style: none; padding: 0; margin: 0; }
         .lp-box ul li { margin-bottom: 16px; display: flex; align-items: flex-start; gap: 12px; font-size: 1rem; }
         .lp-icon-check { color: var(--lp-green-text); font-weight: bold; }
         .lp-icon-cross { color: var(--lp-primary); font-weight: bold; }
 
-        /* Pricing */
-        .lp-pricing-wrapper { background-color: #fcf8f7; padding: 60px 24px; position: relative; }
-        .lp-pricing-card { position: relative; background: var(--lp-white); width: 100%; margin: 0 auto; padding: 32px 24px; border-radius: 24px; text-align: center; box-shadow: 0 12px 40px rgba(0,0,0,0.06); z-index: 2; }
+        /* Estilos do Timer e Preços */
+        .lp-pricing-wrapper { background-color: #fcf8f7; padding: 80px 24px; position: relative; }
+        .lp-pricing-card { position: relative; background: var(--lp-white); width: 100%; max-width: 900px; margin: 0 auto; padding: 40px 24px; border-radius: 24px; text-align: center; box-shadow: 0 20px 50px rgba(138,37,34,0.1); z-index: 2; border: 1px solid var(--lp-primary-border); }
+        
+        .lp-timer-container { background: #fff0f0; border: 2px dashed var(--lp-primary); padding: 20px; border-radius: 16px; margin-bottom: 40px; display: inline-block; width: 100%; max-width: 500px; }
+        .lp-timer-title { color: var(--lp-primary); font-weight: 800; font-size: 1.1rem; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 1px;}
+        .lp-timer-clock { display: flex; justify-content: center; gap: 15px; }
+        .lp-timer-box { background: var(--lp-primary); color: white; padding: 10px; border-radius: 8px; min-width: 70px; font-size: 2.2rem; font-weight: 900; line-height: 1; box-shadow: 0 4px 10px rgba(0,0,0,0.2); display: flex; flex-direction: column; align-items: center;}
+        .lp-timer-label { font-size: 0.7rem; text-transform: uppercase; color: #ffcccc; margin-top: 5px; font-weight: 700; letter-spacing: 1px;}
+        
         .lp-pricing-grid { display: flex; flex-direction: column; gap: 24px; margin: 32px 0; }
-        .lp-price-tier { background: var(--lp-white); padding: 32px 24px; border-radius: 16px; border: 2px solid var(--lp-primary-border); transition: var(--lp-transition); }
-        .lp-price-tier:hover { transform: translateY(-4px); box-shadow: 0 8px 24px rgba(138, 37, 34, 0.08); }
-        .lp-price-value { font-size: 2.8rem; font-weight: 800; color: var(--lp-text-dark); margin: 12px 0; }
+        .lp-price-tier { background: var(--lp-white); padding: 40px 24px; border-radius: 16px; border: 2px solid #eee; transition: var(--lp-transition); position: relative; overflow: hidden;}
+        .lp-price-tier.highlight { border-color: var(--lp-primary); box-shadow: 0 8px 30px rgba(138, 37, 34, 0.12); }
+        .lp-discount-badge { position: absolute; top: 15px; right: -30px; background: #27ae60; color: white; padding: 5px 40px; font-size: 0.8rem; font-weight: 900; transform: rotate(45deg); letter-spacing: 1px; box-shadow: 0 2px 4px rgba(0,0,0,0.2);}
+        
+        .lp-price-old { text-decoration: line-through; color: #a0a0a0; font-size: 1.3rem; font-weight: 600; margin-top: 15px; }
+        .lp-price-value { font-size: 3.5rem; font-weight: 900; color: var(--lp-text-dark); margin: 0 0 20px 0; line-height: 1; }
+        .lp-price-value span { font-size: 1.5rem; vertical-align: top; margin-right: 5px;}
 
         /* Premium Footer */
         .lp-footer { background-color: var(--lp-bg-dark); color: #e5e5e5; padding: 60px 0 30px; }
@@ -163,7 +152,6 @@ export default function ImersaoGestacaoSemFiltro() {
         .lp-footer-contact p { color: #aaa; font-size: 0.95rem; margin-bottom: 8px; }
         .lp-footer-bottom { border-top: 1px solid #333; padding-top: 24px; text-align: center; font-size: 0.85rem; color: #777; }
 
-        /* Media Queries Desktop */
         @media (min-width: 768px) {
           .lp-hero { flex-direction: row; align-items: center; padding: 80px 24px; }
           .lp-hero-content { flex: 1.2; text-align: left; }
@@ -182,23 +170,20 @@ export default function ImersaoGestacaoSemFiltro() {
           .lp-module-column { flex: 1; }
           .lp-target-boxes { flex-direction: row; }
           .lp-box { flex: 1; }
-          .lp-pricing-grid { flex-direction: row; }
+          .lp-pricing-grid { flex-direction: row; gap: 30px; }
           .lp-price-tier { flex: 1; }
           .lp-footer-grid { flex-direction: row; justify-content: space-between; }
         }
         @media (min-width: 1024px) {
           .lp-hero-title { font-size: 3.8rem; }
-          .lp-pricing-card { padding: 50px; }
+          .lp-pricing-card { padding: 60px; }
         }
       `}} />
 
-      {/* =========================================
-          CONTEÚDO DA PÁGINA
-          ========================================= */}
       <div className="lp-page">
         <main>
           
-          {/* 1. HERO SECTION */}
+          {/* HERO SECTION */}
           <section className="lp-container lp-hero">
             <div className="lp-hero-content">
               <h1 className="lp-hero-title lp-text-red">Imersão Gestação Sem Filtro</h1>
@@ -209,13 +194,13 @@ export default function ImersaoGestacaoSemFiltro() {
               <h2 className="lp-hero-highlight lp-text-red">
                 Mais do que um evento, uma vivência real.
               </h2>
-              <p className="lp-hero-text" style={{ fontWeight: '700', color: 'var(--lp-text-dark)' }}>
-                APENAS 10 VAGAS! Experiência exclusiva e limitada.
+              <p className="lp-hero-text" style={{ fontWeight: '800', color: 'var(--lp-text-dark)', fontSize: '1.2rem' }}>
+                APENAS 10 VAGAS! Experiência exclusiva.
               </p>
               <div className="lp-hero-tags">
                 <span>Acolhimento</span> | <span>Informação</span> | <span>Preparação</span> | <span>Confiança</span> | <span>Conexão</span>
               </div>
-              <a href="#comprar" className="lp-btn">RESERVAR MINHA VAGA</a>
+              <a href="#comprar" className="lp-btn">RESERVAR MINHA VAGA AGORA</a>
             </div>
             <div className="lp-collage">
               <img src="/foto-gestante-1.jpg" alt="Mulher grávida recebendo carinho" />
@@ -225,7 +210,7 @@ export default function ImersaoGestacaoSemFiltro() {
             </div>
           </section>
 
-          {/* 2. INTRODUÇÃO E DORES */}
+          {/* INTRODUÇÃO E DORES */}
           <section className="lp-bg-grey">
             <div className="lp-container">
               <div className="lp-split-section">
@@ -247,7 +232,7 @@ export default function ImersaoGestacaoSemFiltro() {
 
               <div className="lp-split-section">
                 <div>
-                  <h2 style={{ fontSize: '2rem', fontWeight: '700', marginBottom: '20px' }}>Se você sente que:</h2>
+                  <h2 style={{ fontSize: '2rem', fontWeight: '800', marginBottom: '20px' }}>Se você sente que:</h2>
                   <ul className="lp-list">
                     <li>A data do parto está se aproximando e a insegurança está aumentando;</li>
                     <li>Deseja que seu parceiro saiba exatamente como te ajudar no dia;</li>
@@ -257,7 +242,7 @@ export default function ImersaoGestacaoSemFiltro() {
                     <li>Ouvir os "pitacos" alheios está te deixando mais ansiosa;</li>
                     <li>Gostaria de se conectar com outras mulheres que estão passando pela mesma fase;</li>
                   </ul>
-                  <p style={{ marginTop: '20px', fontWeight: '600' }}>Então essa Imersão é o abraço e a preparação que você e seu bebê precisam agora.</p>
+                  <p style={{ marginTop: '20px', fontWeight: '700' }}>Então essa Imersão é o abraço e a preparação que você e seu bebê precisam agora.</p>
                 </div>
                 <div className="lp-collage">
                   <img src="/foto-dor-1.jpg" alt="Gestante pensativa" />
@@ -267,15 +252,15 @@ export default function ImersaoGestacaoSemFiltro() {
                 </div>
               </div>
               
-              <h2 style={{ textAlign: 'center', fontSize: '2rem', marginTop: '60px', fontWeight: '700', lineHeight: '1.3' }}>
+              <h2 style={{ textAlign: 'center', fontSize: '2rem', marginTop: '60px', fontWeight: '800', lineHeight: '1.3' }}>
                 O nascimento de um bebê é também<br/>o nascimento de uma nova mulher e de uma família.
               </h2>
             </div>
           </section>
 
-          {/* 3. ENTREGÁVEIS */}
+          {/* ENTREGÁVEIS */}
           <section className="lp-container" style={{ padding: '80px 24px' }}>
-            <h3 style={{ fontSize: '1.8rem', fontWeight: '700', marginBottom: '24px' }}>O que você vai vivenciar nesta Imersão...</h3>
+            <h3 style={{ fontSize: '1.8rem', fontWeight: '800', marginBottom: '24px' }}>O que você vai vivenciar nesta Imersão...</h3>
             <ul className="lp-list">
               <li><strong>MUITO ACOLHIMENTO:</strong> Um ambiente íntimo, seguro e cheio de cuidado para você se sentir abraçada.</li>
               <li><strong>COFFEE BREAK ESPECIAL:</strong> Momentos deliciosos para conexão, troca e descanso.</li>
@@ -294,13 +279,13 @@ export default function ImersaoGestacaoSemFiltro() {
             </div>
           </section>
 
-          {/* 4. SEGREDO E METODOLOGIA */}
+          {/* SEGREDO E METODOLOGIA */}
           <section className="lp-container" style={{ padding: '80px 24px' }}>
-            <h2 style={{ fontSize: '2.2rem', fontWeight: '700', marginBottom: '20px' }}>Existe um segredo para um parto respeitoso:</h2>
+            <h2 style={{ fontSize: '2.2rem', fontWeight: '800', marginBottom: '20px' }}>Existe um segredo para um parto respeitoso:</h2>
             <p style={{ fontSize: '1.1rem', marginBottom: '20px' }}>O melhor caminho para afastar o medo do desconhecido não é ignorá-lo.<br/><strong>É buscar INFORMAÇÃO e PREPARAÇÃO.</strong></p>
             <p>Quando você entende a fisiologia do seu corpo e treina sua mente, o parto deixa de ser um evento assustador e passa a ser um momento de protagonismo seu e do seu bebê.</p>
             
-            <h4 style={{ marginTop: '32px', fontSize: '1.3rem', fontWeight: '700', marginBottom: '16px' }}>O que você ganha se preparando com a gente:</h4>
+            <h4 style={{ marginTop: '32px', fontSize: '1.3rem', fontWeight: '800', marginBottom: '16px' }}>O que você ganha se preparando com a gente:</h4>
             <ul className="lp-list">
               <li>Consciência corporal para lidar com as contrações;</li>
               <li>Redução drástica do medo e da ansiedade;</li>
@@ -309,12 +294,12 @@ export default function ImersaoGestacaoSemFiltro() {
             </ul>
           </section>
 
-          {/* 5. SOBRE AS PROFISSIONAIS */}
+          {/* SOBRE AS PROFISSIONAIS */}
           <section id="sobre" className="lp-bg-grey">
             <div className="lp-container">
               <div className="lp-split-section">
                 <div>
-                  <h2 style={{ fontSize: '2.2rem', fontWeight: '700', marginBottom: '20px' }}>Quem vai te guiar nessa jornada?</h2>
+                  <h2 style={{ fontSize: '2.2rem', fontWeight: '800', marginBottom: '20px' }}>Quem vai te guiar nessa jornada?</h2>
                   <p style={{ marginBottom: '24px', color: 'var(--lp-text-muted)' }}>Nesta imersão, você será conduzida por duas profissionais especialistas na saúde materno-infantil, unindo corpo e mente para o seu preparo completo:</p>
                   
                   <div style={{ marginBottom: '24px', paddingLeft: '16px', borderLeft: '4px solid var(--lp-primary)' }}>
@@ -327,7 +312,7 @@ export default function ImersaoGestacaoSemFiltro() {
                     <p style={{ fontSize: '0.95rem', color: 'var(--lp-text-muted)' }}>Especialista na preparação física do seu corpo. Lizia vai te guiar através da biomecânica do parto, técnicas de respiração, alívio não farmacológico da dor e exercícios fundamentais para a gestação.</p>
                   </div>
 
-                  <p style={{ fontWeight: '600', marginTop: '24px' }}>O corpo e a mente trabalhando juntos:</p>
+                  <p style={{ fontWeight: '700', marginTop: '24px' }}>O corpo e a mente trabalhando juntos:</p>
                   <p style={{ color: 'var(--lp-text-muted)' }}>Nós criamos a <strong>Gestação Sem Filtro</strong> para unir o melhor da psicologia e da fisioterapia em uma experiência imersiva, garantindo a recepção mais amorosa possível para seu bebê.</p>
                 </div>
                 <div>
@@ -337,12 +322,11 @@ export default function ImersaoGestacaoSemFiltro() {
             </div>
           </section>
 
-          {/* 6. NOVO: SEÇÃO DO LOCAL DA IMERSÃO */}
+          {/* LOCAL DA IMERSÃO */}
           <section id="local" className="lp-container" style={{ padding: '80px 24px' }}>
-            <div className="lp-split-section" style={{ flexDirection: 'row-reverse' }}> {/* Inverte os lados no desktop para variar o design */}
-              
+            <div className="lp-split-section" style={{ flexDirection: 'row-reverse' }}> 
               <div style={{ flex: 1 }}>
-                <h2 style={{ fontSize: '2.2rem', fontWeight: '700', marginBottom: '20px' }}>Um ambiente pensado para você</h2>
+                <h2 style={{ fontSize: '2.2rem', fontWeight: '800', marginBottom: '20px' }}>Um ambiente pensado para você</h2>
                 <p style={{ marginBottom: '24px', color: 'var(--lp-text-muted)', fontSize: '1.1rem' }}>A Imersão Gestação Sem Filtro acontecerá em um espaço exclusivo, escolhido a dedo para proporcionar o máximo de conforto, segurança e acolhimento que você e seu bebê merecem.</p>
                 
                 <ul className="lp-list">
@@ -353,9 +337,9 @@ export default function ImersaoGestacaoSemFiltro() {
                 </ul>
                 
                 <div style={{ marginTop: '32px', padding: '16px', backgroundColor: 'var(--lp-primary-light)', borderLeft: '4px solid var(--lp-primary)', borderRadius: '0 8px 8px 0' }}>
-                  <p style={{ fontWeight: '700', color: 'var(--lp-primary)', margin: 0, display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <p style={{ fontWeight: '800', color: 'var(--lp-primary)', margin: 0, display: 'flex', alignItems: 'center', gap: '8px' }}>
                     <span style={{ fontSize: '1.5rem' }}>📍</span> 
-                    [Nome do Espaço - Ex: Edifício Office, Ponta Verde, Maceió - AL]
+                    [Nome do Espaço - Ex: Ponta Verde, Maceió - AL]
                   </p>
                 </div>
               </div>
@@ -366,82 +350,17 @@ export default function ImersaoGestacaoSemFiltro() {
                 <img src="/local-imersao-3.jpg" alt="Espaço preparado para exercícios" />
                 <img src="/local-imersao-4.jpg" alt="Mesa de coffee break carinhosa" />
               </div>
-
             </div>
           </section>
 
-          {/* 7. CRONOGRAMA */}
-          <section className="lp-bg-red">
-            <div className="lp-container">
-              <h2 style={{ fontSize: '2rem', fontWeight: '700', marginBottom: '10px' }}>QUANDO VAI ACONTECER</h2>
-              <div className="lp-schedule">
-                <div className="lp-schedule-item">
-                  <div className="lp-schedule-icon">📅</div>
-                  <h3 style={{ fontSize: '1.25rem', fontWeight: '700' }}>[Data do Evento]</h3>
-                  <p style={{ opacity: '0.8' }}>De [Horário Início] às [Horário Fim]</p>
-                </div>
-                <div className="lp-schedule-item">
-                  <div className="lp-schedule-icon">📍</div>
-                  <h3 style={{ fontSize: '1.25rem', fontWeight: '700' }}>Presencial e Exclusivo</h3>
-                  <p style={{ opacity: '0.8' }}>[Cidade/Bairro do Evento]</p>
-                </div>
-                <div className="lp-schedule-item">
-                  <div className="lp-schedule-icon">👥</div>
-                  <h3 style={{ fontSize: '1.25rem', fontWeight: '700' }}>Vagas Limitadas</h3>
-                  <p style={{ opacity: '0.8' }}>Apenas 10 Vagas!</p>
-                </div>
-              </div>
-            </div>
-          </section>
-
-          {/* 8. MÓDULOS */}
-          <section id="conteudo" className="lp-container" style={{ padding: '80px 24px' }}>
-            <h2 style={{ textAlign: 'center', fontSize: '2.2rem', fontWeight: '700', marginBottom: '12px' }}>O Que Vamos Abordar na Imersão</h2>
-            <p style={{ textAlign: 'center', maxWidth: '700px', margin: '0 auto 48px', color: 'var(--lp-text-muted)' }}>Uma imersão com todas as ferramentas físicas e emocionais que você precisa para uma gestação, parto e pós-parto mais conscientes.</p>
-
-            <div className="lp-modules-grid">
-              <div className="lp-module-column">
-                <div className="lp-module-title">🌸 FASE 1 - A GESTAÇÃO E O PREPARO</div>
-                <details className="lp-accordion">
-                  <summary>Desmitificando o Parto: O Fim dos Medos</summary>
-                  <p>Entendendo a fisiologia do corpo com a fisio e trabalhando os medos reais e imaginários com a psicologia.</p>
-                </details>
-                <details className="lp-accordion">
-                  <summary>O Papel Fundamental do Acompanhante</summary>
-                  <p>Como o parceiro(a) deve agir antes, durante e depois das contrações, sendo apoio físico e emocional ativo.</p>
-                </details>
-                <details className="lp-accordion">
-                  <summary>Plano de Parto e Escolhas Conscientes</summary>
-                  <p>Construindo suas preferências médicas e entendendo intervenções com profundo embasamento técnico.</p>
-                </details>
-              </div>
-
-              <div className="lp-module-column">
-                <div className="lp-module-title">🔥 FASE 2 - O PARTO E PÓS-PARTO REAL</div>
-                <details className="lp-accordion">
-                  <summary>A Prática: Exercícios e Posições</summary>
-                  <p>Dinâmicas de movimento, bola suíça, alívio não farmacológico da dor e uso da respiração guiada a seu favor.</p>
-                </details>
-                <details className="lp-accordion">
-                  <summary>A Hora de Ir para a Maternidade</summary>
-                  <p>Como identificar os sinais do trabalho de parto ativo e a hora certa de sair de casa sem desespero.</p>
-                </details>
-                <details className="lp-accordion">
-                  <summary>Puerpério: A Maternidade Sem Filtro</summary>
-                  <p>Os primeiros dias em casa, alterações hormonais/emocionais, amamentação e o suporte para o novo ecossistema familiar.</p>
-                </details>
-              </div>
-            </div>
-          </section>
-
-          {/* 9. PÚBLICO ALVO */}
+          {/* PÚBLICO ALVO */}
           <section className="lp-bg-grey">
             <div className="lp-container">
               <div className="lp-target-boxes">
                 <div className="lp-box lp-box-green">
                   <h3>Esta Imersão É Para Você Se...</h3>
                   <ul>
-                    <li><span className="lp-icon-check">✔</span> Você está gestante (em qualquer trimestre) e quer se preparar de verdade...</li>
+                    <li><span className="lp-icon-check">✔</span> Você está gestante e quer se preparar de verdade...</li>
                     <li><span className="lp-icon-check">✔</span> Você deseja que o seu parceiro(a) saiba como te ajudar ativamente...</li>
                     <li><span className="lp-icon-check">✔</span> Você tem medo da dor e quer aprender técnicas de alívio natural...</li>
                     <li><span className="lp-icon-check">✔</span> Você quer fugir de cesáreas desnecessárias e buscar um parto respeitoso...</li>
@@ -460,42 +379,85 @@ export default function ImersaoGestacaoSemFiltro() {
             </div>
           </section>
 
-          {/* 10. PREÇO E OFERTA */}
+          {/* =========================================
+              GATILHO DE CONVERSÃO: PREÇO E TIMER
+              ========================================= */}
           <section id="comprar" className="lp-pricing-wrapper">
             <div className="lp-pricing-card">
-              <h2 style={{ fontSize: '2rem', fontWeight: '700', marginBottom: '8px' }}>Apenas 10 Vagas Disponíveis!</h2>
-              <p style={{ color: 'var(--lp-text-muted)', marginBottom: '32px' }}>Garanta seu lugar nesta experiência exclusiva com as duas especialistas.</p>
+              <h2 style={{ fontSize: '2.5rem', fontWeight: '900', marginBottom: '8px', color: 'var(--lp-primary)' }}>As vagas estão acabando...</h2>
+              <p style={{ color: 'var(--lp-text-muted)', marginBottom: '32px', fontSize: '1.1rem' }}>
+                Seja rápida para garantir os bônus e o desconto especial da primeira turma.
+              </p>
               
+              {/* COMPONENTE DO TIMER */}
+              {isClient && (
+                <div className="lp-timer-container" style={isExpired ? { background: '#f5f5f5', borderColor: '#ccc' } : {}}>
+                  <div className="lp-timer-title" style={isExpired ? { color: '#666' } : {}}>
+                    {isExpired ? "O LOTE COM DESCONTO FOI ENCERRADO." : "⚠️ ATENÇÃO: O LOTE COM DESCONTO VIRA EM:"}
+                  </div>
+                  
+                  {!isExpired && (
+                    <div className="lp-timer-clock">
+                      <div className="lp-timer-box">
+                        00<span className="lp-timer-label">Horas</span>
+                      </div>
+                      <div className="lp-timer-box">
+                        {String(minutes).padStart(2, '0')}<span className="lp-timer-label">Min</span>
+                      </div>
+                      <div className="lp-timer-box">
+                        {String(seconds).padStart(2, '0')}<span className="lp-timer-label">Seg</span>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* CARDS DE PREÇO DINÂMICOS */}
               <div className="lp-pricing-grid">
-                {/* Opção Individual */}
-                <div className="lp-price-tier">
-                  <div style={{ fontSize: '2.5rem', marginBottom: '8px' }}>🤰</div>
-                  <h3 style={{ fontSize: '1.2rem', fontWeight: '700', color: 'var(--lp-primary)', margin: '0' }}>INDIVIDUAL</h3>
-                  <div className="lp-price-value">R$197</div>
-                  <a href="#" className="lp-btn">COMPRAR INDIVIDUAL</a>
+                
+                {/* Ingresso Individual */}
+                <div className={`lp-price-tier ${!isExpired ? 'highlight' : ''}`}>
+                  {!isExpired && <div className="lp-discount-badge">ECONOMIZE R$ 197!</div>}
+                  <div style={{ fontSize: '3rem', marginBottom: '15px' }}>🤰</div>
+                  <h3 style={{ fontSize: '1.3rem', fontWeight: '900', color: 'var(--lp-primary)', margin: '0' }}>INGRESSO INDIVIDUAL</h3>
+                  
+                  {!isExpired && <div className="lp-price-old">De R$ 394,00 por</div>}
+                  
+                  <div className="lp-price-value" style={isExpired ? { marginTop: '20px' } : {}}>
+                    <span>R$</span>{isExpired ? "394" : "197"}
+                  </div>
+                  
+                  <a href="#" className="lp-btn">{isExpired ? "COMPRAR VALOR INTEGRAL" : "COMPRAR COM DESCONTO"}</a>
                 </div>
 
-                {/* Opção Casal */}
-                <div className="lp-price-tier">
-                  <div style={{ fontSize: '2.5rem', marginBottom: '8px' }}>💑</div>
-                  <h3 style={{ fontSize: '1.2rem', fontWeight: '700', color: 'var(--lp-primary)', margin: '0' }}>CASAL</h3>
-                  <div className="lp-price-value">R$297</div>
-                  <a href="#" className="lp-btn">COMPRAR CASAL</a>
+                {/* Ingresso Casal */}
+                <div className={`lp-price-tier ${!isExpired ? 'highlight' : ''}`}>
+                  {!isExpired && <div className="lp-discount-badge">ECONOMIZE R$ 291!</div>}
+                  <div style={{ fontSize: '3rem', marginBottom: '15px' }}>💑</div>
+                  <h3 style={{ fontSize: '1.3rem', fontWeight: '900', color: 'var(--lp-primary)', margin: '0' }}>INGRESSO CASAL</h3>
+                  
+                  {!isExpired && <div className="lp-price-old">De R$ 588,00 por</div>}
+                  
+                  <div className="lp-price-value" style={isExpired ? { marginTop: '20px' } : {}}>
+                    <span>R$</span>{isExpired ? "588" : "297"}
+                  </div>
+                  
+                  <a href="#" className="lp-btn">{isExpired ? "COMPRAR VALOR INTEGRAL" : "COMPRAR COM DESCONTO"}</a>
                 </div>
               </div>
 
-              <ul style={{ listStyle: 'none', padding: 0, textAlign: 'left', display: 'inline-block', fontSize: '0.95rem', color: 'var(--lp-text-muted)' }}>
-                <li style={{ marginBottom: '8px' }}>• Imersão Profunda com Psicóloga e Fisioterapeuta/Doula</li>
-                <li style={{ marginBottom: '8px' }}>• Coffee Break Especial Incluso</li>
-                <li style={{ marginBottom: '8px' }}>• Material de Apoio Exclusivo</li>
-                <li>• Muito Acolhimento e Conexão Real</li>
+              <ul style={{ listStyle: 'none', padding: 0, textAlign: 'left', display: 'inline-block', fontSize: '1rem', color: 'var(--lp-text-muted)', marginTop: '20px' }}>
+                <li style={{ marginBottom: '8px' }}>✅ <strong>Imersão Presencial</strong> com Psicóloga e Fisioterapeuta/Doula</li>
+                <li style={{ marginBottom: '8px' }}>✅ <strong>Coffee Break Especial</strong> Incluso para os dias de imersão</li>
+                <li style={{ marginBottom: '8px' }}>✅ <strong>Material de Apoio</strong> Exclusivo e Prático</li>
+                <li>✅ <strong>Vagas Limitadas:</strong> Máximo de 10 casais/gestantes para maior intimidade</li>
               </ul>
             </div>
           </section>
 
-          {/* 11. FAQ */}
+          {/* FAQ */}
           <section className="lp-container" style={{ padding: '80px 24px', maxWidth: '800px' }}>
-            <h2 style={{ textAlign: 'center', fontSize: '2.2rem', fontWeight: '700', marginBottom: '40px' }}>Dúvidas Frequentes</h2>
+            <h2 style={{ textAlign: 'center', fontSize: '2.2rem', fontWeight: '800', marginBottom: '40px' }}>Dúvidas Frequentes</h2>
             
             <details className="lp-accordion">
               <summary>Estou com poucas semanas de gestação, posso participar?</summary>
@@ -503,20 +465,16 @@ export default function ImersaoGestacaoSemFiltro() {
             </details>
             <details className="lp-accordion">
               <summary>Meu parceiro(a) não quer ou não pode ir. Posso ir sozinha?</summary>
-              <p>Sim! O Ingresso Individual foi pensado exatamente para você. Todo o conteúdo será profundamente transformador, mesmo indo sozinha ou levando sua mãe/amiga (basta adquirir ingresso para elas, se desejarem ir juntas).</p>
+              <p>Sim! O Ingresso Individual foi pensado exatamente para você. Todo o conteúdo será profundamente transformador, mesmo indo sozinha.</p>
             </details>
             <details className="lp-accordion">
               <summary>Vou ter meu bebê por cesárea agendada, a imersão serve para mim?</summary>
               <p>Sim. A imersão aborda a conexão com o bebê, o preparo emocional, o manejo do medo e a realidade do puerpério, vivências essenciais independente da via de parto.</p>
             </details>
-            <details className="lp-accordion">
-              <summary>Como funciona o pagamento?</summary>
-              <p>Você pode pagar via PIX ou parcelar no cartão de crédito através da plataforma segura clicando nos botões acima.</p>
-            </details>
           </section>
         </main>
 
-        {/* 12. PREMIUM FOOTER */}
+        {/* PREMIUM FOOTER */}
         <footer className="lp-footer">
           <div className="lp-container">
             <div className="lp-footer-grid">
@@ -545,7 +503,7 @@ export default function ImersaoGestacaoSemFiltro() {
               </div>
 
               <div className="lp-footer-contact">
-                <h4>Dúvidas ou Suporte?</h4>
+                <h4>Suporte</h4>
                 <p>E-mail: contato@gestaosemfiltro.com.br</p>
                 <p>WhatsApp: (82) 99999-9999</p>
               </div>
