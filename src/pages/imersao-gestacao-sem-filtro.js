@@ -158,7 +158,7 @@ export default function ImersaoGestacaoSemFiltro() {
           </div>
           <div>
             {/* Sugestão: Uma foto bonita das duas juntas ou uma colagem das duas */}
-            <img src="/modelos transparentes.png" alt="Erica Vilar e Lizia Nascimento" className="lp-split-image" style={{ boxShadow: '0 0 40px rgba(0,0,0,0.2)' }} />
+            <img src="/modelos%20transparente.png" alt="Erica Vilar e Lizia Nascimento" className="lp-split-image" style={{ boxShadow: '0 0 40px rgba(0,0,0,0.2)' }} />
           </div>
         </div>
       </section>
