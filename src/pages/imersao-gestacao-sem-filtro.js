@@ -250,7 +250,7 @@ export default function ImersaoGestacaoSemFiltro() {
             <div className="lp-container">
               <div className="lp-split-section">
                 <div>
-                  <img src="/foto-acolhimento.jpg" alt="Acolhimento humanizado na gestação" className="lp-split-image" />
+                  <img src="/foto-acolhimento.jfif" alt="Acolhimento humanizado na gestação" className="lp-split-image" />
                 </div>
                 <div>
                   <ul className="lp-list">
@@ -351,7 +351,7 @@ export default function ImersaoGestacaoSemFiltro() {
                   <p style={{ color: 'var(--lp-text-muted)' }}>Nós criamos a <strong>Gestação Sem Filtro</strong> para unir o melhor da psicologia e da fisioterapia em uma experiência imersiva, garantindo a recepção mais amorosa possível para seu bebê.</p>
                 </div>
                 <div>
-                  <img src="/modelos%transparente.png" alt="Erica Vilar e Lizia Nascimento juntas" className="lp-split-image" />
+                  <img src="/modelos.png" alt="Erica Vilar e Lizia Nascimento juntas" className="lp-split-image" />
                 </div>
               </div>
             </div>
