@@ -358,11 +358,13 @@ export default function ImersaoGestacaoSemFiltro() {
           </section>
 
           {/* LOCAL DA IMERSÃO */}
-          <section id="local" className="lp-container" style={{ padding: '80px 24px' }}>
-            <div className="lp-split-section" style={{ flexDirection: 'row-reverse' }}> 
-              <div style={{ flex: 1 }}>
-                <h2 style={{ fontSize: '2.2rem', fontWeight: '800', marginBottom: '20px' }}>Um ambiente pensado para você</h2>
-                <p style={{ marginBottom: '24px', color: 'var(--lp-text-muted)', fontSize: '1.1rem' }}>A Imersão Gestação Sem Filtro acontecerá em um espaço exclusivo, escolhido a dedo para proporcionar o máximo de conforto, segurança e acolhimento que você e seu bebê merecem.</p>
+          <section id="local" className="lp-container" style={{ padding: '60px 20px' }}>
+            <div className="lp-split-section lp-local-section"> 
+              <div className="lp-local-content">
+                <h2 style={{ fontSize: '2rem', fontWeight: '800', marginBottom: '16px' }}>Um ambiente pensado para você</h2>
+                <p style={{ marginBottom: '24px', color: 'var(--lp-text-muted)', fontSize: '1rem' }}>
+                  A Imersão Gestação Sem Filtro acontecerá em um espaço exclusivo, escolhido a dedo para proporcionar o máximo de conforto, segurança e acolhimento que você e seu bebê merecem.
+                </p>
                 
                 <ul className="lp-list">
                   <li><strong>Climatização e Conforto:</strong> Espaço adaptado para gestantes, com assentos macios, pufes e almofadas.</li>
@@ -371,15 +373,16 @@ export default function ImersaoGestacaoSemFiltro() {
                   <li><strong>Localização Privilegiada:</strong> Bairro seguro, de fácil acesso e com muita tranquilidade para o seu fim de semana.</li>
                 </ul>
                 
-                <div style={{ marginTop: '32px', padding: '16px', backgroundColor: 'var(--lp-primary-light)', borderLeft: '4px solid var(--lp-primary)', borderRadius: '0 8px 8px 0' }}>
-                  <p style={{ fontWeight: '800', color: 'var(--lp-primary)', margin: 0, display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <span style={{ fontSize: '1.5rem' }}>📍</span> 
-                    [Urban Coffe - R. Dr. Odilon Vasconcelos, 427]
+                <div className="lp-local-address">
+                  <p>
+                    <span>📍</span> 
+                    <strong>Urban Cafe - R. Dr. Odilon Vasconcelos, 427</strong>
                   </p>
                 </div>
               </div>
 
-              <div className="lp-collage" style={{ flex: 1 }}>
+              {/* Mudamos de lp-collage para lp-local-grid para isolar a estilização */}
+              <div className="lp-local-grid">
                 <img src="/local-imersao-1.webp" alt="Fachada ou sala principal do local" />
                 <img src="/local-imersao-2.jfif" alt="Detalhe do conforto e poltronas" />
                 <img src="/local-imersao-3.jfif" alt="Espaço preparado para exercícios" />

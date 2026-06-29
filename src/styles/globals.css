@@ -9618,7 +9618,7 @@ button{font:inherit;}
   width: 100%;
   max-width: 1200px;
   margin: 0 auto;
-  padding: 0 20px; /* Reduzido levemente para telas menores */
+  padding: 0 20px;
 }
 
 .lp-page .lp-text-red { color: var(--lp-primary); }
@@ -9643,7 +9643,7 @@ button{font:inherit;}
   border: none;
   cursor: pointer;
   box-shadow: 0 4px 14px rgba(138, 37, 34, 0.3);
-  width: 100%; /* Fullwidth no mobile para facilitar o clique */
+  width: 100%;
   animation: pulse-btn 2s infinite;
   box-sizing: border-box;
 }
@@ -9686,7 +9686,7 @@ button{font:inherit;}
 /* --- HERO SECTION (MOBILE) --- */
 .lp-page .lp-hero {
   display: flex;
-  flex-direction: column; /* Empilhado por padrão */
+  flex-direction: column;
   padding: 40px 0;
   gap: 32px;
 }
@@ -9731,7 +9731,7 @@ button{font:inherit;}
   color: var(--lp-primary);
 }
 
-/* --- COLLAGE / GRID DE IMAGENS (MOBILE) --- */
+/* --- COLLAGE / GRID DE IMAGENS DA DOBRA 1 (MOBILE) --- */
 .lp-page .lp-collage {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -9745,13 +9745,13 @@ button{font:inherit;}
   box-shadow: 0 4px 12px rgba(0,0,0,0.05);
 }
 .lp-page .lp-collage img:nth-child(even) {
-  transform: translateY(12px); /* Deslocamento suave vertical */
+  transform: translateY(12px);
 }
 
 /* --- SPLIT SECTIONS (TEXTO / IMAGEM MOBILE) --- */
 .lp-page .lp-split-section {
   display: flex;
-  flex-direction: column; /* Vertical no mobile */
+  flex-direction: column;
   gap: 24px;
   margin: 32px 0;
 }
@@ -9767,6 +9767,50 @@ button{font:inherit;}
   font-weight: 600;
   line-height: 1.5;
   padding: 0 16px;
+}
+
+/* --- SEÇÃO ESPECÍFICA DO LOCAL (MOBILE-FIRST) --- */
+.lp-page .lp-local-section {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+.lp-page .lp-local-content {
+  order: 1; /* Texto vem primeiro no celular */
+}
+.lp-page .lp-local-address {
+  margin-top: 24px;
+  padding: 16px;
+  background-color: var(--lp-primary-light);
+  border-left: 4px solid var(--lp-primary);
+  border-radius: 0 12px 12px 0;
+  box-shadow: 0 2px 8px rgba(138, 37, 34, 0.05);
+}
+.lp-page .lp-local-address p {
+  margin: 0;
+  font-size: 0.95rem;
+  color: var(--lp-primary);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  line-height: 1.4;
+}
+.lp-page .lp-local-address span {
+  font-size: 1.3rem;
+}
+.lp-page .lp-local-grid {
+  order: 2; /* Fotos abaixo do texto no celular */
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+.lp-page .lp-local-grid img {
+  width: 100%;
+  height: 130px;
+  object-fit: cover;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+  transition: var(--lp-transition);
 }
 
 /* --- ACCORDIONS (<details>) --- */
@@ -9894,7 +9938,7 @@ button{font:inherit;}
   color: #ffcccc;
   margin-top: 3px;
 }
-.lp-page .lp-pricing-grid {
+.lp-pricing-grid {
   display: flex;
   flex-direction: column;
   gap: 20px;
@@ -9968,7 +10012,7 @@ button{font:inherit;}
 @media (min-width: 768px) {
   .lp-page .lp-bg-grey { padding: 60px 0; }
   .lp-page .lp-bg-red { padding: 60px 0; }
-  .lp-page .lp-btn { width: auto; } /* Botão deixa de ser bloco 100% */
+  .lp-page .lp-btn { width: auto; }
 
   .lp-page .lp-hero {
     flex-direction: row;
@@ -9998,6 +10042,30 @@ button{font:inherit;}
   .lp-page .lp-split-image { max-height: 380px; }
   .lp-page .lp-red-banner-text { font-size: 1.6rem; }
 
+  /* Ajuste responsivo para a seção do Local no Desktop */
+  .lp-page .lp-local-section {
+    flex-direction: row-reverse; /* Inverte o posicionamento das colunas no PC */
+    align-items: center;
+    gap: 48px;
+  }
+  .lp-page .lp-local-content {
+    flex: 1;
+    order: 2;
+  }
+  .lp-page .lp-local-grid {
+    flex: 1;
+    order: 1;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+  .lp-page .lp-local-grid img {
+    height: 180px;
+  }
+  .lp-page .lp-local-grid img:hover {
+    transform: scale(1.03);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+  }
+
   .lp-page .lp-modules-grid { flex-direction: row; }
   .lp-page .lp-module-column { flex: 1; }
 
@@ -10019,5 +10087,6 @@ button{font:inherit;}
 @media (min-width: 1024px) {
   .lp-page .lp-hero-title { font-size: 3.6rem; }
   .lp-page .lp-collage img { height: 260px; }
+  .lp-page .lp-local-grid img { height: 220px; }
   .lp-page .lp-pricing-card { max-width: 850px; }
 }
