@@ -239,7 +239,7 @@ export default function ImersaoGestacaoSemFiltro() {
             </div>
             <div className="lp-collage">
               <img src="/foto-gestante-1.jpg" alt="Mulher grávida recebendo carinho" />
-              <img src="/foto-casal-gestante.jpg" alt="Casal aguardando o bebê" />
+              <img src="/foto-casal-gestante.webp" alt="Casal aguardando o bebê" />
               <img src="/foto-gestante-2.jpg" alt="Gestante sorrindo durante prática" />
               <img src="/foto-roda-gestantes.jpg" alt="Roda de apoio com gestantes" />
             </div>
@@ -280,7 +280,7 @@ export default function ImersaoGestacaoSemFiltro() {
                   <p style={{ marginTop: '20px', fontWeight: '700' }}>Então essa Imersão é o abraço e a preparação que você e seu bebê precisam agora.</p>
                 </div>
                 <div className="lp-collage">
-                  <img src="/foto-dor-1.jpg" alt="Gestante pensativa" />
+                  <img src="/foto-dor-1.jfif" alt="Gestante pensativa" />
                   <img src="/foto-dor-2.jpg" alt="Casal conversando" />
                   <img src="/foto-dor-3.jpg" alt="Prática de respiração" />
                   <img src="/foto-dor-4.jpg" alt="Apoio no parto" />
@@ -351,7 +351,7 @@ export default function ImersaoGestacaoSemFiltro() {
                   <p style={{ color: 'var(--lp-text-muted)' }}>Nós criamos a <strong>Gestação Sem Filtro</strong> para unir o melhor da psicologia e da fisioterapia em uma experiência imersiva, garantindo a recepção mais amorosa possível para seu bebê.</p>
                 </div>
                 <div>
-                  <img src="/erica-e-lizia.jpg" alt="Erica Vilar e Lizia Nascimento juntas" className="lp-split-image" />
+                  <img src="/modelos%transparente.png" alt="Erica Vilar e Lizia Nascimento juntas" className="lp-split-image" />
                 </div>
               </div>
             </div>
@@ -374,16 +374,16 @@ export default function ImersaoGestacaoSemFiltro() {
                 <div style={{ marginTop: '32px', padding: '16px', backgroundColor: 'var(--lp-primary-light)', borderLeft: '4px solid var(--lp-primary)', borderRadius: '0 8px 8px 0' }}>
                   <p style={{ fontWeight: '800', color: 'var(--lp-primary)', margin: 0, display: 'flex', alignItems: 'center', gap: '8px' }}>
                     <span style={{ fontSize: '1.5rem' }}>📍</span> 
-                    [Nome do Espaço - Ex: Ponta Verde, Maceió - AL]
+                    [Urban Coffe - R. Dr. Odilon Vasconcelos, 427]
                   </p>
                 </div>
               </div>
 
               <div className="lp-collage" style={{ flex: 1 }}>
-                <img src="/local-imersao-1.jpg" alt="Fachada ou sala principal do local" />
-                <img src="/local-imersao-2.jpg" alt="Detalhe do conforto e poltronas" />
-                <img src="/local-imersao-3.jpg" alt="Espaço preparado para exercícios" />
-                <img src="/local-imersao-4.jpg" alt="Mesa de coffee break carinhosa" />
+                <img src="/local-imersao-1.webp" alt="Fachada ou sala principal do local" />
+                <img src="/local-imersao-2.jfif" alt="Detalhe do conforto e poltronas" />
+                <img src="/local-imersao-3.jfif" alt="Espaço preparado para exercícios" />
+                <img src="/local-imersao-4.jfif" alt="Mesa de coffee break carinhosa" />
               </div>
             </div>
           </section>
