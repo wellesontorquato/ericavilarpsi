@@ -565,17 +565,10 @@ export default function ImersaoGestacaoSemFiltro() {
               <div className="lp-footer-links">
                 <h4>Siga as Facilitadoras</h4>
                 <ul>
-                  <li><a href="https://instagram.com" target="_blank" rel="noopener noreferrer">@ericavilar.psi</a></li>
-                  <li><a href="https://instagram.com" target="_blank" rel="noopener noreferrer">@lizianascimento.fisio</a></li>
+                  <li><a href="https://www.instagram.com/ericavilar.psi" target="_blank" rel="noopener noreferrer">@ericavilar.psi</a></li>
+                  <li><a href="https://www.instagram.com/casanascimentto/" target="_blank" rel="noopener noreferrer">@casanascimentto</a></li>
                 </ul>
               </div>
-
-              <div className="lp-footer-contact">
-                <h4>Suporte</h4>
-                <p>E-mail: contato@gestaosemfiltro.com.br</p>
-                <p>WhatsApp: (82) 99999-9999</p>
-              </div>
-
             </div>
 
             <div className="lp-footer-bottom">
