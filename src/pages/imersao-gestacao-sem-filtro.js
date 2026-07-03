@@ -66,7 +66,7 @@ export default function ImersaoGestacaoSemFiltro() {
         <meta name="author" content="Erica Vilar e Lizia Nascimento" />
         <meta name="robots" content="index, follow" />
         <meta property="og:type" content="website" />
-        <meta property="og:title" content="Imersão Gestação Sem Filtro | Apenas 10 Vagas" />
+        <meta property="og:title" content="Imersão Gestação Sem Filtro | Vagas Limitadas" />
         <meta property="og:description" content="Uma experiência profunda, acolhedora e transformadora para mulheres e casais que desejam viver a maternidade com consciência, preparo e segurança." />
         <meta property="og:image" content="/foto-casal-gestante.jpg" />
       </Head>
@@ -229,7 +229,7 @@ export default function ImersaoGestacaoSemFiltro() {
                 Mais do que um evento, uma vivência real.
               </h2>
               <p className="lp-hero-text" style={{ fontWeight: '800', color: 'var(--lp-text-dark)', fontSize: '1.2rem' }}>
-                APENAS 10 VAGAS! Experiência exclusiva.
+                VAGAS LIMITADAS! Experiência exclusiva.
               </p>
               <div className="lp-hero-tags">
                 <span>Acolhimento</span> | <span>Informação</span> | <span>Preparação</span> | <span>Confiança</span> | <span>Conexão</span>
@@ -483,7 +483,7 @@ export default function ImersaoGestacaoSemFiltro() {
                 <li style={{ marginBottom: '8px' }}>✅ <strong>Imersão Presencial</strong> com Psicóloga e Fisioterapeuta/Doula</li>
                 <li style={{ marginBottom: '8px' }}>✅ <strong>Coffee Break Especial</strong> Incluso para os dias de imersão</li>
                 <li style={{ marginBottom: '8px' }}>✅ <strong>Material de Apoio</strong> Exclusivo e Prático</li>
-                <li>✅ <strong>Vagas Limitadas:</strong> Máximo de 5 casais ou 10 gestantes para maior intimidade</li>
+                <li>✅ <strong>Vagas Limitadas!</strong></li>
               </ul>
             </div>
           </section>
