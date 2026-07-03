@@ -456,33 +456,19 @@ export default function ImersaoGestacaoSemFiltro() {
                 
                 {/* Ingresso Individual */}
                 <div className={`lp-price-tier ${!isExpired ? 'highlight' : ''}`}>
-                  {!isExpired && <div className="lp-discount-badge">ECONOMIZE R$ 197!</div>}
+                  {!isExpired && <div className="lp-discount-badge">ECONOMIZE R$ 102!</div>}
                   <div style={{ fontSize: '3rem', marginBottom: '15px' }}>🤰</div>
                   <h3 style={{ fontSize: '1.3rem', fontWeight: '900', color: 'var(--lp-primary)', margin: '0' }}>INGRESSO INDIVIDUAL</h3>
                   
-                  {!isExpired && <div className="lp-price-old">De R$ 394,00 por</div>}
+                  {!isExpired && <div className="lp-price-old">De R$ 199,00 por</div>}
                   
                   <div className="lp-price-value" style={isExpired ? { marginTop: '20px' } : {}}>
-                    <span>R$</span>{isExpired ? "394" : "197"}
+                    <span>R$</span>{isExpired ? "199" : "97"}
                   </div>
                   
-                  <a href="#" className="lp-btn">{isExpired ? "COMPRAR VALOR INTEGRAL" : "COMPRAR COM DESCONTO"}</a>
+                  <a href="/pagamento-imersao" className="lp-btn">{isExpired ? "COMPRAR VALOR INTEGRAL" : "COMPRAR COM DESCONTO"}</a>
                 </div>
 
-                {/* Ingresso Casal */}
-                <div className={`lp-price-tier ${!isExpired ? 'highlight' : ''}`}>
-                  {!isExpired && <div className="lp-discount-badge">ECONOMIZE R$ 291!</div>}
-                  <div style={{ fontSize: '3rem', marginBottom: '15px' }}>👩‍❤️‍👨</div>
-                  <h3 style={{ fontSize: '1.3rem', fontWeight: '900', color: 'var(--lp-primary)', margin: '0' }}>INGRESSO CASAL</h3>
-                  
-                  {!isExpired && <div className="lp-price-old">De R$ 588,00 por</div>}
-                  
-                  <div className="lp-price-value" style={isExpired ? { marginTop: '20px' } : {}}>
-                    <span>R$</span>{isExpired ? "588" : "297"}
-                  </div>
-                  
-                  <a href="#" className="lp-btn">{isExpired ? "COMPRAR VALOR INTEGRAL" : "COMPRAR COM DESCONTO"}</a>
-                </div>
               </div>
 
               <ul style={{ listStyle: 'none', padding: 0, textAlign: 'left', display: 'inline-block', fontSize: '1rem', color: 'var(--lp-text-muted)', marginTop: '20px' }}>

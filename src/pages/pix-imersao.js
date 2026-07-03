@@ -1,37 +1,43 @@
+"use client";
+
 import Head from "next/head";
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
-const PIX_PAYMENTS = {
-  individual: {
-    nome: "Individual",
-    valor: "R$ 197",
-    imagem: "/pix197.jpeg",
-    codigo:
-      "00020101021226760014BR.GOV.BCB.PIX0122liz.rafaela@icloud.com0228Imersao- Gestacao sem filtro5204000053039865406197.005802BR5925LIZIA RAFAELA CORDEIRO DO6006MACEIO62290525QRCCTZ0NCVL4utMwEIwa1KznP6304523E",
-  },
-  casal: {
-    nome: "Casal",
-    valor: "R$ 297",
-    imagem: "/pix297.jpeg",
-    codigo:
-      "00020101021226700014BR.GOV.BCB.PIX0122liz.rafaela@icloud.com0222Pagamento lizianascime5204000053039865406297.005802BR5925LIZIA RAFAELA CORDEIRO DO6006MACEIO62290525QRCCZUgc8SO3XQC3OvOamoRRm6304AA8C",
-  },
+// Deixamos apenas o Individual com o valor de R$ 97
+// ATENÇÃO: Lembre-se de gerar e trocar a 'imagem' e o 'codigo' para o valor exato de R$ 97!
+const PAGAMENTO = {
+  nome: "Ingresso Individual",
+  valor: "R$ 97,00",
+  imagem: "/pix97.jpeg", // Altere para o QR Code de R$ 97
+  codigo:
+    "00020101021226700014BR.GOV.BCB.PIX0122liz.rafaela@icloud.com0222Pagamento lizianascime520400005303986540597.005802BR5925LIZIA RAFAELA CORDEIRO DO6006MACEIO62290525QRCCDn8mpfYUusbmekQpcFRu46304E527", // Altere para o copia e cola de R$ 97
 };
 
 export default function PixImersao() {
   const router = useRouter();
   const [copiado, setCopiado] = useState(false);
   const [erro, setErro] = useState("");
+  const [autorizado, setAutorizado] = useState(null); // null = carregando, false = erro, true = liberado
 
-  const planoQuery = router.query.plano === "casal" ? "casal" : "individual";
-  const pagamento = PIX_PAYMENTS[planoQuery];
+  useEffect(() => {
+    // Verifica se a pessoa veio da página de pagamento
+    const veioDoPagamento = sessionStorage.getItem("acessoPixLiberado");
+    
+    if (veioDoPagamento === "true") {
+      setAutorizado(true);
+      // Opcional: limpar o acesso após entrar para que um F5 bloqueie a página novamente
+      // sessionStorage.removeItem("acessoPixLiberado"); 
+    } else {
+      setAutorizado(false);
+    }
+  }, []);
 
   async function copiarPix() {
     setErro("");
 
     try {
-      await navigator.clipboard.writeText(pagamento.codigo);
+      await navigator.clipboard.writeText(PAGAMENTO.codigo);
       setCopiado(true);
 
       setTimeout(() => {
@@ -44,393 +50,353 @@ export default function PixImersao() {
     }
   }
 
+  // Enquanto verifica a autorização, não renderiza nada (evita piscar a tela)
+  if (autorizado === null) return null;
+
+  // Tela de erro caso o acesso seja direto (sem passar pela página de opções)
+  if (autorizado === false) {
+    return (
+      <div className="lp-page erro-container">
+        <Head>
+          <title>Acesso Negado | Imersão</title>
+        </Head>
+        <div className="erro-box">
+          <h1>⚠️ Acesso Indisponível</h1>
+          <p>Você tentou acessar a página de pagamento diretamente.</p>
+          <p>Por favor, volte e inicie sua compra selecionando a forma de pagamento.</p>
+          <button onClick={() => router.push("/")} className="lp-btn">
+            Voltar ao Início
+          </button>
+        </div>
+        <style dangerouslySetInnerHTML={{ __html: stylesGlobais }} />
+      </div>
+    );
+  }
+
+  // Tela principal do PIX (Liberada)
   return (
     <>
       <Head>
-        <title>Pix | Imersão Gestação Sem Filtro</title>
+        <title>Pagamento Pix | Imersão Gestação Sem Filtro</title>
         <meta
           name="description"
-          content="Pagamento via Pix da Imersão Gestação Sem Filtro."
+          content="Finalize seu pagamento via Pix para a Imersão Gestação Sem Filtro."
         />
       </Head>
 
-      <main className="pixPage">
-        <div className="bgWord">PIX</div>
-        <div className="orb orbOne" />
-        <div className="orb orbTwo" />
+      <style dangerouslySetInnerHTML={{ __html: stylesGlobais }} />
 
-        <section className="pixShell">
-          <div className="pixIntro">
-            <a href="/pagamento-imersao" className="backLink">
-              ← Voltar para opções
-            </a>
-
-            <div className="badge">
-              <span />
-              Pagamento via Pix
-            </div>
-
-            <h1>Finalize sua reserva</h1>
-
-            <p>
-              Escaneie o QR Code ou copie o código Pix abaixo. Depois, envie o
-              comprovante no grupo para confirmação da sua vaga.
+      <main className="lp-page pix-wrapper">
+        <section className="lp-container pix-container">
+          
+          <div className="pix-header">
+            <button onClick={() => router.push("/pagamento-imersao")} className="back-link">
+              ← Voltar para opções de pagamento
+            </button>
+            <div className="badge">Pagamento via Pix</div>
+            <h1 className="pix-title">Finalize sua reserva</h1>
+            <p className="pix-subtitle">
+              Escaneie o QR Code ou copie o código Pix abaixo. <strong>Sua vaga só estará garantida após o envio do comprovante.</strong>
             </p>
-
-            <div className="summaryBox">
-              <span>Resumo</span>
-
-              <div>
-                <strong>{pagamento.nome}</strong>
-                <b>{pagamento.valor}</b>
-              </div>
-
-              <small>Pix sem acréscimo</small>
-            </div>
           </div>
 
-          <div className="pixCard">
-            <div className="qrFrame">
+          <div className="pix-content">
+            {/* Resumo do Pedido */}
+            <div className="summary-box">
+              <span className="summary-label">Resumo do Pedido</span>
+              <div className="summary-details">
+                <strong>{PAGAMENTO.nome}</strong>
+                <b className="lp-text-red">{PAGAMENTO.valor}</b>
+              </div>
+            </div>
+
+            {/* QR Code */}
+            <div className="qr-frame">
               <img
-                src={pagamento.imagem}
-                alt={`QR Code Pix ${pagamento.nome} ${pagamento.valor}`}
+                src={PAGAMENTO.imagem}
+                alt={`QR Code Pix ${PAGAMENTO.valor}`}
               />
             </div>
 
-            <div className="copyArea">
-              <label htmlFor="pixCopiaCola">Pix copia e cola</label>
-
+            {/* Copia e Cola */}
+            <div className="copy-area">
+              <label htmlFor="pixCopiaCola">Pix Copia e Cola</label>
               <textarea
                 id="pixCopiaCola"
-                value={pagamento.codigo}
+                value={PAGAMENTO.codigo}
                 readOnly
                 onFocus={(event) => event.target.select()}
               />
 
-              <button type="button" className="primaryButton" onClick={copiarPix}>
-                {copiado ? "Pix copiado!" : "Copiar código Pix"}
-                <span>↗</span>
+              <button type="button" className="lp-btn copy-btn" onClick={copiarPix}>
+                {copiado ? "✔ PIX COPIADO!" : "COPIAR CÓDIGO PIX"}
               </button>
             </div>
 
-            {erro && <p className="errorMessage">{erro}</p>}
+            {erro && <p className="error-message">{erro}</p>}
 
-            <p className="proofNote">
-              Importante: sua vaga será confirmada após o envio do comprovante no grupo.
-            </p>
+            <div className="proof-note">
+              <p>📸 <strong>Atenção:</strong> Após o pagamento, não esqueça de enviar o comprovante no nosso grupo de WhatsApp para confirmar sua inscrição.</p>
+            </div>
           </div>
         </section>
       </main>
-
-      <style jsx global>{`
-        .pixPage,
-        .pixPage * {
-          box-sizing: border-box;
-        }
-
-        .pixPage {
-          min-height: 100vh;
-          position: relative;
-          overflow-x: hidden;
-          padding: 14px;
-          color: #2d1717;
-          font-family: "Montserrat", Arial, sans-serif;
-          background:
-            radial-gradient(circle at 14% 12%, rgba(255, 210, 184, 0.24), transparent 30%),
-            radial-gradient(circle at 86% 20%, rgba(187, 76, 91, 0.34), transparent 34%),
-            linear-gradient(135deg, #321217 0%, #5a2328 46%, #9a5545 100%);
-        }
-
-        .bgWord {
-          position: absolute;
-          top: 10px;
-          left: 50%;
-          transform: translateX(-50%);
-          z-index: 0;
-          color: rgba(255, 235, 224, 0.075);
-          font-size: clamp(6rem, 26vw, 18rem);
-          font-weight: 950;
-          letter-spacing: -0.09em;
-          line-height: 0.8;
-          white-space: nowrap;
-          pointer-events: none;
-        }
-
-        .orb {
-          position: absolute;
-          z-index: 0;
-          border-radius: 999px;
-          filter: blur(74px);
-          pointer-events: none;
-        }
-
-        .orbOne {
-          width: 320px;
-          height: 320px;
-          left: -130px;
-          bottom: 18%;
-          background: rgba(255, 181, 137, 0.42);
-        }
-
-        .orbTwo {
-          width: 360px;
-          height: 360px;
-          right: -150px;
-          top: 16%;
-          background: rgba(129, 42, 63, 0.52);
-        }
-
-        .pixShell {
-          width: min(980px, 100%);
-          min-height: calc(100vh - 28px);
-          margin: 0 auto;
-          position: relative;
-          z-index: 1;
-          display: grid;
-          gap: 14px;
-          align-content: center;
-        }
-
-        .pixIntro,
-        .pixCard {
-          background:
-            linear-gradient(180deg, rgba(255, 255, 255, 0.97), rgba(255, 247, 242, 0.99)),
-            #fff8f4;
-          border: 1px solid rgba(255, 255, 255, 0.74);
-          box-shadow:
-            0 28px 70px rgba(24, 6, 8, 0.24),
-            inset 0 0 0 1px rgba(255, 255, 255, 0.68);
-          border-radius: 30px;
-          padding: 18px;
-        }
-
-        .backLink {
-          display: inline-flex;
-          margin-bottom: 14px;
-          color: #8f3048;
-          text-decoration: none;
-          font-size: 0.8rem;
-          font-weight: 900;
-        }
-
-        .badge {
-          width: fit-content;
-          display: inline-flex;
-          align-items: center;
-          gap: 8px;
-          padding: 9px 13px;
-          border-radius: 999px;
-          background: #ffffff;
-          color: #a64c50;
-          font-size: 0.67rem;
-          font-weight: 950;
-          letter-spacing: 0.055em;
-          text-transform: uppercase;
-          box-shadow: 0 12px 30px rgba(90, 35, 38, 0.08);
-        }
-
-        .badge span {
-          width: 8px;
-          height: 8px;
-          border-radius: 999px;
-          background: #b04b58;
-          box-shadow: 0 0 0 5px rgba(176, 75, 88, 0.12);
-        }
-
-        .pixIntro h1 {
-          margin: 14px 0 0;
-          color: #291211;
-          font-family: "Libre Bodoni", Georgia, serif;
-          font-size: clamp(2.6rem, 13vw, 5.3rem);
-          line-height: 0.9;
-          letter-spacing: -0.065em;
-          font-weight: 600;
-        }
-
-        .pixIntro p {
-          margin: 14px 0 0;
-          color: #563936;
-          font-size: 0.96rem;
-          line-height: 1.5;
-          font-weight: 560;
-        }
-
-        .summaryBox {
-          display: grid;
-          gap: 8px;
-          margin-top: 16px;
-          padding: 14px;
-          border-radius: 22px;
-          background:
-            radial-gradient(circle at 12% 18%, rgba(255, 255, 255, 0.78), transparent 35%),
-            linear-gradient(135deg, #fff0e7, #f7d6c8);
-          border: 1px solid rgba(166, 76, 80, 0.16);
-        }
-
-        .summaryBox > span {
-          color: #a64c50;
-          font-size: 0.64rem;
-          font-weight: 950;
-          letter-spacing: 0.08em;
-          text-transform: uppercase;
-        }
-
-        .summaryBox div {
-          display: flex;
-          align-items: flex-start;
-          justify-content: space-between;
-          gap: 12px;
-        }
-
-        .summaryBox strong {
-          color: #351817;
-          font-size: 1rem;
-          font-weight: 950;
-        }
-
-        .summaryBox b {
-          color: #351817;
-          font-family: "Libre Bodoni", Georgia, serif;
-          font-size: 1.9rem;
-          line-height: 1;
-        }
-
-        .summaryBox small {
-          color: #704740;
-          font-size: 0.76rem;
-          font-weight: 800;
-        }
-
-        .pixCard {
-          display: grid;
-          gap: 14px;
-        }
-
-        .qrFrame {
-          display: grid;
-          place-items: center;
-          padding: 12px;
-          border-radius: 22px;
-          background: #ffffff;
-          border: 1px solid rgba(166, 76, 80, 0.1);
-        }
-
-        .qrFrame img {
-          width: min(330px, 100%);
-          height: auto;
-          display: block;
-          border-radius: 14px;
-        }
-
-        .copyArea {
-          display: grid;
-          gap: 8px;
-        }
-
-        .copyArea label {
-          color: #3a1b1a;
-          font-size: 0.78rem;
-          font-weight: 900;
-        }
-
-        .copyArea textarea {
-          width: 100%;
-          min-height: 96px;
-          resize: vertical;
-          border: 1px solid rgba(166, 76, 80, 0.16);
-          border-radius: 16px;
-          background: #ffffff;
-          padding: 12px;
-          color: #2d1717;
-          font: inherit;
-          font-size: 0.72rem;
-          line-height: 1.38;
-          outline: none;
-        }
-
-        .primaryButton {
-          width: 100%;
-          min-height: 56px;
-          border: 0;
-          border-radius: 18px;
-          padding: 15px 16px;
-          background: linear-gradient(135deg, #8f3048, #d86f4f);
-          color: #ffffff;
-          font-family: "Montserrat", Arial, sans-serif;
-          font-size: 0.94rem;
-          font-weight: 950;
-          cursor: pointer;
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          box-shadow: 0 18px 38px rgba(143, 48, 72, 0.34);
-        }
-
-        .primaryButton span {
-          display: grid;
-          place-items: center;
-          width: 32px;
-          height: 32px;
-          border-radius: 999px;
-          background: rgba(255, 255, 255, 0.16);
-        }
-
-        .proofNote {
-          margin: 0;
-          padding: 10px 12px;
-          border-radius: 15px;
-          background: rgba(143, 48, 72, 0.08);
-          color: #7f293f;
-          font-size: 0.75rem;
-          line-height: 1.38;
-          font-weight: 900;
-          text-align: center;
-        }
-
-        .errorMessage {
-          margin: 0;
-          padding: 10px 12px;
-          border-radius: 14px;
-          background: rgba(143, 48, 72, 0.09);
-          color: #8f3048;
-          font-size: 0.78rem;
-          line-height: 1.35;
-          font-weight: 850;
-        }
-
-        @media (min-width: 760px) {
-          .pixPage {
-            padding: 28px;
-          }
-
-          .pixShell {
-            min-height: calc(100vh - 56px);
-            grid-template-columns: minmax(0, 1fr) 420px;
-            align-items: center;
-            gap: 22px;
-          }
-
-          .pixIntro,
-          .pixCard {
-            border-radius: 36px;
-            padding: 28px;
-          }
-        }
-
-        @media (min-width: 1020px) {
-          .pixShell {
-            grid-template-columns: minmax(0, 1fr) 440px;
-          }
-
-          .pixIntro {
-            padding: 42px;
-          }
-
-          .pixIntro h1 {
-            font-size: clamp(4.5rem, 6vw, 6rem);
-          }
-        }
-      `}</style>
     </>
   );
 }
+
+// Estilos padronizados com a Landing Page
+const stylesGlobais = `
+  :root {
+    --lp-primary: #8a2522;
+    --lp-primary-hover: #6b1b19;
+    --lp-primary-border: #fad1d1;
+    --lp-text-dark: #2d2d2d;
+    --lp-text-muted: #595959;
+    --lp-bg-light: #fcf8f7;
+    --lp-white: #ffffff;
+    --lp-font-sans: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    --lp-transition: all 0.3s ease;
+  }
+
+  body {
+    margin: 0;
+    padding: 0;
+    background-color: var(--lp-bg-light);
+  }
+
+  .lp-page {
+    font-family: var(--lp-font-sans);
+    color: var(--lp-text-dark);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .lp-text-red { color: var(--lp-primary); }
+
+  .lp-btn {
+    display: inline-flex; align-items: center; justify-content: center;
+    background-color: var(--lp-primary); color: var(--lp-white);
+    text-decoration: none; font-weight: 800; padding: 16px 32px;
+    border-radius: 50px; text-transform: uppercase; font-size: 1rem;
+    letter-spacing: 0.05em; transition: var(--lp-transition);
+    border: none; cursor: pointer; box-shadow: 0 4px 14px rgba(138, 37, 34, 0.3);
+    width: 100%;
+  }
+  .lp-btn:hover {
+    background-color: var(--lp-primary-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(138, 37, 34, 0.5);
+  }
+
+  /* Container de Erro */
+  .erro-container {
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background-color: var(--lp-bg-light);
+  }
+  .erro-box {
+    background: var(--lp-white);
+    padding: 40px;
+    border-radius: 20px;
+    text-align: center;
+    max-width: 500px;
+    box-shadow: 0 10px 30px rgba(138, 37, 34, 0.1);
+    border: 1px solid var(--lp-primary-border);
+  }
+  .erro-box h1 {
+    color: var(--lp-primary);
+    margin-bottom: 16px;
+    font-size: 2rem;
+    font-weight: 900;
+  }
+  .erro-box p {
+    color: var(--lp-text-muted);
+    margin-bottom: 24px;
+    font-size: 1.1rem;
+  }
+
+  /* Layout PIX */
+  .pix-wrapper {
+    min-height: 100vh;
+    padding: 40px 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .pix-container {
+    background: var(--lp-white);
+    max-width: 600px;
+    width: 100%;
+    border-radius: 24px;
+    padding: 40px;
+    box-shadow: 0 20px 50px rgba(138,37,34,0.08);
+    border: 1px solid var(--lp-primary-border);
+  }
+
+  .pix-header {
+    text-align: center;
+    margin-bottom: 32px;
+  }
+
+  .back-link {
+    background: none; border: none; cursor: pointer;
+    color: var(--lp-primary); font-weight: 700;
+    font-size: 0.9rem; margin-bottom: 24px;
+    display: inline-block; text-decoration: underline;
+    font-family: inherit;
+  }
+
+  .badge {
+    background: #fce8e8;
+    color: var(--lp-primary);
+    padding: 6px 16px;
+    border-radius: 50px;
+    font-size: 0.8rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    display: inline-block;
+    margin-bottom: 16px;
+    letter-spacing: 1px;
+  }
+
+  .pix-title {
+    font-size: 2.2rem;
+    font-weight: 900;
+    margin: 0 0 16px 0;
+    color: var(--lp-text-dark);
+  }
+
+  .pix-subtitle {
+    color: var(--lp-text-muted);
+    font-size: 1.05rem;
+    margin: 0;
+  }
+
+  .pix-content {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  .summary-box {
+    background: #f9f9f9;
+    padding: 20px;
+    border-radius: 16px;
+    border: 1px dashed var(--lp-primary-border);
+  }
+
+  .summary-label {
+    display: block;
+    font-size: 0.8rem;
+    color: var(--lp-text-muted);
+    text-transform: uppercase;
+    font-weight: 800;
+    margin-bottom: 8px;
+  }
+
+  .summary-details {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 1.2rem;
+  }
+
+  .summary-details strong {
+    color: var(--lp-text-dark);
+  }
+
+  .summary-details b {
+    font-size: 1.8rem;
+    font-weight: 900;
+  }
+
+  .qr-frame {
+    display: flex;
+    justify-content: center;
+    background: #fff;
+    padding: 20px;
+    border-radius: 20px;
+    border: 1px solid #eee;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+  }
+
+  .qr-frame img {
+    width: 100%;
+    max-width: 280px;
+    border-radius: 12px;
+  }
+
+  .copy-area {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .copy-area label {
+    font-weight: 800;
+    color: var(--lp-text-dark);
+    font-size: 0.95rem;
+  }
+
+  .copy-area textarea {
+    width: 100%;
+    box-sizing: border-box;
+    height: 80px;
+    resize: none;
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    padding: 12px;
+    font-family: monospace;
+    font-size: 0.85rem;
+    color: var(--lp-text-muted);
+    background: #fcfcfc;
+    outline: none;
+  }
+
+  .copy-area textarea:focus {
+    border-color: var(--lp-primary);
+  }
+
+  .copy-btn {
+    margin-top: 8px;
+  }
+
+  .error-message {
+    color: #e74c3c;
+    background: #fdf0ed;
+    padding: 12px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-align: center;
+    margin: 0;
+  }
+
+  .proof-note {
+    background: #eaf8ec;
+    border: 1px solid #bfe4c6;
+    color: #27ae60;
+    padding: 16px;
+    border-radius: 12px;
+    font-size: 0.95rem;
+    text-align: center;
+  }
+  .proof-note p { margin: 0; }
+
+  @media (max-width: 600px) {
+    .pix-container {
+      padding: 24px;
+    }
+    .pix-title {
+      font-size: 1.8rem;
+    }
+    .summary-details b {
+      font-size: 1.5rem;
+    }
+  }
+`;
