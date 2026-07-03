@@ -1,7 +1,7 @@
 "use client";
 
 import Head from "next/head";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 
 const PLANO = {
@@ -23,9 +23,21 @@ const DESTAQUES = [
 export default function PagamentoImersao() {
   const router = useRouter();
   const [metodoPagamento, setMetodoPagamento] = useState("pix");
+  const [autorizado, setAutorizado] = useState(null);
 
   const isPix = metodoPagamento === "pix";
   const isCartao = metodoPagamento === "cartao";
+
+  useEffect(() => {
+    // Verifica se a pessoa clicou no botão da página principal
+    const veioDaLandingPage = sessionStorage.getItem("acessoPagamentoLiberado");
+    
+    if (veioDaLandingPage === "true") {
+      setAutorizado(true);
+    } else {
+      setAutorizado(false);
+    }
+  }, []);
 
   function continuarPagamento() {
     if (isCartao) {
@@ -39,6 +51,28 @@ export default function PagamentoImersao() {
     
     // Redireciona para a página PIX
     router.push("/pix-imersao");
+  }
+
+  // Enquanto verifica a autorização, não renderiza nada
+  if (autorizado === null) return null;
+
+  // Tela de erro caso o acesso seja direto
+  if (autorizado === false) {
+    return (
+      <div className="lp-page erro-container">
+        <Head>
+          <title>Acesso Negado | Imersão</title>
+        </Head>
+        <div className="erro-box">
+          <h1>⚠️ Acesso Indisponível</h1>
+          <p>Você precisa iniciar a sua inscrição a partir da página oficial da Imersão.</p>
+          <button onClick={() => router.push("/")} className="lp-btn">
+            Ir para a página principal
+          </button>
+        </div>
+        <style dangerouslySetInnerHTML={{ __html: stylesGlobais }} />
+      </div>
+    );
   }
 
   return (
@@ -201,6 +235,36 @@ const stylesGlobais = `
   }
 
   .checkout-grid { display: grid; gap: 30px; grid-template-columns: 1fr; }
+
+  /* Container de Erro */
+  .erro-container {
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background-color: var(--lp-bg-light);
+  }
+  .erro-box {
+    background: var(--lp-white);
+    padding: 40px;
+    border-radius: 20px;
+    text-align: center;
+    max-width: 500px;
+    box-shadow: 0 10px 30px rgba(138, 37, 34, 0.1);
+    border: 1px solid var(--lp-primary-border);
+  }
+  .erro-box h1 {
+    color: var(--lp-primary);
+    margin-bottom: 16px;
+    font-size: 2rem;
+    font-weight: 900;
+  }
+  .erro-box p {
+    color: var(--lp-text-muted);
+    margin-bottom: 24px;
+    font-size: 1.1rem;
+  }
 
   /* CARDS GERAIS */
   .info-card, .payment-card {

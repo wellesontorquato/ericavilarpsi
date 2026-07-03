@@ -100,7 +100,7 @@ export default function ImersaoGestacaoSemFiltro() {
           display: inline-flex; align-items: center; justify-content: center; background-color: var(--lp-primary); color: var(--lp-white);
           text-decoration: none; font-weight: 800; padding: 20px 36px; border-radius: 50px; text-transform: uppercase;
           font-size: 1rem; letter-spacing: 0.05em; transition: var(--lp-transition); border: none; cursor: pointer;
-          box-shadow: 0 4px 14px rgba(138, 37, 34, 0.3); width: 100%; animation: pulse-btn 2s infinite;
+          box-shadow: 0 4px 14px rgba(138, 37, 34, 0.3); width: 100%; animation: pulse-btn 2s infinite; font-family: inherit;
         }
         @keyframes pulse-btn {
           0% { box-shadow: 0 0 0 0 rgba(138, 37, 34, 0.4); }
@@ -419,7 +419,6 @@ export default function ImersaoGestacaoSemFiltro() {
 
           {/* =========================================
               GATILHO DE CONVERSÃO: PREÇO E TIMER
-              Aqui adicionamos o Ref para disparar o Observer
               ========================================= */}
           <section id="comprar" ref={pricingSectionRef} className="lp-pricing-wrapper">
             <div className="lp-pricing-card">
@@ -466,7 +465,16 @@ export default function ImersaoGestacaoSemFiltro() {
                     <span>R$</span>{isExpired ? "199" : "97"}
                   </div>
                   
-                  <a href="/pagamento-imersao" className="lp-btn">{isExpired ? "COMPRAR VALOR INTEGRAL" : "COMPRAR COM DESCONTO"}</a>
+                  {/* Botão de Compra Modificado com sessionStorage */}
+                  <button 
+                    onClick={() => {
+                      sessionStorage.setItem("acessoPagamentoLiberado", "true");
+                      window.location.href = "/pagamento-imersao";
+                    }}
+                    className="lp-btn"
+                  >
+                    {isExpired ? "COMPRAR VALOR INTEGRAL" : "COMPRAR COM DESCONTO"}
+                  </button>
                 </div>
 
               </div>
