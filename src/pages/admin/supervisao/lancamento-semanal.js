@@ -76,6 +76,24 @@ function normalizeLaunchForm(item = {}) {
   }, {});
 }
 
+// NOVA FUNÇÃO: Avalia o status e retorna a classe CSS de cor correta
+function getStatusClass(status, archived) {
+  if (archived) return "archived";
+  
+  const normalized = String(status || "").toLowerCase();
+  
+  // Se contiver "concl", deixa vazio para pegar o verde padrão do CSS
+  if (normalized.includes("concl")) return "";
+  
+  // Se estiver em andamento ou pendente, usa "neutral" (laranja/amarelo)
+  if (normalized.includes("andamento") || normalized.includes("pendente")) return "neutral";
+  
+  // Se estiver atrasado/vencido, tenta usar uma classe de perigo (vermelho)
+  if (normalized.includes("atras") || normalized.includes("venc")) return "danger";
+  
+  return "neutral"; // Padrão seguro para outros status não mapeados
+}
+
 export default function LancamentoSemanalPage() {
   return (
     <AuthGuard>
@@ -384,7 +402,7 @@ function LancamentoContent({ user, onLogout }) {
                       <article className={`supervisao-entity-row ${archived ? "archived" : ""}`} key={item.id}>
                         <div className="primary" data-label="Paciente/Caso">
                           <strong>{item.pacienteNome || "Paciente/caso"}</strong>
-                          <span className={`supervisao-inline-status ${archived ? "archived" : ""}`}>
+                          <span className={`supervisao-inline-status ${getStatusClass(item.statusPlano, archived)}`}>
                             {archived ? "Arquivado" : item.statusPlano || "Ativo"}
                           </span>
                         </div>
