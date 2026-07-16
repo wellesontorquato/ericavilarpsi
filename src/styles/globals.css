@@ -6837,7 +6837,7 @@ button{font:inherit;}
 
 .supervisao-dashboard-hero {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(420px, 0.88fr);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 360px), 1fr));
   gap: 24px;
   align-items: center;
   border-radius: 34px;
@@ -6999,9 +6999,10 @@ button{font:inherit;}
 
 .supervisao-radar-wrap {
   display: grid;
-  grid-template-columns: 280px minmax(0, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
   gap: 18px;
   align-items: center;
+  justify-items: center;
 }
 
 .supervisao-radar {
