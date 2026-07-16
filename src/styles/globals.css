@@ -10117,7 +10117,7 @@ button{font:inherit;}
 /* Ajuste para mobile para não sobrepor a tabbar inferior */
 @media (max-width: 768px) {
   .whatsapp-float {
-    bottom: 90px; /* Sobe o botão para escapar do menu mobile */
+    bottom: 100px; /* Sobe o botão para escapar do menu mobile */
     right: 18px;
     width: 52px;
     height: 52px;
