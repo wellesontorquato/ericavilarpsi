@@ -10090,3 +10090,41 @@ button{font:inherit;}
   .lp-page .lp-local-grid img { height: 220px; }
   .lp-page .lp-pricing-card { max-width: 850px; }
 }
+
+/* Botão Flutuante do WhatsApp */
+.whatsapp-float {
+  position: fixed;
+  bottom: 28px;
+  right: 28px;
+  width: 60px;
+  height: 60px;
+  background-color: #25d366;
+  color: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8px 24px rgba(37, 211, 102, 0.35);
+  z-index: 1000;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.whatsapp-float:hover {
+  transform: scale(1.08);
+  box-shadow: 0 12px 28px rgba(37, 211, 102, 0.45);
+}
+
+/* Ajuste para mobile para não sobrepor a tabbar inferior */
+@media (max-width: 768px) {
+  .whatsapp-float {
+    bottom: 90px; /* Sobe o botão para escapar do menu mobile */
+    right: 18px;
+    width: 52px;
+    height: 52px;
+  }
+  
+  .whatsapp-float svg {
+    width: 26px;
+    height: 26px;
+  }
+}
