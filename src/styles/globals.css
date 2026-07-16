@@ -6787,7 +6787,7 @@ button{font:inherit;}
   .supervisao-chart-card:has(.supervisao-trend-chart),
   .supervisao-chart-card:has(svg polyline),
   .supervisao-chart-card:has(.supervisao-column-chart) {
-    grid-column: span 8 !important;
+    grid-column: span 7 !important;
   }
 
   /* Painéis de Gráficos Circulares / Radar - Espaço Lateral Compacto */
@@ -6795,7 +6795,7 @@ button{font:inherit;}
   .supervisao-chart-card:has(.supervisao-progress-ring),
   .supervisao-chart-card:has(.supervisao-donut-container),
   .supervisao-chart-card:has(.supervisao-radar-wrap) {
-    grid-column: span 4 !important;
+    grid-column: span 5 !important;
   }
 
   /* Ajustes para layouts mistos (tabelas e resumo) */
@@ -6999,10 +6999,9 @@ button{font:inherit;}
 
 .supervisao-radar-wrap {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
   gap: 18px;
   align-items: center;
-  justify-items: center;
 }
 
 .supervisao-radar {
