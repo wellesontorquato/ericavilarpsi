@@ -6712,7 +6712,7 @@ button{font:inherit;}
   box-shadow: var(--sup-shadow);
   margin-bottom: 12px !important;
   display: grid;
-  grid-template-columns: repeat(4, minmax(150px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
   gap: 16px;
   transition: all 0.25s ease;
 }
