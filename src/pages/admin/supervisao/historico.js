@@ -118,6 +118,7 @@ function ModalDetalheLancamento({ item, onFechar }) {
   if (!item) return null;
 
   const textos = [
+    ["Emoção a ser elaborada", item.emocaoElaborada], // NOVO CAMPO
     ["Ponto forte", item.pontoForte],
     ["Ponto a desenvolver", item.pontoDesenvolver],
     ["Recomendação", item.recomendacao],
@@ -183,6 +184,16 @@ function ModalDetalheLancamento({ item, onFechar }) {
               <span>Objetivos</span>
               <strong>{formatPercent(item.evolucaoObjetivos || 0)}</strong>
             </div>
+
+            {/* NOVO CAMPO NO GRID */}
+            <div>
+              <span>Intensidade (Comp.)</span>
+              <strong>
+                {item.intensidadeComportamento !== undefined && item.intensidadeComportamento !== "" 
+                  ? `${item.intensidadeComportamento}/10` 
+                  : "-"}
+              </strong>
+            </div>
           </div>
 
           <div className="supervisao-detalhe-textos">
@@ -241,6 +252,10 @@ function TimelineLancamentosResumida({ items = [], onVerDetalhes }) {
               <span>Competência {formatDecimal(competenciaMedia(item))}/5</span>
               <span>Adesão {formatPercent(item.adesaoTarefas || 0)}</span>
               <span>Objetivos {formatPercent(item.evolucaoObjetivos || 0)}</span>
+              {/* NOVO CAMPO NAS MÉTRICAS DA TIMELINE */}
+              {item.intensidadeComportamento !== undefined && item.intensidadeComportamento !== "" && (
+                <span>Intensidade {item.intensidadeComportamento}/10</span>
+              )}
             </div>
 
             <p className="supervisao-history-summary">

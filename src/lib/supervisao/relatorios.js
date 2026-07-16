@@ -233,6 +233,8 @@ export const lancamentosColumns = [
   { key: "pontoDesenvolver", label: "Ponto a desenvolver" },
   { key: "recomendacao", label: "Recomendação" },
   { key: "planoAcao", label: "Plano de ação" },
+  { key: "emocaoElaborada", label: "Emoção Elaborada" },
+  { key: "intensidadeComportamento", label: "Intensidade Comportamento" },
 ];
 
 export const alertasColumns = [
@@ -309,6 +311,8 @@ export function buildLancamentosRows(lancamentos = [], context = {}) {
     pontoDesenvolver: normalizeText(item.pontoDesenvolver),
     recomendacao: normalizeText(item.recomendacao),
     planoAcao: normalizeText(item.planoAcao),
+    emocaoElaborada: normalizeText(item.emocaoElaborada),
+    intensidadeComportamento: normalizeText(item.intensidadeComportamento),
   }));
 }
 

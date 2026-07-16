@@ -17,6 +17,7 @@ export const patientIndicatorFields = [
   ["evolucaoObjetivos", "Objetivos", 100, false],
   ["intensidadeSintomas", "Sintomas", 10, true],
   ["evitacaoSocial", "Evitação", 10, true],
+  ["intensidadeComportamento", "Comportamento", 10, true],
 ];
 
 export function asArray(value) {

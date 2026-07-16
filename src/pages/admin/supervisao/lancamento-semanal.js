@@ -30,6 +30,8 @@ const initialForm = {
   evitacaoSocial: "",
   adesaoTarefas: "",
   intensidadeSintomas: "",
+  intensidadeComportamento: "", // NOVO
+  emocaoElaborada: "", // NOVO
   evolucaoObjetivos: "",
   pontoForte: "",
   pontoDesenvolver: "",
@@ -55,6 +57,7 @@ const evolucaoFields = [
   ["evitacaoSocial", "Evitação social (0-10)", 0, 10],
   ["adesaoTarefas", "Adesão às tarefas (%)", 0, 100],
   ["intensidadeSintomas", "Intensidade dos sintomas (0-10)", 0, 10],
+  ["intensidadeComportamento", "Intensidade do comportamento (0-10)", 0, 10], // NOVO
   ["evolucaoObjetivos", "Evolução dos objetivos (%)", 0, 100],
 ];
 
@@ -531,6 +534,11 @@ function LancamentoContent({ user, onLogout }) {
                 />
               </label>
             ))}
+            
+            <label className="full">
+              <span>Emoção a ser elaborada</span>
+              <textarea value={form.emocaoElaborada} onChange={(event) => setField("emocaoElaborada", event.target.value)} rows="2" />
+            </label>
 
             <div className="supervisao-form-group full">
               <h2>4. Plano de desenvolvimento e devolutiva</h2>

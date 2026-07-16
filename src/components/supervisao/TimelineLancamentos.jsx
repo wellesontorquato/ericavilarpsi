@@ -90,12 +90,24 @@ export function TimelineLancamentos({
               <span>Competência {formatDecimal(competenciaMedia(item))}/5</span>
               <span>Adesão {formatPercent(item.adesaoTarefas)}</span>
               <span>Objetivos {formatPercent(item.evolucaoObjetivos)}</span>
+              
+              {/* NOVO CAMPO: INTENSIDADE DO COMPORTAMENTO */}
+              {item.intensidadeComportamento !== undefined && item.intensidadeComportamento !== "" && (
+                <span>Intensidade (Comp.) {formatDecimal(item.intensidadeComportamento)}/10</span>
+              )}
             </div>
 
             <p title={safeText(getResumoTexto(item), "")}>{truncateText(getResumoTexto(item), 170, "Sem observação registrada para esta semana.")}</p>
 
-            {(item.pontoForte || item.pontoDesenvolver || item.planoAcao) && (
+            {/* ATUALIZADO PARA INCLUIR A EMOÇÃO */}
+            {(item.emocaoElaborada || item.pontoForte || item.pontoDesenvolver || item.planoAcao) && (
               <dl>
+                {item.emocaoElaborada && (
+                  <div>
+                    <dt>Emoção a ser elaborada</dt>
+                    <dd title={safeText(item.emocaoElaborada, "")}>{truncateText(item.emocaoElaborada, 95)}</dd>
+                  </div>
+                )}
                 {item.pontoForte && (
                   <div>
                     <dt>Ponto forte</dt>
@@ -210,6 +222,16 @@ export function HistoricoComparativo({ items = [] }) {
       formatter: (value) => `${formatDecimal(value)}/10`,
       trend: trendText(first.intensidadeSintomas, last.intensidadeSintomas, true),
       status: trendClass(first.intensidadeSintomas, last.intensidadeSintomas, true),
+    },
+    {
+      id: "comportamento", // NOVO CAMPO NO COMPARATIVO
+      label: "Intensidade do comportamento",
+      inicio: safeNumber(first.intensidadeComportamento),
+      atual: safeNumber(last.intensidadeComportamento),
+      formatter: (value) => `${formatDecimal(value)}/10`,
+      // invert = true pois comportamento intenso geralmente é ruim, então cair é uma "Melhora"
+      trend: trendText(first.intensidadeComportamento, last.intensidadeComportamento, true),
+      status: trendClass(first.intensidadeComportamento, last.intensidadeComportamento, true),
     },
     {
       id: "evitacao",

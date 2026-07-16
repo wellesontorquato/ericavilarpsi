@@ -169,9 +169,12 @@ function PrintReport({ data }) {
     .sort((a, b) => new Date(a.prazo) - new Date(b.prazo))
     .slice(0, 8);
 
-  // Filtra as últimas Recomendações registradas (Síntese Qualitativa)
+  // Filtra as últimas Recomendações e Emoções registradas (Síntese Qualitativa)
   const ultimasRecomendacoes = data.lancamentosRaw
-    .filter(l => l.recomendacao && l.recomendacao.trim() !== "" && l.recomendacao.trim() !== "-")
+    .filter(l => 
+      (l.recomendacao && l.recomendacao.trim() !== "" && l.recomendacao.trim() !== "-") || 
+      (l.emocaoElaborada && l.emocaoElaborada.trim() !== "" && l.emocaoElaborada.trim() !== "-")
+    )
     .slice(0, 5);
 
   const isGlobalView = data.clinicasFiltradas.length > 1;
@@ -200,6 +203,7 @@ function PrintReport({ data }) {
     { label: "Intensidade dos Sintomas", value: avgSkill("intensidadeSintomas") },
     { label: "Crises de Ansiedade (Vol.)", value: avgSkill("crisesAnsiedade") },
     { label: "Evitação Social", value: avgSkill("evitacaoSocial") },
+    { label: "Intensidade do Comportamento", value: avgSkill("intensidadeComportamento") }, // NOVO CAMPO NO PDF
   ];
 
   // EXTRAÇÃO AVANÇADA 3: Raio-X da Carteira (Status dos Casos)
@@ -352,22 +356,31 @@ function PrintReport({ data }) {
 
       {/* PÁGINA 3: SÍNTESE E RISCO */}
       <div className="print-section">
-        <h3>Síntese Qualitativa: Recomendações da Supervisão</h3>
+        <h3>Síntese Qualitativa: Anotações da Supervisão</h3>
         {ultimasRecomendacoes.length > 0 ? (
           <div style={{ display: 'grid', gap: '16px', marginBottom: '40px' }}>
             {ultimasRecomendacoes.map((rec, i) => (
               <div key={`rec-${i}`} style={{ background: '#fff', border: '1px solid #e8ddd3', borderRadius: '12px', padding: '16px' }}>
-                <strong style={{ display: 'block', color: '#392619', fontSize: '0.9rem', marginBottom: '6px' }}>
+                <strong style={{ display: 'block', color: '#392619', fontSize: '0.9rem', marginBottom: '8px' }}>
                   Para: {rec.terapeutaNome} (Caso: {rec.pacienteNome})
                 </strong>
-                <p style={{ margin: 0, color: '#5d4d43', fontSize: '0.95rem', lineHeight: 1.5 }}>
-                  "{rec.recomendacao}"
-                </p>
+                
+                {rec.recomendacao && rec.recomendacao.trim() !== "" && (
+                  <p style={{ margin: '0 0 6px', color: '#5d4d43', fontSize: '0.95rem', lineHeight: 1.5 }}>
+                    <strong>Recomendação:</strong> "{rec.recomendacao}"
+                  </p>
+                )}
+                
+                {rec.emocaoElaborada && rec.emocaoElaborada.trim() !== "" && (
+                  <p style={{ margin: 0, color: '#9f6947', fontSize: '0.9rem', lineHeight: 1.5 }}>
+                    <strong>Emoção a elaborar:</strong> {rec.emocaoElaborada}
+                  </p>
+                )}
               </div>
             ))}
           </div>
         ) : (
-          <p style={{ marginBottom: '40px' }}>Nenhuma recomendação registrada nas últimas semanas.</p>
+          <p style={{ marginBottom: '40px' }}>Nenhuma recomendação ou emoção registrada nas últimas semanas.</p>
         )}
 
         <h3>Casos que Exigem Intervenção (Alertas)</h3>
