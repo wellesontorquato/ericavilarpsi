@@ -10580,3 +10580,123 @@ button{font:inherit;}
     white-space: pre-wrap;
   }
 }
+
+/* =========================================================
+   RELATÓRIO PDF - PAGINAÇÃO SEMÂNTICA
+   Adicione este bloco ao final de src/styles/globals.css.
+   ========================================================= */
+@media print {
+  .print-section {
+    box-sizing: border-box !important;
+    min-height: 100vh !important;
+    padding: 60px 50px !important;
+    overflow: visible !important;
+  }
+
+  .print-section-overview .print-grid-two {
+    margin-bottom: 0 !important;
+  }
+
+  .print-section-technical .print-technical-explanation,
+  .print-section-indicators .print-grid-two,
+  .print-section-observation .print-report-observation,
+  .print-metric-card,
+  .print-card,
+  .print-bar-row,
+  .print-recommendation-card,
+  .print-technical-facts > div,
+  .print-technical-breakdown > div,
+  .print-technical-highlights > div {
+    page-break-inside: avoid !important;
+    break-inside: avoid-page !important;
+  }
+
+  .print-section-technical .print-technical-explanation,
+  .print-section-observation .print-report-observation {
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+  }
+
+  .print-section h3,
+  .print-section h4,
+  .print-section h5,
+  .print-table thead {
+    page-break-after: avoid !important;
+    break-after: avoid-page !important;
+  }
+
+  .print-table tr,
+  .print-table td,
+  .print-table th {
+    page-break-inside: avoid !important;
+    break-inside: avoid-page !important;
+  }
+
+  .print-table thead {
+    display: table-header-group !important;
+  }
+
+  .print-table tfoot {
+    display: table-footer-group !important;
+  }
+
+  .print-recommendations {
+    break-inside: auto !important;
+  }
+
+  .print-report-observation p,
+  .print-technical-explanation p,
+  .print-recommendation-card p,
+  .print-table td {
+    orphans: 3;
+    widows: 3;
+  }
+
+  .print-section-technical .print-technical-explanation {
+    padding: 22px 26px !important;
+  }
+
+  .print-section-technical .print-technical-explanation-heading {
+    margin-bottom: 12px !important;
+  }
+
+  .print-section-technical .print-technical-context {
+    margin: 0 0 14px !important;
+  }
+
+  .print-section-technical .print-technical-narrative {
+    margin-bottom: 14px !important;
+    padding: 14px 16px !important;
+  }
+
+  .print-section-technical .print-technical-narrative p {
+    margin: 0 !important;
+  }
+
+  .print-section-technical .print-technical-narrative p + p {
+    margin-top: 8px !important;
+  }
+
+  .print-section-technical .print-technical-facts,
+  .print-section-technical .print-technical-breakdown,
+  .print-section-technical .print-technical-highlights {
+    gap: 10px !important;
+    margin-top: 14px !important;
+  }
+
+  .print-section-technical .print-technical-facts > div,
+  .print-section-technical .print-technical-breakdown > div,
+  .print-section-technical .print-technical-highlights > div {
+    padding: 12px !important;
+  }
+
+  .print-section-technical .print-technical-method-note {
+    margin: 14px 0 0 !important;
+    padding-top: 14px !important;
+  }
+
+  .print-section-plans .print-table,
+  .print-section-summary .print-table {
+    margin-bottom: 0 !important;
+  }
+}
