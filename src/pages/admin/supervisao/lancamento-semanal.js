@@ -1,136 +1,513 @@
 /* eslint-disable react-hooks/set-state-in-effect, react-hooks/exhaustive-deps */
 import Head from "next/head";
-import { useEffect, useMemo, useState } from "react";
+import {
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import AuthGuard from "@/components/supervisao/AuthGuard";
 import LayoutSupervisao from "@/components/supervisao/LayoutSupervisao";
 import CardIndicador from "@/components/supervisao/CardIndicador";
 import Modal from "@/components/supervisao/Modal";
 import StatusMessage from "@/components/supervisao/StatusMessage";
-import { archiveResource, createResource, listResource, restoreResource, updateResource } from "@/lib/supervisao/api";
-import { average, formatDecimal, mesNome, meses, semanas } from "@/lib/supervisao/format";
+import {
+  archiveResource,
+  createResource,
+  listResource,
+  restoreResource,
+  updateResource,
+} from "@/lib/supervisao/api";
+import {
+  formatDecimal,
+  mesNome,
+  meses,
+  semanas,
+} from "@/lib/supervisao/format";
 
 const PAGE_SIZE = 15;
-const currentDate = new Date();
-
-const initialForm = {
-  ano: String(currentDate.getFullYear()),
-  mes: String(currentDate.getMonth() + 1),
-  semana: "1",
-  clinicaId: "",
-  terapeutaId: "",
-  pacienteId: "",
-  qualidadeConceitualizacao: "",
-  planejamentoTerapeutico: "",
-  aplicacaoTecnicasTcc: "",
-  manejoSessao: "",
-  posturaTerapeutica: "",
-  formulacaoHipoteses: "",
-  crisesAnsiedade: "",
-  qualidadeSono: "",
-  evitacaoSocial: "",
-  adesaoTarefas: "",
-  intensidadeSintomas: "",
-  intensidadeComportamento: "", // NOVO
-  emocaoElaborada: "", // NOVO
-  evolucaoObjetivos: "",
-  pontoForte: "",
-  pontoDesenvolver: "",
-  recomendacao: "",
-  planoAcao: "",
-  prazo: "",
-  statusPlano: "Em andamento",
-  observacao: "",
-};
 
 const scoreFields = [
-  ["qualidadeConceitualizacao", "Qualidade da conceitualização"],
-  ["planejamentoTerapeutico", "Planejamento terapêutico"],
-  ["aplicacaoTecnicasTcc", "Aplicação de técnicas TCC"],
-  ["manejoSessao", "Manejo da sessão"],
-  ["posturaTerapeutica", "Postura terapêutica"],
-  ["formulacaoHipoteses", "Formulação de hipóteses"],
+  {
+    name: "qualidadeConceitualizacao",
+    label: "Qualidade da conceitualização",
+    min: 1,
+    max: 5,
+  },
+  {
+    name: "planejamentoTerapeutico",
+    label: "Planejamento terapêutico",
+    min: 1,
+    max: 5,
+  },
+  {
+    name: "aplicacaoTecnicasTcc",
+    label: "Aplicação de técnicas TCC",
+    min: 1,
+    max: 5,
+  },
+  {
+    name: "manejoSessao",
+    label: "Manejo da sessão",
+    min: 1,
+    max: 5,
+  },
+  {
+    name: "posturaTerapeutica",
+    label: "Postura terapêutica",
+    min: 1,
+    max: 5,
+  },
+  {
+    name: "formulacaoHipoteses",
+    label: "Formulação de hipóteses",
+    min: 1,
+    max: 5,
+  },
 ];
 
 const evolucaoFields = [
-  ["crisesAnsiedade", "Crises de ansiedade/semana", 0, 99],
-  ["qualidadeSono", "Qualidade do sono (0-10)", 0, 10],
-  ["evitacaoSocial", "Evitação social (0-10)", 0, 10],
-  ["adesaoTarefas", "Adesão às tarefas (%)", 0, 100],
-  ["intensidadeSintomas", "Intensidade dos sintomas (0-10)", 0, 10],
-  ["intensidadeComportamento", "Intensidade do comportamento (0-10)", 0, 10], // NOVO
-  ["evolucaoObjetivos", "Evolução dos objetivos (%)", 0, 100],
+  {
+    name: "crisesAnsiedade",
+    label: "Crises de ansiedade por semana",
+    min: 0,
+    max: 99,
+  },
+  {
+    name: "qualidadeSono",
+    label: "Qualidade do sono",
+    min: 0,
+    max: 10,
+  },
+  {
+    name: "evitacaoSocial",
+    label: "Evitação social",
+    min: 0,
+    max: 10,
+  },
+  {
+    name: "adesaoTarefas",
+    label: "Adesão às tarefas",
+    min: 0,
+    max: 100,
+    suffix: "%",
+  },
+  {
+    name: "intensidadeSintomas",
+    label: "Intensidade dos sintomas",
+    min: 0,
+    max: 10,
+  },
+  {
+    name: "intensidadeComportamento",
+    label: "Intensidade do comportamento",
+    min: 0,
+    max: 10,
+  },
+  {
+    name: "aplicacaoEstrategias",
+    label: "Aplicação das estratégias discutidas",
+    min: 0,
+    max: 100,
+    suffix: "%",
+  },
+  {
+    name: "evolucaoObjetivos",
+    label: "Evolução dos objetivos terapêuticos",
+    min: 0,
+    max: 100,
+    suffix: "%",
+  },
 ];
 
-function competenciaMedia(item) {
-  return average(scoreFields.map(([field]) => item[field]));
+const allMetricFields = [
+  ...scoreFields,
+  ...evolucaoFields,
+];
+
+function createInitialForm() {
+  const currentDate = new Date();
+
+  return {
+    ano: String(
+      currentDate.getFullYear()
+    ),
+    mes: String(
+      currentDate.getMonth() + 1
+    ),
+    semana: "1",
+    clinicaId: "",
+    terapeutaId: "",
+    pacienteId: "",
+
+    qualidadeConceitualizacao: "",
+    planejamentoTerapeutico: "",
+    aplicacaoTecnicasTcc: "",
+    manejoSessao: "",
+    posturaTerapeutica: "",
+    formulacaoHipoteses: "",
+
+    crisesAnsiedade: "",
+    qualidadeSono: "",
+    evitacaoSocial: "",
+    adesaoTarefas: "",
+    intensidadeSintomas: "",
+    intensidadeComportamento: "",
+    aplicacaoEstrategias: "",
+    evolucaoObjetivos: "",
+
+    emocaoElaborada: "",
+    pontoForte: "",
+    pontoDesenvolver: "",
+    recomendacao: "",
+    planoAcao: "",
+    prazo: "",
+    statusPlano: "Em andamento",
+    observacao: "",
+  };
+}
+
+function isBlankMetric(value) {
+  return (
+    value === undefined ||
+    value === null ||
+    value === ""
+  );
+}
+
+function averageEvaluated(values = []) {
+  const validValues = values
+    .filter(
+      (value) => !isBlankMetric(value)
+    )
+    .map(Number)
+    .filter(Number.isFinite);
+
+  if (validValues.length === 0) {
+    return null;
+  }
+
+  const total = validValues.reduce(
+    (sum, value) => sum + value,
+    0
+  );
+
+  return total / validValues.length;
+}
+
+function competenciaMedia(item = {}) {
+  return averageEvaluated(
+    scoreFields.map(
+      ({ name }) => item[name]
+    )
+  );
+}
+
+function countComputedCompetencies(item = {}) {
+  return scoreFields.filter(
+    ({ name }) =>
+      !isBlankMetric(item[name]) &&
+      Number.isFinite(Number(item[name]))
+  ).length;
 }
 
 function isArchived(item) {
-  return item?.arquivado === true || String(item?.statusRegistro || "").toLowerCase() === "arquivado";
+  return (
+    item?.arquivado === true ||
+    String(
+      item?.statusRegistro || ""
+    ).toLowerCase() === "arquivado"
+  );
 }
 
 function normalizeLaunchForm(item = {}) {
-  return Object.keys(initialForm).reduce((acc, key) => {
-    acc[key] = item[key] === undefined || item[key] === null ? initialForm[key] : String(item[key]);
+  const initialForm =
+    createInitialForm();
+
+  return Object.keys(
+    initialForm
+  ).reduce((acc, key) => {
+    acc[key] = isBlankMetric(
+      item[key]
+    )
+      ? ""
+      : String(item[key]);
+
     return acc;
   }, {});
 }
 
-// NOVA FUNÇÃO: Avalia o status e retorna a classe CSS de cor correta
-function getStatusClass(status, archived) {
-  if (archived) return "archived";
-  
-  const normalized = String(status || "").toLowerCase();
-  
-  // Se contiver "concl", deixa vazio para pegar o verde padrão do CSS
-  if (normalized.includes("concl")) return "";
-  
-  // Se estiver em andamento ou pendente, usa "neutral" (laranja/amarelo)
-  if (normalized.includes("andamento") || normalized.includes("pendente")) return "neutral";
-  
-  // Se estiver atrasado/vencido, tenta usar uma classe de perigo (vermelho)
-  if (normalized.includes("atras") || normalized.includes("venc")) return "danger";
-  
-  return "neutral"; // Padrão seguro para outros status não mapeados
+function getIgnoredMetrics(item = {}) {
+  return allMetricFields
+    .filter(({ name }) =>
+      isBlankMetric(item[name])
+    )
+    .map(({ name }) => name);
+}
+
+function getStatusClass(
+  status,
+  archived
+) {
+  if (archived) {
+    return "archived";
+  }
+
+  const normalized = String(
+    status || ""
+  ).toLowerCase();
+
+  if (normalized.includes("concl")) {
+    return "";
+  }
+
+  if (
+    normalized.includes(
+      "andamento"
+    ) ||
+    normalized.includes("pendente")
+  ) {
+    return "neutral";
+  }
+
+  if (
+    normalized.includes("atras") ||
+    normalized.includes("venc")
+  ) {
+    return "danger";
+  }
+
+  return "neutral";
+}
+
+function MetricField({
+  name,
+  label,
+  min,
+  max,
+  suffix,
+  value,
+  ignored,
+  onValueChange,
+  onIgnoredChange,
+}) {
+  const inputId = `metric-${name}`;
+  const descriptionId =
+    `${inputId}-description`;
+
+  return (
+    <div
+      className={
+        `supervisao-metric-field ${
+          ignored
+            ? "metric-disabled"
+            : ""
+        }`
+      }
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        gap: "10px",
+        padding: "14px",
+        border:
+          "1px solid rgba(23, 55, 90, 0.14)",
+        borderRadius: "12px",
+        background: ignored
+          ? "rgba(23, 55, 90, 0.04)"
+          : "transparent",
+        opacity: ignored ? 0.75 : 1,
+      }}
+    >
+      <label
+        htmlFor={inputId}
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          gap: "8px",
+        }}
+      >
+        <span>
+          {label}
+          {suffix
+            ? ` (${min}-${max}${suffix})`
+            : ` (${min}-${max})`}
+        </span>
+
+        <input
+          id={inputId}
+          type="number"
+          min={min}
+          max={max}
+          value={value}
+          disabled={ignored}
+          required={!ignored}
+          aria-describedby={
+            descriptionId
+          }
+          onChange={(event) =>
+            onValueChange(
+              event.target.value
+            )
+          }
+        />
+      </label>
+
+      <label
+        style={{
+          display: "flex",
+          flexDirection: "row",
+          alignItems: "center",
+          gap: "8px",
+          cursor: "pointer",
+          fontSize: "0.84rem",
+          fontWeight: 600,
+        }}
+      >
+        <input
+          type="checkbox"
+          checked={ignored}
+          onChange={(event) =>
+            onIgnoredChange(
+              event.target.checked
+            )
+          }
+          style={{
+            width: "auto",
+            margin: 0,
+          }}
+        />
+
+        <span>
+          Não computar esta métrica
+        </span>
+      </label>
+
+      <small id={descriptionId}>
+        {ignored
+          ? "Esta métrica não participará da média final deste lançamento."
+          : "Informe a pontuação ou marque a opção acima para desconsiderá-la."}
+      </small>
+    </div>
+  );
 }
 
 export default function LancamentoSemanalPage() {
   return (
     <AuthGuard>
-      {({ user, onLogout }) => <LancamentoContent user={user} onLogout={onLogout} />}
+      {({
+        user,
+        access,
+        onLogout,
+      }) => (
+        <LancamentoContent
+          user={user}
+          access={access}
+          onLogout={onLogout}
+        />
+      )}
     </AuthGuard>
   );
 }
 
-function LancamentoContent({ user, onLogout }) {
-  const [form, setForm] = useState(initialForm);
-  const [editingId, setEditingId] = useState("");
-  const [clinicas, setClinicas] = useState([]);
-  const [terapeutas, setTerapeutas] = useState([]);
-  const [pacientes, setPacientes] = useState([]);
-  const [lancamentos, setLancamentos] = useState([]);
-  const [saving, setSaving] = useState(false);
-  const [modalOpen, setModalOpen] = useState(false);
-  const [search, setSearch] = useState("");
-  const [statusFilter, setStatusFilter] = useState("ativos");
-  const [page, setPage] = useState(1);
-  const [message, setMessage] = useState({ type: "", text: "" });
+function LancamentoContent({
+  user,
+  access,
+  onLogout,
+}) {
+  const [form, setForm] = useState(
+    () => createInitialForm()
+  );
+
+  const [
+    ignoredMetrics,
+    setIgnoredMetrics,
+  ] = useState([]);
+
+  const [editingId, setEditingId] =
+    useState("");
+
+  const [clinicas, setClinicas] =
+    useState([]);
+
+  const [terapeutas, setTerapeutas] =
+    useState([]);
+
+  const [pacientes, setPacientes] =
+    useState([]);
+
+  const [lancamentos, setLancamentos] =
+    useState([]);
+
+  const [loadingData, setLoadingData] =
+    useState(true);
+
+  const [saving, setSaving] =
+    useState(false);
+
+  const [modalOpen, setModalOpen] =
+    useState(false);
+
+  const [search, setSearch] =
+    useState("");
+
+  const [
+    statusFilter,
+    setStatusFilter,
+  ] = useState("ativos");
+
+  const [page, setPage] =
+    useState(1);
+
+  const [message, setMessage] =
+    useState({
+      type: "",
+      text: "",
+    });
 
   async function loadData() {
+    setLoadingData(true);
+
     try {
-      const [clinicasData, terapeutasData, pacientesData, lancamentosData] = await Promise.all([
-        listResource(user, "clinicas"),
-        listResource(user, "terapeutas"),
-        listResource(user, "pacientes"),
-        listResource(user, "lancamentos"),
+      const [
+        clinicasData,
+        terapeutasData,
+        pacientesData,
+        lancamentosData,
+      ] = await Promise.all([
+        listResource(
+          user,
+          "clinicas"
+        ),
+        listResource(
+          user,
+          "terapeutas"
+        ),
+        listResource(
+          user,
+          "pacientes"
+        ),
+        listResource(
+          user,
+          "lancamentos"
+        ),
       ]);
+
       setClinicas(clinicasData);
       setTerapeutas(terapeutasData);
       setPacientes(pacientesData);
-      setLancamentos(lancamentosData);
+      setLancamentos(
+        lancamentosData
+      );
     } catch (error) {
       console.error(error);
-      setMessage({ type: "error", text: error.message });
+
+      setMessage({
+        type: "error",
+        text:
+          error?.message ||
+          "Não foi possível carregar os lançamentos.",
+      });
+    } finally {
+      setLoadingData(false);
     }
   }
 
@@ -140,316 +517,1046 @@ function LancamentoContent({ user, onLogout }) {
 
   useEffect(() => {
     setPage(1);
-  }, [search, statusFilter, lancamentos.length]);
+  }, [
+    search,
+    statusFilter,
+    lancamentos.length,
+  ]);
 
-  const clinicasAtivas = useMemo(() => clinicas.filter((item) => !isArchived(item)), [clinicas]);
-  const terapeutasAtivos = useMemo(() => terapeutas.filter((item) => !isArchived(item)), [terapeutas]);
-  const pacientesAtivos = useMemo(() => pacientes.filter((item) => !isArchived(item)), [pacientes]);
+  const clinicasDisponiveis =
+    useMemo(
+      () =>
+        clinicas.filter(
+          (item) =>
+            !isArchived(item) ||
+            String(item.id) ===
+              String(form.clinicaId)
+        ),
+      [
+        clinicas,
+        form.clinicaId,
+      ]
+    );
 
-  const terapeutasFiltrados = useMemo(() => {
-    if (!form.clinicaId) return terapeutasAtivos;
-    return terapeutasAtivos.filter((item) => item.clinicaId === form.clinicaId);
-  }, [terapeutasAtivos, form.clinicaId]);
+  const terapeutasDisponiveis =
+    useMemo(
+      () =>
+        terapeutas.filter(
+          (item) =>
+            (!isArchived(item) &&
+              item.status !==
+                "Inativo") ||
+            String(item.id) ===
+              String(
+                form.terapeutaId
+              )
+        ),
+      [
+        terapeutas,
+        form.terapeutaId,
+      ]
+    );
 
-  const pacientesFiltrados = useMemo(() => {
-    return pacientesAtivos.filter((item) => {
-      if (form.clinicaId && item.clinicaId !== form.clinicaId) return false;
-      if (form.terapeutaId && item.terapeutaId !== form.terapeutaId) return false;
-      return true;
-    });
-  }, [pacientesAtivos, form.clinicaId, form.terapeutaId]);
+  const pacientesDisponiveis =
+    useMemo(
+      () =>
+        pacientes.filter((item) => {
+          const status = String(
+            item.statusCaso || ""
+          ).toLowerCase();
+
+          const active =
+            !isArchived(item) &&
+            !status.includes(
+              "encerrado"
+            ) &&
+            !status.includes("alta");
+
+          return (
+            active ||
+            String(item.id) ===
+              String(form.pacienteId)
+          );
+        }),
+      [
+        pacientes,
+        form.pacienteId,
+      ]
+    );
+
+  const terapeutasFiltrados =
+    useMemo(() => {
+      if (!form.clinicaId) {
+        return terapeutasDisponiveis;
+      }
+
+      return terapeutasDisponiveis.filter(
+        (item) =>
+          String(item.clinicaId) ===
+          String(form.clinicaId)
+      );
+    }, [
+      terapeutasDisponiveis,
+      form.clinicaId,
+    ]);
+
+  const pacientesFiltrados =
+    useMemo(
+      () =>
+        pacientesDisponiveis.filter(
+          (item) => {
+            if (
+              form.clinicaId &&
+              String(
+                item.clinicaId
+              ) !==
+                String(
+                  form.clinicaId
+                )
+            ) {
+              return false;
+            }
+
+            if (
+              form.terapeutaId &&
+              String(
+                item.terapeutaId
+              ) !==
+                String(
+                  form.terapeutaId
+                )
+            ) {
+              return false;
+            }
+
+            return true;
+          }
+        ),
+      [
+        pacientesDisponiveis,
+        form.clinicaId,
+        form.terapeutaId,
+      ]
+    );
 
   const statusCounts = useMemo(() => {
-    const arquivados = lancamentos.filter(isArchived).length;
+    const arquivados =
+      lancamentos.filter(
+        isArchived
+      ).length;
+
     return {
       todos: lancamentos.length,
-      ativos: lancamentos.length - arquivados,
+      ativos:
+        lancamentos.length -
+        arquivados,
       arquivados,
     };
   }, [lancamentos]);
 
-  const lancamentosFiltrados = useMemo(() => {
-    const query = search.trim().toLowerCase();
+  const lancamentosFiltrados =
+    useMemo(() => {
+      const query = search
+        .trim()
+        .toLowerCase();
 
-    return lancamentos.filter((item) => {
-      if (statusFilter === "ativos" && isArchived(item)) return false;
-      if (statusFilter === "arquivados" && !isArchived(item)) return false;
+      return lancamentos.filter(
+        (item) => {
+          if (
+            statusFilter ===
+              "ativos" &&
+            isArchived(item)
+          ) {
+            return false;
+          }
 
-      if (!query) return true;
+          if (
+            statusFilter ===
+              "arquivados" &&
+            !isArchived(item)
+          ) {
+            return false;
+          }
 
-      return [
-        item.pacienteNome,
-        item.terapeutaNome,
-        item.clinicaNome,
-        item.recomendacao,
-        item.observacao,
-        item.statusPlano,
-      ]
-        .some((value) => String(value || "").toLowerCase().includes(query));
-    });
-  }, [lancamentos, search, statusFilter]);
+          if (!query) {
+            return true;
+          }
 
-  const totalPages = Math.max(1, Math.ceil(lancamentosFiltrados.length / PAGE_SIZE));
-  const currentPage = Math.min(page, totalPages);
-  const startIndex = (currentPage - 1) * PAGE_SIZE;
-  const endIndex = startIndex + PAGE_SIZE;
-  const lancamentosPaginados = lancamentosFiltrados.slice(startIndex, endIndex);
+          return [
+            item.pacienteNome,
+            item.terapeutaNome,
+            item.clinicaNome,
+            item.recomendacao,
+            item.observacao,
+            item.statusPlano,
+          ].some((value) =>
+            String(value || "")
+              .toLowerCase()
+              .includes(query)
+          );
+        }
+      );
+    }, [
+      lancamentos,
+      search,
+      statusFilter,
+    ]);
 
-  const lancamentosAtivos = useMemo(() => lancamentos.filter((item) => !isArchived(item)), [lancamentos]);
+  const totalPages = Math.max(
+    1,
+    Math.ceil(
+      lancamentosFiltrados.length /
+        PAGE_SIZE
+    )
+  );
+
+  const currentPage = Math.min(
+    page,
+    totalPages
+  );
+
+  const startIndex =
+    (currentPage - 1) * PAGE_SIZE;
+
+  const endIndex =
+    startIndex + PAGE_SIZE;
+
+  const lancamentosPaginados =
+    lancamentosFiltrados.slice(
+      startIndex,
+      endIndex
+    );
+
+  const lancamentosAtivos =
+    useMemo(
+      () =>
+        lancamentos.filter(
+          (item) =>
+            !isArchived(item)
+        ),
+      [lancamentos]
+    );
 
   const resumo = useMemo(() => {
+    const competencias =
+      lancamentosAtivos
+        .map(competenciaMedia)
+        .filter(
+          (value) => value !== null
+        );
+
     return {
-      total: lancamentosAtivos.length,
-      terapeutas: new Set(lancamentosAtivos.map((item) => item.terapeutaId).filter(Boolean)).size,
-      pacientes: new Set(lancamentosAtivos.map((item) => item.pacienteId).filter(Boolean)).size,
-      competencia: average(lancamentosAtivos.map(competenciaMedia)),
+      total:
+        lancamentosAtivos.length,
+
+      terapeutas: new Set(
+        lancamentosAtivos
+          .map(
+            (item) =>
+              item.terapeutaId
+          )
+          .filter(Boolean)
+      ).size,
+
+      pacientes: new Set(
+        lancamentosAtivos
+          .map(
+            (item) =>
+              item.pacienteId
+          )
+          .filter(Boolean)
+      ).size,
+
+      competencia:
+        averageEvaluated(
+          competencias
+        ),
     };
   }, [lancamentosAtivos]);
 
+  function isMetricIgnored(name) {
+    return ignoredMetrics.includes(
+      name
+    );
+  }
+
   function setField(name, value) {
     setForm((current) => {
-      const next = { ...current, [name]: value };
-      if (name === "clinicaId") {
+      const next = {
+        ...current,
+        [name]: value,
+      };
+
+      if (
+        name === "clinicaId"
+      ) {
         next.terapeutaId = "";
         next.pacienteId = "";
       }
-      if (name === "terapeutaId") {
+
+      if (
+        name === "terapeutaId"
+      ) {
         next.pacienteId = "";
       }
+
       return next;
     });
   }
 
+  function toggleIgnoredMetric(
+    name,
+    checked
+  ) {
+    setIgnoredMetrics((current) => {
+      if (checked) {
+        return [
+          ...new Set([
+            ...current,
+            name,
+          ]),
+        ];
+      }
+
+      return current.filter(
+        (item) => item !== name
+      );
+    });
+
+    if (checked) {
+      setForm((current) => ({
+        ...current,
+        [name]: "",
+      }));
+    }
+  }
+
   function openCreateModal() {
     setEditingId("");
-    setForm(initialForm);
-    setMessage({ type: "", text: "" });
+    setForm(createInitialForm());
+    setIgnoredMetrics([]);
+
+    setMessage({
+      type: "",
+      text: "",
+    });
+
     setModalOpen(true);
   }
 
   function openEditModal(item) {
     setEditingId(item.id);
-    setForm(normalizeLaunchForm(item));
-    setMessage({ type: "", text: "" });
+    setForm(
+      normalizeLaunchForm(item)
+    );
+    setIgnoredMetrics(
+      getIgnoredMetrics(item)
+    );
+
+    setMessage({
+      type: "",
+      text: "",
+    });
+
     setModalOpen(true);
   }
 
   function closeModal() {
     setModalOpen(false);
     setEditingId("");
-    setForm(initialForm);
+    setForm(createInitialForm());
+    setIgnoredMetrics([]);
+  }
+
+  function validateMetricGroup(
+    metricFields,
+    groupLabel
+  ) {
+    const computedFields =
+      metricFields.filter(
+        ({ name }) =>
+          !isMetricIgnored(name)
+      );
+
+    if (
+      computedFields.length === 0
+    ) {
+      throw new Error(
+        `Pelo menos uma métrica de ${groupLabel} deve ser computada.`
+      );
+    }
+
+    const missingField =
+      computedFields.find(
+        ({ name }) =>
+          isBlankMetric(
+            form[name]
+          )
+      );
+
+    if (missingField) {
+      throw new Error(
+        `Informe "${missingField.label}" ou marque a opção para não computar essa métrica.`
+      );
+    }
   }
 
   async function handleSubmit(event) {
     event.preventDefault();
     setSaving(true);
-    setMessage({ type: "", text: "" });
+
+    setMessage({
+      type: "",
+      text: "",
+    });
 
     try {
-      if (!form.ano || !form.mes || !form.semana) {
-        throw new Error("Informe ano, mês e semana do lançamento.");
-      }
-      if (!form.clinicaId || !form.terapeutaId || !form.pacienteId) {
-        throw new Error("Selecione clínica, terapeuta e paciente/caso.");
+      if (
+        !form.ano ||
+        !form.mes ||
+        !form.semana
+      ) {
+        throw new Error(
+          "Informe ano, mês e semana do lançamento."
+        );
       }
 
-      const clinica = clinicas.find((item) => item.id === form.clinicaId);
-      const terapeuta = terapeutas.find((item) => item.id === form.terapeutaId);
-      const paciente = pacientes.find((item) => item.id === form.pacienteId);
+      if (
+        !form.clinicaId ||
+        !form.terapeutaId ||
+        !form.pacienteId
+      ) {
+        throw new Error(
+          "Selecione clínica, terapeuta e paciente/caso."
+        );
+      }
+
+      const clinica = clinicas.find(
+        (item) =>
+          String(item.id) ===
+          String(form.clinicaId)
+      );
+
+      const terapeuta =
+        terapeutas.find(
+          (item) =>
+            String(item.id) ===
+            String(
+              form.terapeutaId
+            )
+        );
+
+      const paciente =
+        pacientes.find(
+          (item) =>
+            String(item.id) ===
+            String(
+              form.pacienteId
+            )
+        );
+
+      if (
+        !clinica ||
+        !terapeuta ||
+        !paciente
+      ) {
+        throw new Error(
+          "Um dos vínculos selecionados não foi encontrado."
+        );
+      }
+
+      if (
+        String(
+          terapeuta.clinicaId
+        ) !==
+        String(clinica.id)
+      ) {
+        throw new Error(
+          "O terapeuta selecionado não pertence à clínica informada."
+        );
+      }
+
+      if (
+        String(
+          paciente.clinicaId
+        ) !==
+          String(clinica.id) ||
+        String(
+          paciente.terapeutaId
+        ) !==
+          String(terapeuta.id)
+      ) {
+        throw new Error(
+          "O paciente selecionado não pertence ao terapeuta e à clínica informados."
+        );
+      }
+
+      validateMetricGroup(
+        scoreFields,
+        "competência clínica"
+      );
+
+      validateMetricGroup(
+        evolucaoFields,
+        "evolução do paciente"
+      );
 
       const payload = {
         ...form,
         ano: Number(form.ano),
         mes: Number(form.mes),
-        semana: Number(form.semana),
-        clinicaNome: clinica?.nome || "",
-        terapeutaNome: terapeuta?.nome || "",
-        pacienteNome: paciente?.nome || "",
+        semana: Number(
+          form.semana
+        ),
+        clinicaNome:
+          clinica.nome || "",
+        terapeutaNome:
+          terapeuta.nome || "",
+        pacienteNome:
+          paciente.nome || "",
       };
 
-      [...scoreFields, ...evolucaoFields].forEach(([name]) => {
-        payload[name] = form[name] === "" ? "" : Number(form[name]);
-      });
+      allMetricFields.forEach(
+        ({ name }) => {
+          payload[name] =
+            isMetricIgnored(name)
+              ? null
+              : Number(form[name]);
+        }
+      );
 
       if (editingId) {
-        await updateResource(user, "lancamentos", editingId, payload);
-        setMessage({ type: "success", text: "Lançamento semanal atualizado com sucesso." });
-      } else {
-        await createResource(user, "lancamentos", {
-          ...payload,
-          arquivado: false,
-          statusRegistro: "Ativo",
+        await updateResource(
+          user,
+          "lancamentos",
+          editingId,
+          payload
+        );
+
+        setMessage({
+          type: "success",
+          text:
+            "Lançamento semanal atualizado com sucesso.",
         });
-        setMessage({ type: "success", text: "Lançamento semanal salvo com sucesso." });
+      } else {
+        await createResource(
+          user,
+          "lancamentos",
+          {
+            ...payload,
+            arquivado: false,
+            statusRegistro: "Ativo",
+          }
+        );
+
+        setMessage({
+          type: "success",
+          text:
+            "Lançamento semanal salvo com sucesso.",
+        });
       }
 
       closeModal();
       await loadData();
     } catch (error) {
       console.error(error);
-      setMessage({ type: "error", text: error.message });
+
+      setMessage({
+        type: "error",
+        text:
+          error?.message ||
+          "Não foi possível salvar o lançamento.",
+      });
     } finally {
       setSaving(false);
     }
   }
 
   async function handleArchive(item) {
-    const confirmed = window.confirm("Deseja arquivar este lançamento semanal? Ele sairá dos dashboards ativos, mas continuará salvo no histórico.");
-    if (!confirmed) return;
+    const confirmed =
+      window.confirm(
+        "Deseja arquivar este lançamento semanal? Ele sairá dos dashboards ativos, mas continuará salvo no histórico."
+      );
+
+    if (!confirmed) {
+      return;
+    }
 
     try {
-      await archiveResource(user, "lancamentos", item.id);
-      setMessage({ type: "success", text: "Lançamento arquivado com sucesso." });
+      await archiveResource(
+        user,
+        "lancamentos",
+        item.id
+      );
+
+      setMessage({
+        type: "success",
+        text:
+          "Lançamento arquivado com sucesso.",
+      });
+
       await loadData();
     } catch (error) {
       console.error(error);
-      setMessage({ type: "error", text: error.message });
+
+      setMessage({
+        type: "error",
+        text:
+          error?.message ||
+          "Não foi possível arquivar o lançamento.",
+      });
     }
   }
 
   async function handleRestore(item) {
     try {
-      await restoreResource(user, "lancamentos", item.id);
-      setMessage({ type: "success", text: "Lançamento restaurado com sucesso." });
+      await restoreResource(
+        user,
+        "lancamentos",
+        item.id
+      );
+
+      setMessage({
+        type: "success",
+        text:
+          "Lançamento restaurado com sucesso.",
+      });
+
       await loadData();
     } catch (error) {
       console.error(error);
-      setMessage({ type: "error", text: error.message });
+
+      setMessage({
+        type: "error",
+        text:
+          error?.message ||
+          "Não foi possível restaurar o lançamento.",
+      });
     }
   }
 
+  const identityLocked =
+    Boolean(editingId);
+
   return (
     <>
-      <Head><title>Lançamento semanal | Supervisão TCC</title></Head>
+      <Head>
+        <title>
+          Lançamento semanal |
+          Supervisão TCC
+        </title>
+
+        <meta
+          name="description"
+          content="Registro semanal das competências clínicas e da evolução dos pacientes acompanhados."
+        />
+      </Head>
+
       <LayoutSupervisao
         title="Lançamentos semanais"
-        description="Registre, edite e arquive supervisões semanais sem perder o histórico clínico."
+        description="Registre as competências avaliadas, a evolução do paciente e as métricas que não foram computadas."
         user={user}
+        access={access}
         onLogout={onLogout}
-        actions={<button className="supervisao-primary-button" type="button" onClick={openCreateModal}>+ Novo lançamento</button>}
+        actions={
+          <button
+            className="supervisao-primary-button"
+            type="button"
+            onClick={openCreateModal}
+          >
+            + Novo lançamento
+          </button>
+        }
       >
-        <StatusMessage message={message} />
+        <StatusMessage
+          message={message}
+        />
 
         <section className="supervisao-indicator-grid launch-summary">
-          <CardIndicador label="Lançamentos ativos" value={resumo.total} detail="registros em dashboard" />
-          <CardIndicador label="Terapeutas" value={resumo.terapeutas} detail="com lançamento ativo" />
-          <CardIndicador label="Pacientes/Casos" value={resumo.pacientes} detail="acompanhados" />
-          <CardIndicador label="Média competência" value={formatDecimal(resumo.competencia)} detail="escala de 1 a 5" />
+          <CardIndicador
+            label="Lançamentos ativos"
+            value={resumo.total}
+            detail="registros no dashboard"
+          />
+
+          <CardIndicador
+            label="Terapeutas"
+            value={resumo.terapeutas}
+            detail="com lançamento ativo"
+          />
+
+          <CardIndicador
+            label="Pacientes/Casos"
+            value={resumo.pacientes}
+            detail="acompanhados"
+          />
+
+          <CardIndicador
+            label="Média competência"
+            value={
+              resumo.competencia ===
+              null
+                ? "-"
+                : formatDecimal(
+                    resumo.competencia
+                  )
+            }
+            detail="somente métricas computadas"
+          />
         </section>
 
         <section className="supervisao-system-toolbar compact">
           <div>
-            <span className="supervisao-kicker">Histórico</span>
-            <h2>{lancamentosFiltrados.length} lançamento(s)</h2>
-            <p>Use a busca e os filtros para revisar registros antigos ou restaurar itens arquivados.</p>
+            <span className="supervisao-kicker">
+              Histórico
+            </span>
+
+            <h2>
+              {
+                lancamentosFiltrados.length
+              }{" "}
+              lançamento(s)
+            </h2>
+
+            <p>
+              Use a busca e os filtros
+              para revisar registros
+              antigos ou restaurar itens
+              arquivados.
+            </p>
           </div>
+
           <div className="supervisao-toolbar-actions">
             <label className="supervisao-search-box">
               <span>Buscar</span>
-              <input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Paciente, terapeuta, clínica..." />
+
+              <input
+                value={search}
+                onChange={(event) =>
+                  setSearch(
+                    event.target.value
+                  )
+                }
+                placeholder="Paciente, terapeuta, clínica..."
+              />
             </label>
           </div>
         </section>
 
-        <div className="supervisao-status-tabs" aria-label="Filtro dos lançamentos">
-          <button type="button" className={statusFilter === "ativos" ? "active" : ""} onClick={() => setStatusFilter("ativos")}>
-            Ativos <span>{statusCounts.ativos}</span>
+        <div
+          className="supervisao-status-tabs"
+          aria-label="Filtro dos lançamentos"
+        >
+          <button
+            type="button"
+            className={
+              statusFilter === "ativos"
+                ? "active"
+                : ""
+            }
+            onClick={() =>
+              setStatusFilter("ativos")
+            }
+          >
+            Ativos{" "}
+            <span>
+              {statusCounts.ativos}
+            </span>
           </button>
-          <button type="button" className={statusFilter === "arquivados" ? "active" : ""} onClick={() => setStatusFilter("arquivados")}>
-            Arquivados <span>{statusCounts.arquivados}</span>
+
+          <button
+            type="button"
+            className={
+              statusFilter ===
+              "arquivados"
+                ? "active"
+                : ""
+            }
+            onClick={() =>
+              setStatusFilter(
+                "arquivados"
+              )
+            }
+          >
+            Arquivados{" "}
+            <span>
+              {
+                statusCounts.arquivados
+              }
+            </span>
           </button>
-          <button type="button" className={statusFilter === "todos" ? "active" : ""} onClick={() => setStatusFilter("todos")}>
-            Todos <span>{statusCounts.todos}</span>
+
+          <button
+            type="button"
+            className={
+              statusFilter === "todos"
+                ? "active"
+                : ""
+            }
+            onClick={() =>
+              setStatusFilter("todos")
+            }
+          >
+            Todos{" "}
+            <span>
+              {statusCounts.todos}
+            </span>
           </button>
         </div>
 
         <section className="supervisao-panel supervisao-list-panel supervisao-list-panel-table">
           <div className="supervisao-section-title supervisao-list-section-title">
             <div>
-              <h2>Histórico de lançamentos</h2>
+              <h2>
+                Histórico de lançamentos
+              </h2>
+
               <p>
-                {lancamentosFiltrados.length} salvo(s). Exibindo {lancamentosPaginados.length} nesta página.
+                {
+                  lancamentosFiltrados.length
+                }{" "}
+                salvo(s). Exibindo{" "}
+                {
+                  lancamentosPaginados.length
+                }{" "}
+                nesta página.
               </p>
             </div>
-            {lancamentosFiltrados.length > PAGE_SIZE && (
-              <span>Página {currentPage} de {totalPages}</span>
+
+            {lancamentosFiltrados.length >
+              PAGE_SIZE && (
+              <span>
+                Página {currentPage} de{" "}
+                {totalPages}
+              </span>
             )}
           </div>
 
-          {lancamentosFiltrados.length === 0 ? (
-            <p className="supervisao-empty">Nenhum lançamento semanal encontrado para o filtro selecionado.</p>
+          {loadingData ? (
+            <p>Carregando...</p>
+          ) : lancamentosFiltrados.length ===
+            0 ? (
+            <p className="supervisao-empty">
+              Nenhum lançamento semanal
+              encontrado para o filtro
+              selecionado.
+            </p>
           ) : (
             <>
               <div className="supervisao-entity-list-wrap">
                 <div
                   className="supervisao-entity-list supervisao-launch-list"
                   style={{
-                    "--entity-grid": "minmax(220px, 1.3fr) minmax(160px, 0.9fr) minmax(170px, 0.9fr) minmax(140px, 0.7fr) minmax(190px, auto)",
+                    "--entity-grid":
+                      "minmax(220px, 1.3fr) minmax(160px, 0.9fr) minmax(170px, 0.9fr) minmax(170px, 0.7fr) minmax(190px, auto)",
                   }}
                 >
                   <div className="supervisao-entity-row supervisao-entity-row-head">
-                    <div>Paciente/Caso</div>
+                    <div>
+                      Paciente/Caso
+                    </div>
                     <div>Período</div>
-                    <div>Terapeuta</div>
-                    <div>Competência</div>
+                    <div>
+                      Terapeuta
+                    </div>
+                    <div>
+                      Competência
+                    </div>
                     <div>Ações</div>
                   </div>
 
-                  {lancamentosPaginados.map((item) => {
-                    const archived = isArchived(item);
+                  {lancamentosPaginados.map(
+                    (item) => {
+                      const archived =
+                        isArchived(item);
 
-                    return (
-                      <article className={`supervisao-entity-row ${archived ? "archived" : ""}`} key={item.id}>
-                        <div className="primary" data-label="Paciente/Caso">
-                          <strong>{item.pacienteNome || "Paciente/caso"}</strong>
-                          <span className={`supervisao-inline-status ${getStatusClass(item.statusPlano, archived)}`}>
-                            {archived ? "Arquivado" : item.statusPlano || "Ativo"}
-                          </span>
-                        </div>
+                      const competencia =
+                        competenciaMedia(
+                          item
+                        );
 
-                        <div data-label="Período">
-                          <span>{item.ano} · {mesNome(item.mes)} · Semana {item.semana}</span>
-                        </div>
+                      const computedCount =
+                        countComputedCompetencies(
+                          item
+                        );
 
-                        <div data-label="Terapeuta">
-                          <span>{item.terapeutaNome || "-"}</span>
-                          {item.clinicaNome && <small className="supervisao-row-muted">{item.clinicaNome}</small>}
-                        </div>
+                      return (
+                        <article
+                          className={
+                            `supervisao-entity-row ${
+                              archived
+                                ? "archived"
+                                : ""
+                            }`
+                          }
+                          key={item.id}
+                        >
+                          <div
+                            className="primary"
+                            data-label="Paciente/Caso"
+                          >
+                            <strong>
+                              {item.pacienteNome ||
+                                "Paciente/caso"}
+                            </strong>
 
-                        <div data-label="Competência">
-                          <span>{formatDecimal(competenciaMedia(item))}/5</span>
-                        </div>
+                            <span
+                              className={
+                                `supervisao-inline-status ${getStatusClass(
+                                  item.statusPlano,
+                                  archived
+                                )}`
+                              }
+                            >
+                              {archived
+                                ? "Arquivado"
+                                : item.statusPlano ||
+                                  "Ativo"}
+                            </span>
+                          </div>
 
-                        <div className="actions" data-label="Ações">
-                          <button type="button" onClick={() => openEditModal(item)}>Editar</button>
-                          {archived ? (
-                            <button type="button" onClick={() => handleRestore(item)}>Restaurar</button>
-                          ) : (
-                            <button type="button" className="danger" onClick={() => handleArchive(item)}>Arquivar</button>
-                          )}
-                        </div>
-                      </article>
-                    );
-                  })}
+                          <div data-label="Período">
+                            <span>
+                              {item.ano} ·{" "}
+                              {mesNome(
+                                item.mes
+                              )}{" "}
+                              · Semana{" "}
+                              {item.semana}
+                            </span>
+                          </div>
+
+                          <div data-label="Terapeuta">
+                            <span>
+                              {item.terapeutaNome ||
+                                "-"}
+                            </span>
+
+                            {item.clinicaNome && (
+                              <small className="supervisao-row-muted">
+                                {
+                                  item.clinicaNome
+                                }
+                              </small>
+                            )}
+                          </div>
+
+                          <div data-label="Competência">
+                            <span>
+                              {competencia ===
+                              null
+                                ? "Não computada"
+                                : `${formatDecimal(
+                                    competencia
+                                  )}/5`}
+                            </span>
+
+                            <small className="supervisao-row-muted">
+                              {
+                                computedCount
+                              }
+                              /{
+                                scoreFields.length
+                              }{" "}
+                              avaliadas
+                            </small>
+                          </div>
+
+                          <div
+                            className="actions"
+                            data-label="Ações"
+                          >
+                            <button
+                              type="button"
+                              onClick={() =>
+                                openEditModal(
+                                  item
+                                )
+                              }
+                            >
+                              Editar
+                            </button>
+
+                            {archived ? (
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  handleRestore(
+                                    item
+                                  )
+                                }
+                              >
+                                Restaurar
+                              </button>
+                            ) : (
+                              <button
+                                type="button"
+                                className="danger"
+                                onClick={() =>
+                                  handleArchive(
+                                    item
+                                  )
+                                }
+                              >
+                                Arquivar
+                              </button>
+                            )}
+                          </div>
+                        </article>
+                      );
+                    }
+                  )}
                 </div>
               </div>
 
-              {lancamentosFiltrados.length > PAGE_SIZE && (
+              {lancamentosFiltrados.length >
+                PAGE_SIZE && (
                 <div className="supervisao-pagination">
                   <button
                     type="button"
-                    onClick={() => setPage((current) => Math.max(1, current - 1))}
-                    disabled={currentPage === 1}
+                    onClick={() =>
+                      setPage(
+                        (current) =>
+                          Math.max(
+                            1,
+                            current - 1
+                          )
+                      )
+                    }
+                    disabled={
+                      currentPage === 1
+                    }
                   >
                     Anterior
                   </button>
+
                   <span>
-                    {startIndex + 1}-{Math.min(endIndex, lancamentosFiltrados.length)} de {lancamentosFiltrados.length}
+                    {startIndex + 1}-
+                    {Math.min(
+                      endIndex,
+                      lancamentosFiltrados.length
+                    )}{" "}
+                    de{" "}
+                    {
+                      lancamentosFiltrados.length
+                    }
                   </span>
+
                   <button
                     type="button"
-                    onClick={() => setPage((current) => Math.min(totalPages, current + 1))}
-                    disabled={currentPage === totalPages}
+                    onClick={() =>
+                      setPage(
+                        (current) =>
+                          Math.min(
+                            totalPages,
+                            current + 1
+                          )
+                      )
+                    }
+                    disabled={
+                      currentPage ===
+                      totalPages
+                    }
                   >
                     Próxima
                   </button>
@@ -461,151 +1568,511 @@ function LancamentoContent({ user, onLogout }) {
 
         <Modal
           open={modalOpen}
-          title={editingId ? "Editar lançamento semanal" : "Novo lançamento semanal"}
-          description="Preencha a identificação, notas clínicas, evolução do paciente e plano de ação em uma única janela."
+          title={
+            editingId
+              ? "Editar lançamento semanal"
+              : "Novo lançamento semanal"
+          }
+          description="Preencha a identificação, as métricas avaliadas e o plano de desenvolvimento."
           onClose={closeModal}
           size="xl"
         >
-          <StatusMessage message={message} />
+          <StatusMessage
+            message={message}
+          />
 
-          <form className="supervisao-form supervisao-modal-form lancamento" onSubmit={handleSubmit}>
+          <form
+            className="supervisao-form supervisao-modal-form lancamento"
+            onSubmit={handleSubmit}
+          >
             <div className="supervisao-form-group full">
-              <h2>1. Identificação do acompanhamento</h2>
-              <p>Escolha o período, a clínica, o terapeuta e o paciente/caso supervisionado.</p>
+              <h2>
+                1. Identificação do
+                acompanhamento
+              </h2>
+
+              <p>
+                Escolha o período, a
+                clínica, o terapeuta e o
+                paciente supervisionado.
+              </p>
+
+              {identityLocked && (
+                <small>
+                  O período e os vínculos
+                  não podem ser alterados
+                  durante a edição. Para
+                  alterar essas
+                  informações, arquive o
+                  lançamento e crie outro.
+                </small>
+              )}
             </div>
 
             <label>
               <span>Ano *</span>
-              <input type="number" value={form.ano} onChange={(event) => setField("ano", event.target.value)} required />
+
+              <input
+                type="number"
+                min="2000"
+                max="2100"
+                value={form.ano}
+                disabled={identityLocked}
+                onChange={(event) =>
+                  setField(
+                    "ano",
+                    event.target.value
+                  )
+                }
+                required
+              />
             </label>
 
             <label>
               <span>Mês *</span>
-              <select value={form.mes} onChange={(event) => setField("mes", event.target.value)} required>
-                {meses.map((mes) => <option key={mes.value} value={mes.value}>{mes.label}</option>)}
+
+              <select
+                value={form.mes}
+                disabled={identityLocked}
+                onChange={(event) =>
+                  setField(
+                    "mes",
+                    event.target.value
+                  )
+                }
+                required
+              >
+                {meses.map((mes) => (
+                  <option
+                    key={mes.value}
+                    value={mes.value}
+                  >
+                    {mes.label}
+                  </option>
+                ))}
               </select>
             </label>
 
             <label>
               <span>Semana *</span>
-              <select value={form.semana} onChange={(event) => setField("semana", event.target.value)} required>
-                {semanas.map((semana) => <option key={semana.value} value={semana.value}>{semana.label}</option>)}
+
+              <select
+                value={form.semana}
+                disabled={identityLocked}
+                onChange={(event) =>
+                  setField(
+                    "semana",
+                    event.target.value
+                  )
+                }
+                required
+              >
+                {semanas.map(
+                  (semana) => (
+                    <option
+                      key={
+                        semana.value
+                      }
+                      value={
+                        semana.value
+                      }
+                    >
+                      {semana.label}
+                    </option>
+                  )
+                )}
               </select>
             </label>
 
             <label>
               <span>Clínica *</span>
-              <select value={form.clinicaId} onChange={(event) => setField("clinicaId", event.target.value)} required>
-                <option value="">Selecione</option>
-                {clinicasAtivas.map((clinica) => <option key={clinica.id} value={clinica.id}>{clinica.nome}</option>)}
+
+              <select
+                value={form.clinicaId}
+                disabled={identityLocked}
+                onChange={(event) =>
+                  setField(
+                    "clinicaId",
+                    event.target.value
+                  )
+                }
+                required
+              >
+                <option value="">
+                  Selecione
+                </option>
+
+                {clinicasDisponiveis.map(
+                  (clinica) => (
+                    <option
+                      key={clinica.id}
+                      value={clinica.id}
+                    >
+                      {clinica.nome}
+                    </option>
+                  )
+                )}
               </select>
             </label>
 
             <label>
               <span>Terapeuta *</span>
-              <select value={form.terapeutaId} onChange={(event) => setField("terapeutaId", event.target.value)} required>
-                <option value="">Selecione</option>
-                {terapeutasFiltrados.map((terapeuta) => <option key={terapeuta.id} value={terapeuta.id}>{terapeuta.nome}</option>)}
+
+              <select
+                value={form.terapeutaId}
+                disabled={identityLocked}
+                onChange={(event) =>
+                  setField(
+                    "terapeutaId",
+                    event.target.value
+                  )
+                }
+                required
+              >
+                <option value="">
+                  Selecione
+                </option>
+
+                {terapeutasFiltrados.map(
+                  (terapeuta) => (
+                    <option
+                      key={
+                        terapeuta.id
+                      }
+                      value={
+                        terapeuta.id
+                      }
+                    >
+                      {terapeuta.nome}
+                    </option>
+                  )
+                )}
               </select>
             </label>
 
             <label>
-              <span>Paciente/Caso *</span>
-              <select value={form.pacienteId} onChange={(event) => setField("pacienteId", event.target.value)} required>
-                <option value="">Selecione</option>
-                {pacientesFiltrados.map((paciente) => <option key={paciente.id} value={paciente.id}>{paciente.nome}</option>)}
+              <span>
+                Paciente/Caso *
+              </span>
+
+              <select
+                value={form.pacienteId}
+                disabled={identityLocked}
+                onChange={(event) =>
+                  setField(
+                    "pacienteId",
+                    event.target.value
+                  )
+                }
+                required
+              >
+                <option value="">
+                  Selecione
+                </option>
+
+                {pacientesFiltrados.map(
+                  (paciente) => (
+                    <option
+                      key={paciente.id}
+                      value={paciente.id}
+                    >
+                      {paciente.nome}
+                    </option>
+                  )
+                )}
               </select>
             </label>
 
             <div className="supervisao-form-group full">
-              <h2>2. Competências clínicas do terapeuta</h2>
-              <p>Escala de 1 a 5, seguindo a matriz de supervisão.</p>
+              <h2>
+                2. Competências clínicas
+                do terapeuta
+              </h2>
+
+              <p>
+                Escala de 1 a 5,
+                seguindo a matriz de
+                competências clínicas.
+                Marque “Não computar”
+                quando uma competência
+                não tiver sido avaliada
+                nesta supervisão.
+              </p>
             </div>
 
-            {scoreFields.map(([name, label]) => (
-              <label key={name}>
-                <span>{label}</span>
-                <input
-                  type="number"
-                  min="1"
-                  max="5"
-                  value={form[name]}
-                  onChange={(event) => setField(name, event.target.value)}
-                />
-              </label>
-            ))}
-
-            <div className="supervisao-form-group full">
-              <h2>3. Evolução do paciente</h2>
-              <p>Indicadores acompanhados semanalmente.</p>
-            </div>
-
-            {evolucaoFields.map(([name, label, min, max]) => (
-              <label key={name}>
-                <span>{label}</span>
-                <input
-                  type="number"
+            {scoreFields.map(
+              ({
+                name,
+                label,
+                min,
+                max,
+              }) => (
+                <MetricField
+                  key={name}
+                  name={name}
+                  label={label}
                   min={min}
                   max={max}
                   value={form[name]}
-                  onChange={(event) => setField(name, event.target.value)}
+                  ignored={isMetricIgnored(
+                    name
+                  )}
+                  onValueChange={(
+                    value
+                  ) =>
+                    setField(
+                      name,
+                      value
+                    )
+                  }
+                  onIgnoredChange={(
+                    checked
+                  ) =>
+                    toggleIgnoredMetric(
+                      name,
+                      checked
+                    )
+                  }
                 />
-              </label>
-            ))}
-            
+              )
+            )}
+
+            <div className="supervisao-form-group full">
+              <h2>
+                3. Evolução do paciente
+              </h2>
+
+              <p>
+                Informe os indicadores
+                avaliados neste período.
+                Métricas marcadas como
+                não computadas ficarão
+                fora da média final.
+              </p>
+            </div>
+
+            {evolucaoFields.map(
+              ({
+                name,
+                label,
+                min,
+                max,
+                suffix,
+              }) => (
+                <MetricField
+                  key={name}
+                  name={name}
+                  label={label}
+                  min={min}
+                  max={max}
+                  suffix={suffix}
+                  value={form[name]}
+                  ignored={isMetricIgnored(
+                    name
+                  )}
+                  onValueChange={(
+                    value
+                  ) =>
+                    setField(
+                      name,
+                      value
+                    )
+                  }
+                  onIgnoredChange={(
+                    checked
+                  ) =>
+                    toggleIgnoredMetric(
+                      name,
+                      checked
+                    )
+                  }
+                />
+              )
+            )}
+
             <label className="full">
-              <span>Emoção a ser elaborada</span>
-              <textarea value={form.emocaoElaborada} onChange={(event) => setField("emocaoElaborada", event.target.value)} rows="2" />
+              <span>
+                Emoção a ser elaborada
+              </span>
+
+              <textarea
+                value={
+                  form.emocaoElaborada
+                }
+                onChange={(event) =>
+                  setField(
+                    "emocaoElaborada",
+                    event.target.value
+                  )
+                }
+                rows="2"
+                maxLength="3000"
+              />
             </label>
 
             <div className="supervisao-form-group full">
-              <h2>4. Plano de desenvolvimento e devolutiva</h2>
+              <h2>
+                4. Plano de
+                desenvolvimento e
+                devolutiva
+              </h2>
             </div>
 
             <label className="full">
-              <span>Ponto forte do terapeuta</span>
-              <textarea value={form.pontoForte} onChange={(event) => setField("pontoForte", event.target.value)} rows="3" />
+              <span>
+                Ponto forte do terapeuta
+              </span>
+
+              <textarea
+                value={form.pontoForte}
+                onChange={(event) =>
+                  setField(
+                    "pontoForte",
+                    event.target.value
+                  )
+                }
+                rows="3"
+                maxLength="3000"
+              />
             </label>
 
             <label className="full">
-              <span>Ponto a desenvolver</span>
-              <textarea value={form.pontoDesenvolver} onChange={(event) => setField("pontoDesenvolver", event.target.value)} rows="3" />
+              <span>
+                Ponto a desenvolver
+              </span>
+
+              <textarea
+                value={
+                  form.pontoDesenvolver
+                }
+                onChange={(event) =>
+                  setField(
+                    "pontoDesenvolver",
+                    event.target.value
+                  )
+                }
+                rows="3"
+                maxLength="3000"
+              />
             </label>
 
             <label className="full">
-              <span>Recomendação da supervisora</span>
-              <textarea value={form.recomendacao} onChange={(event) => setField("recomendacao", event.target.value)} rows="3" />
+              <span>
+                Recomendação do
+                supervisor
+              </span>
+
+              <textarea
+                value={
+                  form.recomendacao
+                }
+                onChange={(event) =>
+                  setField(
+                    "recomendacao",
+                    event.target.value
+                  )
+                }
+                rows="3"
+                maxLength="5000"
+              />
             </label>
 
             <label className="full">
               <span>Plano de ação</span>
-              <textarea value={form.planoAcao} onChange={(event) => setField("planoAcao", event.target.value)} rows="3" />
+
+              <textarea
+                value={form.planoAcao}
+                onChange={(event) =>
+                  setField(
+                    "planoAcao",
+                    event.target.value
+                  )
+                }
+                rows="3"
+                maxLength="5000"
+              />
             </label>
 
             <label>
               <span>Prazo</span>
-              <input type="date" value={form.prazo} onChange={(event) => setField("prazo", event.target.value)} />
+
+              <input
+                type="date"
+                value={form.prazo}
+                onChange={(event) =>
+                  setField(
+                    "prazo",
+                    event.target.value
+                  )
+                }
+              />
             </label>
 
             <label>
-              <span>Status do plano</span>
-              <select value={form.statusPlano} onChange={(event) => setField("statusPlano", event.target.value)}>
-                <option value="Pendente">Pendente</option>
-                <option value="Em andamento">Em andamento</option>
-                <option value="Concluído">Concluído</option>
+              <span>
+                Status do plano
+              </span>
+
+              <select
+                value={form.statusPlano}
+                onChange={(event) =>
+                  setField(
+                    "statusPlano",
+                    event.target.value
+                  )
+                }
+              >
+                <option value="Pendente">
+                  Pendente
+                </option>
+
+                <option value="Em andamento">
+                  Em andamento
+                </option>
+
+                <option value="Concluído">
+                  Concluído
+                </option>
               </select>
             </label>
 
             <label className="full">
-              <span>Observação geral</span>
-              <textarea value={form.observacao} onChange={(event) => setField("observacao", event.target.value)} rows="4" />
+              <span>
+                Observação geral
+              </span>
+
+              <textarea
+                value={form.observacao}
+                onChange={(event) =>
+                  setField(
+                    "observacao",
+                    event.target.value
+                  )
+                }
+                rows="4"
+                maxLength="5000"
+              />
             </label>
 
             <div className="supervisao-form-actions full sticky-actions">
-              <button className="supervisao-primary-button" type="submit" disabled={saving}>
-                {saving ? "Salvando..." : editingId ? "Atualizar lançamento" : "Salvar lançamento semanal"}
+              <button
+                className="supervisao-primary-button"
+                type="submit"
+                disabled={saving}
+              >
+                {saving
+                  ? "Salvando..."
+                  : editingId
+                    ? "Atualizar lançamento"
+                    : "Salvar lançamento semanal"}
               </button>
-              <button className="supervisao-secondary-button" type="button" onClick={closeModal}>
+
+              <button
+                className="supervisao-secondary-button"
+                type="button"
+                onClick={closeModal}
+                disabled={saving}
+              >
                 Cancelar
               </button>
             </div>

@@ -22,30 +22,76 @@ export const semanas = [
 ];
 
 export function mesNome(mes) {
-  const encontrado = meses.find((item) => Number(item.value) === Number(mes));
+  const encontrado = meses.find(
+    (item) => Number(item.value) === Number(mes)
+  );
+
   return encontrado?.label || "-";
 }
 
-function safeNumber(value, fallback = 0) {
-  const parsed = Number(value);
-  return Number.isFinite(parsed) ? parsed : fallback;
+/**
+ * Retorna true somente quando o valor realmente representa um número.
+ *
+ * Diferencia corretamente:
+ * - 0: valor válido;
+ * - "0": valor válido;
+ * - null: não computado;
+ * - undefined: não computado;
+ * - "": não computado;
+ * - "   ": não computado;
+ * - booleanos e objetos: inválidos.
+ */
+export function isNumericValue(value) {
+  if (typeof value === "number") {
+    return Number.isFinite(value);
+  }
+
+  if (typeof value === "string") {
+    const normalized = value.trim();
+
+    if (!normalized) return false;
+
+    return Number.isFinite(Number(normalized));
+  }
+
+  return false;
+}
+
+/**
+ * Converte um valor numérico válido.
+ * Quando o valor não foi computado ou é inválido, retorna o fallback.
+ */
+export function toNumber(value, fallback = null) {
+  return isNumericValue(value) ? Number(value) : fallback;
 }
 
 function safeFractionDigits(value, fallback = 1) {
-  const parsed = Number(value);
+  const parsed = toNumber(value, null);
 
-  if (!Number.isFinite(parsed)) return fallback;
+  if (parsed === null) return fallback;
 
   const inteiro = Math.trunc(parsed);
 
-  if (inteiro < 0) return fallback;
-  if (inteiro > 20) return fallback;
+  if (inteiro < 0 || inteiro > 20) return fallback;
 
   return inteiro;
 }
 
-export function formatDecimal(value, fractionDigits = 1) {
-  const safeValue = safeNumber(value);
+/**
+ * Formata um valor decimal.
+ *
+ * O terceiro argumento pode ser usado para definir o texto de ausência:
+ * formatDecimal(null, 1, "Não computado")
+ */
+export function formatDecimal(
+  value,
+  fractionDigits = 1,
+  fallback = "-"
+) {
+  const safeValue = toNumber(value, null);
+
+  if (safeValue === null) return fallback;
+
   const digits = safeFractionDigits(fractionDigits, 1);
 
   return safeValue.toLocaleString("pt-BR", {
@@ -54,16 +100,34 @@ export function formatDecimal(value, fractionDigits = 1) {
   });
 }
 
-export function formatNumber(value) {
-  const safeValue = safeNumber(value);
+/**
+ * Formata um número inteiro.
+ */
+export function formatNumber(value, fallback = "-") {
+  const safeValue = toNumber(value, null);
+
+  if (safeValue === null) return fallback;
 
   return safeValue.toLocaleString("pt-BR", {
     maximumFractionDigits: 0,
   });
 }
 
-export function formatPercent(value, fractionDigits = 0) {
-  const safeValue = safeNumber(value);
+/**
+ * Formata um percentual.
+ *
+ * O terceiro argumento pode ser usado para definir o texto de ausência:
+ * formatPercent(null, 0, "Não computado")
+ */
+export function formatPercent(
+  value,
+  fractionDigits = 0,
+  fallback = "-"
+) {
+  const safeValue = toNumber(value, null);
+
+  if (safeValue === null) return fallback;
+
   const digits = safeFractionDigits(fractionDigits, 0);
 
   return `${safeValue.toLocaleString("pt-BR", {
@@ -72,26 +136,61 @@ export function formatPercent(value, fractionDigits = 0) {
   })}%`;
 }
 
-export function formatScore(value) {
+/**
+ * Formata uma competência na escala de 1 a 5.
+ */
+export function formatScore(value, fallback = "-") {
+  if (!isNumericValue(value)) return fallback;
+
   return `${formatDecimal(value, 1)}/5`;
 }
 
-export function average(values = []) {
-  if (!Array.isArray(values)) return 0;
+/**
+ * Calcula a média considerando somente valores efetivamente computados.
+ *
+ * null, undefined, strings vazias e valores inválidos são ignorados.
+ * O número zero continua sendo considerado um valor válido.
+ *
+ * Se nenhum valor válido existir, retorna null por padrão.
+ */
+export function average(values = [], fallback = null) {
+  if (!Array.isArray(values)) return fallback;
 
   const validValues = values
-    .map((value) => Number(value))
-    .filter((value) => Number.isFinite(value));
+    .filter(isNumericValue)
+    .map(Number);
 
-  if (!validValues.length) return 0;
+  if (!validValues.length) return fallback;
 
-  const total = validValues.reduce((sum, value) => sum + value, 0);
+  const total = validValues.reduce(
+    (sum, value) => sum + value,
+    0
+  );
 
   return total / validValues.length;
 }
 
-export function clamp(value, min = 0, max = 100) {
-  const safeValue = safeNumber(value);
+/**
+ * Limita um número entre o mínimo e o máximo.
+ * Retorna null quando o valor não foi computado.
+ */
+export function clamp(
+  value,
+  min = 0,
+  max = 100,
+  fallback = null
+) {
+  const safeValue = toNumber(value, null);
+  const safeMin = toNumber(min, 0);
+  const safeMax = toNumber(max, 100);
 
-  return Math.min(max, Math.max(min, safeValue));
+  if (safeValue === null) return fallback;
+
+  const lower = Math.min(safeMin, safeMax);
+  const upper = Math.max(safeMin, safeMax);
+
+  return Math.min(
+    upper,
+    Math.max(lower, safeValue)
+  );
 }

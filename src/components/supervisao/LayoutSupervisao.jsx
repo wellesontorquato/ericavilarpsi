@@ -31,6 +31,12 @@ const navGroups = [
     icon: "◇",
     items: [
       {
+        href: "/admin/supervisao/supervisores",
+        label: "Supervisores",
+        icon: "♙",
+        adminOnly: true,
+      },
+      {
         href: "/admin/supervisao/clinicas",
         label: "Clínicas",
         icon: "⌂",
@@ -80,29 +86,96 @@ function isActiveRoute(pathname, href) {
   return pathname === href;
 }
 
-function getOpenGroups(pathname) {
-  return navGroups.reduce((acc, group) => {
-    acc[group.id] = group.items.some((item) => isActiveRoute(pathname, item.href));
+function getVisibleGroups(isAdmin) {
+  return navGroups
+    .map((group) => ({
+      ...group,
+      items: group.items.filter(
+        (item) =>
+          !item.adminOnly || isAdmin
+      ),
+    }))
+    .filter(
+      (group) => group.items.length > 0
+    );
+}
+
+function getOpenGroups(pathname, groups) {
+  return groups.reduce((acc, group) => {
+    acc[group.id] = group.items.some(
+      (item) =>
+        isActiveRoute(
+          pathname,
+          item.href
+        )
+    );
+
     return acc;
   }, {});
+}
+
+function getRoleLabel(access) {
+  if (access?.role === "admin") {
+    return "Administrador geral";
+  }
+
+  if (access?.role === "supervisor") {
+    return "Supervisor";
+  }
+
+  return "Usuário interno";
 }
 
 export default function LayoutSupervisao({
   title,
   description,
   user,
+  access,
   onLogout,
   children,
   actions,
 }) {
   const router = useRouter();
-  const activeGroups = useMemo(() => getOpenGroups(router.pathname), [router.pathname]);
-  const [openGroups, setOpenGroups] = useState(() => getOpenGroups(router.pathname));
+
+  const currentAccess =
+    access ||
+    user?.supervisaoAccess ||
+    null;
+
+  const isAdmin =
+    currentAccess?.role === "admin" ||
+    currentAccess?.isAdmin === true;
+
+  const visibleGroups = useMemo(
+    () => getVisibleGroups(isAdmin),
+    [isAdmin]
+  );
+
+  const activeGroups = useMemo(
+    () =>
+      getOpenGroups(
+        router.pathname,
+        visibleGroups
+      ),
+    [
+      router.pathname,
+      visibleGroups,
+    ]
+  );
+
+  const [openGroups, setOpenGroups] =
+    useState(() =>
+      getOpenGroups(
+        router.pathname,
+        getVisibleGroups(isAdmin)
+      )
+    );
 
   function toggleGroup(groupId) {
     setOpenGroups((current) => ({
       ...current,
-      [groupId]: !current[groupId],
+      [groupId]:
+        !current[groupId],
     }));
   }
 
@@ -110,64 +183,171 @@ export default function LayoutSupervisao({
     <main className="supervisao-shell">
       <aside className="supervisao-sidebar">
         <div className="supervisao-brand-card">
-          <span className="supervisao-brand-mark">EV</span>
+          <span className="supervisao-brand-mark">
+            EV
+          </span>
 
           <div>
-            <span className="supervisao-kicker">Área interna</span>
-            <h2>Supervisão Clínica</h2>
+            <span className="supervisao-kicker">
+              Área interna
+            </span>
+
+            <h2>
+              Supervisão Clínica
+            </h2>
           </div>
         </div>
 
-        <nav className="supervisao-sidebar-nav" aria-label="Menu da supervisão">
-          {navGroups.map((group) => {
-            const isGroupOpen = Boolean(openGroups[group.id] || activeGroups[group.id]);
-            const isGroupActive = group.items.some((item) =>
-              isActiveRoute(router.pathname, item.href)
-            );
+        <nav
+          className="supervisao-sidebar-nav"
+          aria-label="Menu da supervisão"
+        >
+          {visibleGroups.map(
+            (group) => {
+              const isGroupOpen = Boolean(
+                openGroups[group.id] ||
+                activeGroups[group.id]
+              );
 
-            return (
-              <div
-                key={group.id}
-                className={`supervisao-nav-section ${isGroupOpen ? "open" : ""} ${
-                  isGroupActive ? "active" : ""
-                }`}
-              >
-                <button
-                  type="button"
-                  className="supervisao-submenu-trigger"
-                  onClick={() => toggleGroup(group.id)}
-                  aria-expanded={isGroupOpen}
+              const isGroupActive =
+                group.items.some(
+                  (item) =>
+                    isActiveRoute(
+                      router.pathname,
+                      item.href
+                    )
+                );
+
+              return (
+                <div
+                  key={group.id}
+                  className={
+                    `supervisao-nav-section ${
+                      isGroupOpen
+                        ? "open"
+                        : ""
+                    } ${
+                      isGroupActive
+                        ? "active"
+                        : ""
+                    }`
+                  }
                 >
-                  <span className="supervisao-submenu-left">
-                    <span className="supervisao-nav-icon">{group.icon}</span>
-                    <span>{group.label}</span>
-                  </span>
-
-                  <span className="supervisao-submenu-chevron">⌄</span>
-                </button>
-
-                {isGroupOpen && (
-                  <div className="supervisao-submenu-items">
-                    {group.items.map((item) => (
-                      <Link
-                        key={item.href}
-                        href={item.href}
-                        className={isActiveRoute(router.pathname, item.href) ? "active" : ""}
+                  <button
+                    type="button"
+                    className="supervisao-submenu-trigger"
+                    onClick={() =>
+                      toggleGroup(
+                        group.id
+                      )
+                    }
+                    aria-expanded={
+                      isGroupOpen
+                    }
+                    aria-controls={
+                      `supervisao-menu-${group.id}`
+                    }
+                  >
+                    <span className="supervisao-submenu-left">
+                      <span
+                        className="supervisao-nav-icon"
+                        aria-hidden="true"
                       >
-                        <span>{item.icon}</span>
-                        {item.label}
-                      </Link>
-                    ))}
-                  </div>
-                )}
-              </div>
-            );
-          })}
+                        {group.icon}
+                      </span>
+
+                      <span>
+                        {group.label}
+                      </span>
+                    </span>
+
+                    <span
+                      className="supervisao-submenu-chevron"
+                      aria-hidden="true"
+                    >
+                      ⌄
+                    </span>
+                  </button>
+
+                  {isGroupOpen && (
+                    <div
+                      id={
+                        `supervisao-menu-${group.id}`
+                      }
+                      className="supervisao-submenu-items"
+                    >
+                      {group.items.map(
+                        (item) => {
+                          const active =
+                            isActiveRoute(
+                              router.pathname,
+                              item.href
+                            );
+
+                          return (
+                            <Link
+                              key={
+                                item.href
+                              }
+                              href={
+                                item.href
+                              }
+                              className={
+                                active
+                                  ? "active"
+                                  : ""
+                              }
+                              aria-current={
+                                active
+                                  ? "page"
+                                  : undefined
+                              }
+                            >
+                              <span
+                                aria-hidden="true"
+                              >
+                                {item.icon}
+                              </span>
+
+                              {item.label}
+                            </Link>
+                          );
+                        }
+                      )}
+                    </div>
+                  )}
+                </div>
+              );
+            }
+          )}
         </nav>
 
         <div className="supervisao-sidebar-footer">
-          <small>{user?.email}</small>
-          <button type="button" onClick={onLogout}>
+          <div className="supervisao-sidebar-user">
+            <strong>
+              {currentAccess?.nome ||
+                user?.email ||
+                "Usuário"}
+            </strong>
+
+            <small>
+              {getRoleLabel(
+                currentAccess
+              )}
+            </small>
+
+            {user?.email &&
+              currentAccess?.nome && (
+                <small>
+                  {user.email}
+                </small>
+              )}
+          </div>
+
+          <button
+            type="button"
+            onClick={onLogout}
+          >
             Sair
           </button>
         </div>
@@ -176,12 +356,22 @@ export default function LayoutSupervisao({
       <section className="supervisao-content">
         <header className="supervisao-page-header">
           <div>
-            <span className="supervisao-kicker">Sistema de acompanhamento</span>
+            <span className="supervisao-kicker">
+              Sistema de acompanhamento
+            </span>
+
             <h1>{title}</h1>
-            {description && <p>{description}</p>}
+
+            {description && (
+              <p>{description}</p>
+            )}
           </div>
 
-          {actions && <div className="supervisao-header-actions">{actions}</div>}
+          {actions && (
+            <div className="supervisao-header-actions">
+              {actions}
+            </div>
+          )}
         </header>
 
         {children}
