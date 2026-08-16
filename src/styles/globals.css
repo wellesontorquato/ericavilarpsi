@@ -10128,3 +10128,89 @@ button{font:inherit;}
     height: 26px;
   }
 }
+
+/* =========================================================
+   SUPERVISÃO - IDENTIFICAÇÃO DO USUÁRIO NA SIDEBAR
+   ========================================================= */
+
+.supervisao-sidebar-footer {
+  min-width: 0;
+  overflow: hidden;
+}
+
+.supervisao-sidebar-user {
+  display: grid;
+  grid-template-columns: 42px minmax(0, 1fr);
+  align-items: center;
+  gap: 11px;
+  min-width: 0;
+}
+
+.supervisao-sidebar-user-avatar {
+  width: 42px;
+  height: 42px;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  border: 1px solid rgba(255, 247, 239, 0.12);
+  border-radius: 14px;
+  background: linear-gradient(
+    135deg,
+    rgba(201, 150, 115, 0.92),
+    rgba(167, 120, 134, 0.92)
+  );
+  color: #fff;
+  font-size: 0.78rem;
+  font-weight: 900;
+  letter-spacing: 0.02em;
+}
+
+.supervisao-sidebar-user-copy {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.supervisao-sidebar-user-copy strong {
+  display: block;
+  min-width: 0;
+  overflow: hidden;
+  color: #fff7ef;
+  font-size: 0.88rem;
+  font-weight: 800;
+  line-height: 1.25;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.supervisao-sidebar-user-role {
+  display: block;
+  width: fit-content;
+  max-width: 100%;
+  overflow: hidden;
+  color: #f1cdb5;
+  font-size: 0.68rem;
+  font-weight: 800;
+  line-height: 1.25;
+  text-overflow: ellipsis;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+}
+
+.supervisao-sidebar-user-copy small {
+  display: block;
+  min-width: 0;
+  overflow: hidden;
+  color: rgba(255, 247, 239, 0.62);
+  font-size: 0.72rem;
+  line-height: 1.35;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.supervisao-sidebar-footer > button {
+  width: 100%;
+  margin: 0;
+}
