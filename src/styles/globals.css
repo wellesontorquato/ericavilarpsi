@@ -10700,4 +10700,124 @@ button{font:inherit;}
     margin-bottom: 0 !important;
   }
 }
+/* =========================================================
+   AJUSTES FINAIS DO RELATÓRIO PDF
 
+   Cole este bloco no FINAL do arquivo:
+   src/styles/globals.css
+   ========================================================= */
+
+@media print {
+  /* Permite que a seção continue na página seguinte quando
+     a observação for maior que o espaço disponível. */
+  .print-section-indicators {
+    page-break-inside: auto !important;
+    break-inside: auto !important;
+    overflow: visible !important;
+  }
+
+  /* Mantém os dois painéis de indicadores juntos. */
+  .print-section-indicators .print-grid-two {
+    page-break-inside: avoid !important;
+    break-inside: avoid-page !important;
+    margin-bottom: 24px !important;
+  }
+
+  /* A observação sempre começa logo abaixo dos indicadores.
+     Se for muito grande, o próprio texto continua na próxima página. */
+  .print-section-indicators .print-report-observation {
+    page-break-before: auto !important;
+    break-before: auto !important;
+
+    page-break-after: auto !important;
+    break-after: auto !important;
+
+    page-break-inside: auto !important;
+    break-inside: auto !important;
+
+    overflow: visible !important;
+    max-height: none !important;
+    height: auto !important;
+
+    -webkit-box-decoration-break: clone;
+    box-decoration-break: clone;
+  }
+
+  .print-section-indicators .print-report-observation h4 {
+    page-break-after: avoid !important;
+    break-after: avoid-page !important;
+  }
+
+  .print-section-indicators .print-report-observation p {
+    page-break-before: avoid !important;
+    break-before: avoid-page !important;
+
+    page-break-inside: auto !important;
+    break-inside: auto !important;
+
+    white-space: pre-wrap !important;
+    overflow-wrap: break-word !important;
+    word-break: normal !important;
+
+    orphans: 3;
+    widows: 3;
+  }
+
+  /* =======================================================
+     TERMÔMETRO DE INDICADORES
+     ======================================================= */
+
+  /* Organiza cada indicador em:
+     nome | barra | valor */
+  .print-indicator-card .print-bar-row {
+    display: grid !important;
+    grid-template-columns:
+      minmax(0, 1.35fr)
+      minmax(42px, 0.8fr)
+      98px !important;
+
+    align-items: center !important;
+    gap: 8px !important;
+    width: 100% !important;
+
+    page-break-inside: avoid !important;
+    break-inside: avoid-page !important;
+  }
+
+  .print-indicator-card .print-bar-label {
+    width: auto !important;
+    min-width: 0 !important;
+    max-width: none !important;
+
+    overflow: hidden !important;
+    white-space: nowrap !important;
+    text-overflow: ellipsis !important;
+
+    font-size: 0.76rem !important;
+  }
+
+  .print-indicator-card .print-bar-track {
+    width: 100% !important;
+    min-width: 42px !important;
+    max-width: none !important;
+  }
+
+  /* Impede "Não computado" de quebrar em duas linhas. */
+  .print-indicator-card .print-bar-value {
+    width: 98px !important;
+    min-width: 98px !important;
+    max-width: 98px !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+
+    text-align: right !important;
+    white-space: nowrap !important;
+    overflow-wrap: normal !important;
+    word-break: keep-all !important;
+    hyphens: none !important;
+
+    font-size: 0.72rem !important;
+    line-height: 1.15 !important;
+  }
+}
