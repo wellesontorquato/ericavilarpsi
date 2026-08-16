@@ -29,7 +29,8 @@ const INDICATOR_LABELS = {
   evolucaoObjetivos: "Evolução dos objetivos",
   intensidadeSintomas: "Intensidade dos sintomas",
   evitacaoSocial: "Evitação social",
-  intensidadeComportamento: "Intensidade do comportamento-alvo",
+  intensidadeComportamento:
+    "Intensidade do comportamento-alvo",
 };
 
 export const REPORT_TYPES = [
@@ -54,40 +55,80 @@ export const REPORT_TYPES = [
 function isArchived(item = {}) {
   return (
     item?.arquivado === true ||
-    String(item?.statusRegistro || "").toLowerCase() === "arquivado"
+    String(
+      item?.statusRegistro || ""
+    ).toLowerCase() === "arquivado"
   );
 }
 
-function normalizeText(value, fallback = "-") {
-  const text = safeText(value, fallback);
+function normalizeText(
+  value,
+  fallback = "-"
+) {
+  const text = safeText(
+    value,
+    fallback
+  );
 
-  if (typeof text !== "string") return fallback;
+  if (typeof text !== "string") {
+    return fallback;
+  }
 
-  const normalized = text.replace(/\s+/g, " ").trim();
+  const normalized = text
+    .replace(/\s+/g, " ")
+    .trim();
 
   return normalized || fallback;
 }
 
 function hasText(value) {
-  if (typeof value !== "string") return false;
+  if (typeof value !== "string") {
+    return false;
+  }
 
   const normalized = value.trim();
 
-  return Boolean(normalized && normalized !== "-");
+  return Boolean(
+    normalized &&
+    normalized !== "-"
+  );
 }
 
-function formatMetricDecimal(value, fractionDigits = 1) {
-  return formatDecimal(value, fractionDigits, NOT_COMPUTED);
+function formatMetricDecimal(
+  value,
+  fractionDigits = 1
+) {
+  return formatDecimal(
+    value,
+    fractionDigits,
+    NOT_COMPUTED
+  );
 }
 
-function formatMetricPercent(value, fractionDigits = 0) {
-  return formatPercent(value, fractionDigits, NOT_COMPUTED);
+function formatMetricPercent(
+  value,
+  fractionDigits = 0
+) {
+  return formatPercent(
+    value,
+    fractionDigits,
+    NOT_COMPUTED
+  );
 }
 
-function formatScale(value, max, fractionDigits = 1) {
-  if (!isNumericValue(value)) return NOT_COMPUTED;
+function formatScale(
+  value,
+  max,
+  fractionDigits = 1
+) {
+  if (!isNumericValue(value)) {
+    return NOT_COMPUTED;
+  }
 
-  return `${formatDecimal(value, fractionDigits)}/${max}`;
+  return `${formatDecimal(
+    value,
+    fractionDigits
+  )}/${max}`;
 }
 
 function rawPercent(value, max) {
@@ -101,13 +142,19 @@ function rawPercent(value, max) {
 
   return Math.max(
     0,
-    Math.min(100, (Number(value) / Number(max)) * 100)
+    Math.min(
+      100,
+      (Number(value) /
+        Number(max)) *
+        100
+    )
   );
 }
 
 function periodValue(item = {}) {
   return (
-    toNumber(item?.ano, 0) * 1000 +
+    toNumber(item?.ano, 0) *
+      1000 +
     toNumber(item?.mes, 0) * 10 +
     toNumber(item?.semana, 0)
   );
@@ -127,38 +174,61 @@ function parseDate(value) {
 
   if (!text) return null;
 
-  if (/^\d{4}-\d{2}-\d{2}/.test(text)) {
+  if (
+    /^\d{4}-\d{2}-\d{2}/.test(
+      text
+    )
+  ) {
     const parsed = new Date(
-      `${text.slice(0, 10)}T00:00:00`
+      `${text.slice(
+        0,
+        10
+      )}T00:00:00`
     );
 
-    return Number.isNaN(parsed.getTime())
+    return Number.isNaN(
+      parsed.getTime()
+    )
       ? null
       : parsed;
   }
 
   const parsed = new Date(text);
 
-  return Number.isNaN(parsed.getTime())
+  return Number.isNaN(
+    parsed.getTime()
+  )
     ? null
     : parsed;
 }
 
-function comparePlanDeadline(a = {}, b = {}) {
+function comparePlanDeadline(
+  a = {},
+  b = {}
+) {
   const dateA = parseDate(a?.prazo);
   const dateB = parseDate(b?.prazo);
 
   if (dateA && dateB) {
-    return dateA.getTime() - dateB.getTime();
+    return (
+      dateA.getTime() -
+      dateB.getTime()
+    );
   }
 
   if (dateA) return -1;
   if (dateB) return 1;
 
-  return periodValue(b) - periodValue(a);
+  return (
+    periodValue(b) -
+    periodValue(a)
+  );
 }
 
-function uniqueCount(items = [], getValue) {
+function uniqueCount(
+  items = [],
+  getValue
+) {
   return new Set(
     asArray(items)
       .map(getValue)
@@ -167,21 +237,24 @@ function uniqueCount(items = [], getValue) {
   ).size;
 }
 
-function groupCount(items = [], getLabel) {
-  const groups = asArray(items).reduce(
-    (accumulator, item) => {
-      const label = normalizeText(
-        getLabel(item),
-        "Não informado"
-      );
+function groupCount(
+  items = [],
+  getLabel
+) {
+  const groups = asArray(
+    items
+  ).reduce((accumulator, item) => {
+    const label = normalizeText(
+      getLabel(item),
+      "Não informado"
+    );
 
-      accumulator[label] =
-        (accumulator[label] || 0) + 1;
+    accumulator[label] =
+      (accumulator[label] || 0) +
+      1;
 
-      return accumulator;
-    },
-    {}
-  );
+    return accumulator;
+  }, {});
 
   return Object.entries(groups)
     .map(([label, value]) => ({
@@ -191,27 +264,40 @@ function groupCount(items = [], getLabel) {
     }))
     .sort(
       (a, b) =>
-        b.value - a.value ||
-        a.label.localeCompare(b.label, "pt-BR")
+        b.value -
+          a.value ||
+        a.label.localeCompare(
+          b.label,
+          "pt-BR"
+        )
     );
 }
 
 function spreadsheetSafeValue(value) {
-  if (value === null || value === undefined) {
+  if (
+    value === null ||
+    value === undefined
+  ) {
     return NOT_COMPUTED;
   }
 
   const text = String(value);
 
-  return /^[=+\-@]/.test(text.trimStart())
+  return /^[=+\-@]/.test(
+    text.trimStart()
+  )
     ? `'${text}`
     : text;
 }
 
 function escapeCsv(value) {
-  const text = spreadsheetSafeValue(value);
+  const text =
+    spreadsheetSafeValue(value);
 
-  return `"${text.replace(/"/g, '""')}"`;
+  return `"${text.replace(
+    /"/g,
+    '""'
+  )}"`;
 }
 
 function escapeHtml(value) {
@@ -224,25 +310,46 @@ function escapeHtml(value) {
 }
 
 function slugify(value) {
-  return String(value || "relatorio")
+  return String(
+    value || "relatorio"
+  )
     .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
+    .replace(
+      /[\u0300-\u036f]/g,
+      ""
+    )
     .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
+    .replace(
+      /[^a-z0-9]+/g,
+      "-"
+    )
     .replace(/^-|-$/g, "")
     .slice(0, 80);
 }
 
-function downloadFile(filename, content, mimeType) {
-  if (typeof window === "undefined") return;
+function downloadFile(
+  filename,
+  content,
+  mimeType
+) {
+  if (
+    typeof window === "undefined"
+  ) {
+    return;
+  }
 
   const blob = new Blob(
     [content],
-    { type: mimeType }
+    {
+      type: mimeType,
+    }
   );
 
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement("a");
+  const url =
+    URL.createObjectURL(blob);
+
+  const link =
+    document.createElement("a");
 
   link.href = url;
   link.download = filename;
@@ -253,13 +360,20 @@ function downloadFile(filename, content, mimeType) {
   link.remove();
 
   window.setTimeout(
-    () => URL.revokeObjectURL(url),
+    () =>
+      URL.revokeObjectURL(url),
     0
   );
 }
 
-function getColumnValue(row, column) {
-  if (typeof column.value === "function") {
+function getColumnValue(
+  row,
+  column
+) {
+  if (
+    typeof column.value ===
+    "function"
+  ) {
     return column.value(row);
   }
 
@@ -273,22 +387,30 @@ function buildMaps({
 }) {
   return {
     clinicas: Object.fromEntries(
-      asArray(clinicas).map((item) => [
-        safeId(item?.id),
-        item,
-      ])
+      asArray(clinicas).map(
+        (item) => [
+          safeId(item?.id),
+          item,
+        ]
+      )
     ),
+
     terapeutas: Object.fromEntries(
-      asArray(terapeutas).map((item) => [
-        safeId(item?.id),
-        item,
-      ])
+      asArray(terapeutas).map(
+        (item) => [
+          safeId(item?.id),
+          item,
+        ]
+      )
     ),
+
     pacientes: Object.fromEntries(
-      asArray(pacientes).map((item) => [
-        safeId(item?.id),
-        item,
-      ])
+      asArray(pacientes).map(
+        (item) => [
+          safeId(item?.id),
+          item,
+        ]
+      )
     ),
   };
 }
@@ -299,7 +421,8 @@ function resolveClinicaNome(
   fallback = "-"
 ) {
   return normalizeText(
-    maps.clinicas[safeId(id)]?.nome,
+    maps.clinicas[safeId(id)]
+      ?.nome,
     fallback
   );
 }
@@ -310,7 +433,8 @@ function resolveTerapeutaNome(
   fallback = "-"
 ) {
   return normalizeText(
-    maps.terapeutas[safeId(id)]?.nome,
+    maps.terapeutas[safeId(id)]
+      ?.nome,
     fallback
   );
 }
@@ -321,7 +445,8 @@ function resolvePacienteNome(
   fallback = "-"
 ) {
   return normalizeText(
-    maps.pacientes[safeId(id)]?.nome,
+    maps.pacientes[safeId(id)]
+      ?.nome,
     fallback
   );
 }
@@ -333,52 +458,66 @@ function buildReportMetrics({
   pacientes = [],
   alertas = [],
 }) {
-  const registros = asArray(lancamentos);
+  const registros =
+    asArray(lancamentos);
 
   const competenciasPossiveis =
-    registros.length * competencyFields.length;
+    registros.length *
+    competencyFields.length;
 
   const indicadoresPossiveis =
-    registros.length * patientIndicatorFields.length;
+    registros.length *
+    patientIndicatorFields.length;
 
-  const competenciasComputadas = registros.reduce(
-    (total, item) =>
-      total +
-      countComputedMetrics(
-        item,
-        competencyFields
-      ),
-    0
-  );
+  const competenciasComputadas =
+    registros.reduce(
+      (total, item) =>
+        total +
+        countComputedMetrics(
+          item,
+          competencyFields
+        ),
+      0
+    );
 
-  const indicadoresComputados = registros.reduce(
-    (total, item) =>
-      total +
-      countComputedMetrics(
-        item,
-        patientIndicatorFields
-      ),
-    0
-  );
+  const indicadoresComputados =
+    registros.reduce(
+      (total, item) =>
+        total +
+        countComputedMetrics(
+          item,
+          patientIndicatorFields
+        ),
+      0
+    );
 
   return {
     registros: registros.length,
-    clinicas: asArray(clinicas).length,
-    terapeutas: asArray(terapeutas).length,
-    pacientes: asArray(pacientes).length,
+    clinicas:
+      asArray(clinicas).length,
+    terapeutas:
+      asArray(terapeutas).length,
+    pacientes:
+      asArray(pacientes).length,
 
-    terapeutasAvaliados: uniqueCount(
-      registros,
-      (item) => item?.terapeutaId
-    ),
+    terapeutasAvaliados:
+      uniqueCount(
+        registros,
+        (item) =>
+          item?.terapeutaId
+      ),
 
-    pacientesAvaliados: uniqueCount(
-      registros,
-      (item) => item?.pacienteId
-    ),
+    pacientesAvaliados:
+      uniqueCount(
+        registros,
+        (item) =>
+          item?.pacienteId
+      ),
 
     competencia: average(
-      registros.map(competenciaMedia)
+      registros.map(
+        competenciaMedia
+      )
     ),
 
     evolucao: average(
@@ -387,26 +526,32 @@ function buildReportMetrics({
 
     adesao: average(
       registros.map(
-        (item) => item?.adesaoTarefas
+        (item) =>
+          item?.adesaoTarefas
       )
     ),
 
     estrategias: average(
       registros.map(
-        (item) => item?.aplicacaoEstrategias
+        (item) =>
+          item?.aplicacaoEstrategias
       )
     ),
 
     objetivos: average(
       registros.map(
-        (item) => item?.evolucaoObjetivos
+        (item) =>
+          item?.evolucaoObjetivos
       )
     ),
 
     planosAbertos:
-      registros.filter(isPlanoAberto).length,
+      registros.filter(
+        isPlanoAberto
+      ).length,
 
-    alertas: asArray(alertas).length,
+    alertas:
+      asArray(alertas).length,
 
     competenciasComputadas,
     competenciasPossiveis,
@@ -415,18 +560,16 @@ function buildReportMetrics({
 
     coberturaCompetencias:
       competenciasPossiveis > 0
-        ? (
-            competenciasComputadas /
-            competenciasPossiveis
-          ) * 100
+        ? (competenciasComputadas /
+            competenciasPossiveis) *
+          100
         : null,
 
     coberturaIndicadores:
       indicadoresPossiveis > 0
-        ? (
-            indicadoresComputados /
-            indicadoresPossiveis
-          ) * 100
+        ? (indicadoresComputados /
+            indicadoresPossiveis) *
+          100
         : null,
   };
 }
@@ -450,17 +593,23 @@ function buildRanking({
 
   return entities
     .map((entity) => {
-      const entityId = safeId(entity?.id);
+      const entityId = safeId(
+        entity?.id
+      );
 
       const registros = asArray(
         lancamentos
       ).filter(
         (item) =>
-          safeId(item?.[field]) === entityId
+          safeId(
+            item?.[field]
+          ) === entityId
       );
 
       const value = average(
-        registros.map(evolucaoMedia)
+        registros.map(
+          evolucaoMedia
+        )
       );
 
       return {
@@ -471,10 +620,12 @@ function buildRanking({
         ),
         value,
         percent: value,
-        registros: registros.length,
+        registros:
+          registros.length,
         pacientes: uniqueCount(
           registros,
-          (item) => item?.pacienteId
+          (item) =>
+            item?.pacienteId
         ),
       };
     })
@@ -483,7 +634,8 @@ function buildRanking({
     )
     .sort(
       (a, b) =>
-        b.value - a.value ||
+        b.value -
+          a.value ||
         a.label.localeCompare(
           b.label,
           "pt-BR"
@@ -492,13 +644,23 @@ function buildRanking({
     .slice(0, 5);
 }
 
-function buildCompetencias(lancamentos = []) {
-  const registros = asArray(lancamentos);
+function buildCompetencias(
+  lancamentos = []
+) {
+  const registros =
+    asArray(lancamentos);
 
   return competencyFields.map(
-    ([field, shortLabel, fullLabel]) => {
+    ([
+      field,
+      shortLabel,
+      fullLabel,
+    ]) => {
       const values = registros
-        .map((item) => item?.[field])
+        .map(
+          (item) =>
+            item?.[field]
+        )
         .filter(isNumericValue);
 
       const value = average(values);
@@ -506,20 +668,336 @@ function buildCompetencias(lancamentos = []) {
       return {
         id: field,
         field,
-        label: fullLabel || shortLabel,
+        label:
+          fullLabel ||
+          shortLabel,
         value,
-        percent: isNumericValue(value)
-          ? (Number(value) / 5) * 100
-          : null,
+        percent:
+          isNumericValue(value)
+            ? (Number(value) /
+                5) *
+              100
+            : null,
         max: 5,
-        avaliacoes: values.length,
+        avaliacoes:
+          values.length,
       };
     }
   );
 }
 
-function buildIndicadores(lancamentos = []) {
-  const registros = asArray(lancamentos);
+function pluralize(
+  count,
+  singular,
+  plural
+) {
+  return Number(count) === 1
+    ? singular
+    : plural;
+}
+
+function formatCompetencyReference(
+  item
+) {
+  if (
+    !item ||
+    !isNumericValue(item.value)
+  ) {
+    return "";
+  }
+
+  return `${item.label} (${formatDecimal(
+    item.value,
+    1
+  )}/5 em ${formatNumber(
+    item.avaliacoes
+  )} ${pluralize(
+    item.avaliacoes,
+    "avaliação",
+    "avaliações"
+  )})`;
+}
+
+function joinPortuguese(
+  items = []
+) {
+  const validItems =
+    asArray(items).filter(Boolean);
+
+  if (!validItems.length) {
+    return "";
+  }
+
+  if (validItems.length === 1) {
+    return validItems[0];
+  }
+
+  if (validItems.length === 2) {
+    return `${validItems[0]} e ${validItems[1]}`;
+  }
+
+  return `${validItems
+    .slice(0, -1)
+    .join(", ")} e ${validItems.at(
+    -1
+  )}`;
+}
+
+/**
+ * Explica a nota técnica usando exatamente a mesma regra de competenciaMedia:
+ * primeiro calcula a média das competências válidas de cada supervisão e,
+ * depois, calcula a média dessas médias semanais.
+ */
+export function buildTechnicalExplanation({
+  lancamentos = [],
+  competencias = [],
+  metrics = {},
+} = {}) {
+  const registros =
+    asArray(lancamentos);
+
+  const mediasPorSupervisao =
+    registros
+      .map(competenciaMedia)
+      .filter(isNumericValue)
+      .map(Number);
+
+  const notaFinal = average(
+    mediasPorSupervisao
+  );
+
+  const somaMedias =
+    mediasPorSupervisao.reduce(
+      (total, value) =>
+        total + value,
+      0
+    );
+
+  const competenciasAvaliadas =
+    asArray(
+      competencias
+    ).filter(
+      (item) =>
+        isNumericValue(
+          item?.value
+        ) &&
+        Number(
+          item?.avaliacoes || 0
+        ) > 0
+    );
+
+  const competenciasOrdenadas =
+    [
+      ...competenciasAvaliadas,
+    ].sort(
+      (a, b) =>
+        Number(b.value) -
+        Number(a.value)
+    );
+
+  const acimaDaMedia =
+    isNumericValue(notaFinal)
+      ? competenciasOrdenadas.filter(
+          (item) =>
+            Number(item.value) >
+            Number(notaFinal) +
+              0.001
+        )
+      : [];
+
+  const abaixoDaMedia =
+    isNumericValue(notaFinal)
+      ? [
+          ...competenciasOrdenadas,
+        ]
+          .reverse()
+          .filter(
+            (item) =>
+              Number(item.value) <
+              Number(notaFinal) -
+                0.001
+          )
+      : [];
+
+  const pontosFortes = (
+    acimaDaMedia.length
+      ? acimaDaMedia
+      : competenciasOrdenadas
+  ).slice(0, 2);
+
+  const pontosDesenvolvimento =
+    abaixoDaMedia.slice(0, 2);
+
+  const competenciasPossiveis =
+    Number(
+      metrics.competenciasPossiveis ||
+        0
+    );
+
+  const competenciasComputadas =
+    Number(
+      metrics.competenciasComputadas ||
+        0
+    );
+
+  const naoComputadas = Math.max(
+    0,
+    competenciasPossiveis -
+      competenciasComputadas
+  );
+
+  const cobertura =
+    isNumericValue(
+      metrics.coberturaCompetencias
+    )
+      ? Number(
+          metrics.coberturaCompetencias
+        )
+      : null;
+
+  const supervisoesSemMedia =
+    Math.max(
+      0,
+      registros.length -
+        mediasPorSupervisao.length
+    );
+
+  if (
+    !isNumericValue(notaFinal) ||
+    !mediasPorSupervisao.length
+  ) {
+    return {
+      hasData: false,
+      notaFinal: null,
+      somaMedias: null,
+      supervisoesConsideradas: 0,
+      supervisoesTotais:
+        registros.length,
+      supervisoesSemMedia,
+      competenciasComputadas,
+      competenciasPossiveis,
+      naoComputadas,
+      cobertura,
+      competencias:
+        competenciasAvaliadas,
+      pontosFortes: [],
+      pontosDesenvolvimento: [],
+      calculation:
+        "Não foi possível calcular a média técnica porque nenhuma supervisão possui competência computada no recorte selecionado.",
+      summary:
+        'Campos marcados como "Não computar" permanecem fora do cálculo e não são convertidos em zero.',
+    };
+  }
+
+  const calculation =
+    `A soma das médias técnicas de cada supervisão foi ${formatDecimal(
+      somaMedias,
+      1
+    )}. Esse total foi dividido por ${formatNumber(
+      mediasPorSupervisao.length
+    )} ${pluralize(
+      mediasPorSupervisao.length,
+      "supervisão com nota calculável",
+      "supervisões com nota calculável"
+    )}, resultando em ${formatDecimal(
+      notaFinal,
+      1
+    )}/5.`;
+
+  const coverageText =
+    competenciasPossiveis
+      ? `Foram computados ${formatNumber(
+          competenciasComputadas
+        )} de ${formatNumber(
+          competenciasPossiveis
+        )} campos de competência (${formatPercent(
+          cobertura,
+          1
+        )} de cobertura). ${formatNumber(
+          naoComputadas
+        )} ${pluralize(
+          naoComputadas,
+          "campo foi excluído",
+          "campos foram excluídos"
+        )} por estar sem avaliação ou marcado como "Não computar".`
+      : "Não havia campos de competência disponíveis para medir a cobertura.";
+
+  const influenceParts = [];
+
+  if (acimaDaMedia.length) {
+    influenceParts.push(
+      `Acima da média consolidada aparecem ${joinPortuguese(
+        acimaDaMedia
+          .slice(0, 2)
+          .map(
+            formatCompetencyReference
+          )
+      )}.`
+    );
+  }
+
+  if (
+    pontosDesenvolvimento.length
+  ) {
+    influenceParts.push(
+      `Abaixo da média consolidada aparecem ${joinPortuguese(
+        pontosDesenvolvimento.map(
+          formatCompetencyReference
+        )
+      )}; estes são os principais focos comparativos de desenvolvimento no período.`
+    );
+  }
+
+  if (
+    !influenceParts.length &&
+    competenciasAvaliadas.length
+  ) {
+    influenceParts.push(
+      "As competências computadas ficaram muito próximas da média consolidada, sem um destaque relativo claro acima ou abaixo do resultado final."
+    );
+  }
+
+  if (supervisoesSemMedia) {
+    influenceParts.push(
+      `${formatNumber(
+        supervisoesSemMedia
+      )} ${pluralize(
+        supervisoesSemMedia,
+        "supervisão não entrou",
+        "supervisões não entraram"
+      )} na nota final porque não possuía competência computada.`
+    );
+  }
+
+  return {
+    hasData: true,
+    notaFinal,
+    somaMedias,
+    supervisoesConsideradas:
+      mediasPorSupervisao.length,
+    supervisoesTotais:
+      registros.length,
+    supervisoesSemMedia,
+    competenciasComputadas,
+    competenciasPossiveis,
+    naoComputadas,
+    cobertura,
+    competencias:
+      competenciasAvaliadas,
+    pontosFortes,
+    pontosDesenvolvimento,
+    calculation,
+    summary: `${coverageText} ${influenceParts.join(
+      " "
+    )}`.trim(),
+  };
+}
+
+function buildIndicadores(
+  lancamentos = []
+) {
+  const registros =
+    asArray(lancamentos);
 
   const indicadores =
     patientIndicatorFields.map(
@@ -530,46 +1008,58 @@ function buildIndicadores(lancamentos = []) {
         invert,
       ]) => {
         const values = registros
-          .map((item) => item?.[field])
+          .map(
+            (item) =>
+              item?.[field]
+          )
           .filter(isNumericValue);
 
-        const value = average(values);
+        const value =
+          average(values);
 
         return {
           id: field,
           field,
           label:
-            INDICATOR_LABELS[field] ||
-            fallbackLabel,
+            INDICATOR_LABELS[
+              field
+            ] || fallbackLabel,
           value,
-          percent: rawPercent(value, max),
+          percent: rawPercent(
+            value,
+            max
+          ),
           max,
           unit:
             max === 100
               ? "%"
               : "escala",
           invert,
-          avaliacoes: values.length,
+          avaliacoes:
+            values.length,
         };
       }
     );
 
   const crisesValues = registros
     .map(
-      (item) => item?.crisesAnsiedade
+      (item) =>
+        item?.crisesAnsiedade
     )
     .filter(isNumericValue);
 
   indicadores.push({
     id: "crisesAnsiedade",
     field: "crisesAnsiedade",
-    label: "Crises de ansiedade por semana",
+    label:
+      "Crises de ansiedade por semana",
     value: average(crisesValues),
     percent: null,
     max: null,
     unit: "quantidade",
     invert: true,
-    avaliacoes: crisesValues.length,
+    avaliacoes:
+      crisesValues.length,
   });
 
   return indicadores;
@@ -587,11 +1077,17 @@ function buildPlanosPendentes(
 function buildRecomendacoes(
   lancamentos = []
 ) {
-  return sortByPeriodDesc(lancamentos)
+  return sortByPeriodDesc(
+    lancamentos
+  )
     .filter(
       (item) =>
-        hasText(item?.recomendacao) ||
-        hasText(item?.emocaoElaborada)
+        hasText(
+          item?.recomendacao
+        ) ||
+        hasText(
+          item?.emocaoElaborada
+        )
     )
     .slice(0, 5);
 }
@@ -627,14 +1123,24 @@ export function buildReportAnalysis({
   const alertasAtivos =
     asArray(alertas);
 
-  return {
-    metrics: buildReportMetrics({
-      lancamentos: registrosAtivos,
+  const metrics =
+    buildReportMetrics({
+      lancamentos:
+        registrosAtivos,
       clinicas: clinicasAtivas,
-      terapeutas: terapeutasAtivos,
+      terapeutas:
+        terapeutasAtivos,
       pacientes: pacientesAtivos,
       alertas: alertasAtivos,
-    }),
+    });
+
+  const competencias =
+    buildCompetencias(
+      registrosAtivos
+    );
+
+  return {
+    metrics,
 
     rankingLabel:
       rankingMode === "terapeutas"
@@ -642,28 +1148,43 @@ export function buildReportAnalysis({
         : "Evolução por clínica",
 
     ranking: buildRanking({
-      lancamentos: registrosAtivos,
+      lancamentos:
+        registrosAtivos,
       clinicas: clinicasAtivas,
-      terapeutas: terapeutasAtivos,
+      terapeutas:
+        terapeutasAtivos,
       rankingMode,
     }),
 
-    competencias:
-      buildCompetencias(registrosAtivos),
+    competencias,
 
-    sintomas:
-      buildIndicadores(registrosAtivos),
+    technicalExplanation:
+      buildTechnicalExplanation({
+        lancamentos:
+          registrosAtivos,
+        competencias,
+        metrics,
+      }),
+
+    sintomas: buildIndicadores(
+      registrosAtivos
+    ),
 
     statusCarteira: groupCount(
       pacientesAtivos,
-      (item) => item?.statusCaso
+      (item) =>
+        item?.statusCaso
     ),
 
     planosPendentes:
-      buildPlanosPendentes(registrosAtivos),
+      buildPlanosPendentes(
+        registrosAtivos
+      ),
 
     recomendacoes:
-      buildRecomendacoes(registrosAtivos),
+      buildRecomendacoes(
+        registrosAtivos
+      ),
   };
 }
 
@@ -866,11 +1387,13 @@ export const lancamentosColumns = [
   },
   {
     key: "intensidadeComportamento",
-    label: "Intensidade do comportamento-alvo",
+    label:
+      "Intensidade do comportamento-alvo",
   },
   {
     key: "crisesAnsiedade",
-    label: "Crises de ansiedade/semana",
+    label:
+      "Crises de ansiedade/semana",
   },
   {
     key: "statusPlano",
@@ -949,11 +1472,15 @@ export const alertasColumns = [
   },
 ];
 
-function buildPeriodDetail(filters = {}) {
+function buildPeriodDetail(
+  filters = {}
+) {
   const parts = [];
 
   if (filters.semana) {
-    parts.push(`Semana ${filters.semana}`);
+    parts.push(
+      `Semana ${filters.semana}`
+    );
   }
 
   parts.push(
@@ -963,7 +1490,8 @@ function buildPeriodDetail(filters = {}) {
   );
 
   parts.push(
-    filters.ano || "Todos os anos"
+    filters.ano ||
+      "Todos os anos"
   );
 
   return parts.join(" · ");
@@ -977,29 +1505,43 @@ export function buildResumoRows({
   return [
     {
       indicador: "Contexto",
-      valor: contexto || "Geral",
-      detalhe: "Filtro principal do relatório",
+      valor:
+        contexto || "Geral",
+      detalhe:
+        "Filtro principal do relatório",
     },
     {
       indicador: "Período",
-      valor: buildPeriodDetail(filters),
-      detalhe: "Recorte temporal aplicado",
+      valor:
+        buildPeriodDetail(
+          filters
+        ),
+      detalhe:
+        "Recorte temporal aplicado",
     },
     {
       indicador: "Lançamentos",
-      valor: formatNumber(metrics.registros),
-      detalhe: "Registros semanais ativos filtrados",
+      valor: formatNumber(
+        metrics.registros
+      ),
+      detalhe:
+        "Registros semanais ativos filtrados",
     },
     {
       indicador: "Pacientes",
-      valor: formatNumber(metrics.pacientes),
+      valor: formatNumber(
+        metrics.pacientes
+      ),
       detalhe: `${formatNumber(
         metrics.pacientesAvaliados
       )} paciente(s) com lançamento no período`,
     },
     {
-      indicador: "Média de competências",
-      valor: isNumericValue(metrics.competencia)
+      indicador:
+        "Média de competências",
+      valor: isNumericValue(
+        metrics.competencia
+      )
         ? `${formatMetricDecimal(
             metrics.competencia
           )}/5`
@@ -1011,7 +1553,8 @@ export function buildResumoRows({
       )} campos computados`,
     },
     {
-      indicador: "Evolução clínica",
+      indicador:
+        "Evolução clínica",
       valor: formatMetricPercent(
         metrics.evolucao
       ),
@@ -1022,7 +1565,8 @@ export function buildResumoRows({
       )} indicadores computados`,
     },
     {
-      indicador: "Adesão às tarefas",
+      indicador:
+        "Adesão às tarefas",
       valor: formatMetricPercent(
         metrics.adesao
       ),
@@ -1030,7 +1574,8 @@ export function buildResumoRows({
         "Campos não computados foram ignorados",
     },
     {
-      indicador: "Aplicação das estratégias",
+      indicador:
+        "Aplicação das estratégias",
       valor: formatMetricPercent(
         metrics.estrategias
       ),
@@ -1038,7 +1583,8 @@ export function buildResumoRows({
         "Campos não computados foram ignorados",
     },
     {
-      indicador: "Evolução dos objetivos",
+      indicador:
+        "Evolução dos objetivos",
       valor: formatMetricPercent(
         metrics.objetivos
       ),
@@ -1046,15 +1592,19 @@ export function buildResumoRows({
         "Campos não computados foram ignorados",
     },
     {
-      indicador: "Planos em aberto",
+      indicador:
+        "Planos em aberto",
       valor: formatNumber(
         metrics.planosAbertos
       ),
-      detalhe: "Planos ainda não concluídos",
+      detalhe:
+        "Planos ainda não concluídos",
     },
     {
       indicador: "Alertas",
-      valor: formatNumber(metrics.alertas),
+      valor: formatNumber(
+        metrics.alertas
+      ),
       detalhe:
         "Alertas automáticos no recorte",
     },
@@ -1064,17 +1614,65 @@ export function buildResumoRows({
 export function buildClinicasRows(
   clinicas = []
 ) {
-  return asArray(clinicas).map((item) => ({
+  return asArray(clinicas).map(
+    (item) => ({
+      id: safeId(item?.id),
+      nome: normalizeText(
+        item?.nome
+      ),
+      cidade: normalizeText(
+        item?.cidade
+      ),
+      responsavel:
+        normalizeText(
+          item?.responsavel
+        ),
+      status: normalizeText(
+        item?.status,
+        "Ativa"
+      ),
+      registro: isArchived(
+        item
+      )
+        ? "Arquivado"
+        : normalizeText(
+            item?.statusRegistro,
+            "Ativo"
+          ),
+    })
+  );
+}
+
+export function buildTerapeutasRows(
+  terapeutas = [],
+  context = {}
+) {
+  const maps = buildMaps(context);
+
+  return asArray(
+    terapeutas
+  ).map((item) => ({
     id: safeId(item?.id),
-    nome: normalizeText(item?.nome),
-    cidade: normalizeText(item?.cidade),
-    responsavel: normalizeText(
-      item?.responsavel
+    nome: normalizeText(
+      item?.nome
     ),
+    clinica:
+      resolveClinicaNome(
+        item?.clinicaId,
+        maps
+      ),
+    dataEntrada:
+      normalizeText(
+        item?.dataEntrada
+      ),
     status: normalizeText(
       item?.status,
-      "Ativa"
+      "Ativo"
     ),
+    observacao:
+      normalizeText(
+        item?.observacao
+      ),
     registro: isArchived(item)
       ? "Arquivado"
       : normalizeText(
@@ -1084,85 +1682,60 @@ export function buildClinicasRows(
   }));
 }
 
-export function buildTerapeutasRows(
-  terapeutas = [],
-  context = {}
-) {
-  const maps = buildMaps(context);
-
-  return asArray(terapeutas).map(
-    (item) => ({
-      id: safeId(item?.id),
-      nome: normalizeText(item?.nome),
-      clinica: resolveClinicaNome(
-        item?.clinicaId,
-        maps
-      ),
-      dataEntrada: normalizeText(
-        item?.dataEntrada
-      ),
-      status: normalizeText(
-        item?.status,
-        "Ativo"
-      ),
-      observacao: normalizeText(
-        item?.observacao
-      ),
-      registro: isArchived(item)
-        ? "Arquivado"
-        : normalizeText(
-            item?.statusRegistro,
-            "Ativo"
-          ),
-    })
-  );
-}
-
 export function buildPacientesRows(
   pacientes = [],
   context = {}
 ) {
   const maps = buildMaps(context);
 
-  return asArray(pacientes).map(
-    (item) => ({
-      id: safeId(item?.id),
-      nome: normalizeText(item?.nome),
-      clinica: resolveClinicaNome(
+  return asArray(
+    pacientes
+  ).map((item) => ({
+    id: safeId(item?.id),
+    nome: normalizeText(
+      item?.nome
+    ),
+    clinica:
+      resolveClinicaNome(
         item?.clinicaId,
         maps
       ),
-      terapeuta: resolveTerapeutaNome(
+    terapeuta:
+      resolveTerapeutaNome(
         item?.terapeutaId,
         maps
       ),
-      dataInicio: normalizeText(
+    dataInicio:
+      normalizeText(
         item?.dataInicio
       ),
-      statusCaso: normalizeText(
+    statusCaso:
+      normalizeText(
         item?.statusCaso
       ),
-      nivelAtencao: normalizeText(
+    nivelAtencao:
+      normalizeText(
         item?.nivelAtencao
       ),
-      queixaPrincipal: normalizeText(
+    queixaPrincipal:
+      normalizeText(
         item?.queixaPrincipal
       ),
-      objetivosTerapeuticos:
-        normalizeText(
-          item?.objetivosTerapeuticos
-        ),
-      observacoes: normalizeText(
+    objetivosTerapeuticos:
+      normalizeText(
+        item?.objetivosTerapeuticos
+      ),
+    observacoes:
+      normalizeText(
         item?.observacoes
       ),
-      registro: isArchived(item)
-        ? "Arquivado"
-        : normalizeText(
-            item?.statusRegistro,
-            "Ativo"
-          ),
-    })
-  );
+    registro: isArchived(item)
+      ? "Arquivado"
+      : normalizeText(
+          item?.statusRegistro,
+          "Ativo"
+        ),
+  }));
 }
 
 export function buildLancamentosRows(
@@ -1191,7 +1764,10 @@ export function buildLancamentosRows(
 
     return {
       id: safeId(item?.id),
-      ano: normalizeText(item?.ano),
+
+      ano: normalizeText(
+        item?.ano
+      ),
 
       mes: item?.mes
         ? mesNome(item.mes)
@@ -1226,7 +1802,9 @@ export function buildLancamentosRows(
       ),
 
       competenciaMedia:
-        isNumericValue(mediaCompetencia)
+        isNumericValue(
+          mediaCompetencia
+        )
           ? `${formatMetricDecimal(
               mediaCompetencia
             )}/5`
@@ -1328,39 +1906,46 @@ export function buildLancamentosRows(
             )
           : NOT_COMPUTED,
 
-      statusPlano: normalizeText(
-        item?.statusPlano,
-        "Sem status"
-      ),
+      statusPlano:
+        normalizeText(
+          item?.statusPlano,
+          "Sem status"
+        ),
 
       prazo: normalizeText(
         item?.prazo,
         "Sem prazo"
       ),
 
-      pontoForte: normalizeText(
-        item?.pontoForte
-      ),
+      pontoForte:
+        normalizeText(
+          item?.pontoForte
+        ),
 
-      pontoDesenvolver: normalizeText(
-        item?.pontoDesenvolver
-      ),
+      pontoDesenvolver:
+        normalizeText(
+          item?.pontoDesenvolver
+        ),
 
-      recomendacao: normalizeText(
-        item?.recomendacao
-      ),
+      recomendacao:
+        normalizeText(
+          item?.recomendacao
+        ),
 
-      planoAcao: normalizeText(
-        item?.planoAcao
-      ),
+      planoAcao:
+        normalizeText(
+          item?.planoAcao
+        ),
 
-      emocaoElaborada: normalizeText(
-        item?.emocaoElaborada
-      ),
+      emocaoElaborada:
+        normalizeText(
+          item?.emocaoElaborada
+        ),
 
-      observacao: normalizeText(
-        item?.observacao
-      ),
+      observacao:
+        normalizeText(
+          item?.observacao
+        ),
 
       registro: isArchived(item)
         ? "Arquivado"
@@ -1387,23 +1972,28 @@ export function buildAlertasRows(
       periodo:
         item?.periodo &&
         item.periodo !== "-"
-          ? normalizeText(item.periodo)
+          ? normalizeText(
+              item.periodo
+            )
           : "Cadastro atual",
 
-      pacienteNome: normalizeText(
-        item?.pacienteNome,
-        "Não se aplica"
-      ),
+      pacienteNome:
+        normalizeText(
+          item?.pacienteNome,
+          "Não se aplica"
+        ),
 
-      terapeutaNome: normalizeText(
-        item?.terapeutaNome,
-        "Não informado"
-      ),
+      terapeutaNome:
+        normalizeText(
+          item?.terapeutaNome,
+          "Não informado"
+        ),
 
-      clinicaNome: normalizeText(
-        item?.clinicaNome,
-        "Não informada"
-      ),
+      clinicaNome:
+        normalizeText(
+          item?.clinicaNome,
+          "Não informada"
+        ),
 
       summary: normalizeText(
         item?.summary
@@ -1439,14 +2029,23 @@ export function buildReportSheets({
     return [
       summarySheet,
       {
-        name: "Atenção imediata - Top 15",
+        name:
+          "Atenção imediata - Top 15",
         columns: alertasColumns,
-        rows: alertasRows.slice(0, 15),
+        rows: alertasRows.slice(
+          0,
+          15
+        ),
       },
       {
-        name: "Últimos lançamentos - Top 20",
-        columns: lancamentosColumns,
-        rows: lancamentosRows.slice(0, 20),
+        name:
+          "Últimos lançamentos - Top 20",
+        columns:
+          lancamentosColumns,
+        rows: lancamentosRows.slice(
+          0,
+          20
+        ),
       },
     ];
   }
@@ -1455,8 +2054,10 @@ export function buildReportSheets({
     return [
       summarySheet,
       {
-        name: "Lançamentos semanais",
-        columns: lancamentosColumns,
+        name:
+          "Lançamentos semanais",
+        columns:
+          lancamentosColumns,
         rows: lancamentosRows,
       },
     ];
@@ -1466,7 +2067,8 @@ export function buildReportSheets({
     return [
       summarySheet,
       {
-        name: "Alertas automáticos",
+        name:
+          "Alertas automáticos",
         columns: alertasColumns,
         rows: alertasRows,
       },
@@ -1476,12 +2078,14 @@ export function buildReportSheets({
   return [
     summarySheet,
     {
-      name: "Lançamentos semanais",
+      name:
+        "Lançamentos semanais",
       columns: lancamentosColumns,
       rows: lancamentosRows,
     },
     {
-      name: "Alertas automáticos",
+      name:
+        "Alertas automáticos",
       columns: alertasColumns,
       rows: alertasRows,
     },
@@ -1509,9 +2113,8 @@ export function exportCsv(
   rows = []
 ) {
   const header = asArray(columns)
-    .map(
-      (column) =>
-        escapeCsv(column.label)
+    .map((column) =>
+      escapeCsv(column.label)
     )
     .join(";");
 
@@ -1520,7 +2123,10 @@ export function exportCsv(
       asArray(columns)
         .map((column) =>
           escapeCsv(
-            getColumnValue(row, column)
+            getColumnValue(
+              row,
+              column
+            )
           )
         )
         .join(";")
@@ -1674,16 +2280,17 @@ export function exportExcelWorkbook(
     `;
   }
 
-  asArray(sheets).forEach((sheet) => {
-    const columns = asArray(
-      sheet?.columns
-    );
+  asArray(sheets).forEach(
+    (sheet) => {
+      const columns = asArray(
+        sheet?.columns
+      );
 
-    const rows = asArray(
-      sheet?.rows
-    );
+      const rows = asArray(
+        sheet?.rows
+      );
 
-    htmlContent += `
+      htmlContent += `
       <table
         style="
           width:100%;
@@ -1800,7 +2407,8 @@ export function exportExcelWorkbook(
         }
       </table>
     `;
-  });
+    }
+  );
 
   htmlContent += "</body></html>";
 
