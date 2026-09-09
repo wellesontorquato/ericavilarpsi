@@ -1,4 +1,4 @@
-import {
+﻿import {
   average,
   isNumericValue,
   mesNome,
@@ -13,47 +13,47 @@ export const competencyFields = [
   [
     "qualidadeConceitualizacao",
     "Conceit.",
-    "ConceitualizaÃ§Ã£o",
+    "Conceitualização",
   ],
   [
     "planejamentoTerapeutico",
     "Planej.",
-    "Planejamento terapÃªutico",
+    "Planejamento terapêutico",
   ],
   [
     "aplicacaoTecnicasTcc",
-    "TÃ©cnicas",
-    "TÃ©cnicas TCC",
+    "Técnicas",
+    "Técnicas TCC",
   ],
   [
     "manejoSessao",
     "Manejo",
-    "Manejo da sessÃ£o",
+    "Manejo da sessão",
   ],
   [
     "posturaTerapeutica",
     "Postura",
-    "Postura terapÃªutica",
+    "Postura terapêutica",
   ],
   [
     "formulacaoHipoteses",
-    "HipÃ³teses",
-    "FormulaÃ§Ã£o de hipÃ³teses",
+    "Hipóteses",
+    "Formulação de hipóteses",
   ],
 ];
 
 /**
- * Indicadores utilizados no cÃ¡lculo consolidado da evoluÃ§Ã£o clÃ­nica.
+ * Indicadores utilizados no cálculo consolidado da evolução clínica.
  *
  * Estrutura:
- * [campo, rÃ³tulo, valor mÃ¡ximo, inverter]
+ * [campo, rótulo, valor máximo, inverter]
  *
- * Indicadores de intensidade sÃ£o invertidos, pois quanto menor o valor
- * informado, melhor Ã© o resultado clÃ­nico.
+ * Indicadores de intensidade são invertidos, pois quanto menor o valor
+ * informado, melhor é o resultado clínico.
  *
- * crisesAnsiedade nÃ£o participa da mÃ©dia consolidada porque Ã© uma
- * frequÃªncia sem uma escala mÃ¡xima clÃ­nica fixa. Ela continua sendo
- * utilizada separadamente nos alertas e no histÃ³rico.
+ * crisesAnsiedade não participa da média consolidada porque é uma
+ * frequência sem uma escala máxima clínica fixa. Ela continua sendo
+ * utilizada separadamente nos alertas e no histórico.
  */
 export const patientIndicatorFields = [
   [
@@ -64,13 +64,13 @@ export const patientIndicatorFields = [
   ],
   [
     "adesaoTarefas",
-    "AdesÃ£o",
+    "Adesão",
     100,
     false,
   ],
   [
     "aplicacaoEstrategias",
-    "EstratÃ©gias",
+    "Estratégias",
     100,
     false,
   ],
@@ -88,7 +88,7 @@ export const patientIndicatorFields = [
   ],
   [
     "evitacaoSocial",
-    "EvitaÃ§Ã£o",
+    "Evitação",
     10,
     true,
   ],
@@ -133,16 +133,16 @@ export function safeId(value) {
 /**
  * Informa se determinado campo foi efetivamente computado.
  *
- * O nÃºmero zero Ã© considerado um valor vÃ¡lido.
+ * O número zero é considerado um valor válido.
  */
 export function hasComputedMetric(item = {}, field) {
   return isNumericValue(item?.[field]);
 }
 
 /**
- * Retorna quantas mÃ©tricas foram computadas em um registro.
+ * Retorna quantas métricas foram computadas em um registro.
  *
- * Aceita uma lista simples de nomes ou as listas de configuraÃ§Ã£o
+ * Aceita uma lista simples de nomes ou as listas de configuração
  * competencyFields e patientIndicatorFields.
  */
 export function countComputedMetrics(item = {}, fields = []) {
@@ -156,10 +156,10 @@ export function countComputedMetrics(item = {}, fields = []) {
 }
 
 /**
- * Normaliza uma mÃ©trica para a escala percentual de 0 a 100.
+ * Normaliza uma métrica para a escala percentual de 0 a 100.
  *
- * Quando o valor nÃ£o foi computado, retorna null.
- * Dessa forma, campos desmarcados nÃ£o entram nas mÃ©dias.
+ * Quando o valor não foi computado, retorna null.
+ * Dessa forma, campos desmarcados não entram nas médias.
  */
 export function normalizedPercent(
   value,
@@ -191,10 +191,10 @@ export function normalizedPercent(
 }
 
 /**
- * Calcula a mÃ©dia das competÃªncias avaliadas.
+ * Calcula a média das competências avaliadas.
  *
- * CompetÃªncias com null, undefined ou string vazia sÃ£o ignoradas.
- * Retorna null quando nenhuma competÃªncia foi computada.
+ * Competências com null, undefined ou string vazia são ignoradas.
+ * Retorna null quando nenhuma competência foi computada.
  */
 export function competenciaMedia(item = {}) {
   const values = competencyFields.map(
@@ -205,11 +205,11 @@ export function competenciaMedia(item = {}) {
 }
 
 /**
- * Calcula o Ã­ndice consolidado da evoluÃ§Ã£o clÃ­nica.
+ * Calcula o índice consolidado da evolução clínica.
  *
- * Cada indicador Ã© normalizado para 0 a 100 antes da mÃ©dia.
- * Indicadores nÃ£o computados sÃ£o ignorados.
- * Retorna null quando nenhum indicador consolidÃ¡vel foi computado.
+ * Cada indicador é normalizado para 0 a 100 antes da média.
+ * Indicadores não computados são ignorados.
+ * Retorna null quando nenhum indicador consolidável foi computado.
  */
 export function evolucaoMedia(item = {}) {
   const normalizedValues = patientIndicatorFields.map(
@@ -243,7 +243,7 @@ export function isPlanoAberto(item = {}) {
   if (!status) return false;
 
   return ![
-    "concluÃ­do",
+    "concluído",
     "concluido",
     "finalizado",
   ].includes(status);
@@ -257,7 +257,7 @@ export function isCasoAtencao(paciente = {}) {
   return (
     nivel.includes("alta") ||
     nivel.includes("urgente") ||
-    nivel.includes("atenÃ§Ã£o")
+    nivel.includes("atenção")
   );
 }
 
@@ -384,11 +384,11 @@ export function anosDisponiveis(
 }
 
 /**
- * Monta a tendÃªncia mensal ou semanal.
+ * Monta a tendência mensal ou semanal.
  *
- * As mÃ©dias ignoram mÃ©tricas nÃ£o computadas. Os campos
+ * As médias ignoram métricas não computadas. Os campos
  * registrosCompetencia e registrosEvolucao informam quantos
- * lanÃ§amentos realmente participaram de cada mÃ©dia.
+ * lançamentos realmente participaram de cada média.
  */
 export function buildTendencia(
   lancamentos = [],
@@ -461,11 +461,11 @@ export function buildTendencia(
 }
 
 /**
- * Monta o radar das competÃªncias.
+ * Monta o radar das competências.
  *
- * Quando uma competÃªncia nÃ£o tiver nenhuma avaliaÃ§Ã£o, seu valor serÃ¡
- * null, e nÃ£o zero. O campo avaliacoes informa quantos lanÃ§amentos
- * participaram da mÃ©dia de cada competÃªncia.
+ * Quando uma competência não tiver nenhuma avaliação, seu valor será
+ * null, e não zero. O campo avaliacoes informa quantos lançamentos
+ * participaram da média de cada competência.
  */
 export function buildRadar(
   lancamentos = []

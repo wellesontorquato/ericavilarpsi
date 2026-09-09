@@ -1,4 +1,4 @@
-const admin = require("firebase-admin");
+﻿const admin = require("firebase-admin");
 
 const RESOURCE_COLLECTIONS = {
   supervisores: "supervisao_supervisores",
@@ -75,11 +75,11 @@ const FIELD_RULES = {
     },
     nivelAtencao: {
       type: "enum",
-      values: ["Baixa", "MÃ©dia", "Alta"],
+      values: ["Baixa", "Média", "Alta"],
     },
     statusConceitualizacao: {
       type: "enum",
-      values: ["Rascunho", "ConcluÃ­da"],
+      values: ["Rascunho", "Concluída"],
     },
     queixaPrincipal: { type: "string", max: 5000 },
     pensamentosAutomaticos: { type: "string", max: 5000 },
@@ -219,7 +219,7 @@ const FIELD_RULES = {
     prazo: { type: "date" },
     statusPlano: {
       type: "enum",
-      values: ["Pendente", "Em andamento", "ConcluÃ­do"],
+      values: ["Pendente", "Em andamento", "Concluído"],
     },
     observacao: { type: "string", max: 5000 },
     arquivado: { type: "boolean" },
@@ -266,7 +266,7 @@ function getAdminDb() {
 
     if (!projectId || !clientEmail || !privateKey) {
       throw new Error(
-        "Firebase Admin nÃ£o configurado. Configure FIREBASE_PROJECT_ID, FIREBASE_CLIENT_EMAIL e FIREBASE_PRIVATE_KEY na Netlify."
+        "Firebase Admin não configurado. Configure FIREBASE_PROJECT_ID, FIREBASE_CLIENT_EMAIL e FIREBASE_PRIVATE_KEY na Netlify."
       );
     }
 
@@ -313,7 +313,7 @@ function getIdentityUser(context) {
     ) {
       throw httpError(
         500,
-        "SUPERVISAO_DEV_NO_AUTH nÃ£o pode ser usado em produÃ§Ã£o."
+        "SUPERVISAO_DEV_NO_AUTH não pode ser usado em produção."
       );
     }
 
@@ -331,7 +331,7 @@ function getIdentityUser(context) {
   if (!user) {
     throw httpError(
       401,
-      "Acesso negado. FaÃ§a login para continuar."
+      "Acesso negado. Faça login para continuar."
     );
   }
 
@@ -433,7 +433,7 @@ async function resolvePrincipal(db, user) {
   if (!profileDoc) {
     throw httpError(
       403,
-      "UsuÃ¡rio autenticado, mas sem cadastro ativo como administrador ou supervisor."
+      "Usuário autenticado, mas sem cadastro ativo como administrador ou supervisor."
     );
   }
 
@@ -442,7 +442,7 @@ async function resolvePrincipal(db, user) {
   if (isInactiveSupervisor(profile)) {
     throw httpError(
       403,
-      "Seu acesso de supervisor estÃ¡ inativo ou arquivado."
+      "Seu acesso de supervisor está inativo ou arquivado."
     );
   }
 
@@ -453,7 +453,7 @@ async function resolvePrincipal(db, user) {
   ) {
     throw httpError(
       403,
-      "A conta autenticada nÃ£o corresponde ao cadastro deste supervisor."
+      "A conta autenticada não corresponde ao cadastro deste supervisor."
     );
   }
 
@@ -471,7 +471,7 @@ async function resolvePrincipal(db, user) {
   ) {
     throw httpError(
       403,
-      "A conta nÃ£o possui a funÃ§Ã£o de supervisor no provedor de identidade."
+      "A conta não possui a função de supervisor no provedor de identidade."
     );
   }
 
@@ -508,7 +508,7 @@ function parseBody(event) {
   if (Buffer.byteLength(event.body, "utf8") > 128 * 1024) {
     throw httpError(
       413,
-      "O conteÃºdo enviado excede o limite permitido."
+      "O conteúdo enviado excede o limite permitido."
     );
   }
 
@@ -527,7 +527,7 @@ function parseBody(event) {
   } catch (error) {
     throw httpError(
       400,
-      "Corpo da requisiÃ§Ã£o invÃ¡lido."
+      "Corpo da requisição inválido."
     );
   }
 }
@@ -564,7 +564,7 @@ function sanitizeField(value, rule, fieldName) {
     ) {
       throw httpError(
         400,
-        `Informe um e-mail vÃ¡lido em ${fieldName}.`
+        `Informe um e-mail válido em ${fieldName}.`
       );
     }
 
@@ -577,7 +577,7 @@ function sanitizeField(value, rule, fieldName) {
     if (!rule.values.includes(text)) {
       throw httpError(
         400,
-        `Valor invÃ¡lido para ${fieldName}.`
+        `Valor inválido para ${fieldName}.`
       );
     }
 
@@ -598,7 +598,7 @@ function sanitizeField(value, rule, fieldName) {
     ) {
       throw httpError(
         400,
-        `Identificador invÃ¡lido em ${fieldName}.`
+        `Identificador inválido em ${fieldName}.`
       );
     }
 
@@ -629,7 +629,7 @@ function sanitizeField(value, rule, fieldName) {
     ) {
       throw httpError(
         400,
-        `Lista invÃ¡lida em ${fieldName}.`
+        `Lista inválida em ${fieldName}.`
       );
     }
 
@@ -655,7 +655,7 @@ function sanitizeField(value, rule, fieldName) {
     ) {
       throw httpError(
         400,
-        `Data invÃ¡lida em ${fieldName}.`
+        `Data inválida em ${fieldName}.`
       );
     }
 
@@ -680,7 +680,7 @@ function sanitizeField(value, rule, fieldName) {
     ) {
       throw httpError(
         400,
-        `Informe um nÃºmero vÃ¡lido em ${fieldName}.`
+        `Informe um número válido em ${fieldName}.`
       );
     }
 
@@ -699,7 +699,7 @@ function sanitizeField(value, rule, fieldName) {
 
   throw httpError(
     400,
-    `Campo nÃ£o suportado: ${fieldName}.`
+    `Campo não suportado: ${fieldName}.`
   );
 }
 
@@ -709,7 +709,7 @@ function sanitizeRecord(resource, body) {
   if (!rules) {
     throw httpError(
       400,
-      "Recurso invÃ¡lido."
+      "Recurso inválido."
     );
   }
 
@@ -720,7 +720,7 @@ function sanitizeRecord(resource, body) {
   if (unknownFields.length) {
     throw httpError(
       400,
-      `Campo(s) nÃ£o permitido(s): ${unknownFields.join(", ")}.`
+      `Campo(s) não permitido(s): ${unknownFields.join(", ")}.`
     );
   }
 
@@ -775,7 +775,7 @@ function validateRecord(resource, data) {
     requireFields(
       data,
       ["nome", "email"],
-      "Preencha os campos obrigatÃ³rios"
+      "Preencha os campos obrigatórios"
     );
   }
 
@@ -783,7 +783,7 @@ function validateRecord(resource, data) {
     requireFields(
       data,
       ["nome", "supervisorIds"],
-      "Preencha os campos obrigatÃ³rios"
+      "Preencha os campos obrigatórios"
     );
   }
 
@@ -795,7 +795,7 @@ function validateRecord(resource, data) {
         "clinicaId",
         "supervisorIds",
       ],
-      "Preencha os campos obrigatÃ³rios"
+      "Preencha os campos obrigatórios"
     );
   }
 
@@ -808,11 +808,11 @@ function validateRecord(resource, data) {
         "terapeutaId",
         "supervisorIds",
       ],
-      "Preencha os campos obrigatÃ³rios"
+      "Preencha os campos obrigatórios"
     );
 
     if (
-      data.statusConceitualizacao === "ConcluÃ­da"
+      data.statusConceitualizacao === "Concluída"
     ) {
       requireFields(
         data,
@@ -825,7 +825,7 @@ function validateRecord(resource, data) {
           "fatoresManutencao",
           "objetivosTerapeuticos",
         ],
-        "Para concluir a prÃ©-supervisÃ£o, preencha"
+        "Para concluir a pré-supervisão, preencha"
       );
     }
   }
@@ -843,7 +843,7 @@ function validateRecord(resource, data) {
         "supervisorId",
         "supervisorIds",
       ],
-      "Preencha os campos obrigatÃ³rios do lanÃ§amento"
+      "Preencha os campos obrigatórios do lançamento"
     );
 
     const hasCompetency = hasComputedField(
@@ -854,7 +854,7 @@ function validateRecord(resource, data) {
     if (!hasCompetency) {
       throw httpError(
         400,
-        "Informe pelo menos uma competÃªncia clÃ­nica para calcular a mÃ©dia."
+        "Informe pelo menos uma competência clínica para calcular a média."
       );
     }
 
@@ -867,7 +867,7 @@ function validateRecord(resource, data) {
     if (!hasPatientIndicator) {
       throw httpError(
         400,
-        "Informe pelo menos um indicador de evoluÃ§Ã£o do paciente."
+        "Informe pelo menos um indicador de evolução do paciente."
       );
     }
   }
@@ -892,7 +892,7 @@ function assertRecordAccess(principal, item) {
   if (!canAccessRecord(principal, item)) {
     throw httpError(
       403,
-      "VocÃª nÃ£o possui permissÃ£o para acessar este registro."
+      "Você não possui permissão para acessar este registro."
     );
   }
 }
@@ -937,7 +937,7 @@ function assertAdmin(principal) {
   if (principal.role !== "admin") {
     throw httpError(
       403,
-      "Esta operaÃ§Ã£o Ã© exclusiva do administrador geral."
+      "Esta operação é exclusiva do administrador geral."
     );
   }
 }
@@ -951,7 +951,7 @@ async function getDocument(db, resource, id) {
   if (!doc.exists) {
     throw httpError(
       404,
-      "Registro nÃ£o encontrado."
+      "Registro não encontrado."
     );
   }
 
@@ -1102,7 +1102,7 @@ async function validateSupervisorIds(
   if (!supervisorIds.length) {
     throw httpError(
       400,
-      "Selecione pelo menos um supervisor responsÃ¡vel."
+      "Selecione pelo menos um supervisor responsável."
     );
   }
 
@@ -1126,7 +1126,7 @@ async function validateSupervisorIds(
   if (invalid) {
     throw httpError(
       400,
-      "Um dos supervisores selecionados nÃ£o existe ou estÃ¡ inativo."
+      "Um dos supervisores selecionados não existe ou está inativo."
     );
   }
 }
@@ -1238,7 +1238,7 @@ async function prepareRecord(
     if (duplicateDoc) {
       throw httpError(
         409,
-        "JÃ¡ existe um supervisor cadastrado com este e-mail."
+        "Já existe um supervisor cadastrado com este e-mail."
       );
     }
 
@@ -1283,7 +1283,7 @@ async function prepareRecord(
   requireFields(
     merged,
     ["clinicaId"],
-    "Preencha os campos obrigatÃ³rios"
+    "Preencha os campos obrigatórios"
   );
 
   const clinic = await getDocument(
@@ -1302,7 +1302,7 @@ async function prepareRecord(
     recordSupervisorIds(
       clinic.data
     ),
-    "Os supervisores do registro tambÃ©m precisam estar atribuÃ­dos Ã  clÃ­nica."
+    "Os supervisores do registro também precisam estar atribuídos Ã  clínica."
   );
 
   if (resource === "terapeutas") {
@@ -1317,7 +1317,7 @@ async function prepareRecord(
   requireFields(
     merged,
     ["terapeutaId"],
-    "Preencha os campos obrigatÃ³rios"
+    "Preencha os campos obrigatórios"
   );
 
   const therapist = await getDocument(
@@ -1341,7 +1341,7 @@ async function prepareRecord(
   ) {
     throw httpError(
       400,
-      "O terapeuta selecionado nÃ£o pertence Ã  clÃ­nica informada."
+      "O terapeuta selecionado não pertence Ã  clínica informada."
     );
   }
 
@@ -1350,7 +1350,7 @@ async function prepareRecord(
     recordSupervisorIds(
       therapist.data
     ),
-    "Os supervisores do paciente tambÃ©m precisam estar atribuÃ­dos ao terapeuta."
+    "Os supervisores do paciente também precisam estar atribuídos ao terapeuta."
   );
 
   if (resource === "pacientes") {
@@ -1365,7 +1365,7 @@ async function prepareRecord(
   requireFields(
     merged,
     ["pacienteId"],
-    "Preencha os campos obrigatÃ³rios"
+    "Preencha os campos obrigatórios"
   );
 
   const patient = await getDocument(
@@ -1401,7 +1401,7 @@ async function prepareRecord(
   ) {
     throw httpError(
       400,
-      "Paciente, terapeuta e clÃ­nica nÃ£o correspondem ao mesmo vÃ­nculo."
+      "Paciente, terapeuta e clínica não correspondem ao mesmo vínculo."
     );
   }
 
@@ -1430,7 +1430,7 @@ async function prepareRecord(
   if (!responsibleSupervisorId) {
     throw httpError(
       400,
-      "Selecione a supervisora responsÃ¡vel pelo lanÃ§amento."
+      "Selecione a supervisora responsável pelo lançamento."
     );
   }
 
@@ -1443,7 +1443,7 @@ async function prepareRecord(
     assertSubset(
       [responsibleSupervisorId],
       merged.supervisorIds,
-      "A supervisora responsÃ¡vel precisa estar vinculada ao paciente selecionado."
+      "A supervisora responsável precisa estar vinculada ao paciente selecionado."
     );
   }
 
@@ -1462,7 +1462,7 @@ async function prepareRecord(
   ) {
     throw httpError(
       400,
-      "A supervisora responsÃ¡vel estÃ¡ inativa ou arquivada."
+      "A supervisora responsável está inativa ou arquivada."
     );
   }
 
@@ -1679,7 +1679,7 @@ async function dashboard(
         return (
           status &&
           ![
-            "concluÃ­do",
+            "concluído",
             "concluido",
             "finalizado",
           ].includes(status)
@@ -1697,7 +1697,7 @@ async function dashboard(
         return (
           nivel.includes("alta") ||
           nivel.includes("urgente") ||
-          nivel.includes("atenÃ§Ã£o")
+          nivel.includes("atenção")
         );
       }
     ).length;
@@ -1818,7 +1818,7 @@ async function assertNoLegacyLaunchDuplicate(
   if (duplicate) {
     throw httpError(
       409,
-      "JÃ¡ existe um lanÃ§amento ativo para este paciente no perÃ­odo informado."
+      "Já existe um lançamento ativo para este paciente no período informado."
     );
   }
 }
@@ -1911,7 +1911,7 @@ async function createRecord(
         if (current.exists) {
           throw httpError(
             409,
-            "JÃ¡ existe um lanÃ§amento para este paciente no perÃ­odo informado. Edite ou restaure o registro existente."
+            "Já existe um lançamento para este paciente no período informado. Edite ou restaure o registro existente."
           );
         }
 
@@ -2060,7 +2060,7 @@ async function updateRecord(
   ) {
     throw httpError(
       400,
-      "O perÃ­odo e os vÃ­nculos de um lanÃ§amento nÃ£o podem ser alterados. Arquive-o e crie outro lanÃ§amento."
+      "O período e os vínculos de um lançamento não podem ser alterados. Arquive-o e crie outro lançamento."
     );
   }
 
@@ -2161,6 +2161,163 @@ async function updateRecord(
   );
 }
 
+async function migrateLaunchesToOnlySupervisor(
+  db,
+  principal
+) {
+  assertAdmin(principal);
+
+  const supervisorsSnapshot =
+    await db
+      .collection(
+        RESOURCE_COLLECTIONS.supervisores
+      )
+      .get();
+
+  const activeSupervisors =
+    supervisorsSnapshot.docs.filter(
+      (doc) =>
+        !isInactiveSupervisor(
+          doc.data()
+        )
+    );
+
+  if (activeSupervisors.length !== 1) {
+    throw httpError(
+      409,
+      activeSupervisors.length === 0
+        ? "Nenhuma supervisora ativa foi encontrada."
+        : "A migração automática exige exatamente uma supervisora ativa cadastrada."
+    );
+  }
+
+  const supervisorDoc =
+    activeSupervisors[0];
+
+  const supervisor = {
+    id: supervisorDoc.id,
+    ...supervisorDoc.data(),
+  };
+
+  const launchesSnapshot =
+    await db
+      .collection(
+        RESOURCE_COLLECTIONS.lancamentos
+      )
+      .get();
+
+  const launchesToUpdate =
+    launchesSnapshot.docs.filter(
+      (doc) => {
+        const item = doc.data();
+
+        const sameSupervisor =
+          String(
+            item?.supervisorId || ""
+          ) === supervisor.id;
+
+        const assignments =
+          recordSupervisorIds(item);
+
+        const sameAssignments =
+          assignments.length === 1 &&
+          assignments[0] ===
+            supervisor.id;
+
+        const sameSnapshot =
+          String(
+            item?.supervisorNome || ""
+          ) ===
+            String(
+              supervisor.nome || ""
+            ) &&
+          normalizeEmail(
+            item?.supervisorEmail
+          ) ===
+            normalizeEmail(
+              supervisor.email
+            );
+
+        return !(
+          sameSupervisor &&
+          sameAssignments &&
+          sameSnapshot
+        );
+      }
+    );
+
+  const batchSize = 400;
+
+  for (
+    let index = 0;
+    index < launchesToUpdate.length;
+    index += batchSize
+  ) {
+    const batch = db.batch();
+
+    launchesToUpdate
+      .slice(
+        index,
+        index + batchSize
+      )
+      .forEach((doc) => {
+        batch.update(doc.ref, {
+          supervisorId:
+            supervisor.id,
+          supervisorIds: [
+            supervisor.id,
+          ],
+          supervisorNome:
+            supervisor.nome || "",
+          supervisorEmail:
+            supervisor.email || "",
+          atualizadoEm:
+            admin.firestore.FieldValue.serverTimestamp(),
+          atualizadoPor:
+            actorLabel(principal),
+          vinculoSupervisorMigradoEm:
+            admin.firestore.FieldValue.serverTimestamp(),
+          vinculoSupervisorMigradoPor:
+            actorLabel(principal),
+        });
+      });
+
+    await batch.commit();
+  }
+
+  await writeAudit(db, {
+    action:
+      "migrate-launch-supervisor",
+    resource: "lancamentos",
+    recordId: "todos",
+    principal,
+    changedFields: [
+      "supervisorId",
+      "supervisorIds",
+      "supervisorNome",
+      "supervisorEmail",
+    ],
+  });
+
+  return {
+    message:
+      launchesToUpdate.length > 0
+        ? `${launchesToUpdate.length} lançamento(s) foram vinculados à supervisora ${supervisor.nome}.`
+        : `Todos os lançamentos já estavam vinculados à supervisora ${supervisor.nome}.`,
+    supervisor: {
+      id: supervisor.id,
+      nome: supervisor.nome || "",
+      email: supervisor.email || "",
+    },
+    total:
+      launchesSnapshot.size,
+    atualizados:
+      launchesToUpdate.length,
+    inalterados:
+      launchesSnapshot.size -
+      launchesToUpdate.length,
+  };
+}
 exports.handler =
   async function handler(
     event,
@@ -2214,7 +2371,7 @@ exports.handler =
             405,
             {
               message:
-                "MÃ©todo nÃ£o permitido.",
+                "Método não permitido.",
             }
           );
         }
@@ -2242,7 +2399,7 @@ exports.handler =
             405,
             {
               message:
-                "MÃ©todo nÃ£o permitido.",
+                "Método não permitido.",
             }
           );
         }
@@ -2257,6 +2414,31 @@ exports.handler =
       }
 
       if (
+        resource ===
+        "migrar-lancamentos-supervisora"
+      ) {
+        if (
+          event.httpMethod !==
+          "POST"
+        ) {
+          return json(
+            405,
+            {
+              message:
+                "Método não permitido.",
+            }
+          );
+        }
+
+        return json(
+          200,
+          await migrateLaunchesToOnlySupervisor(
+            db,
+            principal
+          )
+        );
+      }
+      if (
         !RESOURCE_COLLECTIONS[
           resource
         ]
@@ -2265,7 +2447,7 @@ exports.handler =
           400,
           {
             message:
-              "Recurso invÃ¡lido.",
+              "Recurso inválido.",
           }
         );
       }
@@ -2350,7 +2532,7 @@ exports.handler =
             400,
             {
               message:
-                "ID obrigatÃ³rio para atualizaÃ§Ã£o.",
+                "ID obrigatório para atualização.",
             }
           );
         }
@@ -2380,7 +2562,7 @@ exports.handler =
           405,
           {
             message:
-              "ExclusÃ£o definitiva desativada. Arquive o registro para preservar o histÃ³rico.",
+              "Exclusão definitiva desativada. Arquive o registro para preservar o histórico.",
           }
         );
       }
@@ -2389,7 +2571,7 @@ exports.handler =
         405,
         {
           message:
-            "MÃ©todo nÃ£o permitido.",
+            "Método não permitido.",
         }
       );
     } catch (error) {
@@ -2403,7 +2585,7 @@ exports.handler =
         {
           message:
             error.message ||
-            "Erro interno na API de supervisÃ£o.",
+            "Erro interno na API de supervisão.",
         }
       );
     }
