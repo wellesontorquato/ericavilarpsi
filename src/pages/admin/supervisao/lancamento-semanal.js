@@ -15,7 +15,6 @@ import {
   createResource,
   listResource,
   restoreResource,
-  supervisaoRequest,
   updateResource,
 } from "@/lib/supervisao/api";
 import {
@@ -471,8 +470,6 @@ function LancamentoContent({
   const [saving, setSaving] =
     useState(false);
 
-  const [migrating, setMigrating] =
-    useState(false);
 
   const [modalOpen, setModalOpen] =
     useState(false);
@@ -1383,53 +1380,6 @@ function LancamentoContent({
     }
   }
 
-  async function handleMigrateSupervisorLinks() {
-    const confirmed = window.confirm(
-      "Esta ação vinculará todos os lançamentos, inclusive os arquivados, à única supervisora ativa cadastrada. Deseja continuar?"
-    );
-
-    if (!confirmed) {
-      return;
-    }
-
-    setMigrating(true);
-
-    setMessage({
-      type: "",
-      text: "",
-    });
-
-    try {
-      const result =
-        await supervisaoRequest(
-          user,
-          "migrar-lancamentos-supervisora",
-          {
-            method: "POST",
-          }
-        );
-
-      setMessage({
-        type: "success",
-        text:
-          result?.message ||
-          "Os lançamentos foram vinculados à supervisora.",
-      });
-
-      await loadData();
-    } catch (error) {
-      console.error(error);
-
-      setMessage({
-        type: "error",
-        text:
-          error?.message ||
-          "Não foi possível vincular os lançamentos à supervisora.",
-      });
-    } finally {
-      setMigrating(false);
-    }
-  }
   const identityLocked =
     Boolean(editingId);
 
@@ -1454,37 +1404,13 @@ function LancamentoContent({
         access={access}
         onLogout={onLogout}
         actions={
-          <div
-            style={{
-              display: "flex",
-              gap: "10px",
-              flexWrap: "wrap",
-            }}
+          <button
+            className="supervisao-primary-button"
+            type="button"
+            onClick={openCreateModal}
           >
-            {access?.isAdmin && (
-              <button
-                className="supervisao-secondary-button"
-                type="button"
-                onClick={
-                  handleMigrateSupervisorLinks
-                }
-                disabled={migrating}
-              >
-                {migrating
-                  ? "Vinculando..."
-                  : "Vincular lançamentos antigos"}
-              </button>
-            )}
-
-            <button
-              className="supervisao-primary-button"
-              type="button"
-              onClick={openCreateModal}
-              disabled={migrating}
-            >
-              + Novo lançamento
-            </button>
-          </div>
+            + Novo lançamento
+          </button>
         }
       >
         <StatusMessage
