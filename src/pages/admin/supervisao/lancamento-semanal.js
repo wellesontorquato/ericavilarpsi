@@ -29,37 +29,37 @@ const PAGE_SIZE = 15;
 const scoreFields = [
   {
     name: "qualidadeConceitualizacao",
-    label: "Qualidade da conceitualização",
+    label: "Qualidade da conceitualizaÃ§Ã£o",
     min: 1,
     max: 5,
   },
   {
     name: "planejamentoTerapeutico",
-    label: "Planejamento terapêutico",
+    label: "Planejamento terapÃªutico",
     min: 1,
     max: 5,
   },
   {
     name: "aplicacaoTecnicasTcc",
-    label: "Aplicação de técnicas TCC",
+    label: "AplicaÃ§Ã£o de tÃ©cnicas TCC",
     min: 1,
     max: 5,
   },
   {
     name: "manejoSessao",
-    label: "Manejo da sessão",
+    label: "Manejo da sessÃ£o",
     min: 1,
     max: 5,
   },
   {
     name: "posturaTerapeutica",
-    label: "Postura terapêutica",
+    label: "Postura terapÃªutica",
     min: 1,
     max: 5,
   },
   {
     name: "formulacaoHipoteses",
-    label: "Formulação de hipóteses",
+    label: "FormulaÃ§Ã£o de hipÃ³teses",
     min: 1,
     max: 5,
   },
@@ -80,13 +80,13 @@ const evolucaoFields = [
   },
   {
     name: "evitacaoSocial",
-    label: "Evitação social",
+    label: "EvitaÃ§Ã£o social",
     min: 0,
     max: 10,
   },
   {
     name: "adesaoTarefas",
-    label: "Adesão às tarefas",
+    label: "AdesÃ£o Ã s tarefas",
     min: 0,
     max: 100,
     suffix: "%",
@@ -105,14 +105,14 @@ const evolucaoFields = [
   },
   {
     name: "aplicacaoEstrategias",
-    label: "Aplicação das estratégias discutidas",
+    label: "AplicaÃ§Ã£o das estratÃ©gias discutidas",
     min: 0,
     max: 100,
     suffix: "%",
   },
   {
     name: "evolucaoObjetivos",
-    label: "Evolução dos objetivos terapêuticos",
+    label: "EvoluÃ§Ã£o dos objetivos terapÃªuticos",
     min: 0,
     max: 100,
     suffix: "%",
@@ -138,6 +138,7 @@ function createInitialForm() {
     clinicaId: "",
     terapeutaId: "",
     pacienteId: "",
+    supervisorId: "",
 
     qualidadeConceitualizacao: "",
     planejamentoTerapeutico: "",
@@ -216,6 +217,27 @@ function isArchived(item) {
     String(
       item?.statusRegistro || ""
     ).toLowerCase() === "arquivado"
+  );
+}
+
+function getSupervisorIds(item = {}) {
+  return Array.isArray(
+    item?.supervisorIds
+  )
+    ? item.supervisorIds
+        .map((id) =>
+          String(id || "").trim()
+        )
+        .filter(Boolean)
+    : [];
+}
+
+function isActiveSupervisor(item = {}) {
+  return (
+    !isArchived(item) &&
+    String(
+      item?.status || "Ativo"
+    ).toLowerCase() !== "inativo"
   );
 }
 
@@ -377,14 +399,14 @@ function MetricField({
         />
 
         <span>
-          Não computar esta métrica
+          NÃ£o computar esta mÃ©trica
         </span>
       </label>
 
       <small id={descriptionId}>
         {ignored
-          ? "Esta métrica não participará da média final deste lançamento."
-          : "Informe a pontuação ou marque a opção acima para desconsiderá-la."}
+          ? "Esta mÃ©trica nÃ£o participarÃ¡ da mÃ©dia final deste lanÃ§amento."
+          : "Informe a pontuaÃ§Ã£o ou marque a opÃ§Ã£o acima para desconsiderÃ¡-la."}
       </small>
     </div>
   );
@@ -428,6 +450,11 @@ function LancamentoContent({
   const [clinicas, setClinicas] =
     useState([]);
 
+  const [
+    supervisores,
+    setSupervisores,
+  ] = useState([]);
+
   const [terapeutas, setTerapeutas] =
     useState([]);
 
@@ -468,11 +495,34 @@ function LancamentoContent({
 
     try {
       const [
+        supervisoresData,
         clinicasData,
         terapeutasData,
         pacientesData,
         lancamentosData,
       ] = await Promise.all([
+        access?.isAdmin
+          ? listResource(
+              user,
+              "supervisores"
+            )
+          : Promise.resolve(
+              access?.supervisorId
+                ? [
+                    {
+                      id:
+                        access.supervisorId,
+                      nome:
+                        access.nome ||
+                        "Supervisora autenticada",
+                      email:
+                        access.email ||
+                        "",
+                      status: "Ativo",
+                    },
+                  ]
+                : []
+            ),
         listResource(
           user,
           "clinicas"
@@ -491,6 +541,9 @@ function LancamentoContent({
         ),
       ]);
 
+      setSupervisores(
+        supervisoresData
+      );
       setClinicas(clinicasData);
       setTerapeutas(terapeutasData);
       setPacientes(pacientesData);
@@ -504,7 +557,7 @@ function LancamentoContent({
         type: "error",
         text:
           error?.message ||
-          "Não foi possível carregar os lançamentos.",
+          "NÃ£o foi possÃ­vel carregar os lanÃ§amentos.",
       });
     } finally {
       setLoadingData(false);
@@ -513,7 +566,13 @@ function LancamentoContent({
 
   useEffect(() => {
     loadData();
-  }, [user]);
+  }, [
+    user,
+    access?.isAdmin,
+    access?.supervisorId,
+    access?.nome,
+    access?.email,
+  ]);
 
   useEffect(() => {
     setPage(1);
@@ -639,6 +698,87 @@ function LancamentoContent({
       ]
     );
 
+  const pacienteSelecionado =
+    useMemo(
+      () =>
+        pacientes.find(
+          (item) =>
+            String(item.id) ===
+            String(form.pacienteId)
+        ) || null,
+      [
+        pacientes,
+        form.pacienteId,
+      ]
+    );
+
+  const supervisoresFiltrados =
+    useMemo(() => {
+      const allowedIds = new Set(
+        getSupervisorIds(
+          pacienteSelecionado
+        )
+      );
+
+      return supervisores.filter(
+        (item) => {
+          const id = String(
+            item?.id || ""
+          );
+
+          const isCurrent =
+            id ===
+            String(
+              form.supervisorId || ""
+            );
+
+          return (
+            isCurrent ||
+            (allowedIds.has(id) &&
+              isActiveSupervisor(item))
+          );
+        }
+      );
+    }, [
+      supervisores,
+      pacienteSelecionado,
+      form.supervisorId,
+    ]);
+
+  function defaultSupervisorId(
+    pacienteId,
+    existingId = ""
+  ) {
+    if (existingId) {
+      return String(existingId);
+    }
+
+    const patient = pacientes.find(
+      (item) =>
+        String(item.id) ===
+        String(pacienteId)
+    );
+
+    const allowedIds =
+      getSupervisorIds(patient);
+
+    if (!access?.isAdmin) {
+      const currentId = String(
+        access?.supervisorId || ""
+      );
+
+      return allowedIds.includes(
+        currentId
+      )
+        ? currentId
+        : "";
+    }
+
+    return allowedIds.length === 1
+      ? allowedIds[0]
+      : "";
+  }
+
   const statusCounts = useMemo(() => {
     const arquivados =
       lancamentos.filter(
@@ -686,6 +826,7 @@ function LancamentoContent({
             item.pacienteNome,
             item.terapeutaNome,
             item.clinicaNome,
+            item.supervisorNome,
             item.recomendacao,
             item.observacao,
             item.statusPlano,
@@ -792,12 +933,21 @@ function LancamentoContent({
       ) {
         next.terapeutaId = "";
         next.pacienteId = "";
+        next.supervisorId = "";
       }
 
       if (
         name === "terapeutaId"
       ) {
         next.pacienteId = "";
+        next.supervisorId = "";
+      }
+
+      if (name === "pacienteId") {
+        next.supervisorId =
+          defaultSupervisorId(
+            value
+          );
       }
 
       return next;
@@ -833,7 +983,16 @@ function LancamentoContent({
 
   function openCreateModal() {
     setEditingId("");
-    setForm(createInitialForm());
+    setForm({
+      ...createInitialForm(),
+      supervisorId:
+        access?.isAdmin
+          ? ""
+          : String(
+              access?.supervisorId ||
+                ""
+            ),
+    });
     setIgnoredMetrics([]);
 
     setMessage({
@@ -846,9 +1005,50 @@ function LancamentoContent({
 
   function openEditModal(item) {
     setEditingId(item.id);
-    setForm(
-      normalizeLaunchForm(item)
-    );
+
+    if (item.supervisorId) {
+      setSupervisores((current) => {
+        const alreadyLoaded =
+          current.some(
+            (supervisora) =>
+              String(
+                supervisora.id
+              ) ===
+              String(
+                item.supervisorId
+              )
+          );
+
+        if (alreadyLoaded) {
+          return current;
+        }
+
+        return [
+          ...current,
+          {
+            id: item.supervisorId,
+            nome:
+              item.supervisorNome ||
+              "Supervisora responsÃ¡vel",
+            email:
+              item.supervisorEmail ||
+              "",
+            status: "Ativo",
+          },
+        ];
+      });
+    }
+
+    const normalized =
+      normalizeLaunchForm(item);
+
+    normalized.supervisorId =
+      defaultSupervisorId(
+        item.pacienteId,
+        item.supervisorId
+      );
+
+    setForm(normalized);
     setIgnoredMetrics(
       getIgnoredMetrics(item)
     );
@@ -882,7 +1082,7 @@ function LancamentoContent({
       computedFields.length === 0
     ) {
       throw new Error(
-        `Pelo menos uma métrica de ${groupLabel} deve ser computada.`
+        `Pelo menos uma mÃ©trica de ${groupLabel} deve ser computada.`
       );
     }
 
@@ -896,7 +1096,7 @@ function LancamentoContent({
 
     if (missingField) {
       throw new Error(
-        `Informe "${missingField.label}" ou marque a opção para não computar essa métrica.`
+        `Informe "${missingField.label}" ou marque a opÃ§Ã£o para nÃ£o computar essa mÃ©trica.`
       );
     }
   }
@@ -917,17 +1117,18 @@ function LancamentoContent({
         !form.semana
       ) {
         throw new Error(
-          "Informe ano, mês e semana do lançamento."
+          "Informe ano, mÃªs e semana do lanÃ§amento."
         );
       }
 
       if (
         !form.clinicaId ||
         !form.terapeutaId ||
-        !form.pacienteId
+        !form.pacienteId ||
+        !form.supervisorId
       ) {
         throw new Error(
-          "Selecione clínica, terapeuta e paciente/caso."
+          "Selecione clÃ­nica, terapeuta, paciente/caso e supervisora responsÃ¡vel."
         );
       }
 
@@ -955,13 +1156,23 @@ function LancamentoContent({
             )
         );
 
+      const supervisora =
+        supervisores.find(
+          (item) =>
+            String(item.id) ===
+            String(
+              form.supervisorId
+            )
+        );
+
       if (
         !clinica ||
         !terapeuta ||
-        !paciente
+        !paciente ||
+        !supervisora
       ) {
         throw new Error(
-          "Um dos vínculos selecionados não foi encontrado."
+          "Um dos vÃ­nculos selecionados nÃ£o foi encontrado."
         );
       }
 
@@ -972,7 +1183,7 @@ function LancamentoContent({
         String(clinica.id)
       ) {
         throw new Error(
-          "O terapeuta selecionado não pertence à clínica informada."
+          "O terapeuta selecionado nÃ£o pertence Ã  clÃ­nica informada."
         );
       }
 
@@ -987,18 +1198,51 @@ function LancamentoContent({
           String(terapeuta.id)
       ) {
         throw new Error(
-          "O paciente selecionado não pertence ao terapeuta e à clínica informados."
+          "O paciente selecionado nÃ£o pertence ao terapeuta e Ã  clÃ­nica informados."
+        );
+      }
+
+      const originalLaunch =
+        editingId
+          ? lancamentos.find(
+              (item) =>
+                String(item.id) ===
+                String(editingId)
+            )
+          : null;
+
+      const keepsHistoricalSupervisor =
+        originalLaunch?.supervisorId &&
+        String(
+          originalLaunch.supervisorId
+        ) ===
+          String(
+            supervisora.id
+          );
+
+      if (
+        !keepsHistoricalSupervisor &&
+        !getSupervisorIds(
+          paciente
+        ).includes(
+          String(
+            supervisora.id
+          )
+        )
+      ) {
+        throw new Error(
+          "A supervisora responsÃ¡vel nÃ£o estÃ¡ vinculada ao paciente selecionado."
         );
       }
 
       validateMetricGroup(
         scoreFields,
-        "competência clínica"
+        "competÃªncia clÃ­nica"
       );
 
       validateMetricGroup(
         evolucaoFields,
-        "evolução do paciente"
+        "evoluÃ§Ã£o do paciente"
       );
 
       const payload = {
@@ -1036,7 +1280,7 @@ function LancamentoContent({
         setMessage({
           type: "success",
           text:
-            "Lançamento semanal atualizado com sucesso.",
+            "LanÃ§amento semanal atualizado com sucesso.",
         });
       } else {
         await createResource(
@@ -1052,7 +1296,7 @@ function LancamentoContent({
         setMessage({
           type: "success",
           text:
-            "Lançamento semanal salvo com sucesso.",
+            "LanÃ§amento semanal salvo com sucesso.",
         });
       }
 
@@ -1065,7 +1309,7 @@ function LancamentoContent({
         type: "error",
         text:
           error?.message ||
-          "Não foi possível salvar o lançamento.",
+          "NÃ£o foi possÃ­vel salvar o lanÃ§amento.",
       });
     } finally {
       setSaving(false);
@@ -1075,7 +1319,7 @@ function LancamentoContent({
   async function handleArchive(item) {
     const confirmed =
       window.confirm(
-        "Deseja arquivar este lançamento semanal? Ele sairá dos dashboards ativos, mas continuará salvo no histórico."
+        "Deseja arquivar este lanÃ§amento semanal? Ele sairÃ¡ dos dashboards ativos, mas continuarÃ¡ salvo no histÃ³rico."
       );
 
     if (!confirmed) {
@@ -1092,7 +1336,7 @@ function LancamentoContent({
       setMessage({
         type: "success",
         text:
-          "Lançamento arquivado com sucesso.",
+          "LanÃ§amento arquivado com sucesso.",
       });
 
       await loadData();
@@ -1103,7 +1347,7 @@ function LancamentoContent({
         type: "error",
         text:
           error?.message ||
-          "Não foi possível arquivar o lançamento.",
+          "NÃ£o foi possÃ­vel arquivar o lanÃ§amento.",
       });
     }
   }
@@ -1119,7 +1363,7 @@ function LancamentoContent({
       setMessage({
         type: "success",
         text:
-          "Lançamento restaurado com sucesso.",
+          "LanÃ§amento restaurado com sucesso.",
       });
 
       await loadData();
@@ -1130,7 +1374,7 @@ function LancamentoContent({
         type: "error",
         text:
           error?.message ||
-          "Não foi possível restaurar o lançamento.",
+          "NÃ£o foi possÃ­vel restaurar o lanÃ§amento.",
       });
     }
   }
@@ -1142,19 +1386,19 @@ function LancamentoContent({
     <>
       <Head>
         <title>
-          Lançamento semanal |
-          Supervisão TCC
+          LanÃ§amento semanal |
+          SupervisÃ£o TCC
         </title>
 
         <meta
           name="description"
-          content="Registro semanal das competências clínicas e da evolução dos pacientes acompanhados."
+          content="Registro semanal das competÃªncias clÃ­nicas e da evoluÃ§Ã£o dos pacientes acompanhados."
         />
       </Head>
 
       <LayoutSupervisao
-        title="Lançamentos semanais"
-        description="Registre as competências avaliadas, a evolução do paciente e as métricas que não foram computadas."
+        title="LanÃ§amentos semanais"
+        description="Registre as competÃªncias avaliadas, a evoluÃ§Ã£o do paciente e as mÃ©tricas que nÃ£o foram computadas."
         user={user}
         access={access}
         onLogout={onLogout}
@@ -1164,7 +1408,7 @@ function LancamentoContent({
             type="button"
             onClick={openCreateModal}
           >
-            + Novo lançamento
+            + Novo lanÃ§amento
           </button>
         }
       >
@@ -1174,7 +1418,7 @@ function LancamentoContent({
 
         <section className="supervisao-indicator-grid launch-summary">
           <CardIndicador
-            label="Lançamentos ativos"
+            label="LanÃ§amentos ativos"
             value={resumo.total}
             detail="registros no dashboard"
           />
@@ -1182,7 +1426,7 @@ function LancamentoContent({
           <CardIndicador
             label="Terapeutas"
             value={resumo.terapeutas}
-            detail="com lançamento ativo"
+            detail="com lanÃ§amento ativo"
           />
 
           <CardIndicador
@@ -1192,7 +1436,7 @@ function LancamentoContent({
           />
 
           <CardIndicador
-            label="Média competência"
+            label="MÃ©dia competÃªncia"
             value={
               resumo.competencia ===
               null
@@ -1201,21 +1445,21 @@ function LancamentoContent({
                     resumo.competencia
                   )
             }
-            detail="somente métricas computadas"
+            detail="somente mÃ©tricas computadas"
           />
         </section>
 
         <section className="supervisao-system-toolbar compact">
           <div>
             <span className="supervisao-kicker">
-              Histórico
+              HistÃ³rico
             </span>
 
             <h2>
               {
                 lancamentosFiltrados.length
               }{" "}
-              lançamento(s)
+              lanÃ§amento(s)
             </h2>
 
             <p>
@@ -1237,7 +1481,7 @@ function LancamentoContent({
                     event.target.value
                   )
                 }
-                placeholder="Paciente, terapeuta, clínica..."
+                placeholder="Paciente, terapeuta, supervisora, clÃ­nica..."
               />
             </label>
           </div>
@@ -1245,7 +1489,7 @@ function LancamentoContent({
 
         <div
           className="supervisao-status-tabs"
-          aria-label="Filtro dos lançamentos"
+          aria-label="Filtro dos lanÃ§amentos"
         >
           <button
             type="button"
@@ -1308,7 +1552,7 @@ function LancamentoContent({
           <div className="supervisao-section-title supervisao-list-section-title">
             <div>
               <h2>
-                Histórico de lançamentos
+                HistÃ³rico de lanÃ§amentos
               </h2>
 
               <p>
@@ -1319,14 +1563,14 @@ function LancamentoContent({
                 {
                   lancamentosPaginados.length
                 }{" "}
-                nesta página.
+                nesta pÃ¡gina.
               </p>
             </div>
 
             {lancamentosFiltrados.length >
               PAGE_SIZE && (
               <span>
-                Página {currentPage} de{" "}
+                PÃ¡gina {currentPage} de{" "}
                 {totalPages}
               </span>
             )}
@@ -1337,7 +1581,7 @@ function LancamentoContent({
           ) : lancamentosFiltrados.length ===
             0 ? (
             <p className="supervisao-empty">
-              Nenhum lançamento semanal
+              Nenhum lanÃ§amento semanal
               encontrado para o filtro
               selecionado.
             </p>
@@ -1348,21 +1592,24 @@ function LancamentoContent({
                   className="supervisao-entity-list supervisao-launch-list"
                   style={{
                     "--entity-grid":
-                      "minmax(220px, 1.3fr) minmax(160px, 0.9fr) minmax(170px, 0.9fr) minmax(170px, 0.7fr) minmax(190px, auto)",
+                      "minmax(210px, 1.25fr) minmax(150px, 0.8fr) minmax(160px, 0.9fr) minmax(160px, 0.9fr) minmax(150px, 0.7fr) minmax(190px, auto)",
                   }}
                 >
                   <div className="supervisao-entity-row supervisao-entity-row-head">
                     <div>
                       Paciente/Caso
                     </div>
-                    <div>Período</div>
+                    <div>PerÃ­odo</div>
                     <div>
                       Terapeuta
                     </div>
                     <div>
-                      Competência
+                      Supervisora
                     </div>
-                    <div>Ações</div>
+                    <div>
+                      CompetÃªncia
+                    </div>
+                    <div>AÃ§Ãµes</div>
                   </div>
 
                   {lancamentosPaginados.map(
@@ -1415,13 +1662,13 @@ function LancamentoContent({
                             </span>
                           </div>
 
-                          <div data-label="Período">
+                          <div data-label="PerÃ­odo">
                             <span>
-                              {item.ano} ·{" "}
+                              {item.ano} Â·{" "}
                               {mesNome(
                                 item.mes
                               )}{" "}
-                              · Semana{" "}
+                              Â· Semana{" "}
                               {item.semana}
                             </span>
                           </div>
@@ -1441,11 +1688,26 @@ function LancamentoContent({
                             )}
                           </div>
 
-                          <div data-label="Competência">
+                          <div data-label="Supervisora">
+                            <span>
+                              {item.supervisorNome ||
+                                "VÃ­nculo pendente"}
+                            </span>
+
+                            {item.supervisorEmail && (
+                              <small className="supervisao-row-muted">
+                                {
+                                  item.supervisorEmail
+                                }
+                              </small>
+                            )}
+                          </div>
+
+                          <div data-label="CompetÃªncia">
                             <span>
                               {competencia ===
                               null
-                                ? "Não computada"
+                                ? "NÃ£o computada"
                                 : `${formatDecimal(
                                     competencia
                                   )}/5`}
@@ -1464,7 +1726,7 @@ function LancamentoContent({
 
                           <div
                             className="actions"
-                            data-label="Ações"
+                            data-label="AÃ§Ãµes"
                           >
                             <button
                               type="button"
@@ -1558,7 +1820,7 @@ function LancamentoContent({
                       totalPages
                     }
                   >
-                    Próxima
+                    PrÃ³xima
                   </button>
                 </div>
               )}
@@ -1570,10 +1832,10 @@ function LancamentoContent({
           open={modalOpen}
           title={
             editingId
-              ? "Editar lançamento semanal"
-              : "Novo lançamento semanal"
+              ? "Editar lanÃ§amento semanal"
+              : "Novo lanÃ§amento semanal"
           }
-          description="Preencha a identificação, as métricas avaliadas e o plano de desenvolvimento."
+          description="Preencha a identificaÃ§Ã£o, as mÃ©tricas avaliadas e o plano de desenvolvimento."
           onClose={closeModal}
           size="xl"
         >
@@ -1587,24 +1849,26 @@ function LancamentoContent({
           >
             <div className="supervisao-form-group full">
               <h2>
-                1. Identificação do
+                1. IdentificaÃ§Ã£o do
                 acompanhamento
               </h2>
 
               <p>
-                Escolha o período, a
-                clínica, o terapeuta e o
-                paciente supervisionado.
+                Escolha o perÃ­odo, a
+                clÃ­nica, o terapeuta e o
+                paciente supervisionado,
+                alÃ©m da supervisora
+                responsÃ¡vel pelo registro.
               </p>
 
               {identityLocked && (
                 <small>
-                  O período e os vínculos
-                  não podem ser alterados
-                  durante a edição. Para
+                  O perÃ­odo e os vÃ­nculos
+                  nÃ£o podem ser alterados
+                  durante a ediÃ§Ã£o. Para
                   alterar essas
-                  informações, arquive o
-                  lançamento e crie outro.
+                  informaÃ§Ãµes, arquive o
+                  lanÃ§amento e crie outro.
                 </small>
               )}
             </div>
@@ -1629,7 +1893,7 @@ function LancamentoContent({
             </label>
 
             <label>
-              <span>Mês *</span>
+              <span>MÃªs *</span>
 
               <select
                 value={form.mes}
@@ -1685,7 +1949,7 @@ function LancamentoContent({
             </label>
 
             <label>
-              <span>Clínica *</span>
+              <span>ClÃ­nica *</span>
 
               <select
                 value={form.clinicaId}
@@ -1783,20 +2047,72 @@ function LancamentoContent({
               </select>
             </label>
 
+            <label>
+              <span>
+                Supervisora responsÃ¡vel *
+              </span>
+
+              <select
+                value={form.supervisorId}
+                disabled={
+                  identityLocked ||
+                  !form.pacienteId ||
+                  !access?.isAdmin
+                }
+                onChange={(event) =>
+                  setField(
+                    "supervisorId",
+                    event.target.value
+                  )
+                }
+                required
+              >
+                <option value="">
+                  {form.pacienteId
+                    ? "Selecione"
+                    : "Selecione o paciente primeiro"}
+                </option>
+
+                {supervisoresFiltrados.map(
+                  (supervisora) => (
+                    <option
+                      key={
+                        supervisora.id
+                      }
+                      value={
+                        supervisora.id
+                      }
+                    >
+                      {supervisora.nome}
+                      {supervisora.email
+                        ? ` Â· ${supervisora.email}`
+                        : ""}
+                    </option>
+                  )
+                )}
+              </select>
+
+              <small>
+                {access?.isAdmin
+                  ? "A lista mostra somente as supervisoras vinculadas ao paciente."
+                  : "Seu usuÃ¡rio Ã© vinculado automaticamente como responsÃ¡vel pelo lanÃ§amento."}
+              </small>
+            </label>
+
             <div className="supervisao-form-group full">
               <h2>
-                2. Competências clínicas
+                2. CompetÃªncias clÃ­nicas
                 do terapeuta
               </h2>
 
               <p>
                 Escala de 1 a 5,
                 seguindo a matriz de
-                competências clínicas.
-                Marque “Não computar”
-                quando uma competência
-                não tiver sido avaliada
-                nesta supervisão.
+                competÃªncias clÃ­nicas.
+                Marque â€œNÃ£o computarâ€
+                quando uma competÃªncia
+                nÃ£o tiver sido avaliada
+                nesta supervisÃ£o.
               </p>
             </div>
 
@@ -1839,15 +2155,15 @@ function LancamentoContent({
 
             <div className="supervisao-form-group full">
               <h2>
-                3. Evolução do paciente
+                3. EvoluÃ§Ã£o do paciente
               </h2>
 
               <p>
                 Informe os indicadores
-                avaliados neste período.
-                Métricas marcadas como
-                não computadas ficarão
-                fora da média final.
+                avaliados neste perÃ­odo.
+                MÃ©tricas marcadas como
+                nÃ£o computadas ficarÃ£o
+                fora da mÃ©dia final.
               </p>
             </div>
 
@@ -1892,7 +2208,7 @@ function LancamentoContent({
 
             <label className="full">
               <span>
-                Emoção a ser elaborada
+                EmoÃ§Ã£o a ser elaborada
               </span>
 
               <textarea
@@ -1958,7 +2274,7 @@ function LancamentoContent({
 
             <label className="full">
               <span>
-                Recomendação do
+                RecomendaÃ§Ã£o do
                 supervisor
               </span>
 
@@ -1978,7 +2294,7 @@ function LancamentoContent({
             </label>
 
             <label className="full">
-              <span>Plano de ação</span>
+              <span>Plano de aÃ§Ã£o</span>
 
               <textarea
                 value={form.planoAcao}
@@ -2030,15 +2346,15 @@ function LancamentoContent({
                   Em andamento
                 </option>
 
-                <option value="Concluído">
-                  Concluído
+                <option value="ConcluÃ­do">
+                  ConcluÃ­do
                 </option>
               </select>
             </label>
 
             <label className="full">
               <span>
-                Observação geral
+                ObservaÃ§Ã£o geral
               </span>
 
               <textarea
@@ -2063,8 +2379,8 @@ function LancamentoContent({
                 {saving
                   ? "Salvando..."
                   : editingId
-                    ? "Atualizar lançamento"
-                    : "Salvar lançamento semanal"}
+                    ? "Atualizar lanÃ§amento"
+                    : "Salvar lanÃ§amento semanal"}
               </button>
 
               <button

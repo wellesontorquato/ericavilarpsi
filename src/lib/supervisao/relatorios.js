@@ -20,15 +20,15 @@ import {
   sortByPeriodDesc,
 } from "./dashboardUtils";
 
-const NOT_COMPUTED = "Não computado";
+const NOT_COMPUTED = "NÃ£o computado";
 
 const INDICATOR_LABELS = {
   qualidadeSono: "Qualidade do sono",
-  adesaoTarefas: "Adesão às tarefas",
-  aplicacaoEstrategias: "Aplicação das estratégias",
-  evolucaoObjetivos: "Evolução dos objetivos",
+  adesaoTarefas: "AdesÃ£o Ã s tarefas",
+  aplicacaoEstrategias: "AplicaÃ§Ã£o das estratÃ©gias",
+  evolucaoObjetivos: "EvoluÃ§Ã£o dos objetivos",
   intensidadeSintomas: "Intensidade dos sintomas",
-  evitacaoSocial: "Evitação social",
+  evitacaoSocial: "EvitaÃ§Ã£o social",
   intensidadeComportamento:
     "Intensidade do comportamento-alvo",
 };
@@ -40,15 +40,15 @@ export const REPORT_TYPES = [
   },
   {
     value: "completo",
-    label: "Relatório completo",
+    label: "RelatÃ³rio completo",
   },
   {
     value: "lancamentos",
-    label: "Apenas lançamentos semanais",
+    label: "Apenas lanÃ§amentos semanais",
   },
   {
     value: "alertas",
-    label: "Apenas alertas automáticos",
+    label: "Apenas alertas automÃ¡ticos",
   },
 ];
 
@@ -246,7 +246,7 @@ function groupCount(
   ).reduce((accumulator, item) => {
     const label = normalizeText(
       getLabel(item),
-      "Não informado"
+      "NÃ£o informado"
     );
 
     accumulator[label] =
@@ -713,8 +713,8 @@ function formatCompetencyReference(
     item.avaliacoes
   )} ${pluralize(
     item.avaliacoes,
-    "avaliação",
-    "avaliações"
+    "avaliaÃ§Ã£o",
+    "avaliaÃ§Ãµes"
   )})`;
 }
 
@@ -744,9 +744,9 @@ function joinPortuguese(
 }
 
 /**
- * Explica a nota técnica usando exatamente a mesma regra de competenciaMedia:
- * primeiro calcula a média das competências válidas de cada supervisão e,
- * depois, calcula a média dessas médias semanais.
+ * Explica a nota tÃ©cnica usando exatamente a mesma regra de competenciaMedia:
+ * primeiro calcula a mÃ©dia das competÃªncias vÃ¡lidas de cada supervisÃ£o e,
+ * depois, calcula a mÃ©dia dessas mÃ©dias semanais.
  */
 export function buildTechnicalExplanation({
   lancamentos = [],
@@ -883,22 +883,22 @@ export function buildTechnicalExplanation({
       pontosFortes: [],
       pontosDesenvolvimento: [],
       calculation:
-        "Não foi possível calcular a média técnica porque nenhuma supervisão possui competência computada no recorte selecionado.",
+        "NÃ£o foi possÃ­vel calcular a mÃ©dia tÃ©cnica porque nenhuma supervisÃ£o possui competÃªncia computada no recorte selecionado.",
       summary:
-        'Campos marcados como "Não computar" permanecem fora do cálculo e não são convertidos em zero.',
+        'Campos marcados como "NÃ£o computar" permanecem fora do cÃ¡lculo e nÃ£o sÃ£o convertidos em zero.',
     };
   }
 
   const calculation =
-    `A soma das médias técnicas de cada supervisão foi ${formatDecimal(
+    `A soma das mÃ©dias tÃ©cnicas de cada supervisÃ£o foi ${formatDecimal(
       somaMedias,
       1
     )}. Esse total foi dividido por ${formatNumber(
       mediasPorSupervisao.length
     )} ${pluralize(
       mediasPorSupervisao.length,
-      "supervisão com nota calculável",
-      "supervisões com nota calculável"
+      "supervisÃ£o com nota calculÃ¡vel",
+      "supervisÃµes com nota calculÃ¡vel"
     )}, resultando em ${formatDecimal(
       notaFinal,
       1
@@ -910,23 +910,23 @@ export function buildTechnicalExplanation({
           competenciasComputadas
         )} de ${formatNumber(
           competenciasPossiveis
-        )} campos de competência (${formatPercent(
+        )} campos de competÃªncia (${formatPercent(
           cobertura,
           1
         )} de cobertura). ${formatNumber(
           naoComputadas
         )} ${pluralize(
           naoComputadas,
-          "campo foi excluído",
-          "campos foram excluídos"
-        )} por estar sem avaliação ou marcado como "Não computar".`
-      : "Não havia campos de competência disponíveis para medir a cobertura.";
+          "campo foi excluÃ­do",
+          "campos foram excluÃ­dos"
+        )} por estar sem avaliaÃ§Ã£o ou marcado como "NÃ£o computar".`
+      : "NÃ£o havia campos de competÃªncia disponÃ­veis para medir a cobertura.";
 
   const influenceParts = [];
 
   if (acimaDaMedia.length) {
     influenceParts.push(
-      `Acima da média consolidada aparecem ${joinPortuguese(
+      `Acima da mÃ©dia consolidada aparecem ${joinPortuguese(
         acimaDaMedia
           .slice(0, 2)
           .map(
@@ -940,11 +940,11 @@ export function buildTechnicalExplanation({
     pontosDesenvolvimento.length
   ) {
     influenceParts.push(
-      `Abaixo da média consolidada aparecem ${joinPortuguese(
+      `Abaixo da mÃ©dia consolidada aparecem ${joinPortuguese(
         pontosDesenvolvimento.map(
           formatCompetencyReference
         )
-      )}; estes são os principais focos comparativos de desenvolvimento no período.`
+      )}; estes sÃ£o os principais focos comparativos de desenvolvimento no perÃ­odo.`
     );
   }
 
@@ -953,7 +953,7 @@ export function buildTechnicalExplanation({
     competenciasAvaliadas.length
   ) {
     influenceParts.push(
-      "As competências computadas ficaram muito próximas da média consolidada, sem um destaque relativo claro acima ou abaixo do resultado final."
+      "As competÃªncias computadas ficaram muito prÃ³ximas da mÃ©dia consolidada, sem um destaque relativo claro acima ou abaixo do resultado final."
     );
   }
 
@@ -963,9 +963,9 @@ export function buildTechnicalExplanation({
         supervisoesSemMedia
       )} ${pluralize(
         supervisoesSemMedia,
-        "supervisão não entrou",
-        "supervisões não entraram"
-      )} na nota final porque não possuía competência computada.`
+        "supervisÃ£o nÃ£o entrou",
+        "supervisÃµes nÃ£o entraram"
+      )} na nota final porque nÃ£o possuÃ­a competÃªncia computada.`
     );
   }
 
@@ -1144,8 +1144,8 @@ export function buildReportAnalysis({
 
     rankingLabel:
       rankingMode === "terapeutas"
-        ? "Evolução por terapeuta"
-        : "Evolução por clínica",
+        ? "EvoluÃ§Ã£o por terapeuta"
+        : "EvoluÃ§Ã£o por clÃ­nica",
 
     ranking: buildRanking({
       lancamentos:
@@ -1206,7 +1206,7 @@ export const resumoColumns = [
 export const clinicasColumns = [
   {
     key: "nome",
-    label: "Clínica",
+    label: "ClÃ­nica",
   },
   {
     key: "cidade",
@@ -1214,7 +1214,7 @@ export const clinicasColumns = [
   },
   {
     key: "responsavel",
-    label: "Responsável",
+    label: "ResponsÃ¡vel",
   },
   {
     key: "status",
@@ -1233,7 +1233,7 @@ export const terapeutasColumns = [
   },
   {
     key: "clinica",
-    label: "Clínica",
+    label: "ClÃ­nica",
   },
   {
     key: "dataEntrada",
@@ -1245,7 +1245,7 @@ export const terapeutasColumns = [
   },
   {
     key: "observacao",
-    label: "Observação",
+    label: "ObservaÃ§Ã£o",
   },
   {
     key: "registro",
@@ -1260,7 +1260,7 @@ export const pacientesColumns = [
   },
   {
     key: "clinica",
-    label: "Clínica",
+    label: "ClÃ­nica",
   },
   {
     key: "terapeuta",
@@ -1268,7 +1268,7 @@ export const pacientesColumns = [
   },
   {
     key: "dataInicio",
-    label: "Data de início",
+    label: "Data de inÃ­cio",
   },
   {
     key: "statusCaso",
@@ -1276,7 +1276,7 @@ export const pacientesColumns = [
   },
   {
     key: "nivelAtencao",
-    label: "Nível de atenção",
+    label: "NÃ­vel de atenÃ§Ã£o",
   },
   {
     key: "queixaPrincipal",
@@ -1284,11 +1284,11 @@ export const pacientesColumns = [
   },
   {
     key: "objetivosTerapeuticos",
-    label: "Objetivos terapêuticos",
+    label: "Objetivos terapÃªuticos",
   },
   {
     key: "observacoes",
-    label: "Observações",
+    label: "ObservaÃ§Ãµes",
   },
   {
     key: "registro",
@@ -1303,7 +1303,7 @@ export const lancamentosColumns = [
   },
   {
     key: "mes",
-    label: "Mês",
+    label: "MÃªs",
   },
   {
     key: "semana",
@@ -1311,7 +1311,7 @@ export const lancamentosColumns = [
   },
   {
     key: "clinica",
-    label: "Clínica",
+    label: "ClÃ­nica",
   },
   {
     key: "terapeuta",
@@ -1322,40 +1322,44 @@ export const lancamentosColumns = [
     label: "Paciente/caso",
   },
   {
+    key: "supervisor",
+    label: "Supervisora responsÃ¡vel",
+  },
+  {
     key: "competenciaMedia",
-    label: "Média das competências",
+    label: "MÃ©dia das competÃªncias",
   },
   {
     key: "competenciasComputadas",
-    label: "Competências computadas",
+    label: "CompetÃªncias computadas",
   },
   {
     key: "qualidadeConceitualizacao",
-    label: "Conceitualização",
+    label: "ConceitualizaÃ§Ã£o",
   },
   {
     key: "planejamentoTerapeutico",
-    label: "Planejamento terapêutico",
+    label: "Planejamento terapÃªutico",
   },
   {
     key: "aplicacaoTecnicasTcc",
-    label: "Técnicas TCC",
+    label: "TÃ©cnicas TCC",
   },
   {
     key: "manejoSessao",
-    label: "Manejo da sessão",
+    label: "Manejo da sessÃ£o",
   },
   {
     key: "posturaTerapeutica",
-    label: "Postura terapêutica",
+    label: "Postura terapÃªutica",
   },
   {
     key: "formulacaoHipoteses",
-    label: "Formulação de hipóteses",
+    label: "FormulaÃ§Ã£o de hipÃ³teses",
   },
   {
     key: "evolucaoMedia",
-    label: "Evolução clínica",
+    label: "EvoluÃ§Ã£o clÃ­nica",
   },
   {
     key: "indicadoresComputados",
@@ -1367,15 +1371,15 @@ export const lancamentosColumns = [
   },
   {
     key: "adesaoTarefas",
-    label: "Adesão às tarefas",
+    label: "AdesÃ£o Ã s tarefas",
   },
   {
     key: "aplicacaoEstrategias",
-    label: "Aplicação das estratégias",
+    label: "AplicaÃ§Ã£o das estratÃ©gias",
   },
   {
     key: "evolucaoObjetivos",
-    label: "Evolução dos objetivos",
+    label: "EvoluÃ§Ã£o dos objetivos",
   },
   {
     key: "intensidadeSintomas",
@@ -1383,7 +1387,7 @@ export const lancamentosColumns = [
   },
   {
     key: "evitacaoSocial",
-    label: "Evitação social",
+    label: "EvitaÃ§Ã£o social",
   },
   {
     key: "intensidadeComportamento",
@@ -1413,19 +1417,19 @@ export const lancamentosColumns = [
   },
   {
     key: "recomendacao",
-    label: "Recomendação",
+    label: "RecomendaÃ§Ã£o",
   },
   {
     key: "planoAcao",
-    label: "Plano de ação",
+    label: "Plano de aÃ§Ã£o",
   },
   {
     key: "emocaoElaborada",
-    label: "Emoção a elaborar",
+    label: "EmoÃ§Ã£o a elaborar",
   },
   {
     key: "observacao",
-    label: "Observação",
+    label: "ObservaÃ§Ã£o",
   },
   {
     key: "registro",
@@ -1436,7 +1440,7 @@ export const lancamentosColumns = [
 export const alertasColumns = [
   {
     key: "levelLabel",
-    label: "Nível",
+    label: "NÃ­vel",
   },
   {
     key: "typeLabel",
@@ -1444,7 +1448,7 @@ export const alertasColumns = [
   },
   {
     key: "periodo",
-    label: "Período",
+    label: "PerÃ­odo",
   },
   {
     key: "pacienteNome",
@@ -1456,7 +1460,7 @@ export const alertasColumns = [
   },
   {
     key: "clinicaNome",
-    label: "Clínica",
+    label: "ClÃ­nica",
   },
   {
     key: "summary",
@@ -1468,7 +1472,7 @@ export const alertasColumns = [
   },
   {
     key: "criteria",
-    label: "Critério",
+    label: "CritÃ©rio",
   },
 ];
 
@@ -1494,7 +1498,7 @@ function buildPeriodDetail(
       "Todos os anos"
   );
 
-  return parts.join(" · ");
+  return parts.join(" Â· ");
 }
 
 export function buildResumoRows({
@@ -1508,10 +1512,10 @@ export function buildResumoRows({
       valor:
         contexto || "Geral",
       detalhe:
-        "Filtro principal do relatório",
+        "Filtro principal do relatÃ³rio",
     },
     {
-      indicador: "Período",
+      indicador: "PerÃ­odo",
       valor:
         buildPeriodDetail(
           filters
@@ -1520,7 +1524,7 @@ export function buildResumoRows({
         "Recorte temporal aplicado",
     },
     {
-      indicador: "Lançamentos",
+      indicador: "LanÃ§amentos",
       valor: formatNumber(
         metrics.registros
       ),
@@ -1534,11 +1538,11 @@ export function buildResumoRows({
       ),
       detalhe: `${formatNumber(
         metrics.pacientesAvaliados
-      )} paciente(s) com lançamento no período`,
+      )} paciente(s) com lanÃ§amento no perÃ­odo`,
     },
     {
       indicador:
-        "Média de competências",
+        "MÃ©dia de competÃªncias",
       valor: isNumericValue(
         metrics.competencia
       )
@@ -1554,7 +1558,7 @@ export function buildResumoRows({
     },
     {
       indicador:
-        "Evolução clínica",
+        "EvoluÃ§Ã£o clÃ­nica",
       valor: formatMetricPercent(
         metrics.evolucao
       ),
@@ -1566,30 +1570,30 @@ export function buildResumoRows({
     },
     {
       indicador:
-        "Adesão às tarefas",
+        "AdesÃ£o Ã s tarefas",
       valor: formatMetricPercent(
         metrics.adesao
       ),
       detalhe:
-        "Campos não computados foram ignorados",
+        "Campos nÃ£o computados foram ignorados",
     },
     {
       indicador:
-        "Aplicação das estratégias",
+        "AplicaÃ§Ã£o das estratÃ©gias",
       valor: formatMetricPercent(
         metrics.estrategias
       ),
       detalhe:
-        "Campos não computados foram ignorados",
+        "Campos nÃ£o computados foram ignorados",
     },
     {
       indicador:
-        "Evolução dos objetivos",
+        "EvoluÃ§Ã£o dos objetivos",
       valor: formatMetricPercent(
         metrics.objetivos
       ),
       detalhe:
-        "Campos não computados foram ignorados",
+        "Campos nÃ£o computados foram ignorados",
     },
     {
       indicador:
@@ -1598,7 +1602,7 @@ export function buildResumoRows({
         metrics.planosAbertos
       ),
       detalhe:
-        "Planos ainda não concluídos",
+        "Planos ainda nÃ£o concluÃ­dos",
     },
     {
       indicador: "Alertas",
@@ -1606,7 +1610,7 @@ export function buildResumoRows({
         metrics.alertas
       ),
       detalhe:
-        "Alertas automáticos no recorte",
+        "Alertas automÃ¡ticos no recorte",
     },
   ];
 }
@@ -1801,6 +1805,13 @@ export function buildLancamentosRows(
         )
       ),
 
+      supervisor: normalizeText(
+        item?.supervisorNome,
+        item?.supervisorId
+          ? `ID: ${item.supervisorId}`
+          : "NÃ£o vinculada"
+      ),
+
       competenciaMedia:
         isNumericValue(
           mediaCompetencia
@@ -1980,19 +1991,19 @@ export function buildAlertasRows(
       pacienteNome:
         normalizeText(
           item?.pacienteNome,
-          "Não se aplica"
+          "NÃ£o se aplica"
         ),
 
       terapeutaNome:
         normalizeText(
           item?.terapeutaNome,
-          "Não informado"
+          "NÃ£o informado"
         ),
 
       clinicaNome:
         normalizeText(
           item?.clinicaNome,
-          "Não informada"
+          "NÃ£o informada"
         ),
 
       summary: normalizeText(
@@ -2030,7 +2041,7 @@ export function buildReportSheets({
       summarySheet,
       {
         name:
-          "Atenção imediata - Top 15",
+          "AtenÃ§Ã£o imediata - Top 15",
         columns: alertasColumns,
         rows: alertasRows.slice(
           0,
@@ -2039,7 +2050,7 @@ export function buildReportSheets({
       },
       {
         name:
-          "Últimos lançamentos - Top 20",
+          "Ãšltimos lanÃ§amentos - Top 20",
         columns:
           lancamentosColumns,
         rows: lancamentosRows.slice(
@@ -2055,7 +2066,7 @@ export function buildReportSheets({
       summarySheet,
       {
         name:
-          "Lançamentos semanais",
+          "LanÃ§amentos semanais",
         columns:
           lancamentosColumns,
         rows: lancamentosRows,
@@ -2068,7 +2079,7 @@ export function buildReportSheets({
       summarySheet,
       {
         name:
-          "Alertas automáticos",
+          "Alertas automÃ¡ticos",
         columns: alertasColumns,
         rows: alertasRows,
       },
@@ -2079,13 +2090,13 @@ export function buildReportSheets({
     summarySheet,
     {
       name:
-        "Lançamentos semanais",
+        "LanÃ§amentos semanais",
       columns: lancamentosColumns,
       rows: lancamentosRows,
     },
     {
       name:
-        "Alertas automáticos",
+        "Alertas automÃ¡ticos",
       columns: alertasColumns,
       rows: alertasRows,
     },
@@ -2100,7 +2111,7 @@ export function buildReportSheets({
       rows: terapeutasRows,
     },
     {
-      name: "Clínicas",
+      name: "ClÃ­nicas",
       columns: clinicasColumns,
       rows: clinicasRows,
     },
@@ -2219,7 +2230,7 @@ export function exportExcelWorkbook(
               vertical-align:middle;
             "
           >
-            RELATÓRIO EXECUTIVO:
+            RELATÃ“RIO EXECUTIVO:
             ${escapeHtml(filename)}
           </td>
         </tr>
@@ -2233,7 +2244,7 @@ export function exportExcelWorkbook(
 
         <tr>
           ${metricCardHtml(
-            "EVOLUÇÃO CLÍNICA",
+            "EVOLUÃ‡ÃƒO CLÃNICA",
             formatMetricPercent(
               dashboardMetrics.evolucao
             ),
@@ -2241,7 +2252,7 @@ export function exportExcelWorkbook(
           )}
 
           ${metricCardHtml(
-            "MÉDIA TÉCNICA",
+            "MÃ‰DIA TÃ‰CNICA",
             isNumericValue(
               dashboardMetrics.competencia
             )
@@ -2249,7 +2260,7 @@ export function exportExcelWorkbook(
                   dashboardMetrics.competencia
                 )}/5`
               : NOT_COMPUTED,
-            "Competências computadas"
+            "CompetÃªncias computadas"
           )}
 
           ${metricCardHtml(
@@ -2266,7 +2277,7 @@ export function exportExcelWorkbook(
             formatNumber(
               dashboardMetrics.pacientes
             ),
-            "Casos incluídos"
+            "Casos incluÃ­dos"
           )}
         </tr>
 
