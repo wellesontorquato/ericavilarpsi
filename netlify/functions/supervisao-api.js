@@ -1520,6 +1520,30 @@ function average(values) {
   );
 }
 
+function averageNullable(values) {
+  const validValues = values
+    .filter(
+      (value) =>
+        value !== "" &&
+        value !== null &&
+        value !== undefined
+    )
+    .map(Number)
+    .filter(Number.isFinite);
+
+  if (!validValues.length) {
+    return null;
+  }
+
+  return (
+    validValues.reduce(
+      (sum, value) =>
+        sum + value,
+      0
+    ) / validValues.length
+  );
+}
+
 function normalizedPercent(
   value,
   max = 10,
@@ -1555,7 +1579,7 @@ function normalizedPercent(
 }
 
 function calcCompetencias(lancamento) {
-  return average(
+  return averageNullable(
     COMPETENCY_FIELDS.map(
       (field) =>
         lancamento[field]
@@ -1564,7 +1588,7 @@ function calcCompetencias(lancamento) {
 }
 
 function calcEvolucao(lancamento) {
-  return average([
+  return averageNullable([
     normalizedPercent(
       lancamento.qualidadeSono,
       10
@@ -1656,14 +1680,14 @@ async function dashboard(
     );
 
   const mediaCompetencias =
-    average(
+    averageNullable(
       lancamentos.map(
         calcCompetencias
       )
     );
 
   const mediaEvolucao =
-    average(
+    averageNullable(
       lancamentos.map(
         calcEvolucao
       )
