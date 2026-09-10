@@ -2421,13 +2421,18 @@ exports.handler =
         error
       );
 
-      return json(
+      const statusCode =
         error.statusCode ||
-          500,
+        500;
+
+      return json(
+        statusCode,
         {
           message:
-            error.message ||
-            "Erro interno na API de supervisão.",
+            statusCode >= 500
+              ? "Erro interno na API de supervisão."
+              : error.message ||
+                "Erro interno na API de supervisão.",
         }
       );
     }
