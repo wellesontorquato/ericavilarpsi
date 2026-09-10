@@ -1,4 +1,13 @@
-﻿const admin = require("firebase-admin");
+﻿const {
+  cert,
+  getApps,
+  initializeApp,
+} = require("firebase-admin/app");
+
+const {
+  FieldValue,
+  getFirestore,
+} = require("firebase-admin/firestore");
 
 const RESOURCE_COLLECTIONS = {
   supervisores: "supervisao_supervisores",
@@ -254,7 +263,7 @@ function formatPrivateKey(key) {
 }
 
 function getAdminDb() {
-  if (!admin.apps.length) {
+  if (!getApps().length) {
     const projectId =
       process.env.FIREBASE_PROJECT_ID ||
       process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID;
@@ -270,8 +279,8 @@ function getAdminDb() {
       );
     }
 
-    admin.initializeApp({
-      credential: admin.credential.cert({
+    initializeApp({
+      credential: cert({
         projectId,
         clientEmail,
         privateKey,
@@ -279,7 +288,7 @@ function getAdminDb() {
     });
   }
 
-  return admin.firestore();
+  return getFirestore();
 }
 
 function normalizeEmail(value) {
@@ -479,7 +488,7 @@ async function resolvePrincipal(db, user) {
     await profileDoc.ref.update({
       identityUserId: userId,
       vinculadoEm:
-        admin.firestore.FieldValue.serverTimestamp(),
+        FieldValue.serverTimestamp(),
     });
   }
 
@@ -1798,7 +1807,7 @@ async function writeAudit(
         principal.email ||
         null,
       createdAt:
-        admin.firestore.FieldValue.serverTimestamp(),
+        FieldValue.serverTimestamp(),
     });
 }
 
@@ -1876,7 +1885,7 @@ async function createRecord(
     );
 
   const now =
-    admin.firestore.FieldValue.serverTimestamp();
+    FieldValue.serverTimestamp();
 
   const data = {
     ...prepared,
@@ -2117,7 +2126,7 @@ async function updateRecord(
     );
 
   update.atualizadoEm =
-    admin.firestore.FieldValue.serverTimestamp();
+    FieldValue.serverTimestamp();
 
   update.atualizadoPor =
     actorLabel(principal);
@@ -2130,7 +2139,7 @@ async function updateRecord(
     )
   ) {
     update.arquivadoEm =
-      admin.firestore.FieldValue.serverTimestamp();
+      FieldValue.serverTimestamp();
 
     update.arquivadoPor =
       actorLabel(principal);
@@ -2144,7 +2153,7 @@ async function updateRecord(
     )
   ) {
     update.restauradoEm =
-      admin.firestore.FieldValue.serverTimestamp();
+      FieldValue.serverTimestamp();
 
     update.restauradoPor =
       actorLabel(principal);

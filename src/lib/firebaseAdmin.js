@@ -1,4 +1,13 @@
-import admin from "firebase-admin";
+import {
+  cert,
+  getApps,
+  initializeApp,
+} from "firebase-admin/app";
+
+import {
+  FieldValue,
+  getFirestore,
+} from "firebase-admin/firestore";
 
 function formatPrivateKey(key) {
   if (!key) return undefined;
@@ -28,9 +37,9 @@ export function getFirebaseAdmin() {
     throw new Error("FIREBASE_PRIVATE_KEY não configurada.");
   }
 
-  if (!admin.apps.length) {
-    admin.initializeApp({
-      credential: admin.credential.cert({
+  if (!getApps().length) {
+    initializeApp({
+      credential: cert({
         projectId,
         clientEmail,
         privateKey,
@@ -39,7 +48,7 @@ export function getFirebaseAdmin() {
   }
 
   return {
-    admin,
-    adminDb: admin.firestore(),
+    adminDb: getFirestore(),
+    FieldValue,
   };
 }

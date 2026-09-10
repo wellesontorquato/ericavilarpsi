@@ -191,10 +191,10 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { admin, adminDb } = getFirebaseAdmin();
+    const { adminDb, FieldValue } = getFirebaseAdmin();
 
     const nowDate = new Date();
-    const now = admin.firestore.FieldValue.serverTimestamp();
+    const now = FieldValue.serverTimestamp();
     const nowIso = nowDate.toISOString();
     const nowDateKey = getBrazilDateKey(nowDate);
 
@@ -264,7 +264,7 @@ export default async function handler(req, res) {
           lastAttemptSubtemasCount: subtemas.length,
           lastAttemptHasSubtemas: subtemas.length > 0,
 
-          duplicateAttempts: admin.firestore.FieldValue.increment(1),
+          duplicateAttempts: FieldValue.increment(1),
           updatedAt: now,
           updatedAtIso: nowIso,
           updatedAtDateKey: nowDateKey,
