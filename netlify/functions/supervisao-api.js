@@ -1,4 +1,4 @@
-﻿const {
+const {
   cert,
   getApps,
   initializeApp,
@@ -1102,6 +1102,382 @@ async function listCollection(
         )
       )
     );
+}
+
+const PAGINATED_LIST_RESOURCES =
+  new Set([
+    "clinicas",
+    "pacientes",
+    "supervisores",
+    "terapeutas",
+  ]);
+
+function parseListPageSize(value) {
+  const parsed =
+    Number(value);
+
+  if (
+    !Number.isInteger(parsed) ||
+    parsed < 1
+  ) {
+    return 15;
+  }
+
+  return Math.min(
+    parsed,
+    50
+  );
+}
+
+function parseListStatus(value) {
+  const status =
+    String(
+      value || "todos"
+    ).toLowerCase();
+
+  if (
+    status === "ativos" ||
+    status === "arquivados" ||
+    status === "todos"
+  ) {
+    return status;
+  }
+
+  throw httpError(
+    400,
+    "Filtro de status inválido."
+  );
+}
+
+function encodeListCursor(doc) {
+  const payload =
+    JSON.stringify({
+      id: doc.id,
+    });
+
+  return Buffer
+    .from(
+      payload,
+      "utf8"
+    )
+    .toString("base64")
+    .replace(/\+/g, "-")
+    .replace(/\//g, "_")
+    .replace(/=+$/g, "");
+}
+
+function decodeListCursor(value) {
+  if (!value) {
+    return null;
+  }
+
+  const text =
+    String(value);
+
+  if (
+    text.length > 2048 ||
+    !/^[A-Za-z0-9_-]+$/.test(text)
+  ) {
+    throw httpError(
+      400,
+      "Cursor de paginação inválido."
+    );
+  }
+
+  try {
+    let normalized =
+      text
+        .replace(/-/g, "+")
+        .replace(/_/g, "/");
+
+    const remainder =
+      normalized.length % 4;
+
+    if (remainder) {
+      normalized +=
+        "=".repeat(
+          4 - remainder
+        );
+    }
+
+    const decoded =
+      JSON.parse(
+        Buffer
+          .from(
+            normalized,
+            "base64"
+          )
+          .toString("utf8")
+      );
+
+    const id =
+      String(
+        decoded?.id || ""
+      );
+
+    if (
+      !id ||
+      id.length > 1500 ||
+      id.includes("/")
+    ) {
+      throw new Error(
+        "INVALID_CURSOR_ID"
+      );
+    }
+
+    return id;
+  } catch {
+    throw httpError(
+      400,
+      "Cursor de paginação inválido."
+    );
+  }
+}
+
+function matchesListStatus(
+  item,
+  status
+) {
+  const archived =
+    isArchived(item);
+
+  if (
+    status === "ativos"
+  ) {
+    return !archived;
+  }
+
+  if (
+    status === "arquivados"
+  ) {
+    return archived;
+  }
+
+  return true;
+}
+
+async function listCollectionPage(
+  db,
+  resource,
+  principal,
+  options = {}
+) {
+  if (
+    !PAGINATED_LIST_RESOURCES.has(
+      resource
+    )
+  ) {
+    throw httpError(
+      400,
+      "Paginação por cursor não está disponível para este recurso."
+    );
+  }
+
+  if (
+    ADMIN_ONLY_RESOURCES.has(
+      resource
+    )
+  ) {
+    assertAdmin(
+      principal
+    );
+  }
+
+  const pageSize =
+    parseListPageSize(
+      options.pageSize
+    );
+
+  const status =
+    parseListStatus(
+      options.status
+    );
+
+  const collection =
+    db.collection(
+      RESOURCE_COLLECTIONS[
+        resource
+      ]
+    );
+
+  let query =
+    collection;
+
+  if (
+    principal.role !== "admin"
+  ) {
+    query =
+      query.where(
+        "supervisorIds",
+        "array-contains",
+        principal.supervisorId
+      );
+  }
+
+  query =
+    query.orderBy(
+      "criadoEm",
+      "desc"
+    );
+
+  const cursorId =
+    decodeListCursor(
+      options.cursor
+    );
+
+  let scanCursor =
+    null;
+
+  if (cursorId) {
+    const cursorSnapshot =
+      await collection
+        .doc(
+          cursorId
+        )
+        .get();
+
+    if (
+      !cursorSnapshot.exists
+    ) {
+      throw httpError(
+        400,
+        "Cursor de paginação expirado ou inválido."
+      );
+    }
+
+    if (
+      principal.role !== "admin"
+    ) {
+      assertRecordAccess(
+        principal,
+        cursorSnapshot.data()
+      );
+    }
+
+    scanCursor =
+      cursorSnapshot;
+  }
+
+  const matches =
+    [];
+
+  const scanBatchSize =
+    Math.min(
+      Math.max(
+        pageSize * 2,
+        30
+      ),
+      100
+    );
+
+  let exhausted =
+    false;
+
+  while (
+    matches.length <= pageSize &&
+    !exhausted
+  ) {
+    let pageQuery =
+      query;
+
+    if (scanCursor) {
+      pageQuery =
+        pageQuery.startAfter(
+          scanCursor
+        );
+    }
+
+    const snapshot =
+      await pageQuery
+        .limit(
+          scanBatchSize
+        )
+        .get();
+
+    if (
+      snapshot.empty
+    ) {
+      exhausted =
+        true;
+
+      break;
+    }
+
+    for (
+      const doc
+      of snapshot.docs
+    ) {
+      scanCursor =
+        doc;
+
+      if (
+        matchesListStatus(
+          doc.data(),
+          status
+        )
+      ) {
+        matches.push(
+          doc
+        );
+
+        if (
+          matches.length >
+          pageSize
+        ) {
+          break;
+        }
+      }
+    }
+
+    if (
+      matches.length >
+      pageSize
+    ) {
+      break;
+    }
+
+    if (
+      snapshot.size <
+      scanBatchSize
+    ) {
+      exhausted =
+        true;
+    }
+  }
+
+  const hasMore =
+    matches.length >
+    pageSize;
+
+  const pageDocuments =
+    matches.slice(
+      0,
+      pageSize
+    );
+
+  const lastDocument =
+    pageDocuments[
+      pageDocuments.length - 1
+    ];
+
+  return {
+    items:
+      pageDocuments.map(
+        serializeDoc
+      ),
+
+    pageSize,
+
+    hasMore,
+
+    nextCursor:
+      hasMore &&
+      lastDocument
+        ? encodeListCursor(
+            lastDocument
+          )
+        : "",
+  };
 }
 
 async function validateSupervisorIds(
@@ -2338,6 +2714,38 @@ exports.handler =
               item:
                 item.data,
             }
+          );
+        }
+
+        if (
+          event
+            .queryStringParameters
+            ?.pagination ===
+          "cursor"
+        ) {
+          return json(
+            200,
+            await listCollectionPage(
+              db,
+              resource,
+              principal,
+              {
+                pageSize:
+                  event
+                    .queryStringParameters
+                    ?.pageSize,
+
+                cursor:
+                  event
+                    .queryStringParameters
+                    ?.cursor,
+
+                status:
+                  event
+                    .queryStringParameters
+                    ?.status,
+              }
+            )
           );
         }
 

@@ -4,6 +4,7 @@ import {
   archiveResource,
   createResource,
   listResource,
+  listResourcePage,
   restoreResource,
   updateResource,
 } from "@/lib/supervisao/api";
@@ -142,21 +143,122 @@ export default function EntityCrud({
   const [statusFilter, setStatusFilter] =
     useState("ativos");
   const [page, setPage] = useState(1);
+
+  const [
+    serverHasMore,
+    setServerHasMore,
+  ] = useState(false);
+
+  const [
+    serverNextCursor,
+    setServerNextCursor,
+  ] = useState("");
+
+  const [
+    serverCursors,
+    setServerCursors,
+  ] = useState([""]);
+
+  const serverPaginationMode =
+    search.trim() === "";
+
   const [message, setMessage] = useState({
     type: "",
     text: "",
   });
 
-  async function loadItems() {
+  async function loadItems(
+    {
+      mode =
+        serverPaginationMode,
+      cursor = null,
+      pageNumber = null,
+      resetCursors = false,
+    } = {}
+  ) {
     setLoading(true);
 
     try {
-      const data = await listResource(
-        user,
-        resource
-      );
+      if (mode) {
+        const targetPage =
+          pageNumber ||
+          page ||
+          1;
+
+        const targetCursor =
+          cursor !== null
+            ? cursor
+            : serverCursors[
+                targetPage - 1
+              ] || "";
+
+        const result =
+          await listResourcePage(
+            user,
+            resource,
+            {
+              pageSize:
+                PAGE_SIZE,
+
+              cursor:
+                targetCursor,
+
+              status:
+                statusFilter,
+            }
+          );
+
+        setItems(
+          result.items
+        );
+
+        setServerHasMore(
+          result.hasMore
+        );
+
+        setServerNextCursor(
+          result.nextCursor
+        );
+
+        setPage(
+          targetPage
+        );
+
+        if (resetCursors) {
+          setServerCursors(
+            [""]
+          );
+        }
+
+        afterLoad?.(
+          result.items
+        );
+
+        return;
+      }
+
+      const data =
+        await listResource(
+          user,
+          resource
+        );
 
       setItems(data);
+
+      setServerHasMore(
+        false
+      );
+
+      setServerNextCursor(
+        ""
+      );
+
+      setServerCursors(
+        [""]
+      );
+
+      setPage(1);
+
       afterLoad?.(data);
     } catch (error) {
       console.error(error);
@@ -173,14 +275,46 @@ export default function EntityCrud({
   }
 
   useEffect(() => {
-    loadItems();
-  }, [user, resource]);
+    loadItems({
+      mode:
+        serverPaginationMode,
 
-  useEffect(() => {
-    setPage(1);
-  }, [search, statusFilter, items.length]);
+      cursor:
+        "",
+
+      pageNumber:
+        1,
+
+      resetCursors:
+        true,
+    });
+  }, [
+    user,
+    resource,
+    statusFilter,
+    serverPaginationMode,
+  ]);
 
   const statusCounts = useMemo(() => {
+    /*
+     * Em modo server-side só temos os itens
+     * da página atual. Mostrar um total global
+     * calculado a partir deles seria incorreto.
+     *
+     * Durante busca textual, o contrato legado
+     * carrega a lista completa e as contagens
+     * voltam a ser exatas.
+     */
+    if (
+      serverPaginationMode
+    ) {
+      return {
+        todos: "—",
+        ativos: "—",
+        arquivados: "—",
+      };
+    }
+
     const arquivados = items.filter(
       isArchived
     ).length;
@@ -190,7 +324,10 @@ export default function EntityCrud({
       ativos: items.length - arquivados,
       arquivados,
     };
-  }, [items]);
+  }, [
+    items,
+    serverPaginationMode,
+  ]);
 
   const filteredItems = useMemo(() => {
     const query = search
@@ -234,29 +371,53 @@ export default function EntityCrud({
     statusFilter,
   ]);
 
-  const totalPages = Math.max(
+  const localTotalPages = Math.max(
     1,
     Math.ceil(
       filteredItems.length / PAGE_SIZE
     )
   );
 
-  const currentPage = Math.min(
-    page,
-    totalPages
-  );
+  const currentPage =
+    serverPaginationMode
+      ? page
+      : Math.min(
+          page,
+          localTotalPages
+        );
+
+  const totalPages =
+    serverPaginationMode
+      ? currentPage +
+        (serverHasMore ? 1 : 0)
+      : localTotalPages;
 
   const startIndex =
     (currentPage - 1) * PAGE_SIZE;
 
   const endIndex =
-    startIndex + PAGE_SIZE;
+    serverPaginationMode
+      ? startIndex +
+        filteredItems.length
+      : startIndex +
+        PAGE_SIZE;
 
   const paginatedItems =
-    filteredItems.slice(
-      startIndex,
-      endIndex
-    );
+    serverPaginationMode
+      ? filteredItems
+      : filteredItems.slice(
+          startIndex,
+          endIndex
+        );
+
+  const showPagination =
+    serverPaginationMode
+      ? (
+          currentPage > 1 ||
+          serverHasMore
+        )
+      : filteredItems.length >
+        PAGE_SIZE;
 
   const gridTemplateColumns = useMemo(() => {
     const extraColumns = Math.max(
@@ -270,6 +431,91 @@ export default function EntityCrud({
       `minmax(170px, auto)`
     );
   }, [columns.length]);
+
+  async function handlePreviousPage() {
+    if (
+      !serverPaginationMode
+    ) {
+      setPage((current) =>
+        Math.max(
+          1,
+          current - 1
+        )
+      );
+
+      return;
+    }
+
+    if (
+      currentPage <= 1
+    ) {
+      return;
+    }
+
+    const targetPage =
+      currentPage - 1;
+
+    const cursor =
+      serverCursors[
+        targetPage - 1
+      ] || "";
+
+    await loadItems({
+      mode: true,
+      cursor,
+      pageNumber:
+        targetPage,
+    });
+  }
+
+  async function handleNextPage() {
+    if (
+      !serverPaginationMode
+    ) {
+      setPage((current) =>
+        Math.min(
+          totalPages,
+          current + 1
+        )
+      );
+
+      return;
+    }
+
+    if (
+      !serverHasMore ||
+      !serverNextCursor
+    ) {
+      return;
+    }
+
+    const targetPage =
+      currentPage + 1;
+
+    const cursor =
+      serverNextCursor;
+
+    setServerCursors(
+      (current) => {
+        const next =
+          [...current];
+
+        next[
+          targetPage - 1
+        ] =
+          cursor;
+
+        return next;
+      }
+    );
+
+    await loadItems({
+      mode: true,
+      cursor,
+      pageNumber:
+        targetPage,
+    });
+  }
 
   function setField(name, value) {
     setForm((current) => ({
@@ -632,15 +878,22 @@ export default function EntityCrud({
             <p>
               {loading
                 ? "Carregando..."
-                : `${filteredItems.length} encontrado(s). Exibindo ${paginatedItems.length} nesta página.`}
+                : serverPaginationMode
+                  ? `${paginatedItems.length} registro(s) exibido(s) nesta página.`
+                  : `${filteredItems.length} encontrado(s). Exibindo ${paginatedItems.length} nesta página.`}
             </p>
           </div>
 
-          {filteredItems.length >
-            PAGE_SIZE && (
+          {showPagination && (
             <span>
-              Página {currentPage} de{" "}
-              {totalPages}
+              {serverPaginationMode ? (
+                <>Página {currentPage}</>
+              ) : (
+                <>
+                  Página {currentPage} de{" "}
+                  {totalPages}
+                </>
+              )}
             </span>
           )}
         </div>
@@ -800,18 +1053,12 @@ export default function EntityCrud({
               </div>
             </div>
 
-            {filteredItems.length >
-              PAGE_SIZE && (
+            {showPagination && (
               <div className="supervisao-pagination">
                 <button
                   type="button"
-                  onClick={() =>
-                    setPage((current) =>
-                      Math.max(
-                        1,
-                        current - 1
-                      )
-                    )
+                  onClick={
+                    handlePreviousPage
                   }
                   disabled={
                     currentPage === 1
@@ -821,28 +1068,24 @@ export default function EntityCrud({
                 </button>
 
                 <span>
-                  {startIndex + 1}-
-                  {Math.min(
-                    endIndex,
-                    filteredItems.length
-                  )}{" "}
-                  de{" "}
-                  {filteredItems.length}
+                  {serverPaginationMode
+                    ? `${paginatedItems.length} registro(s) nesta página`
+                    : `${startIndex + 1}-${Math.min(
+                        endIndex,
+                        filteredItems.length
+                      )} de ${filteredItems.length}`}
                 </span>
 
                 <button
                   type="button"
-                  onClick={() =>
-                    setPage((current) =>
-                      Math.min(
-                        totalPages,
-                        current + 1
-                      )
-                    )
+                  onClick={
+                    handleNextPage
                   }
                   disabled={
-                    currentPage ===
-                    totalPages
+                    serverPaginationMode
+                      ? !serverHasMore
+                      : currentPage ===
+                        totalPages
                   }
                 >
                   Próxima

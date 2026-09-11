@@ -41,6 +41,46 @@ export async function listResource(user, resource, params) {
   return payload.items || [];
 }
 
+export async function listResourcePage(
+  user,
+  resource,
+  {
+    pageSize = 15,
+    cursor = "",
+    status = "todos",
+  } = {}
+) {
+  const payload =
+    await supervisaoRequest(
+      user,
+      resource,
+      {
+        params: {
+          pagination: "cursor",
+          pageSize,
+          cursor,
+          status,
+        },
+      }
+    );
+
+  return {
+    items:
+      payload.items || [],
+
+    pageSize:
+      Number(
+        payload.pageSize
+      ) || pageSize,
+
+    hasMore:
+      payload.hasMore === true,
+
+    nextCursor:
+      payload.nextCursor || "",
+  };
+}
+
 export async function createResource(user, resource, data) {
   const payload = await supervisaoRequest(user, resource, {
     method: "POST",
