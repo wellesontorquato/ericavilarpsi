@@ -5,7 +5,9 @@ const {
 } = require("firebase-admin/app");
 
 const {
+  FieldPath,
   FieldValue,
+  Timestamp,
   getFirestore,
 } = require("firebase-admin/firestore");
 
@@ -912,29 +914,13 @@ async function assertResourceAccess(
   principal,
   item
 ) {
-  if (canAccessRecord(principal, item)) {
-    return;
-  }
+  await Promise.resolve(
+    db
+  );
 
-  const isLegacyLaunch =
-    resource === "lancamentos" &&
-    recordSupervisorIds(item).length === 0 &&
-    item?.pacienteId;
-
-  if (isLegacyLaunch) {
-    const patient = await getDocument(
-      db,
-      "pacientes",
-      item.pacienteId
-    );
-
-    assertRecordAccess(
-      principal,
-      patient.data
-    );
-
-    return;
-  }
+  String(
+    resource || ""
+  );
 
   assertRecordAccess(
     principal,
@@ -976,119 +962,46 @@ async function listCollection(
   resource,
   principal
 ) {
-  if (ADMIN_ONLY_RESOURCES.has(resource)) {
-    assertAdmin(principal);
+  if (
+    ADMIN_ONLY_RESOURCES.has(
+      resource
+    )
+  ) {
+    assertAdmin(
+      principal
+    );
   }
 
-  const collection = db.collection(
-    RESOURCE_COLLECTIONS[resource]
-  );
-
-  let documents;
-
-  if (principal.role === "admin") {
-    const snapshot =
-      await collection.get();
-
-    documents = snapshot.docs;
-  } else if (resource === "lancamentos") {
-    const [assignedSnapshot, patientsSnapshot] =
-      await Promise.all([
-        collection
-          .where(
-            "supervisorIds",
-            "array-contains",
-            principal.supervisorId
-          )
-          .get(),
-        db
-          .collection(
-            RESOURCE_COLLECTIONS.pacientes
-          )
-          .where(
-            "supervisorIds",
-            "array-contains",
-            principal.supervisorId
-          )
-          .get(),
-      ]);
-
-    const patientIds =
-      patientsSnapshot.docs.map(
-        (doc) => doc.id
-      );
-
-    const patientChunks = [];
-
-    for (
-      let index = 0;
-      index < patientIds.length;
-      index += 10
-    ) {
-      patientChunks.push(
-        patientIds.slice(
-          index,
-          index + 10
-        )
-      );
-    }
-
-    const legacySnapshots =
-      await Promise.all(
-        patientChunks.map((ids) =>
-          collection
-            .where(
-              "pacienteId",
-              "in",
-              ids
-            )
-            .get()
-        )
-      );
-
-    const documentsById =
-      new Map(
-        assignedSnapshot.docs.map(
-          (doc) => [doc.id, doc]
-        )
-      );
-
-    legacySnapshots.forEach(
-      (snapshot) => {
-        snapshot.docs.forEach(
-          (doc) => {
-            if (
-              recordSupervisorIds(
-                doc.data()
-              ).length === 0
-            ) {
-              documentsById.set(
-                doc.id,
-                doc
-              );
-            }
-          }
-        );
-      }
+  const collection =
+    db.collection(
+      RESOURCE_COLLECTIONS[
+        resource
+      ]
     );
 
-    documents = [
-      ...documentsById.values(),
-    ];
-  } else {
-    const snapshot = await collection
-      .where(
-        "supervisorIds",
-        "array-contains",
-        principal.supervisorId
-      )
-      .get();
+  let snapshot;
 
-    documents = snapshot.docs;
+  if (
+    principal.role ===
+    "admin"
+  ) {
+    snapshot =
+      await collection.get();
+  } else {
+    snapshot =
+      await collection
+        .where(
+          "supervisorIds",
+          "array-contains",
+          principal.supervisorId
+        )
+        .get();
   }
 
-  return documents
-    .map(serializeDoc)
+  return snapshot.docs
+    .map(
+      serializeDoc
+    )
     .sort((a, b) =>
       String(
         b.criadoEm ||
@@ -1254,6 +1167,383 @@ function matchesListStatus(
   }
 
   return true;
+}
+
+function getLaunchCursorParts(
+  doc
+) {
+  const createdAt =
+    doc
+      .data()
+      ?.criadoEm;
+
+  const seconds =
+    Number(
+      createdAt?.seconds
+    );
+
+  const nanoseconds =
+    Number(
+      createdAt?.nanoseconds
+    );
+
+  const id =
+    String(
+      doc?.id || ""
+    );
+
+  if (
+    !Number.isSafeInteger(
+      seconds
+    ) ||
+    !Number.isInteger(
+      nanoseconds
+    ) ||
+    nanoseconds < 0 ||
+    nanoseconds > 999999999 ||
+    !id ||
+    id.length > 1500 ||
+    id.includes("/")
+  ) {
+    throw httpError(
+      500,
+      "Lançamento sem cursor temporal válido."
+    );
+  }
+
+  return {
+    seconds,
+    nanoseconds,
+    id,
+  };
+}
+
+function encodeLaunchListCursor(
+  doc
+) {
+  const parts =
+    getLaunchCursorParts(
+      doc
+    );
+
+  const payload =
+    JSON.stringify({
+      v: 1,
+      seconds:
+        parts.seconds,
+      nanoseconds:
+        parts.nanoseconds,
+      id:
+        parts.id,
+    });
+
+  return Buffer
+    .from(
+      payload,
+      "utf8"
+    )
+    .toString("base64")
+    .replace(/\+/g, "-")
+    .replace(/\//g, "_")
+    .replace(/=+$/g, "");
+}
+
+function decodeLaunchListCursor(
+  value
+) {
+  if (!value) {
+    return null;
+  }
+
+  const text =
+    String(value);
+
+  if (
+    text.length > 2048 ||
+    !/^[A-Za-z0-9_-]+$/.test(
+      text
+    )
+  ) {
+    throw httpError(
+      400,
+      "Cursor de paginação inválido."
+    );
+  }
+
+  try {
+    let normalized =
+      text
+        .replace(/-/g, "+")
+        .replace(/_/g, "/");
+
+    const remainder =
+      normalized.length % 4;
+
+    if (remainder) {
+      normalized +=
+        "=".repeat(
+          4 - remainder
+        );
+    }
+
+    const decoded =
+      JSON.parse(
+        Buffer
+          .from(
+            normalized,
+            "base64"
+          )
+          .toString(
+            "utf8"
+          )
+      );
+
+    if (
+      decoded?.v !== 1
+    ) {
+      throw new Error(
+        "INVALID_CURSOR_VERSION"
+      );
+    }
+
+    const seconds =
+      Number(
+        decoded?.seconds
+      );
+
+    const nanoseconds =
+      Number(
+        decoded?.nanoseconds
+      );
+
+    const id =
+      String(
+        decoded?.id || ""
+      );
+
+    if (
+      !Number.isSafeInteger(
+        seconds
+      ) ||
+      !Number.isInteger(
+        nanoseconds
+      ) ||
+      nanoseconds < 0 ||
+      nanoseconds >
+        999999999 ||
+      !id ||
+      id.length > 1500 ||
+      id.includes("/")
+    ) {
+      throw new Error(
+        "INVALID_CURSOR_PAYLOAD"
+      );
+    }
+
+    return {
+      createdAt:
+        new Timestamp(
+          seconds,
+          nanoseconds
+        ),
+
+      id,
+    };
+  } catch {
+    throw httpError(
+      400,
+      "Cursor de paginação inválido."
+    );
+  }
+}
+
+async function listLaunchCollectionPage(
+  db,
+  principal,
+  options = {}
+) {
+  const pageSize =
+    parseListPageSize(
+      options.pageSize
+    );
+
+  const status =
+    parseListStatus(
+      options.status
+    );
+
+  const collection =
+    db.collection(
+      RESOURCE_COLLECTIONS
+        .lancamentos
+    );
+
+  let query =
+    collection;
+
+  if (
+    principal.role !==
+    "admin"
+  ) {
+    query =
+      query.where(
+        "supervisorIds",
+        "array-contains",
+        principal.supervisorId
+      );
+  }
+
+  query =
+    query
+      .orderBy(
+        "criadoEm",
+        "desc"
+      )
+      .orderBy(
+        FieldPath.documentId(),
+        "desc"
+      );
+
+  let scanCursor =
+    decodeLaunchListCursor(
+      options.cursor
+    );
+
+  const matches =
+    [];
+
+  const scanBatchSize =
+    Math.min(
+      Math.max(
+        pageSize * 2,
+        30
+      ),
+      100
+    );
+
+  let exhausted =
+    false;
+
+  while (
+    matches.length <=
+      pageSize &&
+    !exhausted
+  ) {
+    let pageQuery =
+      query;
+
+    if (scanCursor) {
+      pageQuery =
+        pageQuery.startAfter(
+          scanCursor.createdAt,
+          scanCursor.id
+        );
+    }
+
+    const snapshot =
+      await pageQuery
+        .limit(
+          scanBatchSize
+        )
+        .get();
+
+    if (
+      snapshot.empty
+    ) {
+      exhausted =
+        true;
+
+      break;
+    }
+
+    for (
+      const doc
+      of snapshot.docs
+    ) {
+      const parts =
+        getLaunchCursorParts(
+          doc
+        );
+
+      scanCursor = {
+        createdAt:
+          new Timestamp(
+            parts.seconds,
+            parts.nanoseconds
+          ),
+
+        id:
+          parts.id,
+      };
+
+      if (
+        matchesListStatus(
+          doc.data(),
+          status
+        )
+      ) {
+        matches.push(
+          doc
+        );
+
+        if (
+          matches.length >
+          pageSize
+        ) {
+          break;
+        }
+      }
+    }
+
+    if (
+      matches.length >
+      pageSize
+    ) {
+      break;
+    }
+
+    if (
+      snapshot.size <
+      scanBatchSize
+    ) {
+      exhausted =
+        true;
+    }
+  }
+
+  const hasMore =
+    matches.length >
+    pageSize;
+
+  const pageDocuments =
+    matches.slice(
+      0,
+      pageSize
+    );
+
+  const lastDocument =
+    pageDocuments[
+      pageDocuments.length - 1
+    ];
+
+  return {
+    items:
+      pageDocuments.map(
+        serializeDoc
+      ),
+
+    pageSize,
+
+    hasMore,
+
+    nextCursor:
+      hasMore &&
+      lastDocument
+        ? encodeLaunchListCursor(
+            lastDocument
+          )
+        : "",
+  };
 }
 
 async function listCollectionPage(
@@ -2728,29 +3018,38 @@ exports.handler =
             ?.pagination ===
           "cursor"
         ) {
+          const pageOptions = {
+            pageSize:
+              event
+                .queryStringParameters
+                ?.pageSize,
+
+            cursor:
+              event
+                .queryStringParameters
+                ?.cursor,
+
+            status:
+              event
+                .queryStringParameters
+                ?.status,
+          };
+
           return json(
             200,
-            await listCollectionPage(
-              db,
-              resource,
-              principal,
-              {
-                pageSize:
-                  event
-                    .queryStringParameters
-                    ?.pageSize,
-
-                cursor:
-                  event
-                    .queryStringParameters
-                    ?.cursor,
-
-                status:
-                  event
-                    .queryStringParameters
-                    ?.status,
-              }
-            )
+            resource ===
+              "lancamentos"
+              ? await listLaunchCollectionPage(
+                  db,
+                  principal,
+                  pageOptions
+                )
+              : await listCollectionPage(
+                  db,
+                  resource,
+                  principal,
+                  pageOptions
+                )
           );
         }
 

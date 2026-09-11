@@ -14,6 +14,7 @@ import {
   archiveResource,
   createResource,
   listResource,
+  listResourcePage,
   restoreResource,
   updateResource,
 } from "@/lib/supervisao/api";
@@ -485,22 +486,42 @@ function LancamentoContent({
   const [page, setPage] =
     useState(1);
 
+  const [
+    serverPage,
+    setServerPage,
+  ] = useState(1);
+
+  const [
+    serverCursorStack,
+    setServerCursorStack,
+  ] = useState([""]);
+
+  const [
+    serverHasMore,
+    setServerHasMore,
+  ] = useState(false);
+
+  const [
+    serverNextCursor,
+    setServerNextCursor,
+  ] = useState("");
+
+  const searchMode =
+    search.trim().length > 0;
+
   const [message, setMessage] =
     useState({
       type: "",
       text: "",
     });
 
-  async function loadData() {
-    setLoadingData(true);
-
+  async function loadReferenceData() {
     try {
       const [
         supervisoresData,
         clinicasData,
         terapeutasData,
         pacientesData,
-        lancamentosData,
       ] = await Promise.all([
         access?.isAdmin
           ? listResource(
@@ -519,40 +540,151 @@ function LancamentoContent({
                       email:
                         access.email ||
                         "",
-                      status: "Ativo",
+                      status:
+                        "Ativo",
                     },
                   ]
                 : []
             ),
+
         listResource(
           user,
           "clinicas"
         ),
+
         listResource(
           user,
           "terapeutas"
         ),
+
         listResource(
           user,
           "pacientes"
-        ),
-        listResource(
-          user,
-          "lancamentos"
         ),
       ]);
 
       setSupervisores(
         supervisoresData
       );
-      setClinicas(clinicasData);
-      setTerapeutas(terapeutasData);
-      setPacientes(pacientesData);
-      setLancamentos(
-        lancamentosData
+
+      setClinicas(
+        clinicasData
       );
+
+      setTerapeutas(
+        terapeutasData
+      );
+
+      setPacientes(
+        pacientesData
+      );
+
+      return true;
     } catch (error) {
-      console.error(error);
+      console.error(
+        error
+      );
+
+      setMessage({
+        type: "error",
+        text:
+          error?.message ||
+          "Não foi possível carregar os vínculos da supervisão.",
+      });
+
+      return false;
+    }
+  }
+
+  async function loadLaunches({
+    cursor = "",
+    resetCursor = false,
+  } = {}) {
+    setLoadingData(
+      true
+    );
+
+    try {
+      if (searchMode) {
+        const data =
+          await listResource(
+            user,
+            "lancamentos"
+          );
+
+        setLancamentos(
+          data
+        );
+
+        setServerPage(
+          1
+        );
+
+        setServerCursorStack(
+          [""]
+        );
+
+        setServerHasMore(
+          false
+        );
+
+        setServerNextCursor(
+          ""
+        );
+
+        return true;
+      }
+
+      const payload =
+        await listResourcePage(
+          user,
+          "lancamentos",
+          {
+            pageSize:
+              PAGE_SIZE,
+
+            cursor,
+
+            status:
+              statusFilter,
+          }
+        );
+
+      setLancamentos(
+        Array.isArray(
+          payload?.items
+        )
+          ? payload.items
+          : []
+      );
+
+      setServerHasMore(
+        payload?.hasMore ===
+          true
+      );
+
+      setServerNextCursor(
+        String(
+          payload?.nextCursor ||
+          ""
+        )
+      );
+
+      if (resetCursor) {
+        setServerPage(
+          1
+        );
+
+        setServerCursorStack(
+          [""]
+        );
+      }
+
+      return true;
+    } catch (error) {
+      console.error(
+        error
+      );
 
       setMessage({
         type: "error",
@@ -560,13 +692,28 @@ function LancamentoContent({
           error?.message ||
           "Não foi possível carregar os lançamentos.",
       });
+
+      return false;
     } finally {
-      setLoadingData(false);
+      setLoadingData(
+        false
+      );
     }
   }
 
+  async function loadData() {
+    await Promise.all([
+      loadReferenceData(),
+      loadLaunches({
+        cursor: "",
+        resetCursor:
+          true,
+      }),
+    ]);
+  }
+
   useEffect(() => {
-    loadData();
+    loadReferenceData();
   }, [
     user,
     access?.isAdmin,
@@ -576,11 +723,24 @@ function LancamentoContent({
   ]);
 
   useEffect(() => {
-    setPage(1);
+    loadLaunches({
+      cursor: "",
+      resetCursor:
+        true,
+    });
+  }, [
+    user,
+    searchMode,
+    statusFilter,
+  ]);
+
+  useEffect(() => {
+    setPage(
+      1
+    );
   }, [
     search,
     statusFilter,
-    lancamentos.length,
   ]);
 
   const clinicasDisponiveis =
@@ -780,26 +940,46 @@ function LancamentoContent({
       : "";
   }
 
-  const statusCounts = useMemo(() => {
-    const arquivados =
-      lancamentos.filter(
-        isArchived
-      ).length;
+  const statusCounts =
+    useMemo(() => {
+      if (!searchMode) {
+        return {
+          todos: "—",
+          ativos: "—",
+          arquivados: "—",
+        };
+      }
 
-    return {
-      todos: lancamentos.length,
-      ativos:
-        lancamentos.length -
+      const arquivados =
+        lancamentos.filter(
+          isArchived
+        ).length;
+
+      return {
+        todos:
+          lancamentos.length,
+
+        ativos:
+          lancamentos.length -
+          arquivados,
+
         arquivados,
-      arquivados,
-    };
-  }, [lancamentos]);
+      };
+    }, [
+      lancamentos,
+      searchMode,
+    ]);
 
   const lancamentosFiltrados =
     useMemo(() => {
-      const query = search
-        .trim()
-        .toLowerCase();
+      if (!searchMode) {
+        return lancamentos;
+      }
+
+      const query =
+        search
+          .trim()
+          .toLowerCase();
 
       return lancamentos.filter(
         (item) => {
@@ -832,89 +1012,275 @@ function LancamentoContent({
             item.observacao,
             item.statusPlano,
           ].some((value) =>
-            String(value || "")
+            String(
+              value || ""
+            )
               .toLowerCase()
-              .includes(query)
+              .includes(
+                query
+              )
           );
         }
       );
     }, [
       lancamentos,
       search,
+      searchMode,
       statusFilter,
     ]);
 
-  const totalPages = Math.max(
-    1,
-    Math.ceil(
-      lancamentosFiltrados.length /
-        PAGE_SIZE
-    )
-  );
+  const totalPages =
+    Math.max(
+      1,
+      Math.ceil(
+        lancamentosFiltrados.length /
+          PAGE_SIZE
+      )
+    );
 
-  const currentPage = Math.min(
-    page,
-    totalPages
-  );
+  const currentPage =
+    Math.min(
+      page,
+      totalPages
+    );
 
   const startIndex =
-    (currentPage - 1) * PAGE_SIZE;
+    (currentPage - 1) *
+    PAGE_SIZE;
 
   const endIndex =
-    startIndex + PAGE_SIZE;
+    startIndex +
+    PAGE_SIZE;
 
   const lancamentosPaginados =
-    lancamentosFiltrados.slice(
-      startIndex,
-      endIndex
-    );
+    searchMode
+      ? lancamentosFiltrados.slice(
+          startIndex,
+          endIndex
+        )
+      : lancamentosFiltrados;
 
   const lancamentosAtivos =
     useMemo(
       () =>
         lancamentos.filter(
           (item) =>
-            !isArchived(item)
+            !isArchived(
+              item
+            )
         ),
-      [lancamentos]
+      [
+        lancamentos,
+      ]
     );
 
-  const resumo = useMemo(() => {
-    const competencias =
-      lancamentosAtivos
-        .map(competenciaMedia)
-        .filter(
-          (value) => value !== null
+  const resumo =
+    useMemo(() => {
+      if (!searchMode) {
+        return {
+          total: "—",
+          terapeutas:
+            "—",
+          pacientes:
+            "—",
+          competencia:
+            null,
+        };
+      }
+
+      const competencias =
+        lancamentosAtivos
+          .map(
+            competenciaMedia
+          )
+          .filter(
+            (value) =>
+              value !== null
+          );
+
+      return {
+        total:
+          lancamentosAtivos
+            .length,
+
+        terapeutas:
+          new Set(
+            lancamentosAtivos
+              .map(
+                (item) =>
+                  item
+                    .terapeutaId
+              )
+              .filter(
+                Boolean
+              )
+          ).size,
+
+        pacientes:
+          new Set(
+            lancamentosAtivos
+              .map(
+                (item) =>
+                  item
+                    .pacienteId
+              )
+              .filter(
+                Boolean
+              )
+          ).size,
+
+        competencia:
+          averageEvaluated(
+            competencias
+          ),
+      };
+    }, [
+      lancamentosAtivos,
+      searchMode,
+    ]);
+
+  const canPaginate =
+    searchMode
+      ? lancamentosFiltrados
+          .length >
+        PAGE_SIZE
+      : serverPage > 1 ||
+        serverHasMore;
+
+  const previousDisabled =
+    searchMode
+      ? currentPage === 1
+      : serverPage === 1;
+
+  const nextDisabled =
+    searchMode
+      ? currentPage ===
+        totalPages
+      : !serverHasMore;
+
+  const paginationLabel =
+    searchMode
+      ? String(
+          startIndex + 1
+        ) +
+        "-" +
+        String(
+          Math.min(
+            endIndex,
+            lancamentosFiltrados
+              .length
+          )
+        ) +
+        " de " +
+        String(
+          lancamentosFiltrados
+            .length
+        )
+      : "Página " +
+        String(
+          serverPage
         );
 
-    return {
-      total:
-        lancamentosAtivos.length,
-
-      terapeutas: new Set(
-        lancamentosAtivos
-          .map(
-            (item) =>
-              item.terapeutaId
+  async function handlePreviousPage() {
+    if (searchMode) {
+      setPage(
+        (current) =>
+          Math.max(
+            1,
+            current - 1
           )
-          .filter(Boolean)
-      ).size,
+      );
 
-      pacientes: new Set(
-        lancamentosAtivos
-          .map(
-            (item) =>
-              item.pacienteId
+      return;
+    }
+
+    if (
+      serverPage <= 1
+    ) {
+      return;
+    }
+
+    const previousPage =
+      serverPage - 1;
+
+    const previousCursor =
+      serverCursorStack[
+        previousPage - 1
+      ] || "";
+
+    const loaded =
+      await loadLaunches({
+        cursor:
+          previousCursor,
+        resetCursor:
+          false,
+      });
+
+    if (loaded) {
+      setServerPage(
+        previousPage
+      );
+    }
+  }
+
+  async function handleNextPage() {
+    if (searchMode) {
+      setPage(
+        (current) =>
+          Math.min(
+            totalPages,
+            current + 1
           )
-          .filter(Boolean)
-      ).size,
+      );
 
-      competencia:
-        averageEvaluated(
-          competencias
-        ),
-    };
-  }, [lancamentosAtivos]);
+      return;
+    }
+
+    if (
+      !serverHasMore ||
+      !serverNextCursor
+    ) {
+      return;
+    }
+
+    const nextPage =
+      serverPage + 1;
+
+    const nextCursor =
+      serverNextCursor;
+
+    const loaded =
+      await loadLaunches({
+        cursor:
+          nextCursor,
+        resetCursor:
+          false,
+      });
+
+    if (!loaded) {
+      return;
+    }
+
+    setServerCursorStack(
+      (current) => {
+        const next =
+          current.slice(
+            0,
+            serverPage
+          );
+
+        next.push(
+          nextCursor
+        );
+
+        return next;
+      }
+    );
+
+    setServerPage(
+      nextPage
+    );
+  }
 
   function isMetricIgnored(name) {
     return ignoredMetrics.includes(
@@ -1457,10 +1823,10 @@ function LancamentoContent({
             </span>
 
             <h2>
-              {
-                lancamentosFiltrados.length
-              }{" "}
-              lançamento(s)
+              {searchMode
+                ? lancamentosFiltrados.length +
+                  " lançamento(s)"
+                : "Histórico paginado"}
             </h2>
 
             <p>
@@ -1557,22 +1923,38 @@ function LancamentoContent({
               </h2>
 
               <p>
-                {
-                  lancamentosFiltrados.length
-                }{" "}
-                salvo(s). Exibindo{" "}
-                {
-                  lancamentosPaginados.length
-                }{" "}
-                nesta página.
+                {searchMode
+                  ? String(
+                      lancamentosFiltrados.length
+                    ) +
+                    " salvo(s). Exibindo " +
+                    String(
+                      lancamentosPaginados.length
+                    ) +
+                    " nesta página."
+                  : "Exibindo " +
+                    String(
+                      lancamentosPaginados.length
+                    ) +
+                    " nesta página."}
               </p>
             </div>
 
-            {lancamentosFiltrados.length >
-              PAGE_SIZE && (
+            {canPaginate && (
               <span>
-                Página {currentPage} de{" "}
-                {totalPages}
+                {searchMode
+                  ? "Página " +
+                    String(
+                      currentPage
+                    ) +
+                    " de " +
+                    String(
+                      totalPages
+                    )
+                  : "Página " +
+                    String(
+                      serverPage
+                    )}
               </span>
             )}
           </div>
@@ -1772,53 +2154,35 @@ function LancamentoContent({
                 </div>
               </div>
 
-              {lancamentosFiltrados.length >
-                PAGE_SIZE && (
+              {canPaginate && (
                 <div className="supervisao-pagination">
                   <button
                     type="button"
-                    onClick={() =>
-                      setPage(
-                        (current) =>
-                          Math.max(
-                            1,
-                            current - 1
-                          )
-                      )
+                    onClick={
+                      handlePreviousPage
                     }
                     disabled={
-                      currentPage === 1
+                      previousDisabled ||
+                      loadingData
                     }
                   >
                     Anterior
                   </button>
 
                   <span>
-                    {startIndex + 1}-
-                    {Math.min(
-                      endIndex,
-                      lancamentosFiltrados.length
-                    )}{" "}
-                    de{" "}
                     {
-                      lancamentosFiltrados.length
+                      paginationLabel
                     }
                   </span>
 
                   <button
                     type="button"
-                    onClick={() =>
-                      setPage(
-                        (current) =>
-                          Math.min(
-                            totalPages,
-                            current + 1
-                          )
-                      )
+                    onClick={
+                      handleNextPage
                     }
                     disabled={
-                      currentPage ===
-                      totalPages
+                      nextDisabled ||
+                      loadingData
                     }
                   >
                     Próxima
