@@ -2204,24 +2204,29 @@ async function assertNoLegacyLaunchDuplicate(
       "==",
       data.pacienteId
     )
+    .where(
+      "ano",
+      "==",
+      data.ano
+    )
+    .where(
+      "mes",
+      "==",
+      data.mes
+    )
+    .where(
+      "semana",
+      "==",
+      data.semana
+    )
     .get();
 
   const duplicate =
     snapshot.docs.some(
-      (doc) => {
-        const item =
-          doc.data();
-
-        return (
-          !isArchived(item) &&
-          Number(item.ano) ===
-            Number(data.ano) &&
-          Number(item.mes) ===
-            Number(data.mes) &&
-          Number(item.semana) ===
-            Number(data.semana)
-        );
-      }
+      (doc) =>
+        !isArchived(
+          doc.data()
+        )
     );
 
   if (duplicate) {
