@@ -1357,6 +1357,115 @@ function decodeLaunchListCursor(
   }
 }
 
+async function getLaunchCollectionSummary(
+  db,
+  principal
+) {
+  const collection =
+    db.collection(
+      RESOURCE_COLLECTIONS
+        .lancamentos
+    );
+
+  let query =
+    collection;
+
+  if (
+    principal.role !==
+    "admin"
+  ) {
+    query =
+      query.where(
+        "supervisorIds",
+        "array-contains",
+        principal.supervisorId
+      );
+  }
+
+  const snapshot =
+    await query
+      .select(
+        "arquivado",
+        "statusRegistro",
+        "terapeutaId",
+        "pacienteId",
+        ...COMPETENCY_FIELDS
+      )
+      .get();
+
+  const allLaunches =
+    snapshot.docs.map(
+      (doc) =>
+        doc.data()
+    );
+
+  const activeLaunches =
+    allLaunches.filter(
+      (item) =>
+        !isArchived(
+          item
+        )
+    );
+
+  const therapistIds =
+    new Set(
+      activeLaunches
+        .map(
+          (item) =>
+            String(
+              item.terapeutaId ||
+                ""
+            ).trim()
+        )
+        .filter(Boolean)
+    );
+
+  const patientIds =
+    new Set(
+      activeLaunches
+        .map(
+          (item) =>
+            String(
+              item.pacienteId ||
+                ""
+            ).trim()
+        )
+        .filter(Boolean)
+    );
+
+  return {
+    summary: {
+      totalAtivos:
+        activeLaunches.length,
+
+      terapeutasAtivos:
+        therapistIds.size,
+
+      pacientesAtivos:
+        patientIds.size,
+
+      competenciaMedia:
+        averageNullable(
+          activeLaunches.map(
+            calcCompetencias
+          )
+        ),
+    },
+
+    statusCounts: {
+      todos:
+        allLaunches.length,
+
+      ativos:
+        activeLaunches.length,
+
+      arquivados:
+        allLaunches.length -
+        activeLaunches.length,
+    },
+  };
+}
+
 async function listLaunchCollectionPage(
   db,
   principal,
@@ -3009,6 +3118,25 @@ exports.handler =
               item:
                 item.data,
             }
+          );
+        }
+
+        if (
+          resource ===
+            "lancamentos" &&
+          String(
+            event
+              .queryStringParameters
+              ?.summary ||
+              ""
+          ) === "1"
+        ) {
+          return json(
+            200,
+            await getLaunchCollectionSummary(
+              db,
+              principal
+            )
           );
         }
 

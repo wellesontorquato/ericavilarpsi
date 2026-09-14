@@ -16,6 +16,7 @@ import {
   listResource,
   listResourcePage,
   restoreResource,
+  supervisaoRequest,
   updateResource,
 } from "@/lib/supervisao/api";
 import {
@@ -505,6 +506,10 @@ function LancamentoContent({
     serverNextCursor,
     setServerNextCursor,
   ] = useState("");
+  const [
+    globalLaunchSummary,
+    setGlobalLaunchSummary,
+  ] = useState(null);
 
   const searchMode =
     search.trim().length > 0;
@@ -514,6 +519,47 @@ function LancamentoContent({
       type: "",
       text: "",
     });
+
+  async function loadLaunchSummary() {
+    try {
+      const payload =
+        await supervisaoRequest(
+          user,
+          "lancamentos",
+          {
+            params: {
+              summary: 1,
+            },
+          }
+        );
+
+      if (
+        !payload ||
+        !payload.summary ||
+        !payload.statusCounts
+      ) {
+        throw new Error(
+          "Resumo global de lançamentos inválido."
+        );
+      }
+
+      setGlobalLaunchSummary(
+        payload
+      );
+
+      return true;
+    } catch (error) {
+      console.error(
+        error
+      );
+
+      setGlobalLaunchSummary(
+        null
+      );
+
+      return false;
+    }
+  }
 
   async function loadReferenceData() {
     try {
@@ -711,6 +757,14 @@ function LancamentoContent({
       }),
     ]);
   }
+
+  useEffect(() => {
+    loadLaunchSummary();
+  }, [
+    user,
+    access?.isAdmin,
+    access?.supervisorId,
+  ]);
 
   useEffect(() => {
     loadReferenceData();
@@ -943,10 +997,22 @@ function LancamentoContent({
   const statusCounts =
     useMemo(() => {
       if (!searchMode) {
+        const counts =
+          globalLaunchSummary
+            ?.statusCounts;
+
         return {
-          todos: "—",
-          ativos: "—",
-          arquivados: "—",
+          todos:
+            counts?.todos ??
+            "—",
+
+          ativos:
+            counts?.ativos ??
+            "—",
+
+          arquivados:
+            counts?.arquivados ??
+            "—",
         };
       }
 
@@ -968,6 +1034,7 @@ function LancamentoContent({
     }, [
       lancamentos,
       searchMode,
+      globalLaunchSummary,
     ]);
 
   const lancamentosFiltrados =
@@ -1077,13 +1144,28 @@ function LancamentoContent({
   const resumo =
     useMemo(() => {
       if (!searchMode) {
+        const summary =
+          globalLaunchSummary
+            ?.summary;
+
         return {
-          total: "—",
+          total:
+            summary?.totalAtivos ??
+            "—",
+
           terapeutas:
+            summary
+              ?.terapeutasAtivos ??
             "—",
+
           pacientes:
+            summary
+              ?.pacientesAtivos ??
             "—",
+
           competencia:
+            summary
+              ?.competenciaMedia ??
             null,
         };
       }
@@ -1137,6 +1219,7 @@ function LancamentoContent({
     }, [
       lancamentosAtivos,
       searchMode,
+      globalLaunchSummary,
     ]);
 
   const canPaginate =
@@ -1668,6 +1751,7 @@ function LancamentoContent({
       }
 
       closeModal();
+      await loadLaunchSummary();
       await loadData();
     } catch (error) {
       console.error(error);
@@ -1700,6 +1784,8 @@ function LancamentoContent({
         item.id
       );
 
+      await loadLaunchSummary();
+
       setMessage({
         type: "success",
         text:
@@ -1726,6 +1812,8 @@ function LancamentoContent({
         "lancamentos",
         item.id
       );
+
+      await loadLaunchSummary();
 
       setMessage({
         type: "success",
