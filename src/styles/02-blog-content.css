@@ -2778,7 +2778,6 @@
     padding-bottom:var(--mobile-safe-bottom);
   }
 
-  .container{width:min(calc(100% - 26px), 100%);}
 
   .mobile-topbar{
     display:flex;
