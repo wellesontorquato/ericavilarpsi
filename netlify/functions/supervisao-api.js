@@ -779,7 +779,14 @@ function hasComputedField(data, fields) {
   });
 }
 
-function validateRecord(resource, data) {
+function validateRecord(
+  resource,
+  data,
+  options = {}
+) {
+  const existing =
+    options.existing ||
+    null;
   if (isArchived(data)) return;
 
   if (resource === "supervisores") {
@@ -862,7 +869,17 @@ function validateRecord(resource, data) {
       COMPETENCY_FIELDS
     );
 
-    if (!hasCompetency) {
+    const preserveLegacyMissingCompetency =
+      Boolean(existing) &&
+      !hasComputedField(
+        existing,
+        COMPETENCY_FIELDS
+      );
+
+    if (
+      !hasCompetency &&
+      !preserveLegacyMissingCompetency
+    ) {
       throw httpError(
         400,
         "Informe pelo menos uma competência clínica para calcular a média."
@@ -875,7 +892,17 @@ function validateRecord(resource, data) {
         PATIENT_INDICATOR_FIELDS
       );
 
-    if (!hasPatientIndicator) {
+    const preserveLegacyMissingIndicator =
+      Boolean(existing) &&
+      !hasComputedField(
+        existing,
+        PATIENT_INDICATOR_FIELDS
+      );
+
+    if (
+      !hasPatientIndicator &&
+      !preserveLegacyMissingIndicator
+    ) {
       throw httpError(
         400,
         "Informe pelo menos um indicador de evolução do paciente."
@@ -2274,7 +2301,8 @@ async function prepareRecord(
 
   validateRecord(
     resource,
-    merged
+    merged,
+    { existing }
   );
 
   return merged;

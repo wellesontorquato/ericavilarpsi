@@ -1520,8 +1520,19 @@ function LancamentoContent({
 
   function validateMetricGroup(
     metricFields,
-    groupLabel
+    groupLabel,
+    originalLaunch = null
   ) {
+    const originalHadComputedValue =
+      originalLaunch
+        ? metricFields.some(
+            ({ name }) =>
+              !isBlankMetric(
+                originalLaunch[name]
+              )
+          )
+        : true;
+
     const computedFields =
       metricFields.filter(
         ({ name }) =>
@@ -1531,6 +1542,13 @@ function LancamentoContent({
     if (
       computedFields.length === 0
     ) {
+      if (
+        originalLaunch &&
+        !originalHadComputedValue
+      ) {
+        return;
+      }
+
       throw new Error(
         `Pelo menos uma métrica de ${groupLabel} deve ser computada.`
       );
@@ -1687,12 +1705,14 @@ function LancamentoContent({
 
       validateMetricGroup(
         scoreFields,
-        "competência clínica"
+        "competência clínica",
+        originalLaunch
       );
 
       validateMetricGroup(
         evolucaoFields,
-        "evolução do paciente"
+        "evolução do paciente",
+        originalLaunch
       );
 
       const payload = {
