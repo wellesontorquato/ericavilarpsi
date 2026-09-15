@@ -40,16 +40,6 @@
   line-height: 1.6;
 }
 
-.supervisao-kicker {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  color: #a36b43;
-  font-size: 0.74rem;
-  font-weight: 700;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-}
 
 .supervisao-login-form,
 .supervisao-form {
@@ -122,23 +112,12 @@
   transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
 }
 
-.supervisao-primary-button {
-  background: linear-gradient(135deg, #7c4a2d, #b8794c);
-  color: #fff;
-  padding: 13px 20px;
-  box-shadow: 0 14px 28px rgba(124, 74, 45, 0.22);
-}
 
 .supervisao-primary-button:disabled {
   opacity: 0.6;
   cursor: not-allowed;
 }
 
-.supervisao-secondary-button {
-  background: #efe4d7;
-  color: #6a4129;
-  padding: 13px 20px;
-}
 
 .supervisao-primary-button:not(:disabled):hover,
 .supervisao-secondary-button:hover,
@@ -170,32 +149,9 @@
   color: #284d80;
 }
 
-.supervisao-shell {
-  display: grid;
-  grid-template-columns: 290px minmax(0, 1fr);
-}
 
-.supervisao-sidebar {
-  position: sticky;
-  top: 0;
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-  gap: 30px;
-  background: #fffaf4;
-  border-right: 1px solid rgba(81, 53, 35, 0.12);
-  padding: 28px 22px;
-}
 
-.supervisao-sidebar h2 {
-  margin-top: 8px;
-  font-size: 1.55rem;
-}
 
-.supervisao-sidebar nav {
-  display: grid;
-  gap: 10px;
-}
 
 .supervisao-sidebar nav a {
   border-radius: 16px;
@@ -205,22 +161,8 @@
   text-decoration: none;
 }
 
-.supervisao-sidebar nav a:hover,
-.supervisao-sidebar nav a.active {
-  background: #ead8c6;
-  color: #4a2e1d;
-}
 
-.supervisao-sidebar-footer {
-  display: grid;
-  gap: 12px;
-  margin-top: auto;
-}
 
-.supervisao-sidebar-footer small {
-  color: #7d6d60;
-  word-break: break-word;
-}
 
 .supervisao-sidebar-footer button,
 .supervisao-row-actions button,
