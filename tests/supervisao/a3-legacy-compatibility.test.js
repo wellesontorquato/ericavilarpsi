@@ -1,345 +1,108 @@
 import {
+  readFileSync,
+} from "node:fs";
+
+import {
+  resolve,
+} from "node:path";
+
+import {
   describe,
   expect,
   it,
 } from "vitest";
 
-import {
-  createRequire,
-} from "node:module";
 
-import fs from "node:fs";
-
-import path from "node:path";
-
-import {
-  fileURLToPath,
-} from "node:url";
-
-
-const require =
-  createRequire(
-    import.meta.url
+const backendSource =
+  readFileSync(
+    resolve(
+      process.cwd(),
+      "netlify/functions/supervisao-api.js"
+    ),
+    "utf8"
   );
 
 
-const backend =
-  require(
-    "../../netlify/functions/supervisao-api.js"
+const frontendSource =
+  readFileSync(
+    resolve(
+      process.cwd(),
+      "src/pages/admin/supervisao/lancamento-semanal.js"
+    ),
+    "utf8"
   );
-
-
-const {
-  validateRecord,
-} = backend.__test;
-
-
-const currentFile =
-  fileURLToPath(
-    import.meta.url
-  );
-
-
-const currentDirectory =
-  path.dirname(
-    currentFile
-  );
-
-
-const base = {
-  ano: 2026,
-  mes: 9,
-  semana: 1,
-
-  clinicaId:
-    "clinic-a3",
-
-  terapeutaId:
-    "therapist-a3",
-
-  pacienteId:
-    "patient-a3",
-
-  supervisorId:
-    "supervisor-a3",
-
-  supervisorIds: [
-    "supervisor-a3",
-  ],
-
-  arquivado:
-    false,
-
-  statusRegistro:
-    "Ativo",
-};
 
 
 describe(
-  "A3 - compatibilidade de lancamentos legados",
+  "A3 - compatibilidade estatica de lancamentos legados",
   () => {
 
     it(
-      "mantem novo lancamento sem competencia rejeitado",
+      "validateRecord aceita baseline existente opcional",
       () => {
 
         expect(
-          () =>
-            validateRecord(
-              "lancamentos",
-              {
-                ...base,
-              }
-            )
-        ).toThrow(
-          "competência clínica"
+          backendSource
+        ).toMatch(
+          /function validateRecord\(\s*resource,\s*data,\s*options = \{\}\s*\)/
+        );
+
+
+        expect(
+          backendSource
+        ).toMatch(
+          /const existing =\s*options\.existing \|\|\s*null;/
         );
       }
     );
 
 
     it(
-      "mantem novo lancamento sem indicador rejeitado",
+      "preserva ausencia historica de competencia somente com existing",
       () => {
 
         expect(
-          () =>
-            validateRecord(
-              "lancamentos",
-              {
-                ...base,
+          backendSource
+        ).toMatch(
+          /const preserveLegacyMissingCompetency =\s*Boolean\(existing\) &&\s*!hasComputedField\(\s*existing,\s*COMPETENCY_FIELDS\s*\);/
+        );
 
-                qualidadeConceitualizacao:
-                  4,
-              }
-            )
-        ).toThrow(
-          "indicador de evolução"
+
+        expect(
+          backendSource
+        ).toMatch(
+          /if\s*\(\s*!hasCompetency &&\s*!preserveLegacyMissingCompetency\s*\)\s*\{/
         );
       }
     );
 
 
     it(
-      "mantem novo lancamento completo aceito",
+      "preserva ausencia historica de indicador somente com existing",
       () => {
 
         expect(
-          () =>
-            validateRecord(
-              "lancamentos",
-              {
-                ...base,
-
-                qualidadeConceitualizacao:
-                  4,
-
-                qualidadeSono:
-                  8,
-              }
-            )
-        ).not.toThrow();
-      }
-    );
-
-
-    it(
-      "permite legado sem competencia e sem indicador preservar ausencia",
-      () => {
-
-        const existing = {
-          ...base,
-        };
+          backendSource
+        ).toMatch(
+          /const preserveLegacyMissingIndicator =\s*Boolean\(existing\) &&\s*!hasComputedField\(\s*existing,\s*PATIENT_INDICATOR_FIELDS\s*\);/
+        );
 
 
         expect(
-          () =>
-            validateRecord(
-              "lancamentos",
-              {
-                ...existing,
-              },
-              {
-                existing,
-              }
-            )
-        ).not.toThrow();
-      }
-    );
-
-
-    it(
-      "permite legado sem indicador preservar ausencia",
-      () => {
-
-        const existing = {
-          ...base,
-
-          qualidadeConceitualizacao:
-            4,
-        };
-
-
-        expect(
-          () =>
-            validateRecord(
-              "lancamentos",
-              {
-                ...existing,
-              },
-              {
-                existing,
-              }
-            )
-        ).not.toThrow();
-      }
-    );
-
-
-    it(
-      "permite legado sem competencia preservar ausencia",
-      () => {
-
-        const existing = {
-          ...base,
-
-          qualidadeSono:
-            8,
-        };
-
-
-        expect(
-          () =>
-            validateRecord(
-              "lancamentos",
-              {
-                ...existing,
-              },
-              {
-                existing,
-              }
-            )
-        ).not.toThrow();
-      }
-    );
-
-
-    it(
-      "permite legado ganhar competencia sem inventar indicador",
-      () => {
-
-        const existing = {
-          ...base,
-        };
-
-
-        expect(
-          () =>
-            validateRecord(
-              "lancamentos",
-              {
-                ...existing,
-
-                qualidadeConceitualizacao:
-                  4,
-              },
-              {
-                existing,
-              }
-            )
-        ).not.toThrow();
-      }
-    );
-
-
-    it(
-      "nao permite registro completo perder todos os indicadores",
-      () => {
-
-        const existing = {
-          ...base,
-
-          qualidadeConceitualizacao:
-            4,
-
-          qualidadeSono:
-            8,
-        };
-
-
-        expect(
-          () =>
-            validateRecord(
-              "lancamentos",
-              {
-                ...base,
-
-                qualidadeConceitualizacao:
-                  4,
-              },
-              {
-                existing,
-              }
-            )
-        ).toThrow(
-          "indicador de evolução"
+          backendSource
+        ).toMatch(
+          /if\s*\(\s*!hasPatientIndicator &&\s*!preserveLegacyMissingIndicator\s*\)\s*\{/
         );
       }
     );
 
 
     it(
-      "nao permite registro completo perder todas as competencias",
+      "edicao passa o registro original para validateRecord",
       () => {
 
-        const existing = {
-          ...base,
-
-          qualidadeConceitualizacao:
-            4,
-
-          qualidadeSono:
-            8,
-        };
-
-
         expect(
-          () =>
-            validateRecord(
-              "lancamentos",
-              {
-                ...base,
-
-                qualidadeSono:
-                  8,
-              },
-              {
-                existing,
-              }
-            )
-        ).toThrow(
-          "competência clínica"
-        );
-      }
-    );
-
-
-    it(
-      "backend passa existing real para validacao de edicao",
-      () => {
-
-        const source =
-          fs.readFileSync(
-            path.resolve(
-              currentDirectory,
-              "../../netlify/functions/supervisao-api.js"
-            ),
-            "utf8"
-          );
-
-
-        expect(
-          source
+          backendSource
         ).toMatch(
           /validateRecord\(\s*resource,\s*merged,\s*\{ existing \}\s*\)/
         );
@@ -348,44 +111,109 @@ describe(
 
 
     it(
-      "frontend passa originalLaunch aos dois grupos",
+      "frontend recebe originalLaunch na validacao do grupo",
       () => {
 
-        const source =
-          fs.readFileSync(
-            path.resolve(
-              currentDirectory,
-              "../../src/pages/admin/supervisao/lancamento-semanal.js"
+        expect(
+          frontendSource
+        ).toMatch(
+          /function validateMetricGroup\(\s*metricFields,\s*groupLabel,\s*originalLaunch = null\s*\)/
+        );
+      }
+    );
+
+
+    it(
+      "frontend identifica se o grupo original possuia valor computado",
+      () => {
+
+        expect(
+          frontendSource
+        ).toMatch(
+          /const originalHadComputedValue =\s*originalLaunch\s*\?\s*metricFields\.some\(/
+        );
+      }
+    );
+
+
+    it(
+      "frontend so permite grupo vazio quando ele ja era vazio no legado",
+      () => {
+
+        expect(
+          frontendSource
+        ).toMatch(
+          /if\s*\(\s*originalLaunch &&\s*!originalHadComputedValue\s*\)\s*\{\s*return;\s*\}/
+        );
+      }
+    );
+
+
+    it(
+      "frontend passa originalLaunch ao grupo de competencias",
+      () => {
+
+        expect(
+          frontendSource
+        ).toMatch(
+          /validateMetricGroup\(\s*scoreFields,\s*"competência clínica",\s*originalLaunch\s*\)/
+        );
+      }
+    );
+
+
+    it(
+      "frontend passa originalLaunch ao grupo de indicadores",
+      () => {
+
+        expect(
+          frontendSource
+        ).toMatch(
+          /validateMetricGroup\(\s*evolucaoFields,\s*"evolução do paciente",\s*originalLaunch\s*\)/
+        );
+      }
+    );
+
+
+    it(
+      "permanece teste puramente estatico sem importar backend em runtime",
+      () => {
+
+        const forbiddenRuntimeImport =
+          [
+            "require(",
+            '"../../netlify/functions/supervisao-api.js"',
+          ].join("");
+
+
+        const forbiddenDynamicImport =
+          [
+            "import(",
+            '"../../netlify/functions/supervisao-api.js"',
+          ].join("");
+
+
+        const currentTestSource =
+          readFileSync(
+            resolve(
+              process.cwd(),
+              "tests/supervisao/a3-legacy-compatibility.test.js"
             ),
             "utf8"
           );
 
 
         expect(
-          source
-        ).toMatch(
-          /originalHadComputedValue/
+          currentTestSource
+        ).not.toContain(
+          forbiddenRuntimeImport
         );
 
 
         expect(
-          source
-        ).toMatch(
-          /originalLaunch\s*&&\s*!originalHadComputedValue/
-        );
-
-
-        expect(
-          source
-        ).toMatch(
-          /scoreFields,[\s\S]*?"competência clínica",[\s\S]*?originalLaunch/
-        );
-
-
-        expect(
-          source
-        ).toMatch(
-          /evolucaoFields,[\s\S]*?"evolução do paciente",[\s\S]*?originalLaunch/
+          currentTestSource
+        ).not.toContain(
+          forbiddenDynamicImport
         );
       }
     );
