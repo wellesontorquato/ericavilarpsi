@@ -260,39 +260,11 @@
   gap: 8px;
 }
 
-.supervisao-timeline {
-  display: grid;
-  gap: 12px;
-}
 
-.supervisao-timeline article {
-  background: #ffffff;
-  border: 1px solid rgba(81, 53, 35, 0.1);
-  border-radius: 18px;
-  padding: 16px;
-}
 
-.supervisao-timeline strong,
-.supervisao-timeline span,
-.supervisao-timeline p {
-  display: block;
-}
 
-.supervisao-timeline strong {
-  color: #392619;
-}
 
-.supervisao-timeline span {
-  color: #8a7768;
-  font-size: 0.82rem;
-  margin-top: 4px;
-}
 
-.supervisao-timeline p {
-  color: #5b4b3f;
-  line-height: 1.55;
-  margin: 10px 0 0;
-}
 
 .supervisao-timeline button {
   margin-top: 12px;
@@ -1940,9 +1912,6 @@
   word-break: break-word;
 }
 
-.supervisao-detalhe-modal {
-  width: min(100%, 920px);
-}
 
 .supervisao-detalhe-grid {
   display: grid;

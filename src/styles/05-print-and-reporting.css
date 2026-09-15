@@ -248,9 +248,6 @@
   }
 
   /* Repete o cabeçalho da tabela se ela pular para a próxima página */
-  .print-table thead {
-    display: table-header-group !important;
-  }
 
   /* Evita que uma linha seja cortada na metade */
   .print-table tr {
