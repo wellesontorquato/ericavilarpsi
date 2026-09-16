@@ -213,8 +213,6 @@
 }
 
 @media print {
-  .supervisao-print-report {
-  }
 
   .print-technical-explanation {
     margin: 0 0 32px;
