@@ -1,0 +1,388 @@
+/* =========================================================
+   BENTO BOX EXPLÍCITO E CORREÇÃO DE TEXTOS LONGOS
+   ========================================================= */
+.bento-grid {
+  display: grid !important;
+  grid-template-columns: 1fr !important;
+  gap: 24px !important;
+  align-items: stretch !important;
+}
+
+.bento-col {
+  display: flex;
+  flex-direction: column;
+}
+
+.bento-col > * {
+  flex: 1;
+  width: 100%;
+}
+
+.supervisao-insight-list article p {
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+@media (min-width: 1024px) {
+  .bento-grid { grid-template-columns: repeat(12, 1fr) !important; }
+  .bento-4 { grid-column: span 4 !important; }
+  .bento-6 { grid-column: span 6 !important; }
+  .bento-8 { grid-column: span 8 !important; }
+  .bento-12 { grid-column: span 12 !important; }
+}
+
+/* =========================================================
+   SCROLL INTERNO E PROTEÇÃO CONTRA QUEBRA DE TEXTO
+   ========================================================= */
+.scroll-interno {
+  flex: 1;
+  overflow-y: auto;
+  padding-right: 8px;
+  /* Altura travada para garantir a harmonia do Bento Box */
+  max-height: 420px;
+}
+
+/* Barra de rolagem customizada e invisível (estilo Mac/SaaS) */
+.scroll-interno::-webkit-scrollbar {
+  width: 5px;
+}
+.scroll-interno::-webkit-scrollbar-track {
+  background: transparent;
+}
+.scroll-interno::-webkit-scrollbar-thumb {
+  background: rgba(159, 105, 71, 0.25);
+  border-radius: 10px;
+}
+.scroll-interno::-webkit-scrollbar-thumb:hover {
+  background: rgba(159, 105, 71, 0.45);
+}
+
+/* Protege os cards da Timeline contra textos gigantes */
+.supervisao-history-summary {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.supervisao-history-card dl {
+  /* Força as 3 colunas a se adaptarem sem esmagar o texto */
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)) !important;
+}
+
+.supervisao-history-card dd {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-height: none !important;
+}
+
+/* =========================================================
+   RELATÓRIOS E EXPORTAÇÃO - DASHBOARD EXECUTIVO
+   ========================================================= */
+
+/* 1. Painel de Comando (Exportar Apresentação) */
+.supervisao-report-command-panel {
+  background: var(--sup-surface);
+  border: 1px solid rgba(255, 255, 255, 0.72);
+  box-shadow: var(--sup-shadow);
+  backdrop-filter: blur(18px);
+  border-radius: 28px;
+  padding: 28px 32px;
+  margin-bottom: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.supervisao-report-command-panel h2 {
+  color: var(--sup-text);
+  font-family: var(--font-libre-bodoni), serif;
+  font-size: clamp(1.6rem, 3vw, 2.2rem);
+  margin: 8px 0 12px;
+  letter-spacing: -0.04em;
+}
+
+.supervisao-report-command-panel p {
+  color: var(--sup-muted);
+  line-height: 1.6;
+  max-width: 760px;
+  font-size: 0.95rem;
+}
+
+.supervisao-report-command-panel label {
+  display: grid;
+  gap: 8px;
+  color: var(--sup-primary-dark);
+  font-size: 0.8rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-top: 8px;
+}
+
+.supervisao-report-command-panel select {
+  height: 48px;
+  border-radius: 14px;
+  border: 1px solid rgba(159, 105, 71, 0.25);
+  padding: 0 16px;
+  background-color: #fff;
+  font-size: 0.95rem;
+  color: var(--sup-text);
+  font-family: inherit;
+  outline: none;
+  max-width: 320px;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.supervisao-report-command-panel select:focus {
+  border-color: var(--sup-primary);
+  box-shadow: 0 0 0 4px rgba(159, 105, 71, 0.12);
+}
+
+.supervisao-report-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+/* 2. Tabelas de Prévia (Bento Box) */
+.supervisao-report-preview-card {
+  background: var(--sup-surface);
+  border: 1px solid rgba(255, 255, 255, 0.72);
+  box-shadow: var(--sup-shadow);
+  backdrop-filter: blur(18px);
+  border-radius: 28px;
+  padding: 24px;
+}
+
+.supervisao-report-preview-table-wrap {
+  border-radius: 16px;
+  border: 1px solid var(--sup-line);
+  background: rgba(255, 255, 255, 0.4);
+}
+
+.supervisao-report-preview-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+
+.supervisao-report-preview-table th,
+.supervisao-report-preview-table td {
+  padding: 14px 16px;
+  text-align: left;
+  border-bottom: 1px solid var(--sup-line);
+  color: var(--sup-text);
+  line-height: 1.4;
+}
+
+.supervisao-report-preview-table th {
+  color: var(--sup-primary-dark);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  background: rgba(159, 105, 71, 0.06);
+  font-size: 0.75rem;
+}
+
+.supervisao-report-preview-table tbody tr {
+  transition: background 0.2s ease;
+}
+
+.supervisao-report-preview-table tbody tr:hover {
+  background: rgba(255, 255, 255, 0.8);
+}
+
+.supervisao-report-preview-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* Tratamento para telas menores (Mobile Responsivo) */
+@media (max-width: 768px) {
+  .supervisao-report-command-panel {
+    padding: 20px;
+  }
+
+  .supervisao-report-command-panel select {
+    max-width: 100%;
+  }
+
+  .supervisao-report-actions {
+    flex-direction: column;
+  }
+
+  .supervisao-report-actions button {
+    width: 100%;
+  }
+
+  .supervisao-report-preview-table-wrap {
+    overflow-x: auto;
+  }
+}
+
+/* =========================================================
+   MODAIS DE DETALHE (DESIGN PREMIUM / SAAS)
+   ========================================================= */
+
+/* 1. O Modal em si (Fundo suave e Sombra elegante) */
+.supervisao-modal {
+  background: #fdfbf7 !important; /* Um off-white/creme bem suave */
+  border: 1px solid rgba(159, 105, 71, 0.15) !important;
+  box-shadow: 0 40px 100px rgba(38, 28, 23, 0.25) !important;
+  border-radius: 32px !important;
+}
+
+/* 2. Cabeçalho (Header com mais respiro) */
+.supervisao-modal-header {
+  padding: 36px 40px 28px !important;
+  border-bottom: 1px solid rgba(159, 105, 71, 0.08) !important;
+}
+
+.supervisao-modal-header h2 {
+  font-size: clamp(1.8rem, 3vw, 2.4rem) !important;
+  color: #392619 !important;
+  letter-spacing: -0.04em !important;
+  margin: 8px 0 !important;
+  line-height: 1.1 !important;
+}
+
+.supervisao-modal-header p {
+  font-size: 1rem !important;
+  color: #7b6c61 !important;
+  margin: 0 !important;
+}
+
+/* 3. Grid de Informações Rápidas (Cards Brancos Superiores) */
+.supervisao-alerta-modal-grid,
+.supervisao-detalhe-grid {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)) !important;
+  gap: 16px !important;
+  margin-bottom: 36px !important;
+  border-bottom: none !important;
+  padding-bottom: 0 !important;
+}
+
+.supervisao-alerta-modal-grid div,
+.supervisao-detalhe-grid div {
+  background: #ffffff !important; /* Cards brancos puros contrastando com o fundo creme */
+  border: 1px solid rgba(159, 105, 71, 0.08) !important;
+  border-radius: 20px !important;
+  padding: 20px 24px !important;
+  box-shadow: 0 6px 16px rgba(58, 37, 25, 0.02) !important;
+  transition: transform 0.2s ease, box-shadow 0.2s ease !important;
+}
+
+.supervisao-alerta-modal-grid div:hover,
+.supervisao-detalhe-grid div:hover {
+  transform: translateY(-3px) !important;
+  box-shadow: 0 12px 24px rgba(58, 37, 25, 0.05) !important;
+}
+
+.supervisao-alerta-modal-grid span,
+.supervisao-detalhe-grid span {
+  color: #8b7869 !important;
+  font-size: 0.72rem !important;
+  font-weight: 800 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.08em !important;
+  margin-bottom: 8px !important;
+  display: block !important;
+}
+
+.supervisao-alerta-modal-grid strong,
+.supervisao-detalhe-grid strong {
+  color: #392619 !important;
+  font-size: 1.15rem !important;
+  font-weight: 800 !important;
+  line-height: 1.2 !important;
+  display: block !important;
+}
+
+/* 4. Corpo do Modal e Textos Longos (Cards de Resumo, Detalhe) */
+.supervisao-modal-body {
+  padding: 32px 40px !important;
+}
+
+.supervisao-alerta-modal-textos,
+.supervisao-detalhe-textos {
+  display: grid !important;
+  gap: 20px !important;
+}
+
+.supervisao-alerta-modal-textos section,
+.supervisao-detalhe-textos section {
+  background: #ffffff !important;
+  border: 1px solid rgba(159, 105, 71, 0.08) !important;
+  border-radius: 24px !important;
+  padding: 32px 36px !important;
+  box-shadow: 0 8px 24px rgba(58, 37, 25, 0.02) !important;
+  margin-bottom: 0 !important;
+}
+
+.supervisao-alerta-modal-textos h3,
+.supervisao-detalhe-textos h3 {
+  color: #9f6947 !important;
+  font-size: 0.8rem !important;
+  font-weight: 800 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.1em !important;
+  margin: 0 0 16px 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+}
+
+.supervisao-alerta-modal-textos h3::before,
+.supervisao-detalhe-textos h3::before {
+  content: "";
+  display: block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #d3a66f !important; /* Destaque sutil dourado/marrom */
+}
+
+.supervisao-alerta-modal-textos p,
+.supervisao-detalhe-textos p {
+  color: #55463b !important;
+  font-size: 1.05rem !important;
+  line-height: 1.8 !important;
+  margin: 0 !important;
+}
+
+/* 5. Footer (Botões de Ação) */
+.supervisao-alerta-modal-actions {
+  background: #fdfbf7 !important;
+  border-top: 1px solid rgba(159, 105, 71, 0.08) !important;
+  padding: 24px 40px !important;
+  margin: 0 !important;
+  position: static !important; /* Remove o comportamento grudento que sobrepunha os textos */
+  display: flex !important;
+  gap: 12px !important;
+  justify-content: flex-end !important;
+}
+
+/* 6. Scrollbar Elegante (Se houver muito texto) */
+.supervisao-modal-body::-webkit-scrollbar {
+  width: 6px;
+}
+.supervisao-modal-body::-webkit-scrollbar-track {
+  background: transparent;
+}
+.supervisao-modal-body::-webkit-scrollbar-thumb {
+  background: rgba(159, 105, 71, 0.2);
+  border-radius: 10px;
+}
+.supervisao-modal-body::-webkit-scrollbar-thumb:hover {
+  background: rgba(159, 105, 71, 0.4);
+}
