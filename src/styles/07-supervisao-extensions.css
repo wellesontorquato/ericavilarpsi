@@ -214,7 +214,6 @@
 
 @media print {
   .supervisao-print-report {
-    display: block !important;
   }
 
   .print-technical-explanation {
@@ -458,7 +457,6 @@
   .print-section {
     box-sizing: border-box !important;
     min-height: 100vh !important;
-    padding: 60px 50px !important;
     overflow: visible !important;
   }
 
