@@ -243,21 +243,13 @@
   --sup-bg: #f5f0ea;
   --sup-surface: rgba(255, 252, 247, 0.92);
   --sup-surface-solid: #fffcf7;
-  --sup-soft: #efe2d5;
   --sup-primary: #9f6947;
   --sup-primary-dark: #5f3825;
   --sup-secondary: #b78290;
-  --sup-green: #6f8b6b;
-  --sup-blue: #6c7fa0;
   --sup-text: #261c17;
   --sup-muted: #7b6c61;
   --sup-line: rgba(72, 47, 34, 0.12);
   --sup-shadow: 0 24px 80px rgba(58, 37, 25, 0.12);
-  --donut-1: #9f6947;
-  --donut-2: #b78290;
-  --donut-3: #6f8b6b;
-  --donut-4: #6c7fa0;
-  --donut-5: #d3a66f;
   background:
     radial-gradient(circle at 18% 0%, rgba(183, 130, 144, 0.18), transparent 28%),
     radial-gradient(circle at 92% 12%, rgba(159, 105, 71, 0.14), transparent 30%),

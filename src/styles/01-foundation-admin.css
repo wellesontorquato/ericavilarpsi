@@ -1,8 +1,5 @@
 :root{
   --bg:#f7efea;
-  --bg-2:#fbf7f4;
-  --surface:#ffffff;
-  --surface-soft:rgba(255,255,255,.76);
   --primary:#aa7887;
   --primary-dark:#7f5a66;
   --text:#2e2628;
@@ -13,9 +10,6 @@
   --shadow-sm:0 18px 38px rgba(76,50,57,.08);
   --shadow-md:0 28px 60px rgba(76,50,57,.12);
   --shadow-lg:0 34px 74px rgba(76,50,57,.14);
-  --radius-sm:18px;
-  --radius-md:28px;
-  --radius-lg:40px;
   --sidebar-w:108px;
   --container:1240px;
   --mobile-nav-h:82px;
