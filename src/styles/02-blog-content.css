@@ -1465,14 +1465,12 @@
   align-items: center;
   justify-content: center;
   width: max-content;
-  min-height: 38px;
 }
 
 
 
 .blog-post-hero-kicker {
   margin-bottom: 12px;
-  padding: 7px 11px;
 }
 
 
@@ -2759,12 +2757,7 @@
     align-items:center;
     justify-content:space-between;
     gap:12px;
-    padding:12px 14px;
-    margin:12px 0 18px;
-    background:rgba(251,247,244,.86);
-    border:1px solid rgba(46,38,40,.08);
     box-shadow:var(--shadow-sm);
-    backdrop-filter:blur(16px);
   }
 
   section[id]{scroll-margin-top:calc(var(--mobile-topbar-offset) + 6px);}
@@ -2787,9 +2780,6 @@
   }
 
   .mobile-avatar{
-    width:42px;
-    height:42px;
-    border-radius:14px;
     box-shadow:var(--shadow-xs);
     flex:0 0 auto;
   }
