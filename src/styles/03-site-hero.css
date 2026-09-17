@@ -434,7 +434,6 @@
     align-items:center;
     justify-content:center;
     gap:8px;
-    width:100%;
     margin:0 auto;
   }
   .hero-slide-actions .btn{
@@ -462,14 +461,10 @@
     display:none;
   }
   .hero-highlights{
-    display:flex;
     gap:12px;
-    overflow-x:auto;
-    overflow-y:hidden;
     padding:2px 10px 8px 0;
     margin-top:14px;
     scroll-snap-type:x proximity;
-    -webkit-overflow-scrolling:touch;
   }
 }
 
@@ -1126,7 +1121,6 @@
     max-width: 86%;
     padding-left: 18px;
     padding-right: 18px;
-    padding-bottom: 20px;
   }
 
   .hero-slide h1,
