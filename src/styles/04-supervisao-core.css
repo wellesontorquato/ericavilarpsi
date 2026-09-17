@@ -2182,7 +2182,6 @@
 
 .supervisao-alerta-modal-grid strong,
 .supervisao-detalhe-grid strong {
-  display: block;
   color: var(--sup-text);
   font-size: 1.05rem;
   line-height: 1.3;
@@ -2192,7 +2191,6 @@
 
 .supervisao-alerta-modal-textos,
 .supervisao-detalhe-textos {
-  display: grid;
   gap: 18px;
   max-height: 55vh;
   overflow-y: auto;
@@ -2220,7 +2218,6 @@
 
 .supervisao-alerta-modal-textos p,
 .supervisao-detalhe-textos p {
-  margin: 0;
   color: var(--sup-text);
   font-size: 0.95rem;
   line-height: 1.75;
@@ -2229,9 +2226,7 @@
 }
 
 .supervisao-alerta-modal-actions {
-  display: flex;
   flex-wrap: wrap;
-  justify-content: flex-end;
   gap: 10px;
   margin: 20px -28px -28px;
   padding: 16px 28px;
